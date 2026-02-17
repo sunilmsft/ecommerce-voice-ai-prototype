@@ -288,43 +288,49 @@
 
         /* Prototype Context Panel */
         .prototype-context-panel {
-            background: #f0fdfa;
-            border-left: 4px solid #14b8a6;
-            border: 1px solid #a7f3d0;
-            border-left: 4px solid #14b8a6;
-            border-radius: 4px;
-            padding: 14px 16px;
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 45%, #ffffff 100%);
+            border: 1px solid #5eead4;
+            border-left: 6px solid #0f766e;
+            border-radius: 6px;
+            padding: 16px 18px;
             margin: 12px 20px;
             max-width: 420px;
             width: auto;
-            box-shadow: 
-                0 1px 2px rgba(20, 184, 166, 0.15),
-                0 4px 12px rgba(20, 184, 166, 0.12),
-                0 8px 20px rgba(20, 184, 166, 0.08),
-                inset 0 1px 0px rgba(255, 255, 255, 0.8);
+            box-shadow:
+                0 2px 6px rgba(15, 118, 110, 0.18),
+                0 10px 22px rgba(15, 118, 110, 0.14),
+                0 18px 32px rgba(15, 118, 110, 0.10),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background-clip: padding-box;
             position: relative;
             transform: translateY(0);
-            transition: all 0.2s ease;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
         }
 
         .prototype-context-panel:hover {
-            box-shadow: 
-                0 2px 4px rgba(20, 184, 166, 0.15),
-                0 6px 16px rgba(20, 184, 166, 0.15),
-                0 12px 24px rgba(20, 184, 166, 0.10),
-                inset 0 1px 0px rgba(255, 255, 255, 0.8);
-            transform: translateY(-2px);
+            box-shadow:
+                0 4px 10px rgba(15, 118, 110, 0.20),
+                0 14px 28px rgba(15, 118, 110, 0.16),
+                0 24px 40px rgba(15, 118, 110, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+            transform: translateY(-3px);
         }
 
         .context-header {
             font-size: 10px;
-            color: #0d5d52;
+            color: #f0fdfa;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin: 0 0 6px 0;
+            letter-spacing: 0.8px;
+            margin: 0 0 8px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: #0f766e;
+            border-radius: 999px;
+            box-shadow: 0 2px 6px rgba(15, 118, 110, 0.2);
         }
 
         .context-header-row {
