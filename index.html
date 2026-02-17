@@ -1985,7 +1985,7 @@
             <p class="context-description" id="contextDescription">When a customer requests a human outside business hours, AI voice assistance is offered first for immediate help. Callback remains available if the customer prefers to wait for a specialist.</p>
             <div class="context-divider"></div>
             <div class="variant-switcher">
-                <button class="variant-btn" id="variantHybrid" onclick="switchPrototypeVariant('hybrid')">Hybrid</button>
+                <button class="variant-btn" id="variantHybrid" onclick="switchPrototypeVariant('hybrid')">Customer Choice</button>
                 <button class="variant-btn" id="variantAiFirst" onclick="switchPrototypeVariant('ai_first')">AI-First</button>
                 <button class="variant-btn" id="variantHumanFirst" onclick="switchPrototypeVariant('human_first')">Human-First</button>
             </div>
@@ -2371,8 +2371,8 @@
 
         const prototypeVariants = {
             hybrid: {
-                title: 'Hybrid Choice (Customer-Led)',
-                description: 'Customer chooses between speaking with the AI assistant immediately or requesting a callback. Callback remains available after AI interaction if needed.'
+                title: 'Customer Choice',
+                description: 'Customers choose between speaking with the AI voice assistant immediately or requesting a callback from a Microsoft specialist. Designed to maximize transparency and customer control.'
             },
             human_first: {
                 title: 'Callback-Confirmed + AI While Waiting',
