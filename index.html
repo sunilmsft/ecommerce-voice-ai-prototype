@@ -1981,12 +1981,12 @@
                     <button class="context-refresh" title="Refresh" onclick="refreshPrototype()" aria-label="Refresh">↻</button>
                 </div>
             </div>
-            <h3 class="context-title" id="contextTitle">AI-First Assist (Immediate Help Priority)</h3>
-            <p class="context-description" id="contextDescription">When a customer requests a human outside business hours, AI voice assistance is offered first for immediate help. Callback remains available if the customer prefers to wait for a specialist.</p>
+            <h3 class="context-title" id="contextTitle">Immediate Assist</h3>
+            <p class="context-description" id="contextDescription">When a customer requests human support outside business hours, AI voice assistance is offered first for immediate help. A callback remains available at any time.</p>
             <div class="context-divider"></div>
             <div class="variant-switcher">
                 <button class="variant-btn" id="variantHybrid" onclick="switchPrototypeVariant('hybrid')">Customer Choice</button>
-                <button class="variant-btn" id="variantAiFirst" onclick="switchPrototypeVariant('ai_first')">AI-First</button>
+                <button class="variant-btn" id="variantAiFirst" onclick="switchPrototypeVariant('ai_first')">Immediate Assist</button>
                 <button class="variant-btn" id="variantHumanFirst" onclick="switchPrototypeVariant('human_first')">Human-First</button>
             </div>
             <div style="margin-top: 16px;">
@@ -2379,8 +2379,8 @@
                 description: 'Customer registers for a callback first. After confirmation, they are offered AI voice assistance to continue getting help while waiting for a specialist.'
             },
             ai_first: {
-                title: 'AI-First Assist (Immediate Help Priority)',
-                description: 'When a customer requests a human outside business hours, AI voice assistance is offered first for immediate help. Callback remains available if the customer prefers to wait for a specialist.'
+                title: 'Immediate Assist',
+                description: 'When a customer requests human support outside business hours, AI voice assistance is offered first for immediate help. A callback remains available at any time.'
             }
         };
 
