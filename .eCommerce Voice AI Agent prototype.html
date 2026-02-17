@@ -2968,28 +2968,36 @@
 
         function startAIVoiceConversation() {
             // Initial greeting - AI speaks first
-            addCallTranscriptEntry('AI Assistant', 'Hello! I\'m your Sales AI Assistant for Microsoft 365 Business. How can I help you today?');
+            addCallTranscriptEntry('AI Assistant', 'Hello, I\'m your Sales AI Assistant. To recommend the right Microsoft 365 setup, approximately how many people need licenses?');
             
             // Wait for AI to finish speaking before user responds
             setTimeout(() => {
-                addCallTranscriptEntry('You', 'I\'m looking for Microsoft 365 for my business. We have about 15 people.');
-                conversationContext.numEmployees = 15;
+                addCallTranscriptEntry('You', 'We\'re evaluating options for around 20 employees.');
+                conversationContext.numEmployees = 20;
                 
                 // Wait for user audio to finish
                 setTimeout(() => {
-                    addCallTranscriptEntry('AI Assistant', 'Perfect! For a 15-person team, I\'d recommend Microsoft 365 Business Premium at twenty two dollars per user per month. It includes all productivity apps, Teams, and advanced security features.');
+                    addCallTranscriptEntry('AI Assistant', 'Thanks. Are your teams mostly remote, in-office, or hybrid today?');
                     
                     setTimeout(() => {
-                        addCallTranscriptEntry('You', 'What kind of security features are included?');
+                        addCallTranscriptEntry('You', 'We\'re mostly hybrid, with a few fully remote staff.');
                         
                         setTimeout(() => {
-                            addCallTranscriptEntry('AI Assistant', 'Business Premium includes advanced threat protection, device management, and data loss prevention to keep your business data secure.');
+                            addCallTranscriptEntry('AI Assistant', 'Understood. Quick follow-up: are devices mostly company-managed, or do employees also use personal devices for work?');
                             
                             setTimeout(() => {
-                                addCallTranscriptEntry('You', 'That sounds good. Can I speak with someone about pricing and next steps?');
+                                addCallTranscriptEntry('You', 'Mostly company laptops, plus some personal phones for email and Teams.');
                                 
                                 setTimeout(() => {
-                                    addCallTranscriptEntry('AI Assistant', 'Absolutely! I can arrange a callback from a Microsoft specialist who can discuss detailed pricing and help you get started. Just click disconnect when you\'re ready.');
+                                    addCallTranscriptEntry('AI Assistant', 'That helps. What timeline are you targeting to make a decision?');
+
+                                    setTimeout(() => {
+                                        addCallTranscriptEntry('You', 'Ideally this quarter.');
+
+                                        setTimeout(() => {
+                                            addCallTranscriptEntry('AI Assistant', 'Given your team size, hybrid work model, and device mix, Microsoft 365 Business Premium is a strong fit for productivity, collaboration, and security management. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.');
+                                        }, 6000);
+                                    }, 5000);
                                 }, 6000);
                             }, 7000);
                         }, 5000);
