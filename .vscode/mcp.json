@@ -1,0 +1,37 @@
+{
+  "servers": {
+    "azureMcpProvider": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure-devops/mcp",
+        "MicrosoftIT",
+        "-d",
+        "core",
+        "work-items",
+        "search"
+      ]
+    },
+    "workiq": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@microsoft/workiq",
+        "mcp"
+      ],
+      "tools": [
+        "*"
+      ]
+    },
+    "markitdown": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "markitdown-mcp-npx"
+      ]
+    }
+  }
+}
