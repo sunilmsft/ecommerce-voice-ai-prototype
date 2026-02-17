@@ -2323,6 +2323,7 @@
         let isSpeaking = false;
         let audioEnabled = true;
         let callbackRequested = false;
+        let callbackRequestedAfterVoiceCall = false;
         let offHoursAiFirstFlow = false;
         let callbackFlowContext = null;
         let voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false };
@@ -2814,6 +2815,7 @@
                     }, 1000);
                 }, 500);
             } else if (option === 'callback') {
+                callbackRequestedAfterVoiceCall = false;
                 addMessage('I\'d like to request a callback', 'user');
                 setTimeout(() => {
                     addMessage('I\'ll help you request a callback. Please provide some information so our sales team can reach out to you.', 'bot', false);
@@ -2866,12 +2868,14 @@
 
         function closeCallbackConfirmationAndOffer() {
             document.getElementById('callbackConfirmationModal').classList.remove('active');
-            if (prototypeVariant === 'hybrid') {
+            if (prototypeVariant === 'hybrid' && callbackRequestedAfterVoiceCall) {
                 addMessage('Your callback is confirmed. If you have questions while you wait, you can engage with the Sales AI Assistant again by visiting this page anytime.', 'bot', false);
+                callbackRequestedAfterVoiceCall = false;
                 return;
             }
 
             // Show "speak while you wait" offer
+            callbackRequestedAfterVoiceCall = false;
             document.getElementById('speakWhileYouWaitModal').classList.add('active');
         }
         function closeSpeakWhileYouWaitModal() {
@@ -3514,6 +3518,7 @@
         function handleCancelCallback() {
             // User chose "I'm All Set for Now" - cancel and show confirmation
             callbackRequested = false;
+            callbackRequestedAfterVoiceCall = false;
             voiceSessionContext.fromCallback = false;
             addMessage("I'm all set for now", 'user');
             setTimeout(() => {
@@ -3602,6 +3607,7 @@
             isSpeaking = false;
             audioEnabled = true;
             callbackRequested = false;
+            callbackRequestedAfterVoiceCall = false;
             offHoursAiFirstFlow = false;
             callbackFlowContext = null;
             voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false };
@@ -3739,6 +3745,7 @@
             // Reset conversation context and show welcome message
             conversation = [];
             callbackRequested = false;
+            callbackRequestedAfterVoiceCall = false;
             voiceSessionContext.fromCallback = false;
             
             const chatMessages = document.getElementById('chatMessages');
@@ -3757,6 +3764,7 @@
             // Stop any ongoing speech before closing
             isVoiceMode = false;
             audioEnabled = false;
+            callbackRequestedAfterVoiceCall = true;
             try {
                 if (speechSynthesis.speaking) {
                     speechSynthesis.cancel();
