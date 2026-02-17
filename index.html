@@ -3000,8 +3000,8 @@
                 await new Promise((resolve) => setTimeout(resolve, pauseAfterMs));
             };
 
-            await playLine('AI Assistant', 'Hi there — I am Sales AI Assistant. Happy to help. To point you to the right Microsoft 365 option, about how many people need licenses?', 500);
-            await playLine('You', 'We\'re evaluating options for around 20 employees.', 420);
+            await playLine('AI Assistant', 'Hi there — I am Sales AI Assistant. Happy to help. What can I help you with today?', 500);
+            await playLine('You', 'We\'re looking for Microsoft 365 licensing information for around 20 employees.', 420);
             conversationContext.numEmployees = 20;
 
             await playLine('AI Assistant', 'Got it, thanks. Are your teams mostly in-office, fully remote, or hybrid?', 420);
