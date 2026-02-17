@@ -2829,15 +2829,32 @@
 
         function showCallbackForm() {
             document.getElementById('callbackFormModal').classList.add('active');
-            const callbackDefaults = {
-                callbackName: 'Alex Chen',
-                callbackBusiness: 'Northwind Architecture Group',
-                callbackEmail: 'alex.chen@northwind-example.com',
-                callbackPhone: '(206) 555-0198',
-                callbackUsers: '42'
-            };
+            const callbackTestProfiles = [
+                {
+                    callbackName: 'Alex Chen',
+                    callbackBusiness: 'Northwind Architecture Group',
+                    callbackEmail: 'alex.chen@northwind-example.com',
+                    callbackPhone: '(206) 555-0198',
+                    callbackUsers: '42'
+                },
+                {
+                    callbackName: 'Priya Nair',
+                    callbackBusiness: 'Fabrikam Health Partners',
+                    callbackEmail: 'priya.nair@fabrikam-example.com',
+                    callbackPhone: '(415) 555-0126',
+                    callbackUsers: '85'
+                },
+                {
+                    callbackName: 'Jordan Rivera',
+                    callbackBusiness: 'Adventure Works Retail',
+                    callbackEmail: 'jordan.rivera@adventureworks-example.com',
+                    callbackPhone: '(312) 555-0174',
+                    callbackUsers: '23'
+                }
+            ];
+            const selectedProfile = callbackTestProfiles[Math.floor(Math.random() * callbackTestProfiles.length)];
 
-            Object.entries(callbackDefaults).forEach(([fieldId, fieldValue]) => {
+            Object.entries(selectedProfile).forEach(([fieldId, fieldValue]) => {
                 const field = document.getElementById(fieldId);
                 if (field) {
                     field.value = fieldValue;
