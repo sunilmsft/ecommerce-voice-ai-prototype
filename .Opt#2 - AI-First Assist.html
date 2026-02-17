@@ -3022,7 +3022,7 @@
 
         function startAIVoiceConversation() {
             // Initial greeting - AI speaks first
-            addCallTranscriptEntry('AI Assistant', 'Hello, I\'m your Sales AI Assistant. To recommend the right Microsoft 365 setup, approximately how many people need licenses?');
+            addCallTranscriptEntry('AI Assistant', 'Hi there — happy to help. To point you to the right Microsoft 365 option, about how many people need licenses?');
             
             // Wait for AI to finish speaking before user responds
             setTimeout(() => {
@@ -3031,33 +3031,33 @@
                 
                 // Wait for user audio to finish
                 setTimeout(() => {
-                    addCallTranscriptEntry('AI Assistant', 'Thanks. Are your teams mostly remote, in-office, or hybrid today?');
+                    addCallTranscriptEntry('AI Assistant', 'Got it, thanks. Are your teams mostly in-office, fully remote, or hybrid?');
                     
                     setTimeout(() => {
                         addCallTranscriptEntry('You', 'We\'re mostly hybrid, with a few fully remote staff.');
                         
                         setTimeout(() => {
-                            addCallTranscriptEntry('AI Assistant', 'Understood. Quick follow-up: are devices mostly company-managed, or do employees also use personal devices for work?');
+                            addCallTranscriptEntry('AI Assistant', 'That makes sense. Quick follow-up: are devices mostly company-managed, or are personal devices used too?');
                             
                             setTimeout(() => {
                                 addCallTranscriptEntry('You', 'Mostly company laptops, plus some personal phones for email and Teams.');
                                 
                                 setTimeout(() => {
-                                    addCallTranscriptEntry('AI Assistant', 'That helps. What timeline are you targeting to make a decision?');
+                                    addCallTranscriptEntry('AI Assistant', 'Perfect, that helps. What decision timeline are you working toward?');
 
                                     setTimeout(() => {
                                         addCallTranscriptEntry('You', 'Ideally this quarter.');
 
                                         setTimeout(() => {
-                                            addCallTranscriptEntry('AI Assistant', 'Given your team size, hybrid work model, and device mix, Microsoft 365 Business Premium is a strong fit for productivity, collaboration, and security management. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.');
-                                        }, 6000);
-                                    }, 5000);
-                                }, 6000);
-                            }, 7000);
-                        }, 5000);
-                    }, 8000);
-                }, 6000);
-            }, 7000);
+                                            addCallTranscriptEntry('AI Assistant', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.');
+                                        }, 5200);
+                                    }, 2400);
+                                }, 3400);
+                            }, 3200);
+                        }, 3600);
+                    }, 3200);
+                }, 3600);
+            }, 3800);
         }
 
         function addCallTranscriptEntry(speaker, text) {
