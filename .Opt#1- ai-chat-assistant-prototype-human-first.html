@@ -2255,7 +2255,7 @@
             <div class="call-avatar" id="callAvatar">🤖</div>
             <div class="call-info">
                 <div class="call-agent-name" id="callAgentName">Connecting...</div>
-                <div class="call-status connecting" id="callStatus">Finding Sales AI Assistant</div>
+                <div class="call-status connecting" id="callStatus">Connecting you to Sales AI Assistant...</div>
                 <div class="call-timer" id="callTimer" style="display: none;">00:00</div>
             </div>
             <div class="call-transcript-area" id="callTranscriptArea">
@@ -2311,6 +2311,7 @@
         let speechSynthesis = window.speechSynthesis;
         let isSpeaking = false;
         let audioEnabled = true;
+        let voiceSessionGeneration = 0;
         let callbackRequested = false;
         let voiceSessionContext = { fromCallback: false };
         let conversationContext = {
@@ -2899,6 +2900,7 @@
         function startVoiceSession() {
             isVoiceMode = true;
             audioEnabled = true;
+            voiceSessionGeneration++;
             
             // Load voices if not already loaded (important for Chrome)
             if (speechSynthesis.getVoices().length === 0) {
@@ -2913,7 +2915,7 @@
             
             // Reset call screen elements
             document.getElementById('callAgentName').textContent = 'Connecting...';
-            document.getElementById('callStatus').textContent = 'Finding Sales AI Assistant';
+            document.getElementById('callStatus').textContent = 'Connecting you to Sales AI Assistant...';
             document.getElementById('callStatus').classList.add('connecting');
             document.getElementById('callTimer').style.display = 'none';
             document.getElementById('callTranscriptArea').classList.remove('active');
@@ -2996,12 +2998,19 @@
                 console.log('Speech skipped - audioEnabled:', audioEnabled, 'isVoiceMode:', isVoiceMode);
                 return;
             }
+            const speechGenerationAtStart = voiceSessionGeneration;
             
             // Wait for current speech to complete before starting new one
             const speakWhenReady = () => {
+                if (!audioEnabled || !isVoiceMode || speechGenerationAtStart !== voiceSessionGeneration) {
+                    return;
+                }
                 if (speechSynthesis.speaking) {
                     // Wait 100ms and try again
                     setTimeout(speakWhenReady, 100);
+                    return;
+                }
+                if (!audioEnabled || !isVoiceMode || speechGenerationAtStart !== voiceSessionGeneration) {
                     return;
                 }
                 
@@ -3128,6 +3137,7 @@
             isVoiceMode = false;
             audioEnabled = false;
             isSpeaking = false;
+            voiceSessionGeneration++;
             
             // Stop call timer
             if (callTimer) {
@@ -3410,6 +3420,7 @@
             // Stop any ongoing speech before closing
             isVoiceMode = false;
             audioEnabled = false;
+            voiceSessionGeneration++;
             try {
                 if (speechSynthesis.speaking) {
                     speechSynthesis.cancel();
@@ -3437,6 +3448,7 @@
             isVoiceMode = false;
             isMuted = false;
             isSpeaking = false;
+            voiceSessionGeneration++;
             
             // Stop any ongoing speech forcefully
             try {
