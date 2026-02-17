@@ -2844,6 +2844,20 @@
 
         function showCallbackForm() {
             document.getElementById('callbackFormModal').classList.add('active');
+            const callbackDefaults = {
+                callbackName: 'Taylor Morgan',
+                callbackBusiness: 'Contoso Design Studio',
+                callbackEmail: 'taylor.morgan@contosoexample.com',
+                callbackPhone: '(425) 555-0142',
+                callbackUsers: '15'
+            };
+
+            Object.entries(callbackDefaults).forEach(([fieldId, fieldValue]) => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.value = fieldValue;
+                }
+            });
         }
 
         function closeCallbackFormModal() {
