@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
 ╔════════════════════════════════════════════════════════════════╗
-║  PROTOTYPE: .Opt#1 - AI Chat Assistant (Human-First Flow)     ║
+║  PROTOTYPE: .Opt#1 - AI Chat Assistant (Assisted Follow-Up Flow)║
 ║  DO NOT EDIT if you meant to edit another prototype file!      ║
 ║  Current prototypes in folder:                                 ║
 ║  • .Opt#1- ai-chat-assistant-prototype-human-first.html ✓THIS  ║
@@ -12,7 +12,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>.Opt#1 — Human-First Flow | Ask Microsoft</title>
+    <title>.Opt#1 — Assisted Follow-Up Flow | Ask Microsoft</title>
     <style>
         * {
             margin: 0;
@@ -288,43 +288,49 @@
 
         /* Prototype Context Panel */
         .prototype-context-panel {
-            background: #f0fdfa;
-            border-left: 4px solid #14b8a6;
-            border: 1px solid #a7f3d0;
-            border-left: 4px solid #14b8a6;
-            border-radius: 4px;
-            padding: 14px 16px;
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 45%, #ffffff 100%);
+            border: 1px solid #5eead4;
+            border-left: 6px solid #0f766e;
+            border-radius: 6px;
+            padding: 16px 18px;
             margin: 12px 20px;
             max-width: 420px;
             width: auto;
-            box-shadow: 
-                0 1px 2px rgba(20, 184, 166, 0.15),
-                0 4px 12px rgba(20, 184, 166, 0.12),
-                0 8px 20px rgba(20, 184, 166, 0.08),
-                inset 0 1px 0px rgba(255, 255, 255, 0.8);
+            box-shadow:
+                0 2px 6px rgba(15, 118, 110, 0.18),
+                0 10px 22px rgba(15, 118, 110, 0.14),
+                0 18px 32px rgba(15, 118, 110, 0.10),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background-clip: padding-box;
             position: relative;
             transform: translateY(0);
-            transition: all 0.2s ease;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
         }
 
         .prototype-context-panel:hover {
-            box-shadow: 
-                0 2px 4px rgba(20, 184, 166, 0.15),
-                0 6px 16px rgba(20, 184, 166, 0.15),
-                0 12px 24px rgba(20, 184, 166, 0.10),
-                inset 0 1px 0px rgba(255, 255, 255, 0.8);
-            transform: translateY(-2px);
+            box-shadow:
+                0 4px 10px rgba(15, 118, 110, 0.20),
+                0 14px 28px rgba(15, 118, 110, 0.16),
+                0 24px 40px rgba(15, 118, 110, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+            transform: translateY(-3px);
         }
 
         .context-header {
-            font-size: 10px;
-            color: #0d5d52;
+            font-size: 11px;
+            color: #f0fdfa;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin: 0 0 6px 0;
+            letter-spacing: 0.8px;
+            margin: 0 0 8px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: #0f766e;
+            border-radius: 999px;
+            box-shadow: 0 2px 6px rgba(15, 118, 110, 0.2);
         }
 
         .context-header-row {
@@ -1949,13 +1955,13 @@
                 <div class="context-header">Prototype Scenario</div>
                 <button class="context-refresh" title="Refresh" onclick="refreshPrototype()" aria-label="Refresh">↻</button>
             </div>
-            <h3 class="context-title" id="contextTitle">Callback-Confirmed + AI While Waiting</h3>
+            <h3 class="context-title" id="contextTitle">Assisted Follow-Up</h3>
             <p class="context-description" id="contextDescription">Customer registers for a callback first. After confirmation, they are offered AI voice assistance to continue getting help while waiting for a specialist.</p>
             <div class="context-divider"></div>
             <div class="variant-switcher">
-                <button class="variant-btn" id="variantHybrid" onclick="navigateToHybridPrototype()">Hybrid</button>
-                <button class="variant-btn active" id="variantHumanFirst" onclick="switchPrototypeVariant('human_first')">Human-First</button>
-                <button class="variant-btn" id="variantAiFirst" onclick="switchPrototypeVariant('ai_first')">AI-First</button>
+                <button class="variant-btn" id="variantHybrid" onclick="navigateToHybridPrototype()">Customer Choice</button>
+                <button class="variant-btn" id="variantAiFirst" onclick="switchPrototypeVariant('ai_first')">Immediate Assist</button>
+                <button class="variant-btn active" id="variantHumanFirst" onclick="switchPrototypeVariant('human_first')">Assisted Follow-Up</button>
             </div>
         </div>
 
@@ -2023,10 +2029,10 @@
             <h3 class="variant-confirmation-title">Confirm Variant Switch</h3>
             <div class="variant-info-box">
                 <div class="variant-info-current">Currently on:</div>
-                <div class="variant-info-label"><strong id="currentVariantDisplay">Human-First</strong></div>
+                <div class="variant-info-label"><strong id="currentVariantDisplay">Assisted Follow-Up</strong></div>
                 <div class="variant-arrow">↓</div>
                 <div class="variant-info-current">Switching to:</div>
-                <div class="variant-info-label"><strong id="targetVariantDisplay">Hybrid</strong></div>
+                <div class="variant-info-label"><strong id="targetVariantDisplay">Customer Choice</strong></div>
             </div>
             <p class="variant-confirmation-text" id="variantConfirmText">This will change the prototype flow and update the scenario description.</p>
             <div class="variant-confirmation-buttons">
@@ -2352,16 +2358,16 @@
 
         const prototypeVariants = {
             hybrid: {
-                title: 'Hybrid Choice (Customer-Led)',
-                description: 'Customer chooses between speaking with the AI assistant immediately or requesting a callback. Callback remains available after AI interaction if needed.'
+                title: 'Customer Choice',
+                description: 'Customers choose between speaking with the AI voice assistant immediately or requesting a callback from a Microsoft specialist. Designed to maximize transparency and customer control.'
             },
             human_first: {
-                title: 'Callback-Confirmed + AI While Waiting',
-                description: 'Customer registers for a callback first. After confirmation, they are offered AI voice assistance to continue getting help while waiting for a specialist.'
+                title: 'Assisted Follow-Up',
+                description: 'Customers request a callback first. After confirming the follow-up, AI voice support is offered as an optional way to get immediate answers while they wait.'
             },
             ai_first: {
-                title: 'AI-First Assist (Immediate Help Priority)',
-                description: 'When a customer requests a human outside business hours, AI voice assistance is offered first for immediate help. Callback remains available if the customer prefers to wait for a specialist.'
+                title: 'Immediate Assist',
+                description: 'When a customer requests human support outside business hours, AI voice assistance is offered first for immediate help. A callback remains available at any time.'
             }
         };
 
@@ -2377,7 +2383,7 @@
         }
 
         function navigateToHumanFirstPrototype() {
-            console.log('Navigating to Human-First variant');
+            console.log('Navigating to Assisted Follow-Up variant');
             const baseURL = window.location.protocol + '//' + window.location.host + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) + '/';
             const targetURL = baseURL + '.Opt%231-%20ai-chat-assistant-prototype-human-first.html';
             console.log('Target URL:', targetURL);
@@ -2681,7 +2687,7 @@
         }
 
         function handoffToHuman() {
-            // Human-first: guide to callback request first
+            // Assisted follow-up: guide to callback request first
             showHumanFirstOffHoursOffer();
         }
 
@@ -2872,6 +2878,11 @@
 
         function closeCallbackConfirmationAndOffer() {
             document.getElementById('callbackConfirmationModal').classList.remove('active');
+            if (prototypeVariant === 'hybrid') {
+                addMessage('Your callback is confirmed. If you have questions while you wait, you can engage with the Sales AI Assistant again by visiting this page anytime.', 'bot', false);
+                return;
+            }
+
             // Show "speak while you wait" offer
             document.getElementById('speakWhileYouWaitModal').classList.add('active');
         }
