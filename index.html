@@ -2266,7 +2266,7 @@
             <div class="call-avatar" id="callAvatar">🤖</div>
             <div class="call-info">
                 <div class="call-agent-name" id="callAgentName">Connecting...</div>
-                <div class="call-status connecting" id="callStatus">Finding Sales AI Assistant</div>
+                <div class="call-status connecting" id="callStatus">Connecting you to Sales AI Assistant...</div>
                 <div class="call-timer" id="callTimer" style="display: none;">00:00</div>
             </div>
             <div class="call-transcript-area" id="callTranscriptArea">
@@ -2905,7 +2905,7 @@
             
             // Reset call screen elements
             document.getElementById('callAgentName').textContent = 'Connecting...';
-            document.getElementById('callStatus').textContent = 'Finding Sales AI Assistant';
+            document.getElementById('callStatus').textContent = 'Connecting you to Sales AI Assistant...';
             document.getElementById('callStatus').classList.add('connecting');
             document.getElementById('callTimer').style.display = 'none';
             document.getElementById('callTranscriptArea').classList.remove('active');
@@ -2918,7 +2918,7 @@
             // Simulate connection
             setTimeout(() => {
                 document.getElementById('callAgentName').textContent = 'Sales AI Assistant';
-                document.getElementById('callStatus').textContent = 'Connecting call...';
+                document.getElementById('callStatus').textContent = 'Starting AI voice session...';
                 document.getElementById('pulseRing').style.display = 'none';
             }, 2000);
             
@@ -3707,7 +3707,7 @@
             }
 
             if (callStatus) {
-                callStatus.textContent = 'Finding Sales AI Assistant';
+                callStatus.textContent = 'Connecting you to Sales AI Assistant...';
                 callStatus.classList.add('connecting');
             }
 
