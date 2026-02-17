@@ -2829,7 +2829,7 @@
 
         function startAIVoiceConversation() {
             // Initial greeting - AI speaks first
-            addCallTranscriptEntry('AI Assistant', 'Hi there — happy to help. To point you to the right Microsoft 365 option, about how many people need licenses?');
+            addCallTranscriptEntry('AI Assistant', 'Hi there — I\'m your Sales AI Assistant. Happy to help. To point you to the right Microsoft 365 option, about how many people need licenses?');
             
             // Wait for AI to finish speaking before user responds
             setTimeout(() => {
@@ -2857,14 +2857,14 @@
 
                                         setTimeout(() => {
                                             addCallTranscriptEntry('AI Assistant', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.');
-                                        }, 5200);
-                                    }, 2400);
-                                }, 3400);
-                            }, 3200);
-                        }, 3600);
-                    }, 3200);
-                }, 3600);
-            }, 3800);
+                                        }, 4200);
+                                    }, 1800);
+                                }, 2700);
+                            }, 2500);
+                        }, 2800);
+                    }, 2500);
+                }, 2800);
+            }, 3000);
         }
 
         function addCallTranscriptEntry(speaker, text) {
