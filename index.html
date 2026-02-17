@@ -2866,6 +2866,11 @@
 
         function closeCallbackConfirmationAndOffer() {
             document.getElementById('callbackConfirmationModal').classList.remove('active');
+            if (prototypeVariant === 'hybrid') {
+                addMessage('Your callback is confirmed. If you have questions while you wait, you can engage with the Sales AI Assistant again by visiting this page anytime.', 'bot', false);
+                return;
+            }
+
             // Show "speak while you wait" offer
             document.getElementById('speakWhileYouWaitModal').classList.add('active');
         }
