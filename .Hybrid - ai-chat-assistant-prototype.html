@@ -2827,44 +2827,51 @@
             }, 4000);
         }
 
-        function startAIVoiceConversation() {
-            // Initial greeting - AI speaks first
-            addCallTranscriptEntry('AI Assistant', 'Hi there — I am Sales AI Assistant. Happy to help. To point you to the right Microsoft 365 option, about how many people need licenses?');
-            
-            // Wait for AI to finish speaking before user responds
-            setTimeout(() => {
-                addCallTranscriptEntry('You', 'We\'re evaluating options for around 20 employees.');
-                conversationContext.numEmployees = 20;
-                
-                // Wait for user audio to finish
-                setTimeout(() => {
-                    addCallTranscriptEntry('AI Assistant', 'Got it, thanks. Are your teams mostly in-office, fully remote, or hybrid?');
-                    
-                    setTimeout(() => {
-                        addCallTranscriptEntry('You', 'We\'re mostly hybrid, with a few fully remote staff.');
-                        
-                        setTimeout(() => {
-                            addCallTranscriptEntry('AI Assistant', 'That makes sense. Quick follow-up: are devices mostly company-managed, or are personal devices used too?');
-                            
-                            setTimeout(() => {
-                                addCallTranscriptEntry('You', 'Mostly company laptops, plus some personal phones for email and Teams.');
-                                
-                                setTimeout(() => {
-                                    addCallTranscriptEntry('AI Assistant', 'Perfect, that helps. What decision timeline are you working toward?');
+        function waitForTranscriptSpeechCompletion(text) {
+            if (!audioEnabled || !isVoiceMode || !speechSynthesis) {
+                return Promise.resolve();
+            }
 
-                                    setTimeout(() => {
-                                        addCallTranscriptEntry('You', 'Ideally this quarter.');
+            const words = text.trim().split(/\s+/).filter(Boolean).length;
+            const estimatedMs = Math.max(1200, Math.min(12000, words * 420));
+            const maxWaitMs = estimatedMs + 2500;
+            const startedAt = Date.now();
 
-                                        setTimeout(() => {
-                                            addCallTranscriptEntry('AI Assistant', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.');
-                                        }, 4200);
-                                    }, 1800);
-                                }, 2700);
-                            }, 2500);
-                        }, 2800);
-                    }, 2500);
-                }, 2800);
-            }, 3000);
+            return new Promise((resolve) => {
+                const checkSpeech = () => {
+                    const speakingNow = isSpeaking || speechSynthesis.speaking || speechSynthesis.pending;
+                    const timedOut = Date.now() - startedAt > maxWaitMs;
+
+                    if (!speakingNow || timedOut) {
+                        resolve();
+                        return;
+                    }
+
+                    setTimeout(checkSpeech, 120);
+                };
+
+                setTimeout(checkSpeech, 150);
+            });
+        }
+
+        async function startAIVoiceConversation() {
+            const playLine = async (speaker, text, pauseAfterMs = 450) => {
+                addCallTranscriptEntry(speaker, text);
+                await waitForTranscriptSpeechCompletion(text);
+                await new Promise((resolve) => setTimeout(resolve, pauseAfterMs));
+            };
+
+            await playLine('AI Assistant', 'Hi there — I am Sales AI Assistant. Happy to help. To point you to the right Microsoft 365 option, about how many people need licenses?', 500);
+            await playLine('You', 'We\'re evaluating options for around 20 employees.', 420);
+            conversationContext.numEmployees = 20;
+
+            await playLine('AI Assistant', 'Got it, thanks. Are your teams mostly in-office, fully remote, or hybrid?', 420);
+            await playLine('You', 'We\'re mostly hybrid, with a few fully remote staff.', 420);
+            await playLine('AI Assistant', 'That makes sense. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
+            await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
+            await playLine('AI Assistant', 'Perfect, that helps. What decision timeline are you working toward?', 420);
+            await playLine('You', 'Ideally this quarter.', 450);
+            await playLine('AI Assistant', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
         }
 
         function addCallTranscriptEntry(speaker, text) {
