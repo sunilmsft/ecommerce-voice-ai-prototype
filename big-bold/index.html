@@ -2604,6 +2604,9 @@
                 statusEl.textContent = 'Off';
                 statusEl.className = 'toggle-status off';
             }
+            // Reset the chat so the correct flow plays for the new hours setting
+            resetChatForVariantSwitch();
+            applyVariantState(prototypeVariant);
         }
 
         function switchPrototypeVariant(variant) {
