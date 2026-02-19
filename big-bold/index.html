@@ -2712,24 +2712,24 @@
                 description: 'Customer clicks the voice icon and talks directly with the Sales AI Assistant — entirely via voice.',
                 chainBizHours: [
                     { label: 'Ask Microsoft', cls: 'ask-ms' },
-                    { label: 'Sales AI Assistant', cls: 'ai-voice' },
-                    { label: 'Live Specialist (Voice)', cls: 'live-voice' }
+                    { label: 'Sales AI Assistant (Voice)', cls: 'ai-voice' },
+                    { label: 'Live Specialist (Chat)', cls: 'live-chat' }
                 ],
                 chainAfterHours: [
                     { label: 'Ask Microsoft', cls: 'ask-ms' },
-                    { label: 'Sales AI Assistant', cls: 'ai-voice' },
+                    { label: 'Sales AI Assistant (Voice)', cls: 'ai-voice' },
                     { label: 'Callback Queue', cls: 'callback' }
                 ],
                 flowBizHours: [
                     { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click the voice icon' },
-                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— discusses your needs via voice' },
+                    { party: 'Sales AI Assistant (Voice)', pcls: 'ai-voice', text: '— discusses your needs via voice' },
                     { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— offers transfer to specialist' },
-                    { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— David joins with full context' },
-                    { party: 'Live Specialist', pcls: 'live-voice', text: '— recap, next steps & follow-up' }
+                    { party: 'Live Specialist (Chat)', pcls: 'live-chat', text: '— David joins in chat with full context' },
+                    { party: 'Live Specialist (Chat)', pcls: 'live-chat', text: '— recap, next steps & follow-up' }
                 ],
                 flowAfterHours: [
                     { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click the voice icon' },
-                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— discusses your needs via voice' },
+                    { party: 'Sales AI Assistant (Voice)', pcls: 'ai-voice', text: '— discusses your needs via voice' },
                     { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— offers callback scheduling' },
                     { party: 'Callback Queue', pcls: 'callback', text: '— submit form, summary saved' }
                 ]
@@ -2738,26 +2738,26 @@
                 title: 'Modality Switch',
                 description: 'Customer starts in chat, then switches to voice mid-conversation — full context carries over seamlessly.',
                 chainBizHours: [
-                    { label: 'Ask Microsoft Chat', cls: 'ask-ms' },
-                    { label: 'Sales AI Assistant', cls: 'ai-voice' },
+                    { label: 'Ask Microsoft (Chat)', cls: 'ask-ms' },
+                    { label: 'Sales AI Assistant (Voice)', cls: 'ai-voice' },
                     { label: 'Live Specialist (Voice)', cls: 'live-voice' }
                 ],
                 chainAfterHours: [
-                    { label: 'Ask Microsoft Chat', cls: 'ask-ms' },
-                    { label: 'Sales AI Assistant', cls: 'ai-voice' },
+                    { label: 'Ask Microsoft (Chat)', cls: 'ask-ms' },
+                    { label: 'Sales AI Assistant (Voice)', cls: 'ai-voice' },
                     { label: 'Callback Queue', cls: 'callback' }
                 ],
                 flowBizHours: [
-                    { party: 'Ask Microsoft Chat', pcls: 'ask-ms', text: '— chat about your business needs' },
-                    { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click voice icon to switch' },
-                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— continues with full context' },
-                    { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— David joins with context' },
-                    { party: 'Live Specialist', pcls: 'live-voice', text: '— recap, next steps & follow-up' }
+                    { party: 'Ask Microsoft (Chat)', pcls: 'ask-ms', text: '— chat about your business needs' },
+                    { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click voice icon to switch to voice' },
+                    { party: 'Sales AI Assistant (Voice)', pcls: 'ai-voice', text: '— continues with full context via voice' },
+                    { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— David calls you with full context' },
+                    { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— recap, next steps & follow-up' }
                 ],
                 flowAfterHours: [
-                    { party: 'Ask Microsoft Chat', pcls: 'ask-ms', text: '— chat about your business needs' },
-                    { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click voice icon to switch' },
-                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— continues with full context' },
+                    { party: 'Ask Microsoft (Chat)', pcls: 'ask-ms', text: '— chat about your business needs' },
+                    { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click voice icon to switch to voice' },
+                    { party: 'Sales AI Assistant (Voice)', pcls: 'ai-voice', text: '— continues with full context via voice' },
                     { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— offers callback scheduling' },
                     { party: 'Callback Queue', pcls: 'callback', text: '— submit form, summary saved' }
                 ]
