@@ -988,9 +988,43 @@
 
         .message {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 8px;
             margin-bottom: 20px;
             animation: slideIn 0.3s ease-out;
+        }
+
+        .chat-avatar-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .message.bot .chat-avatar-icon {
+            background: #e1efff;
+            border: 1px solid #b3d4f5;
+        }
+
+        .message.user .chat-avatar-icon {
+            background: #0f6cbd;
+            border: 1px solid #0d5ba3;
+            order: 2;
+        }
+
+        .message.human-agent .chat-avatar-icon {
+            background: #e1f5fe;
+            border: 1px solid #0078d4;
+        }
+
+        .message.system .chat-avatar-icon {
+            display: none;
         }
 
         @keyframes slideIn {
@@ -1005,11 +1039,11 @@
         }
 
         .message.user {
-            align-items: flex-end;
+            justify-content: flex-end;
         }
 
         .message-bubble {
-            max-width: 92%;
+            max-width: 85%;
             padding: 16px;
             border-radius: 16px;
             position: relative;
@@ -2743,7 +2777,18 @@
                 `;
             }
             
+            // Choose avatar icon based on message type
+            let avatarIcon = '';
+            if (type === 'bot') {
+                avatarIcon = '<div class="chat-avatar-icon">🤖</div>';
+            } else if (type === 'user') {
+                avatarIcon = '<div class="chat-avatar-icon">👤</div>';
+            } else if (type === 'human-agent') {
+                avatarIcon = '<div class="chat-avatar-icon">🎧</div>';
+            }
+
             messageDiv.innerHTML = `
+                ${avatarIcon}
                 <div class="message-bubble">
                     ${text.replace(/\n/g, '<br>')}
                     <div class="message-time">${getCurrentTime()}</div>
