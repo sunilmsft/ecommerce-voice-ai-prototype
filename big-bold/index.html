@@ -3416,18 +3416,33 @@
                 await playLine('You', 'We do handle some customer information, so security matters. What would Premium cost for our whole team?', 420);
                 await playLine('Sales AI Assistant', 'For 15 users on Business Premium, you\'d be looking at $330 per month. That includes everything in Standard plus the full security suite. There may also be volume or promotional pricing available — a Microsoft specialist can walk you through the exact numbers.', 500);
                 await playLine('You', 'That\'s helpful. I think I\'d like to talk to someone about next steps.', 420);
-                await playLine('Sales AI Assistant', 'Absolutely! I can set up a callback with a Microsoft sales specialist who can finalize pricing, answer any remaining questions, and help you get started. Would you like me to arrange that?', 500);
-                await playLine('You', 'Yes, please.', 420);
-                await playLine('Sales AI Assistant', 'Perfect. Let me take you to the callback form so we can get your details. A specialist will reach out within 48 hours.', 500);
 
-                // End call and show callback
-                if (sessionGen !== voiceSessionGeneration) return;
-                setTimeout(() => {
-                    endVoiceSession();
+                if (isBusinessHours) {
+                    // Business hours: offer live agent connection
+                    await playLine('Sales AI Assistant', 'Absolutely! Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now. They\'ll have the full context of our conversation so you won\'t need to repeat anything.', 500);
+                    await playLine('You', 'Yes, that would be great.', 420);
+                    await playLine('Sales AI Assistant', 'Perfect. Let me hand you over now — a specialist will be with you shortly.', 500);
+
+                    // End call and show live agent options
+                    if (sessionGen !== voiceSessionGeneration) return;
                     setTimeout(() => {
-                        showCallbackForm();
-                    }, 500);
-                }, 2000);
+                        endAICall();
+                    }, 2000);
+                } else {
+                    // Off hours: callback form
+                    await playLine('Sales AI Assistant', 'Absolutely! I can set up a callback with a Microsoft sales specialist who can finalize pricing, answer any remaining questions, and help you get started. Would you like me to arrange that?', 500);
+                    await playLine('You', 'Yes, please.', 420);
+                    await playLine('Sales AI Assistant', 'Perfect. Let me take you to the callback form so we can get your details. A specialist will reach out within 48 hours.', 500);
+
+                    // End call and show callback
+                    if (sessionGen !== voiceSessionGeneration) return;
+                    setTimeout(() => {
+                        endVoiceSession();
+                        setTimeout(() => {
+                            showCallbackForm();
+                        }, 500);
+                    }, 2000);
+                }
                 return;
             }
 
@@ -3441,7 +3456,11 @@
             await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
             await playLine('Sales AI Assistant', 'Perfect, that helps. What decision timeline are you working toward?', 420);
             await playLine('You', 'Ideally this quarter.', 450);
-            await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
+            if (isBusinessHours) {
+                await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now to go deeper on licensing and next steps.', 500);
+            } else {
+                await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
+            }
         }
 
         function addCallTranscriptEntry(speaker, text) {
