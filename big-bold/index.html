@@ -2545,6 +2545,12 @@
                     <label class="form-label" for="callbackUsers">Estimated Number of Users *</label>
                     <input type="number" class="form-input" id="callbackUsers" min="1" required>
                 </div>
+                <div id="callbackSummarySection" style="display:none; margin: 4px 0 12px 0; padding: 12px 14px; background: #f0f6ff; border-radius: 8px; border-left: 3px solid #0f6cbd;">
+                    <div style="font-weight: 600; font-size: 13px; color: #0f6cbd; margin-bottom: 6px;">📋 Conversation Summary</div>
+                    <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;">This will be shared with the specialist so they can pick up where you left off.</div>
+                    <ul id="callbackSummaryList" style="margin: 0; padding-left: 18px; font-size: 13px; color: #444; line-height: 1.7;"></ul>
+                    <div style="margin-top: 10px; font-size: 12px;"><a href="#" onclick="event.preventDefault(); alert('In production, this would open the full conversation transcript.')" style="color: #0f6cbd; text-decoration: none; font-weight: 500;">📄 View Full Transcript →</a></div>
+                </div>
                 <button type="submit" class="form-submit callback-submit">Submit Request</button>
             </form>
             <button class="modal-cancel callback-cancel" onclick="closeCallbackFormModal()">Cancel</button>
@@ -3555,6 +3561,26 @@
                     field.value = fieldValue;
                 }
             });
+
+            // Populate the conversation summary section on the form
+            const summarySection = document.getElementById('callbackSummarySection');
+            const summaryList = document.getElementById('callbackSummaryList');
+            if (summarySection && summaryList) {
+                const parts = [];
+                if (conversationContext.businessType) parts.push('Business: ' + conversationContext.businessType);
+                if (conversationContext.numEmployees) parts.push('Team size: ~' + conversationContext.numEmployees + ' employees');
+                if (conversationContext.workLocation) parts.push('Work setup: ' + conversationContext.workLocation);
+                if (conversationContext.securityNeeds) parts.push('Security priority: ' + (conversationContext.securityNeeds === 'high' ? 'High — handles sensitive data' : conversationContext.securityNeeds));
+                if (conversationContext.timeline) parts.push('Timeline: ' + conversationContext.timeline);
+                parts.push('Recommended plan: Microsoft 365 Business Premium');
+
+                if (parts.length > 0) {
+                    summaryList.innerHTML = parts.map(function(p) { return '<li>' + p + '</li>'; }).join('');
+                    summarySection.style.display = 'block';
+                } else {
+                    summarySection.style.display = 'none';
+                }
+            }
         }
 
         function closeCallbackFormModal() {
