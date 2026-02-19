@@ -3369,8 +3369,9 @@
             }
 
             const words = text.trim().split(/\s+/).filter(Boolean).length;
-            const estimatedMs = Math.max(1200, Math.min(12000, words * 420));
-            const maxWaitMs = estimatedMs + 2500;
+            // Increase per-word estimate to 520ms (was 420) and raise ceiling to 20s
+            const estimatedMs = Math.max(1800, Math.min(20000, words * 520));
+            const maxWaitMs = estimatedMs + 4000;
             const startedAt = Date.now();
 
             return new Promise((resolve) => {
@@ -3379,14 +3380,16 @@
                     const timedOut = Date.now() - startedAt > maxWaitMs;
 
                     if (!speakingNow || timedOut) {
-                        resolve();
+                        // Add a small buffer after speech ends so it doesn't feel rushed
+                        setTimeout(resolve, 200);
                         return;
                     }
 
-                    setTimeout(checkSpeech, 120);
+                    setTimeout(checkSpeech, 100);
                 };
 
-                setTimeout(checkSpeech, 150);
+                // Wait a bit before first check to let speech engine start
+                setTimeout(checkSpeech, 300);
             });
         }
 
@@ -3684,7 +3687,13 @@
             // --- If this was David's live-agent phone call, handle graceful close ---
             if (isLiveAgentPhoneCall) {
                 isLiveAgentPhoneCall = false;
-                closeCallScreen();
+
+                // Close the call screen overlay directly (don't use closeCallScreen which adds its own message)
+                const callScreen = document.getElementById('callScreen');
+                callScreen.classList.remove('active');
+
+                // Re-enable audio for future calls
+                audioEnabled = true;
 
                 // Gray out any remaining live-agent buttons
                 document.querySelectorAll('[onclick="handlePostVoiceLiveAgent()"]').forEach(btn => {
@@ -3692,7 +3701,7 @@
                     btn.style.opacity = '0.5';
                     btn.style.cursor = 'not-allowed';
                     btn.style.pointerEvents = 'none';
-                    btn.textContent = '✓ Call Completed';
+                    btn.innerHTML = '✓ Call Completed';
                 });
                 document.querySelectorAll('[onclick="joinLivePhoneQueue()"], [onclick="joinLiveQueue()"]').forEach(card => {
                     card.style.opacity = '0.5';
@@ -3732,19 +3741,23 @@
                     messageDiv.innerHTML = `<div class="message-bubble">${closingMsg}<div class="message-time">just now</div></div>`;
                     chatMessages.appendChild(messageDiv);
                     scrollToBottom();
-                }, 1000);
+                }, 800);
 
-                // Reset call screen
+                // Reset call screen elements for future use
                 setTimeout(() => {
-                    document.getElementById('callAvatar').textContent = '🤖';
-                    document.getElementById('callAgentName').textContent = 'Connecting...';
-                    document.getElementById('callStatus').textContent = 'Finding available agent';
-                    document.getElementById('callStatus').classList.add('connecting');
-                    document.getElementById('callTimer').style.display = 'none';
-                    document.getElementById('callTimer').textContent = '00:00';
+                    const resetAvatar = document.getElementById('callAvatar');
+                    const resetName = document.getElementById('callAgentName');
+                    const resetStatus = document.getElementById('callStatus');
+                    const resetTimer = document.getElementById('callTimer');
+                    const resetControls = document.querySelector('.call-controls');
+                    const resetTranscript = document.getElementById('callTranscriptArea');
+                    if (resetAvatar) { resetAvatar.style.display = ''; resetAvatar.textContent = '🤖'; resetAvatar.style.transform = 'scale(1)'; }
+                    if (resetName) { resetName.style.display = ''; resetName.textContent = 'Connecting...'; }
+                    if (resetStatus) { resetStatus.style.display = ''; resetStatus.textContent = 'Finding available agent'; resetStatus.classList.add('connecting'); }
+                    if (resetTimer) { resetTimer.style.display = 'none'; resetTimer.textContent = '00:00'; }
+                    if (resetControls) resetControls.style.display = '';
+                    if (resetTranscript) { resetTranscript.style.display = ''; resetTranscript.innerHTML = ''; }
                     isMuted = false;
-                    document.getElementById('muteBtn').textContent = '🎤';
-                    document.getElementById('muteBtn').style.background = 'rgba(255, 255, 255, 0.2)';
                 }, 500);
                 return;
             }
