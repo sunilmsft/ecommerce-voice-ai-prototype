@@ -2018,6 +2018,11 @@
                 <button class="variant-btn" id="variantVoiceInitiated" onclick="switchPrototypeVariant('voice_initiated')">Voice-First Entry</button>
                 <button class="variant-btn" id="variantModalitySwitch" onclick="switchPrototypeVariant('modality_switch')">Modality Switch</button>
             </div>
+            <div id="modalitySwitchPlayBtn" style="display: none; margin-top: 12px;">
+                <button onclick="startModalitySwitchChat()" style="display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 16px; background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; justify-content: center;" onmouseover="this.style.background='linear-gradient(135deg, #0f766e, #0d9488)'" onmouseout="this.style.background='linear-gradient(135deg, #0d9488, #14b8a6)'">
+                    <span style="font-size: 16px;">▶</span> Play Chat Scenario
+                </button>
+            </div>
             <div style="margin-top: 16px;">
                 <button onclick="copyPrototypeLink()" class="context-link" title="Share this prototype" style="display: inline-block; padding: 8px 16px; background: #0078d4; color: white; border: none; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; font-family: inherit;">📤 Share this Prototype</button>
             </div>
@@ -2426,25 +2431,28 @@
             } else if (variant === 'modality_switch') {
                 document.getElementById('variantModalitySwitch').classList.add('active');
             }
+
+            // Show/hide the Play Chat Scenario button
+            const playBtn = document.getElementById('modalitySwitchPlayBtn');
+            if (playBtn) {
+                playBtn.style.display = variant === 'modality_switch' ? 'block' : 'none';
+            }
         }
 
         applyVariantState(prototypeVariant);
-
-        // On initial load, if stored variant is modality_switch, auto-play the chat
-        if (prototypeVariant === 'modality_switch') {
-            setTimeout(() => autoPlayModalitySwitchChat(), 600);
-        }
 
         function switchPrototypeVariant(variant) {
             prototypeVariant = variant;
             localStorage.setItem('prototypeVariant_bigbold', variant);
             resetChatForVariantSwitch();
             applyVariantState(variant);
+        }
 
-            // Modality Switch: auto-play a pre-scripted mid-conversation chat
-            if (variant === 'modality_switch') {
-                autoPlayModalitySwitchChat();
-            }
+        function startModalitySwitchChat() {
+            // Hide the play button once chat starts
+            const playBtn = document.getElementById('modalitySwitchPlayBtn');
+            if (playBtn) playBtn.style.display = 'none';
+            autoPlayModalitySwitchChat();
         }
 
         function autoPlayModalitySwitchChat() {
