@@ -1,0 +1,9 @@
+# Only track prototype files — exclude everything else
+AI Voice Assistant prototype/
+Copilot- VSCode Starter Guide/
+ME PM Lab/
+vscode-pm-hub/
+vscode-pm-tips/
+node_modules/
+*.zip
+*.docx
