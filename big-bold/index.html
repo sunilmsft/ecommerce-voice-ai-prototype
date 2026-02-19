@@ -3302,27 +3302,33 @@
 
         function showCallbackForm() {
             document.getElementById('callbackFormModal').classList.add('active');
+
+            // Determine the business name based on which script/variant ran
+            const businessName = (prototypeVariant === 'modality_switch')
+                ? 'Spark + Co Creative Agency'
+                : 'Summit Outdoor Gear Co.';
+
             const callbackTestProfiles = [
                 {
                     callbackName: 'Alex Chen',
-                    callbackBusiness: 'Northwind Architecture Group',
-                    callbackEmail: 'alex.chen@northwind-example.com',
+                    callbackBusiness: businessName,
+                    callbackEmail: 'alex.chen@' + (prototypeVariant === 'modality_switch' ? 'sparkco-example.com' : 'summitgear-example.com'),
                     callbackPhone: '(206) 555-0198',
-                    callbackUsers: '42'
+                    callbackUsers: String(conversationContext.numEmployees || 20)
                 },
                 {
                     callbackName: 'Priya Nair',
-                    callbackBusiness: 'Fabrikam Health Partners',
-                    callbackEmail: 'priya.nair@fabrikam-example.com',
+                    callbackBusiness: businessName,
+                    callbackEmail: 'priya.nair@' + (prototypeVariant === 'modality_switch' ? 'sparkco-example.com' : 'summitgear-example.com'),
                     callbackPhone: '(415) 555-0126',
-                    callbackUsers: '85'
+                    callbackUsers: String(conversationContext.numEmployees || 20)
                 },
                 {
                     callbackName: 'Jordan Rivera',
-                    callbackBusiness: 'Adventure Works Retail',
-                    callbackEmail: 'jordan.rivera@adventureworks-example.com',
+                    callbackBusiness: businessName,
+                    callbackEmail: 'jordan.rivera@' + (prototypeVariant === 'modality_switch' ? 'sparkco-example.com' : 'summitgear-example.com'),
                     callbackPhone: '(312) 555-0174',
-                    callbackUsers: '23'
+                    callbackUsers: String(conversationContext.numEmployees || 20)
                 }
             ];
             const selectedProfile = callbackTestProfiles[Math.floor(Math.random() * callbackTestProfiles.length)];
@@ -3355,15 +3361,65 @@
             // Set callback state BEFORE closing form
             callbackRequested = true;
             
+            // Build conversation summary for post-callback display
+            const summaryParts = [];
+            if (conversationContext.businessType) {
+                summaryParts.push(`Business: ${conversationContext.businessType}`);
+            }
+            if (conversationContext.numEmployees) {
+                summaryParts.push(`Team size: ~${conversationContext.numEmployees} employees`);
+            }
+            if (conversationContext.workLocation) {
+                summaryParts.push(`Work setup: ${conversationContext.workLocation}`);
+            }
+            if (conversationContext.securityNeeds) {
+                summaryParts.push(`Security priority: ${conversationContext.securityNeeds === 'high' ? 'High — handles sensitive data' : conversationContext.securityNeeds}`);
+            }
+            if (conversationContext.timeline) {
+                summaryParts.push(`Timeline: ${conversationContext.timeline}`);
+            }
+            summaryParts.push('Recommended plan: Microsoft 365 Business Premium');
+
+            const summaryHTML = summaryParts.length > 0
+                ? `<div style="margin-top: 14px; padding: 12px 14px; background: #f0f6ff; border-radius: 8px; border-left: 3px solid #0f6cbd;">
+                    <div style="font-weight: 600; font-size: 13px; color: #0f6cbd; margin-bottom: 6px;">📋 Conversation Summary (shared with specialist)</div>
+                    <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #444; line-height: 1.7;">
+                        ${summaryParts.map(p => '<li>' + p + '</li>').join('')}
+                    </ul>
+                    <div style="margin-top: 10px; font-size: 12px;"><a href="#" onclick="event.preventDefault(); alert('In production, this would open the full conversation transcript.')" style="color: #0f6cbd; text-decoration: none; font-weight: 500;">📄 View Full Transcript →</a></div>
+                  </div>`
+                : '';
+
             closeCallbackFormModal();
             if (callbackFlowContext === 'offHoursAiFirstPostVoice') {
                 callbackFlowContext = null;
                 showOffHoursCallbackConfirmation();
+                // Add summary to chat after the confirmation
+                if (summaryHTML) {
+                    setTimeout(() => {
+                        const chatMessages = document.getElementById('chatMessages');
+                        const summaryDiv = document.createElement('div');
+                        summaryDiv.className = 'message bot';
+                        summaryDiv.innerHTML = `<div class="message-bubble">${summaryHTML}<div class="message-time">just now</div></div>`;
+                        chatMessages.appendChild(summaryDiv);
+                        scrollToBottom();
+                    }, 500);
+                }
             } else {
                 showCallbackConfirmation();
                 
-                // Add system message to chat
+                // Add system message + summary to chat
                 addSystemMessage('📞 Callback request submitted. A Microsoft sales associate will contact you within 48 hours.');
+                if (summaryHTML) {
+                    setTimeout(() => {
+                        const chatMessages = document.getElementById('chatMessages');
+                        const summaryDiv = document.createElement('div');
+                        summaryDiv.className = 'message bot';
+                        summaryDiv.innerHTML = `<div class="message-bubble">${summaryHTML}<div class="message-time">just now</div></div>`;
+                        chatMessages.appendChild(summaryDiv);
+                        scrollToBottom();
+                    }, 500);
+                }
             }
         }
 
