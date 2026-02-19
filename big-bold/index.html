@@ -3028,7 +3028,9 @@
                                         ? `, including the details about ${contextRef},`
                                         : '';
 
-                                    addCallTranscriptEntry('David', `Hi, this is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything. Let's pick up right where you left off.`);
+                                    const greetingText = `Hi, this is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything. Let's pick up right where you left off.`;
+                                    addCallTranscriptEntry('David', greetingText);
+                                    speakAsDavid(greetingText);
                                 }, 800);
                             }, 1500);
                         }, 1000);
@@ -3536,6 +3538,41 @@
             
             // Start speaking when ready
             speakWhenReady();
+        }
+
+        function speakAsDavid(text) {
+            // Speak David's lines in a distinct male voice (different from AI Assistant's female voice)
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.92;
+            utterance.pitch = 0.85;
+            utterance.volume = 1.0;
+
+            const voices = speechSynthesis.getVoices();
+            const davidVoice =
+                voices.find(v => v.name.includes('Microsoft Mark')) ||
+                voices.find(v => v.name.includes('Microsoft Guy')) ||
+                voices.find(v => v.name.includes('Google UK English Male')) ||
+                voices.find(v => v.lang === 'en-US' && v.name.includes('Male') && !v.name.includes('David')) ||
+                voices.find(v => v.name.includes('Microsoft David')) ||
+                voices.find(v => v.lang === 'en-US') ||
+                voices[0];
+
+            if (davidVoice) utterance.voice = davidVoice;
+
+            utterance.onstart = () => {
+                const avatar = document.getElementById('callAvatar');
+                const indicator = document.getElementById('speakingIndicator');
+                if (avatar) avatar.style.transform = 'scale(1.05)';
+                if (indicator) indicator.classList.add('active');
+            };
+            utterance.onend = utterance.onerror = () => {
+                const avatar = document.getElementById('callAvatar');
+                const indicator = document.getElementById('speakingIndicator');
+                if (avatar) avatar.style.transform = 'scale(1)';
+                if (indicator) indicator.classList.remove('active');
+            };
+
+            try { speechSynthesis.speak(utterance); } catch (e) { console.error('David TTS error:', e); }
         }
 
         function toggleSpeaker() {
