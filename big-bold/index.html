@@ -2460,6 +2460,8 @@
         let offHoursAiFirstFlow = false;
         let isBusinessHours = false;
         let callbackFlowContext = null;
+        let isLiveAgentPhoneCall = false;   // true when David's phone call is active
+        let chatAutoPlayTimeouts = [];      // track setTimeout IDs from auto-play chat
         let voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false, fromModalitySwitch: false };
         let conversationContext = {
             numEmployees: null,
@@ -2581,19 +2583,25 @@
             conversationContext.numEmployees = 15;
             conversationContext.securityNeeds = 'high';
 
+            // Clear any previously queued chat timeouts
+            chatAutoPlayTimeouts.forEach(id => clearTimeout(id));
+            chatAutoPlayTimeouts = [];
+
             let accumulated = 0;
             chatSteps.forEach((step) => {
                 accumulated += step.delay;
-                setTimeout(() => {
+                const tid = setTimeout(() => {
                     addMessage(step.text, step.type);
                 }, accumulated);
+                chatAutoPlayTimeouts.push(tid);
             });
 
             // After chat plays out, add a subtle hint about the voice icon
             accumulated += 1500;
-            setTimeout(() => {
+            const tipTid = setTimeout(() => {
                 addSystemMessage('💡 <em>Tip: Click the Speak with Sales AI Assistant icon at the top to switch this conversation to voice — your context carries over seamlessly.</em>');
             }, accumulated);
+            chatAutoPlayTimeouts.push(tipTid);
         }
 
         function getCurrentTime() {
@@ -2640,6 +2648,10 @@
 
         /* Speak to Sales AI Assistant — triggers same flow as the card */
         function initiateVoiceCall() {
+            // Cancel any remaining auto-play chat timeouts so they don't fire after switching to voice
+            chatAutoPlayTimeouts.forEach(id => clearTimeout(id));
+            chatAutoPlayTimeouts = [];
+
             if (prototypeVariant === 'modality_switch' && conversation.length > 0) {
                 // Modality Switch: capture chat context and go straight to voice
                 voiceSessionContext.fromModalitySwitch = true;
@@ -3008,6 +3020,7 @@
                             setTimeout(() => {
                                 document.getElementById('callStatus').textContent = 'Connected';
                                 document.getElementById('callTimer').style.display = 'block';
+                                isLiveAgentPhoneCall = true;  // Mark this as David's call
                                 startCallTimer();
                                 addSystemMessage('📞 Phone call connected with David, Microsoft 365 sales specialist');
 
@@ -3378,9 +3391,13 @@
         }
 
         async function startAIVoiceConversation() {
+            const sessionGen = voiceSessionGeneration;
             const playLine = async (speaker, text, pauseAfterMs = 450) => {
+                // Bail out if the call was ended (generation changed)
+                if (sessionGen !== voiceSessionGeneration) return;
                 addCallTranscriptEntry(speaker, text);
                 await waitForTranscriptSpeechCompletion(text);
+                if (sessionGen !== voiceSessionGeneration) return;
                 await new Promise((resolve) => setTimeout(resolve, pauseAfterMs));
             };
 
@@ -3401,6 +3418,7 @@
                 await playLine('Sales AI Assistant', 'Perfect. Let me take you to the callback form so we can get your details. A specialist will reach out within 48 hours.', 500);
 
                 // End call and show callback
+                if (sessionGen !== voiceSessionGeneration) return;
                 setTimeout(() => {
                     endVoiceSession();
                     setTimeout(() => {
@@ -3616,6 +3634,10 @@
         }
 
         function endAICall() {
+            // Cancel any remaining auto-play chat timeouts
+            chatAutoPlayTimeouts.forEach(id => clearTimeout(id));
+            chatAutoPlayTimeouts = [];
+
             // Disable voice mode to prevent new audio from starting
             isVoiceMode = false;
             audioEnabled = false;
@@ -3658,6 +3680,74 @@
             }
             if (speakingIndicator) speakingIndicator.classList.remove('active');
             if (transcriptArea) transcriptArea.style.display = 'none';
+
+            // --- If this was David's live-agent phone call, handle graceful close ---
+            if (isLiveAgentPhoneCall) {
+                isLiveAgentPhoneCall = false;
+                closeCallScreen();
+
+                // Gray out any remaining live-agent buttons
+                document.querySelectorAll('[onclick="handlePostVoiceLiveAgent()"]').forEach(btn => {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                    btn.style.pointerEvents = 'none';
+                    btn.textContent = '✓ Call Completed';
+                });
+                document.querySelectorAll('[onclick="joinLivePhoneQueue()"], [onclick="joinLiveQueue()"]').forEach(card => {
+                    card.style.opacity = '0.5';
+                    card.style.cursor = 'not-allowed';
+                    card.style.pointerEvents = 'none';
+                });
+
+                // Update chat header
+                isHumanAgent = false;
+                document.getElementById('agentAvatar').textContent = '🤖';
+                document.getElementById('agentName').textContent = 'Ask Microsoft';
+                document.getElementById('handoffBanner').classList.remove('active');
+                document.getElementById('quickActions').style.display = 'none';
+
+                // System message
+                const minutes = Math.floor(callDuration / 60);
+                const seconds = callDuration % 60;
+                addSystemMessage(`📞 Call with David ended (Duration: ${minutes}m ${seconds}s)`);
+
+                // Graceful closing message
+                setTimeout(() => {
+                    const closingMsg = `
+                        <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with David!</div>
+                        <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
+                            We hope this conversation was helpful. Here's a quick summary of your session:<br/><br/>
+                            ✅ Spoke with <strong>Sales AI Assistant</strong> about Microsoft 365 plans<br/>
+                            ✅ Connected with <strong>David</strong>, Microsoft 365 Sales Specialist, via phone<br/><br/>
+                            If you have any follow-up questions, feel free to start a new conversation anytime. We're available during business hours M-F, 6 AM to 6 PM PT.
+                        </div>
+                        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
+                            Thanks for considering Microsoft 365 for your business.
+                        </div>
+                    `;
+                    const chatMessages = document.getElementById('chatMessages');
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'message bot';
+                    messageDiv.innerHTML = `<div class="message-bubble">${closingMsg}<div class="message-time">just now</div></div>`;
+                    chatMessages.appendChild(messageDiv);
+                    scrollToBottom();
+                }, 1000);
+
+                // Reset call screen
+                setTimeout(() => {
+                    document.getElementById('callAvatar').textContent = '🤖';
+                    document.getElementById('callAgentName').textContent = 'Connecting...';
+                    document.getElementById('callStatus').textContent = 'Finding available agent';
+                    document.getElementById('callStatus').classList.add('connecting');
+                    document.getElementById('callTimer').style.display = 'none';
+                    document.getElementById('callTimer').textContent = '00:00';
+                    isMuted = false;
+                    document.getElementById('muteBtn').textContent = '🎤';
+                    document.getElementById('muteBtn').style.background = 'rgba(255, 255, 255, 0.2)';
+                }, 500);
+                return;
+            }
             
             // Check if we came from callback flow - if so, show wrap-up in chat
             if (callbackRequested && voiceSessionContext.fromCallback) {
