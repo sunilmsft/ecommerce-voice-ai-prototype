@@ -3948,84 +3948,21 @@
             await playLine('Sales AI Assistant', 'Perfect, that helps. What decision timeline are you working toward?', 420);
             await playLine('You', 'Ideally this quarter — we\'re scaling up and need to get everyone on the same platform.', 450);
             conversationContext.timeline = 'this quarter';
+            conversationContext.interestedPlans = ['Business Premium'];
             if (isBusinessHours) {
-                await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now who can go deeper on licensing and next steps. They\'ll have the full context of our conversation.', 500);
+                await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now via chat who can go deeper on licensing and next steps. They\'ll have the full context of our conversation.', 500);
                 await playLine('You', 'That would be great — I\'d love to talk through next steps with someone.', 420);
-                await playLine('Sales AI Assistant', 'Perfect. Let me hand you over now — transferring you to a specialist.', 500);
+                await playLine('Sales AI Assistant', 'Perfect. Once you end this call, I\'ll connect you with a specialist in the chat who\'ll have the full context of everything we discussed. It was great chatting with you!', 500);
 
-                // Seamless handoff: keep call screen open, transition from AI to David
+                // End voice call and seamlessly hand off to live agent chat
                 if (sessionGen !== voiceSessionGeneration) return;
-
-                // Stop AI speech and timer
-                try { speechSynthesis.cancel(); } catch(e) {}
-                if (callTimer) { clearInterval(callTimer); callTimer = null; }
-                isSpeaking = false;
-                isVoiceMode = false;
-                audioEnabled = false;
-                voiceSessionGeneration++;
-
-                // Phase 1: Show "Transferring call..." on the same call screen
                 setTimeout(() => {
-                    document.getElementById('callAgentName').textContent = 'Transferring call...';
-                    document.getElementById('callStatus').textContent = 'Connecting you to a Microsoft sales specialist';
-                    document.getElementById('callStatus').classList.add('connecting');
-                    document.getElementById('callTimer').style.display = 'none';
-                    document.getElementById('pulseRing').style.display = 'block';
-                    document.getElementById('callTranscriptArea').innerHTML = '';
-                    const avatar = document.getElementById('callAvatar');
-                    if (avatar) {
-                        avatar.innerHTML = '&#128260;';
-                        avatar.style.display = '';
-                    }
-
-                    // Phase 2: David connects after 3 seconds
+                    endAICall();
+                    // After call closes, seamlessly connect to live agent in chat
                     setTimeout(() => {
-                        isLiveAgentPhoneCall = true;
-                        audioEnabled = true;
-                        document.getElementById('callAvatar').textContent = '\uD83D\uDC64';
-                        document.getElementById('callAgentName').textContent = 'David — Microsoft 365 Sales Specialist';
-                        document.getElementById('callStatus').textContent = 'Connected';
-                        document.getElementById('callStatus').classList.remove('connecting');
-                        document.getElementById('callTimer').style.display = 'block';
-                        document.getElementById('pulseRing').style.display = 'none';
-                        document.getElementById('callTranscriptArea').classList.add('active');
-                        startCallTimer();
-
-                        addSystemMessage('\uD83D\uDCDE Call transferred to David, Microsoft 365 sales specialist');
-
-                        // David's greeting with full context from the AI conversation
-                        setTimeout(() => {
-                            let contextRef = '';
-                            if (conversationContext.businessType) {
-                                contextRef += `your ${conversationContext.businessType}`;
-                                if (conversationContext.numEmployees) {
-                                    contextRef += ` with ${conversationContext.numEmployees} people`;
-                                }
-                            } else if (conversationContext.numEmployees) {
-                                contextRef += `your team of ${conversationContext.numEmployees}`;
-                            }
-                            if (conversationContext.workLocation) {
-                                contextRef += `${contextRef ? ', the ' : 'the '}${conversationContext.workLocation} work setup`;
-                            }
-                            if (conversationContext.interestedPlans && conversationContext.interestedPlans.length > 0) {
-                                contextRef += `${contextRef ? ', the recommendation for ' : 'the recommendation for '}${conversationContext.interestedPlans.join(' and ')}`;
-                            }
-                            if (conversationContext.securityNeeds) {
-                                contextRef += `${contextRef ? ', and your security needs' : 'your security requirements'}`;
-                            }
-                            if (conversationContext.timeline) {
-                                contextRef += `${contextRef ? ', and the ' : 'the '}${conversationContext.timeline} timeline`;
-                            }
-                            const contextLine = contextRef
-                                ? `, including the details about ${contextRef},`
-                                : '';
-
-                            const greetingText = `Hi, this is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything. Let's pick up right where you left off.`;
-                            addCallTranscriptEntry('David', greetingText);
-                            speakAsDavid(greetingText);
-                        }, 800);
-                    }, 3000);
-                }, 1500);
+                        joinLiveQueue();
+                    }, 800);
+                }, 2500);
             } else {
                 await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
                 await playLine('You', 'Yes, please set that up.', 420);
