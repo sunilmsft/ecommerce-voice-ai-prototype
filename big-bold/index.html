@@ -528,8 +528,8 @@
         /* Flow Section */
         .flow-section {
             margin: 10px 0 2px 0;
-            padding: 10px 12px;
-            background: rgba(255, 255, 255, 0.65);
+            padding: 12px 14px 10px 14px;
+            background: rgba(255, 255, 255, 0.7);
             border-radius: 8px;
             border: 1px solid #d1fae5;
         }
@@ -540,7 +540,7 @@
             color: #0f766e;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -565,16 +565,72 @@
             color: #dc2626;
         }
 
+        /* Handoff chain */
+        .flow-chain {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0;
+            margin-bottom: 10px;
+            padding: 6px 8px;
+            background: linear-gradient(135deg, #f0f9ff, #ecfdf5);
+            border-radius: 6px;
+            border: 1px solid #bae6fd;
+        }
+
+        .flow-chain-node {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .flow-chain-node.ask-ms {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .flow-chain-node.ai-voice {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .flow-chain-node.live-voice {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .flow-chain-node.live-chat {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .flow-chain-node.callback {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .flow-chain-arrow {
+            font-size: 10px;
+            color: #94a3b8;
+            margin: 0 3px;
+            font-weight: 700;
+        }
+
         .flow-list {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
         .flow-item {
             display: flex;
-            align-items: center;
-            gap: 7px;
+            align-items: flex-start;
+            gap: 6px;
         }
 
         .flow-num {
@@ -589,32 +645,25 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-        }
-
-        .flow-icon {
-            font-size: 13px;
-            flex-shrink: 0;
-            line-height: 1;
+            margin-top: 1px;
         }
 
         .flow-text {
             font-size: 11px;
-            color: #1e293b;
-            line-height: 1.3;
+            color: #475569;
+            line-height: 1.35;
         }
 
-        .flow-connector {
-            width: 16px;
-            display: flex;
-            justify-content: center;
+        .flow-party {
+            font-weight: 700;
+            font-size: 11px;
         }
 
-        .flow-connector::before {
-            content: '';
-            width: 1px;
-            height: 4px;
-            background: #99f6e4;
-        }
+        .flow-party.ask-ms { color: #1e40af; }
+        .flow-party.ai-voice { color: #065f46; }
+        .flow-party.live-voice { color: #92400e; }
+        .flow-party.live-chat { color: #5b21b6; }
+        .flow-party.callback { color: #991b1b; }
 
         /* Prototype Variant Confirmation Modal */
         .variant-confirmation-modal {
@@ -2655,36 +2704,56 @@
             voice_initiated: {
                 title: 'Voice-First Entry',
                 description: 'Customer clicks the voice icon and talks directly with the Sales AI Assistant — entirely via voice.',
+                chainBizHours: [
+                    { label: 'Ask Microsoft', cls: 'ask-ms' },
+                    { label: 'Sales AI Assistant', cls: 'ai-voice' },
+                    { label: 'Live Specialist (Voice)', cls: 'live-voice' }
+                ],
+                chainAfterHours: [
+                    { label: 'Ask Microsoft', cls: 'ask-ms' },
+                    { label: 'Sales AI Assistant', cls: 'ai-voice' },
+                    { label: 'Callback Queue', cls: 'callback' }
+                ],
                 flowBizHours: [
-                    { icon: '🎙️', text: 'Click the voice icon in the chat header' },
-                    { icon: '🤖', text: 'AI discusses your business needs via voice' },
-                    { icon: '🔄', text: 'AI offers transfer to a live specialist' },
-                    { icon: '👤', text: 'David joins the call with full context' },
-                    { icon: '✅', text: 'Recap, next steps & follow-up options' }
+                    { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click the voice icon' },
+                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— discusses your needs via voice' },
+                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— offers transfer to specialist' },
+                    { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— David joins with full context' },
+                    { party: 'Live Specialist', pcls: 'live-voice', text: '— recap, next steps & follow-up' }
                 ],
                 flowAfterHours: [
-                    { icon: '🎙️', text: 'Click the voice icon in the chat header' },
-                    { icon: '🤖', text: 'AI discusses your business needs via voice' },
-                    { icon: '📝', text: 'After hours — AI offers callback scheduling' },
-                    { icon: '📋', text: 'Submit form — conversation summary saved' }
+                    { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click the voice icon' },
+                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— discusses your needs via voice' },
+                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— offers callback scheduling' },
+                    { party: 'Callback Queue', pcls: 'callback', text: '— submit form, summary saved' }
                 ]
             },
             modality_switch: {
                 title: 'Modality Switch',
                 description: 'Customer starts in chat, then switches to voice mid-conversation — full context carries over seamlessly.',
+                chainBizHours: [
+                    { label: 'Ask Microsoft Chat', cls: 'ask-ms' },
+                    { label: 'Sales AI Assistant', cls: 'ai-voice' },
+                    { label: 'Live Specialist (Voice)', cls: 'live-voice' }
+                ],
+                chainAfterHours: [
+                    { label: 'Ask Microsoft Chat', cls: 'ask-ms' },
+                    { label: 'Sales AI Assistant', cls: 'ai-voice' },
+                    { label: 'Callback Queue', cls: 'callback' }
+                ],
                 flowBizHours: [
-                    { icon: '💬', text: 'Chat with AI about your business needs' },
-                    { icon: '🎙️', text: 'Click voice icon to switch to voice' },
-                    { icon: '🔄', text: 'AI continues conversation with full context' },
-                    { icon: '👤', text: 'David joins the call with full context' },
-                    { icon: '✅', text: 'Recap, next steps & follow-up options' }
+                    { party: 'Ask Microsoft Chat', pcls: 'ask-ms', text: '— chat about your business needs' },
+                    { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click voice icon to switch' },
+                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— continues with full context' },
+                    { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— David joins with context' },
+                    { party: 'Live Specialist', pcls: 'live-voice', text: '— recap, next steps & follow-up' }
                 ],
                 flowAfterHours: [
-                    { icon: '💬', text: 'Chat with AI about your business needs' },
-                    { icon: '🎙️', text: 'Click voice icon to switch to voice' },
-                    { icon: '🔄', text: 'AI continues conversation with full context' },
-                    { icon: '📝', text: 'After hours — AI offers callback scheduling' },
-                    { icon: '📋', text: 'Submit form — conversation summary saved' }
+                    { party: 'Ask Microsoft Chat', pcls: 'ask-ms', text: '— chat about your business needs' },
+                    { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click voice icon to switch' },
+                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— continues with full context' },
+                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— offers callback scheduling' },
+                    { party: 'Callback Queue', pcls: 'callback', text: '— submit form, summary saved' }
                 ]
             }
         };
@@ -2713,17 +2782,25 @@
 
             // Render the flow details
             const flowSteps = isBusinessHours ? variantData.flowBizHours : variantData.flowAfterHours;
+            const chainNodes = isBusinessHours ? variantData.chainBizHours : variantData.chainAfterHours;
             const flowContainer = document.getElementById('variantFlowDetails');
             if (flowContainer) {
                 const hoursLabel = isBusinessHours ? 'During Business Hours' : 'After Hours';
                 const badgeClass = isBusinessHours ? 'biz' : 'after';
                 let html = '<div class="flow-heading">What to Expect <span class="flow-hours-badge ' + badgeClass + '">' + hoursLabel + '</span></div>';
+                // Handoff chain
+                html += '<div class="flow-chain">';
+                chainNodes.forEach(function(node, i) {
+                    if (i > 0) html += '<span class="flow-chain-arrow">→</span>';
+                    html += '<span class="flow-chain-node ' + node.cls + '">' + node.label + '</span>';
+                });
+                html += '</div>';
+                // Numbered steps
                 html += '<div class="flow-list">';
                 flowSteps.forEach(function(step, i) {
                     html += '<div class="flow-item">' +
                         '<span class="flow-num">' + (i + 1) + '</span>' +
-                        '<span class="flow-icon">' + step.icon + '</span>' +
-                        '<span class="flow-text">' + step.text + '</span>' +
+                        '<span class="flow-text"><span class="flow-party ' + step.pcls + '">' + step.party + '</span> ' + step.text + '</span>' +
                     '</div>';
                 });
                 html += '</div>';
