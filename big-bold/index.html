@@ -3830,7 +3830,7 @@
                     // Off hours: callback form
                     await playLine('Sales AI Assistant', 'Absolutely! I can set up a callback with a Microsoft sales specialist who can finalize pricing, answer any remaining questions, and help you get started. Would you like me to arrange that?', 500);
                     await playLine('You', 'Yes, please.', 420);
-                    await playLine('Sales AI Assistant', 'Perfect. Let me take you to the callback form so we can get your details. A specialist will reach out within 48 hours.', 500);
+                    await playLine('Sales AI Assistant', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
 
                     // End call and show callback
                     if (sessionGen !== voiceSessionGeneration) return;
@@ -3867,7 +3867,7 @@
             } else {
                 await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
                 await playLine('You', 'Yes, please set that up.', 420);
-                await playLine('Sales AI Assistant', 'Perfect. Let me take you to the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
+                await playLine('Sales AI Assistant', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
 
                 // End call and show callback
                 if (sessionGen !== voiceSessionGeneration) return;
