@@ -1692,14 +1692,33 @@
         .call-transcript-entry {
             margin-bottom: 16px;
             animation: slideIn 0.3s ease-out;
+            padding-left: 10px;
+            border-left: 3px solid transparent;
+        }
+
+        .call-transcript-entry.speaker-ai {
+            border-left-color: #14b8a6;
+        }
+
+        .call-transcript-entry.speaker-you {
+            border-left-color: #3b82f6;
         }
 
         .call-transcript-speaker {
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 700;
             color: #605e5c;
             margin-bottom: 4px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .call-transcript-entry.speaker-ai .call-transcript-speaker {
+            color: #0f766e;
+        }
+
+        .call-transcript-entry.speaker-you .call-transcript-speaker {
+            color: #2563eb;
         }
 
         .call-transcript-text {
@@ -3842,7 +3861,8 @@
         function addCallTranscriptEntry(speaker, text) {
             const transcriptArea = document.getElementById('callTranscriptArea');
             const entry = document.createElement('div');
-            entry.className = 'call-transcript-entry';
+            const speakerClass = speaker === 'You' ? 'speaker-you' : 'speaker-ai';
+            entry.className = 'call-transcript-entry ' + speakerClass;
             entry.innerHTML = `
                 <div class="call-transcript-speaker">${speaker}</div>
                 <div class="call-transcript-text">${text}</div>
