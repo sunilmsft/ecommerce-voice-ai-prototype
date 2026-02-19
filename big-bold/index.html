@@ -3471,12 +3471,12 @@
             if (voiceSessionContext.fromModalitySwitch) {
                 voiceSessionContext.fromModalitySwitch = false;
 
-                await playLine('Sales AI Assistant', 'Hi there! I\'m your Sales AI Assistant. I can see you\'ve been chatting about Microsoft 365 plans for your team of about 15 people. Let me pick up right where you left off so you don\'t have to repeat anything.', 600);
-                await playLine('You', 'That\'s great — yes, we were discussing plans and I wanted to understand the differences better.', 420);
-                await playLine('Sales AI Assistant', 'Of course. You mentioned you\'re interested in comparing plans. Based on your team size of 15 and the topics you discussed in chat, I\'d say the key decision is between Business Standard at $12.50 per user per month and Business Premium at $22 per user per month.', 500);
+                await playLine('Sales AI Assistant', 'Hi there! I\'m your Sales AI Assistant. I can see you\'ve been chatting about Microsoft 365 plans for your marketing agency — a team of about 15 people. Let me pick up right where you left off so you don\'t have to repeat anything.', 600);
+                await playLine('You', 'That\'s great — yes, we were discussing plans for the agency and I wanted to understand the differences better.', 420);
+                await playLine('Sales AI Assistant', 'Of course. Based on your agency\'s team size of 15, the collaboration needs you mentioned, and the fact that you handle client data, I\'d say the key decision is between Business Standard at $12.50 per user per month and Business Premium at $22 per user per month.', 500);
                 await playLine('You', 'What\'s the main difference between those two?', 420);
-                await playLine('Sales AI Assistant', 'Great question. Business Standard gives you desktop Office apps, Teams, email, and 1TB OneDrive storage. Business Premium adds advanced security — threat protection, device management, and data loss prevention. If your team handles any sensitive customer data, Premium is usually worth the step up.', 500);
-                await playLine('You', 'We do handle some customer information, so security matters. What would Premium cost for our whole team?', 420);
+                await playLine('Sales AI Assistant', 'Great question. Business Standard gives you desktop Office apps, Teams, email, and 1TB OneDrive storage — solid for day-to-day agency collaboration. Business Premium adds advanced security — threat protection, device management, and data loss prevention. Since your agency handles client campaigns and sensitive data, Premium is usually worth the step up.', 500);
+                await playLine('You', 'That makes sense for us. What would Premium cost for our whole team?', 420);
                 await playLine('Sales AI Assistant', 'For 15 users on Business Premium, you\'d be looking at $330 per month. That includes everything in Standard plus the full security suite. There may also be volume or promotional pricing available — a Microsoft specialist can walk you through the exact numbers.', 500);
                 await playLine('You', 'That\'s helpful. I think I\'d like to talk to someone about next steps.', 420);
 
@@ -3510,19 +3510,19 @@
             }
 
             await playLine('Sales AI Assistant', 'Hi there — I am Sales AI Assistant. Happy to help. What can I help you with today?', 500);
-            await playLine('You', 'We\'re looking for Microsoft 365 licensing information for around 20 employees.', 420);
+            await playLine('You', 'Hi, I run a growing e-commerce company — we sell outdoor gear online. We\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
             conversationContext.numEmployees = 20;
 
-            await playLine('Sales AI Assistant', 'Got it, thanks. Are your teams mostly in-office, fully remote, or hybrid?', 420);
-            await playLine('You', 'We\'re mostly hybrid, with a few fully remote staff.', 420);
-            await playLine('Sales AI Assistant', 'That makes sense. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
+            await playLine('Sales AI Assistant', 'Great, an e-commerce business with 20 employees — that\'s a perfect fit for our Business plans. Are your teams mostly in-office, fully remote, or hybrid?', 420);
+            await playLine('You', 'We\'re mostly hybrid. Our warehouse crew is on-site, but marketing and customer support work remotely.', 420);
+            await playLine('Sales AI Assistant', 'That makes sense for e-commerce. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
             await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
             await playLine('Sales AI Assistant', 'Perfect, that helps. What decision timeline are you working toward?', 420);
-            await playLine('You', 'Ideally this quarter.', 450);
+            await playLine('You', 'Ideally this quarter — we\'re scaling up and need to get everyone on the same platform.', 450);
             if (isBusinessHours) {
-                await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now to go deeper on licensing and next steps.', 500);
+                await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now to go deeper on licensing and next steps.', 500);
             } else {
-                await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
+                await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
             }
         }
 
@@ -4626,48 +4626,48 @@
             const transcript = document.getElementById('voiceTranscript');
             
             // Initial greeting
-            addTranscriptEntry('Sales AI Assistant', 'Hello! I\'m your Sales AI Assistant for Microsoft 365 Business. I\'m here to help you find the right plan for your business. To get started, could you tell me a bit about your company? How many employees do you have?');
+            addTranscriptEntry('Sales AI Assistant', 'Hello! I\'m your Sales AI Assistant for Microsoft 365 Business. I\'m here to help you find the right plan for your business. To get started, could you tell me a bit about your company — what industry are you in and how many employees do you have?');
             
             // Simulate an interactive conversation flow
             setTimeout(() => {
-                addTranscriptEntry('You', 'We have about 15 people on our team.');
+                addTranscriptEntry('You', 'Sure — we\'re a regional marketing agency with about 15 people. Mix of account managers, designers, and content strategists.');
                 conversationContext.numEmployees = 15;
                 
                 setTimeout(() => {
-                    addTranscriptEntry('Sales AI Assistant', 'Perfect! A 15-person team is ideal for our Microsoft 365 Business offerings. Are your employees primarily working in the office, remotely, or a hybrid setup?');
+                    addTranscriptEntry('Sales AI Assistant', 'A 15-person marketing agency — great! Microsoft 365 Business is an excellent fit for creative and collaborative teams like yours. Are your employees primarily working in the office, remotely, or a hybrid setup?');
                     
                     setTimeout(() => {
-                        addTranscriptEntry('You', 'We\'re mostly remote with some hybrid workers.');
+                        addTranscriptEntry('You', 'We\'re mostly remote with some hybrid workers. Our designers often work from home but come in for client presentations.');
                         conversationContext.workLocation = 'hybrid/remote';
                         
                         setTimeout(() => {
-                            addTranscriptEntry('Sales AI Assistant', 'That\'s very common these days. Microsoft 365 is excellent for remote and hybrid teams with Microsoft Teams for collaboration and OneDrive for cloud storage. Now, how important is security to your organization? Do you handle sensitive customer data or have any specific compliance requirements?');
+                            addTranscriptEntry('Sales AI Assistant', 'That\'s very common for agencies these days. Microsoft 365 is excellent for remote and hybrid teams with Microsoft Teams for collaboration and OneDrive for cloud storage — especially useful for sharing campaign assets and client deliverables. Now, how important is security to your agency? Do you handle sensitive client data or have any specific compliance requirements?');
                             
                             setTimeout(() => {
-                                addTranscriptEntry('You', 'Security is pretty important to us. We handle some customer information.');
+                                addTranscriptEntry('You', 'Security is pretty important to us. We handle client campaign data, brand assets, and sometimes financial information for ad budgets.');
                                 conversationContext.securityNeeds = 'high';
                                 
                                 setTimeout(() => {
-                                    addTranscriptEntry('Sales AI Assistant', 'I completely understand. Security is critical for protecting customer information. Based on what you\'ve shared - a 15-person team working remotely with security needs - I\'d recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, data loss prevention, and all the productivity apps like Word, Excel, PowerPoint, Teams, and 1TB of OneDrive storage per user. What\'s your timeline for making a decision?');
+                                    addTranscriptEntry('Sales AI Assistant', 'I completely understand. Protecting client data is critical for an agency\'s reputation and trust. Based on what you\'ve shared — a 15-person agency working remotely with security needs around client data — I\'d recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, data loss prevention, and all the productivity apps like Word, Excel, PowerPoint, Teams, and 1TB of OneDrive storage per user. What\'s your timeline for making a decision?');
                                     
                                     setTimeout(() => {
-                                        addTranscriptEntry('You', 'We\'re looking to move forward pretty soon, maybe this month.');
+                                        addTranscriptEntry('You', 'We\'re looking to move forward pretty soon, maybe this month. We just landed a big client and need to scale up our tools.');
                                         conversationContext.timeline = 'this month';
                                         
                                         setTimeout(() => {
-                                            addTranscriptEntry('Sales AI Assistant', 'That\'s great to hear you\'re ready to move forward! I can connect you with a Microsoft specialist who can help finalize the next steps, provide detailed pricing for your specific needs, and ensure you get the right setup for your team. Would you like me to arrange a callback?');
+                                            addTranscriptEntry('Sales AI Assistant', 'That\'s great to hear — congratulations on the new client! I can connect you with a Microsoft specialist who can help finalize the next steps, provide detailed pricing for your specific needs, and ensure you get the right setup for your agency. Would you like me to arrange a callback?');
                                             
                                             setTimeout(() => {
                                                 addTranscriptEntry('You', 'Yes, that would be helpful. What about pricing? Can you give me an idea of the costs?');
                                                 
                                                 setTimeout(() => {
-                                                    addTranscriptEntry('Sales AI Assistant', 'Microsoft 365 Business Premium is $22 per user per month. For your 15-person team, that would be $330 per month. However, a Microsoft specialist can discuss volume licensing, payment options, and help you understand the full value. They\'ll also make sure you\'re aware of any current promotions. Shall I set up that callback for you?');
+                                                    addTranscriptEntry('Sales AI Assistant', 'Microsoft 365 Business Premium is $22 per user per month. For your 15-person agency, that would be $330 per month. However, a Microsoft specialist can discuss volume licensing, payment options, and help you understand the full value. They\'ll also make sure you\'re aware of any current promotions. Shall I set up that callback for you?');
                                                     
                                                     setTimeout(() => {
                                                         addTranscriptEntry('You', 'Yes, please set up the callback.');
                                                         
                                                         setTimeout(() => {
-                                                            addTranscriptEntry('Sales AI Assistant', 'Perfect! I\'ll transition you to our callback request form to capture your details. A Microsoft sales associate will reach out to you within 48 hours to discuss your specific needs and next steps. Let me switch you over now.');
+                                                            addTranscriptEntry('Sales AI Assistant', 'Perfect! I\'ll transition you to our callback request form to capture your details. A Microsoft sales associate will reach out to you within 48 hours to discuss your agency\'s specific needs and next steps. Let me switch you over now.');
                                                             
                                                             setTimeout(() => {
                                                                 endVoiceSession();
