@@ -2517,6 +2517,7 @@
         let voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false, fromModalitySwitch: false };
         let conversationContext = {
             numEmployees: null,
+            businessType: null,
             workLocation: null,
             securityNeeds: null,
             timeline: null,
@@ -2633,6 +2634,7 @@
 
             // Pre-populate context so the voice handoff knows what was discussed
             conversationContext.numEmployees = 15;
+            conversationContext.businessType = 'regional marketing agency';
             conversationContext.securityNeeds = 'high';
 
             // Clear any previously queued chat timeouts
@@ -3017,7 +3019,12 @@
 
                             // Build context-aware intro from conversation
                             let contextDetails = '';
-                            if (conversationContext.numEmployees) {
+                            if (conversationContext.businessType) {
+                                contextDetails += ` I can see you're running a ${conversationContext.businessType}`;
+                                if (conversationContext.numEmployees) {
+                                    contextDetails += ` with a team of about ${conversationContext.numEmployees}`;
+                                }
+                            } else if (conversationContext.numEmployees) {
                                 contextDetails += ` I can see you have a team of about ${conversationContext.numEmployees}`;
                             }
                             if (conversationContext.securityNeeds) {
@@ -3233,7 +3240,12 @@
             setTimeout(() => {
                 // Build context-aware intro from conversation
                 let contextDetails = '';
-                if (conversationContext.numEmployees) {
+                if (conversationContext.businessType) {
+                    contextDetails += ` I can see you're running a ${conversationContext.businessType}`;
+                    if (conversationContext.numEmployees) {
+                        contextDetails += ` with a team of about ${conversationContext.numEmployees}`;
+                    }
+                } else if (conversationContext.numEmployees) {
                     contextDetails += ` I can see you have a team of about ${conversationContext.numEmployees}`;
                 }
                 if (conversationContext.securityNeeds) {
@@ -4390,6 +4402,7 @@
             voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false, fromModalitySwitch: false };
             conversationContext = {
                 numEmployees: null,
+                businessType: null,
                 workLocation: null,
                 securityNeeds: null,
                 timeline: null,
@@ -4632,6 +4645,7 @@
             setTimeout(() => {
                 addTranscriptEntry('You', 'Sure — we\'re a regional marketing agency with about 15 people. Mix of account managers, designers, and content strategists.');
                 conversationContext.numEmployees = 15;
+                conversationContext.businessType = 'regional marketing agency';
                 
                 setTimeout(() => {
                     addTranscriptEntry('Sales AI Assistant', 'A 15-person marketing agency — great! Microsoft 365 Business is an excellent fit for creative and collaborative teams like yours. Are your employees primarily working in the office, remotely, or a hybrid setup?');
@@ -4857,7 +4871,12 @@
             setTimeout(() => {
                 // Build context-aware intro from conversation
                 let contextDetails = '';
-                if (conversationContext.numEmployees) {
+                if (conversationContext.businessType) {
+                    contextDetails += ` I can see you're running a ${conversationContext.businessType}`;
+                    if (conversationContext.numEmployees) {
+                        contextDetails += ` with a team of about ${conversationContext.numEmployees}`;
+                    }
+                } else if (conversationContext.numEmployees) {
                     contextDetails += ` I can see you have a team of about ${conversationContext.numEmployees}`;
                 }
                 if (conversationContext.securityNeeds) {
