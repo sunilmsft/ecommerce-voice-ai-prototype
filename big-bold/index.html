@@ -4736,31 +4736,52 @@
             const callScreen = document.getElementById('callScreen');
             callScreen.classList.remove('active');
             
-            // Update chat to show human agent is now available for chat too
-            isHumanAgent = true;
-            document.getElementById('agentAvatar').textContent = '👤';
-            document.getElementById('agentName').textContent = 'Microsoft Sales Specialist';
+            // Update chat header
+            isHumanAgent = false;
+            document.getElementById('agentAvatar').textContent = '🤖';
+            document.getElementById('agentName').textContent = 'Ask Microsoft';
             document.getElementById('handoffBanner').classList.remove('active');
             document.getElementById('quickActions').style.display = 'none';
+            
+            // Disable any "Call a Live Agent" / "Connect with a Live Agent" buttons still in chat
+            document.querySelectorAll('[onclick="handlePostVoiceLiveAgent()"]').forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+                btn.style.pointerEvents = 'none';
+                btn.textContent = '✓ Call Completed';
+            });
+            document.querySelectorAll('[onclick="joinLivePhoneQueue()"], [onclick="joinLiveQueue()"]').forEach(card => {
+                card.style.opacity = '0.5';
+                card.style.cursor = 'not-allowed';
+                card.style.pointerEvents = 'none';
+            });
             
             // Add system message
             const minutes = Math.floor(callDuration / 60);
             const seconds = callDuration % 60;
-            addSystemMessage(`📞 Call with David ended (Duration: ${minutes}m ${seconds}s). David is still available via chat.`);
+            addSystemMessage(`📞 Call with David ended (Duration: ${minutes}m ${seconds}s)`);
             
+            // Graceful closing message
             setTimeout(() => {
-                // Build context-aware follow-up
-                let contextDetails = '';
-                if (conversationContext.numEmployees) {
-                    contextDetails += ` about your team of ${conversationContext.numEmployees}`;
-                }
-                if (conversationContext.interestedPlans && conversationContext.interestedPlans.length > 0) {
-                    contextDetails += ` and ${conversationContext.interestedPlans.join(' and ')}`;
-                }
-                const followUp = contextDetails
-                    ? `Thanks for the call! I've got good notes on our conversation${contextDetails}. Feel free to continue chatting here if you have any follow-up questions.`
-                    : `Thanks for the call! Feel free to continue chatting here if you have any follow-up questions.`;
-                addMessage(followUp, 'human-agent', true);
+                const closingMsg = `
+                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with David!</div>
+                    <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
+                        We hope this conversation was helpful. Here's a quick summary of your session:<br/><br/>
+                        ✅ Spoke with <strong>Sales AI Assistant</strong> about Microsoft 365 plans<br/>
+                        ✅ Connected with <strong>David</strong>, Microsoft 365 Sales Specialist, via phone<br/><br/>
+                        If you have any follow-up questions, feel free to start a new conversation anytime. We're available during business hours M-F, 6 AM to 6 PM PT.
+                    </div>
+                    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
+                        Thanks for considering Microsoft 365 for your business.
+                    </div>
+                `;
+                const chatMessages = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message bot';
+                messageDiv.innerHTML = `<div class="message-bubble">${closingMsg}<div class="message-time">just now</div></div>`;
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
             }, 1000);
             
             // Reset call screen
