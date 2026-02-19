@@ -777,22 +777,25 @@
         }
 
         .agent-avatar {
-            width: 69px;
-            height: 69px;
-            border-radius: 10px;
-            background: transparent;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.15), -2px -2px 6px rgba(255,255,255,0.9), inset 0 1px 2px rgba(255,255,255,0.6);
         }
 
         .agent-avatar img {
-            width: 43px;
-            height: 43px;
+            width: 38px;
+            height: 38px;
             display: block;
             object-fit: contain;
+            border-radius: 50%;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.12));
         }
 
         .agent-info {
@@ -1005,11 +1008,20 @@
             font-size: 14px;
             flex-shrink: 0;
             margin-top: 2px;
+            overflow: hidden;
+        }
+
+        .chat-avatar-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .message.bot .chat-avatar-icon {
-            background: #e1efff;
+            background: linear-gradient(145deg, #ffffff, #e1efff);
             border: 1px solid #b3d4f5;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1), -1px -1px 3px rgba(255,255,255,0.8);
         }
 
         .message.user .chat-avatar-icon {
@@ -1474,14 +1486,23 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: white;
+            background: linear-gradient(145deg, #ffffff, #e0e0e0);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 48px;
             margin-bottom: 24px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            box-shadow: 6px 6px 16px rgba(0, 0, 0, 0.25), -4px -4px 12px rgba(255, 255, 255, 0.4), inset 0 2px 4px rgba(255,255,255,0.5);
             position: relative;
+            overflow: hidden;
+        }
+
+        .call-avatar img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 50%;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15));
         }
 
         .call-info {
@@ -2222,7 +2243,7 @@
         <div class="chat-header" id="chatHeader">
             <div class="header-left">
                 <div class="agent-avatar" id="agentAvatar">
-                    <img src="Icon.jpg" alt="Ask Microsoft" />
+                    <img src="Voice ai.jpg" alt="Sales AI Assistant" />
                 </div>
                 <div class="agent-info">
                     <div class="agent-name" id="agentName">Ask Microsoft</div>
@@ -2346,7 +2367,7 @@
                     </div>
                 </div>
                 <div class="choice-card" onclick="selectSalesOption('ai-assistant')">
-                    <div class="choice-card-icon">🤖</div>
+                    <div class="choice-card-icon"><img src="Voice ai.jpg" alt="Sales AI Assistant" style="width: 36px; height: 36px; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" /></div>
                     <div class="choice-card-content">
                         <div class="choice-card-title">Sales AI Assistant</div>
                         <div class="choice-card-description">Available immediately. Can answer most product and plan questions.</div>
@@ -2429,7 +2450,7 @@
         </div>
         <div class="call-screen-content">
             <div class="pulse-ring" id="pulseRing" style="display: none;"></div>
-            <div class="call-avatar" id="callAvatar">🤖</div>
+            <div class="call-avatar" id="callAvatar"><img src="Voice ai.jpg" alt="Sales AI Assistant" /></div>
             <div class="call-info">
                 <div class="call-agent-name" id="callAgentName">Connecting...</div>
                 <div class="call-status connecting" id="callStatus">Connecting you to Sales AI Assistant...</div>
@@ -2780,7 +2801,7 @@
             // Choose avatar icon based on message type
             let avatarIcon = '';
             if (type === 'bot') {
-                avatarIcon = '<div class="chat-avatar-icon">🤖</div>';
+                avatarIcon = '<div class="chat-avatar-icon"><img src="Voice ai.jpg" alt="AI" /></div>';
             } else if (type === 'user') {
                 avatarIcon = '<div class="chat-avatar-icon">👤</div>';
             } else if (type === 'human-agent') {
@@ -2957,7 +2978,7 @@
                     </div>
                     <div class="chat-option-card" onclick="selectSalesOption('ai-assistant')" role="button" tabindex="0">
                         <div class="chat-option-icon" style="background: white;">
-                            <img src="voice-assistants.png" alt="Voice assistant" style="width: 44px; height: 44px; display: block;" />
+                            <img src="Voice ai.jpg" alt="Sales AI Assistant" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
                         </div>
                         <div class="chat-option-content">
                             <div class="chat-option-title">Speak with Sales AI Assistant</div>
@@ -3107,7 +3128,7 @@
                 <div class="options-container">
                     <div class="chat-option-card" onclick="selectSalesOption('ai-assistant')" role="button" tabindex="0">
                         <div class="chat-option-icon" style="background: white;">
-                            <img src="voice-assistants.png" alt="Voice assistant" style="width: 44px; height: 44px; display: block;" />
+                            <img src="Voice ai.jpg" alt="Sales AI Assistant" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
                         </div>
                         <div class="chat-option-content">
                             <div class="chat-option-title">Speak with Sales AI Assistant</div>
@@ -3775,7 +3796,7 @@
 
                 // Update chat header
                 isHumanAgent = false;
-                document.getElementById('agentAvatar').textContent = '🤖';
+                document.getElementById('agentAvatar').innerHTML = '<img src="Voice ai.jpg" alt="Sales AI Assistant" />';
                 document.getElementById('agentName').textContent = 'Ask Microsoft';
                 document.getElementById('handoffBanner').classList.remove('active');
                 document.getElementById('quickActions').style.display = 'none';
@@ -3815,7 +3836,7 @@
                     const resetTimer = document.getElementById('callTimer');
                     const resetControls = document.querySelector('.call-controls');
                     const resetTranscript = document.getElementById('callTranscriptArea');
-                    if (resetAvatar) { resetAvatar.style.display = ''; resetAvatar.textContent = '🤖'; resetAvatar.style.transform = 'scale(1)'; }
+                    if (resetAvatar) { resetAvatar.style.display = ''; resetAvatar.innerHTML = '<img src="Voice ai.jpg" alt="Sales AI Assistant" />'; resetAvatar.style.transform = 'scale(1)'; }
                     if (resetName) { resetName.style.display = ''; resetName.textContent = 'Connecting...'; }
                     if (resetStatus) { resetStatus.style.display = ''; resetStatus.textContent = 'Finding available agent'; resetStatus.classList.add('connecting'); }
                     if (resetTimer) { resetTimer.style.display = 'none'; resetTimer.textContent = '00:00'; }
@@ -3861,7 +3882,7 @@
                 <div class="options-container">
                     <div class="chat-option-card" onclick="handleOffHoursAiFirstSpeakNow()" role="button" tabindex="0" style="border-color: #0f6cbd; background: #e1efff; box-shadow: 0 10px 24px rgba(15, 108, 189, 0.24);">
                         <div class="chat-option-icon" style="background: white;">
-                            <img src="voice-assistants.png" alt="Voice assistant" style="width: 44px; height: 44px; display: block;" />
+                            <img src="Voice ai.jpg" alt="Sales AI Assistant" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
                         </div>
                         <div class="chat-option-content">
                             <div class="chat-option-title">Speak with Sales AI Assistant</div>
@@ -4438,7 +4459,7 @@
             }
 
             if (agentAvatar) {
-                agentAvatar.innerHTML = '<img src="Icon.jpg" alt="Ask Microsoft" />';
+                agentAvatar.innerHTML = '<img src="Voice ai.jpg" alt="Sales AI Assistant" />';
             }
 
             if (agentName) {
@@ -4601,7 +4622,7 @@
             // Add message to chat
             const minutes = Math.floor(callDuration / 60);
             const seconds = callDuration % 60;
-            addSystemMessage(`🤖 Thanks for speaking with the Sales AI Assistant! Your conversation lasted ${minutes}m ${seconds}s. I'm still here if you'd like to continue in chat — just type below.`);
+            addSystemMessage(`Thanks for speaking with the Sales AI Assistant! Your conversation lasted ${minutes}m ${seconds}s. I'm still here if you'd like to continue in chat — just type below.`);
         }
 
         function startVoiceConversation() {
@@ -4771,11 +4792,11 @@
             voiceMuted = false;
             
             // Restore header to original state
-            document.getElementById('agentAvatar').textContent = '💬';
+            document.getElementById('agentAvatar').innerHTML = '<img src="Voice ai.jpg" alt="Sales AI Assistant" />';
             document.getElementById('agentName').textContent = 'Ask Microsoft';
             
             // Add summary to chat
-            addSystemMessage('🤖 Sales AI Assistant session ended. Transcript saved.');
+            addSystemMessage('Sales AI Assistant session ended. Transcript saved.');
             
             // Copy transcript to chat as a system message
             const transcriptEntries = document.querySelectorAll('.transcript-entry');
@@ -4910,7 +4931,7 @@
             
             // Update chat header
             isHumanAgent = false;
-            document.getElementById('agentAvatar').textContent = '🤖';
+            document.getElementById('agentAvatar').innerHTML = '<img src="Voice ai.jpg" alt="Sales AI Assistant" />';
             document.getElementById('agentName').textContent = 'Ask Microsoft';
             document.getElementById('handoffBanner').classList.remove('active');
             document.getElementById('quickActions').style.display = 'none';
@@ -4958,7 +4979,7 @@
             
             // Reset call screen
             setTimeout(() => {
-                document.getElementById('callAvatar').textContent = '🤖';
+                document.getElementById('callAvatar').innerHTML = '<img src="Voice ai.jpg" alt="Sales AI Assistant" />';
                 document.getElementById('callAgentName').textContent = 'Connecting...';
                 document.getElementById('callStatus').textContent = 'Finding available agent';
                 document.getElementById('callStatus').classList.add('connecting');
