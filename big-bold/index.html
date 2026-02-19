@@ -4348,6 +4348,10 @@
         }
 
         function resetChatForVariantSwitch() {
+            // Cancel any pending auto-play chat timeouts
+            chatAutoPlayTimeouts.forEach(id => clearTimeout(id));
+            chatAutoPlayTimeouts = [];
+
             if (callTimer) {
                 clearInterval(callTimer);
                 callTimer = null;
@@ -4355,6 +4359,7 @@
 
             callDuration = 0;
             isHumanAgent = false;
+            isLiveAgentPhoneCall = false;
             conversation = [];
             isMuted = false;
             isVoiceMode = false;
@@ -4364,7 +4369,7 @@
             callbackRequested = false;
             offHoursAiFirstFlow = false;
             callbackFlowContext = null;
-            voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false };
+            voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false, fromModalitySwitch: false };
             conversationContext = {
                 numEmployees: null,
                 workLocation: null,
