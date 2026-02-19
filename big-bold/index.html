@@ -3720,10 +3720,18 @@
             voiceSessionGeneration++;
             
             // Load voices if not already loaded (important for Chrome)
+            const dumpVoices = () => {
+                const allVoices = speechSynthesis.getVoices();
+                const enVoices = allVoices.filter(v => v.lang.startsWith('en'));
+                console.log(`[Voice Diagnostic] ${allVoices.length} total voices, ${enVoices.length} English:`);
+                enVoices.forEach(v => console.log(`  ${v.localService ? '🖥️' : '☁️'} ${v.name} (${v.lang})${v.default ? ' [DEFAULT]' : ''}`));
+            };
             if (speechSynthesis.getVoices().length === 0) {
                 speechSynthesis.addEventListener('voiceschanged', function() {
-                    console.log('Voices loaded:', speechSynthesis.getVoices().length);
+                    dumpVoices();
                 });
+            } else {
+                dumpVoices();
             }
             
             // Show call screen
@@ -3986,12 +3994,38 @@
                 };
                 
                 utterance.onerror = function(event) {
-                    console.error('Speech synthesis error:', event);
+                    console.error(`Speech synthesis error for ${speaker}:`, event.error, '| Voice:', preferredVoice?.name);
                     isSpeaking = false;
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.remove('active');
                     if (avatar) avatar.style.transform = 'scale(1)';
+                    
+                    // If an Online/Neural voice failed, retry with a local fallback
+                    if (preferredVoice && !preferredVoice.localService) {
+                        console.log(`[Voice] Retrying ${speaker} with local fallback voice...`);
+                        const retryUtterance = new SpeechSynthesisUtterance(text);
+                        retryUtterance.rate = 1.0;
+                        retryUtterance.pitch = 1.0;
+                        retryUtterance.volume = 1.0;
+                        const localVoices = speechSynthesis.getVoices();
+                        let fallback;
+                        if (speaker === 'Sales AI Assistant') {
+                            fallback = localVoices.find(v => v.name.includes('Microsoft Zira') && v.localService) ||
+                                       localVoices.find(v => v.lang === 'en-US' && v.localService);
+                        } else {
+                            fallback = localVoices.find(v => v.name.includes('Microsoft David') && v.localService) ||
+                                       localVoices.find(v => v.lang === 'en-US' && v.localService && v.name.includes('Male'));
+                        }
+                        if (fallback) {
+                            retryUtterance.voice = fallback;
+                            console.log(`[Voice] Fallback → ${fallback.name}`);
+                        }
+                        retryUtterance.onstart = utterance.onstart;
+                        retryUtterance.onend = utterance.onend;
+                        retryUtterance.onerror = () => { isSpeaking = false; };
+                        try { speechSynthesis.speak(retryUtterance); } catch(e) {}
+                    }
                 };
                 
                 // Speak the text
