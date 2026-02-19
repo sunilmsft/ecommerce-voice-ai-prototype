@@ -2877,16 +2877,25 @@
         }
 
         function showBusinessHoursOptions() {
+            // Variant-specific: Voice-First Entry -> live chat, Modality Switch -> live phone
+            const isPhoneHandoff = (prototypeVariant === 'modality_switch');
+            const liveAgentAction = isPhoneHandoff ? 'joinLivePhoneQueue()' : 'joinLiveQueue()';
+            const liveAgentIcon = isPhoneHandoff ? '📞' : '🎧';
+            const liveAgentTitle = isPhoneHandoff ? 'Call a Live Agent' : 'Connect with a Live Agent';
+            const liveAgentDesc = isPhoneHandoff
+                ? 'Join the live phone queue and speak directly with a Microsoft sales specialist. Estimated wait: ~2 minutes.'
+                : 'Join the live queue and chat with a Microsoft sales specialist. Estimated wait: ~2 minutes.';
+
             const optionsHTML = `
                 <div style="margin: 0 0 12px 0; font-size: 14px; color: #555555; line-height: 1.6;">
                     I'd be happy to connect you with our team. Please choose how you'd like to proceed:
                 </div>
                 <div class="options-container">
-                    <div class="chat-option-card" onclick="joinLiveQueue()" role="button" tabindex="0" style="border-color: #0f6cbd; background: #e1efff; box-shadow: 0 10px 24px rgba(15, 108, 189, 0.24);">
-                        <div class="chat-option-icon" style="background: #e1efff; font-size: 28px; display: flex; align-items: center; justify-content: center;">🎧</div>
+                    <div class="chat-option-card" onclick="${liveAgentAction}" role="button" tabindex="0" style="border-color: #0f6cbd; background: #e1efff; box-shadow: 0 10px 24px rgba(15, 108, 189, 0.24);">
+                        <div class="chat-option-icon" style="background: #e1efff; font-size: 28px; display: flex; align-items: center; justify-content: center;">${liveAgentIcon}</div>
                         <div class="chat-option-content">
-                            <div class="chat-option-title">Connect with a Live Agent</div>
-                            <div class="chat-option-description">Join the live queue and speak with a Microsoft sales specialist. Estimated wait: ~2 minutes.</div>
+                            <div class="chat-option-title">${liveAgentTitle}</div>
+                            <div class="chat-option-description">${liveAgentDesc}</div>
                         </div>
                     </div>
                     <div class="chat-option-card" onclick="selectSalesOption('ai-assistant')" role="button" tabindex="0">
@@ -2951,6 +2960,37 @@
                                 : `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation and I'm here to pick up right where you left off — what questions can I answer for you?`;
 
                             addMessage(introMsg, 'human-agent', true);
+                        }, 1000);
+                    }, 1500);
+                }, 1000);
+            }, 500);
+        }
+
+        function joinLivePhoneQueue() {
+            addMessage('I\'d like to speak with a live agent over the phone', 'user');
+            setTimeout(() => {
+                addMessage('Great! Connecting you to the live phone queue now. A Microsoft sales specialist will call you shortly.', 'bot', false);
+                setTimeout(() => {
+                    addSystemMessage('📞 <strong>You are now in the live phone queue.</strong> Estimated wait time: ~2 minutes.');
+                    // Simulate agent joining via phone
+                    setTimeout(() => {
+                        addSystemMessage('🔔 A sales specialist is available — connecting your call now...');
+                        setTimeout(() => {
+                            // Launch the call screen with David
+                            const callScreen = document.getElementById('callScreen');
+                            callScreen.classList.add('active');
+                            document.getElementById('callAvatar').textContent = '👤';
+                            document.getElementById('callAgentName').textContent = 'David — Microsoft 365 Sales Specialist';
+                            document.getElementById('callStatus').textContent = 'Connecting call...';
+                            document.getElementById('callStatus').classList.remove('connecting');
+
+                            // Call connects
+                            setTimeout(() => {
+                                document.getElementById('callStatus').textContent = 'Connected';
+                                document.getElementById('callTimer').style.display = 'block';
+                                startCallTimer();
+                                addSystemMessage('📞 Phone call connected with David, Microsoft 365 sales specialist');
+                            }, 1500);
                         }, 1000);
                     }, 1500);
                 }, 1000);
@@ -3802,7 +3842,7 @@
                     onmouseover="this.style.background='#0d4f99'" 
                     onmouseout="this.style.background='#0f6cbd'"
                     onclick="handlePostVoiceLiveAgent()">
-                        🎧 Connect with a Live Agent
+                        ${prototypeVariant === 'modality_switch' ? '📞 Call a Live Agent' : '🎧 Connect with a Live Agent'}
                     </button>
                     <button style="
                         background: white;
@@ -3849,10 +3889,17 @@
         }
 
         function handlePostVoiceLiveAgent() {
-            addMessage('Yes, connect me with a live agent', 'user');
-            setTimeout(() => {
-                joinLiveQueue();
-            }, 300);
+            if (prototypeVariant === 'modality_switch') {
+                addMessage('Yes, connect me with a live agent over the phone', 'user');
+                setTimeout(() => {
+                    joinLivePhoneQueue();
+                }, 300);
+            } else {
+                addMessage('Yes, connect me with a live agent', 'user');
+                setTimeout(() => {
+                    joinLiveQueue();
+                }, 300);
+            }
         }
 
         function handlePostVoiceAllSet() {
@@ -4615,20 +4662,33 @@
             // Update chat to show human agent is now available for chat too
             isHumanAgent = true;
             document.getElementById('agentAvatar').textContent = '👤';
-            document.getElementById('agentName').textContent = 'Microsoft Support Agent';
+            document.getElementById('agentName').textContent = 'Microsoft Sales Specialist';
+            document.getElementById('handoffBanner').classList.remove('active');
             document.getElementById('quickActions').style.display = 'none';
             
             // Add system message
             const minutes = Math.floor(callDuration / 60);
             const seconds = callDuration % 60;
-            addSystemMessage(`📞 Call ended (Duration: ${minutes}m ${seconds}s). Support agent is still available via chat.`);
+            addSystemMessage(`📞 Call with David ended (Duration: ${minutes}m ${seconds}s). David is still available via chat.`);
             
             setTimeout(() => {
-                addMessage('Thanks for the call! Feel free to continue chatting here if you have any follow-up questions.', 'human-agent', true);
+                // Build context-aware follow-up
+                let contextDetails = '';
+                if (conversationContext.numEmployees) {
+                    contextDetails += ` about your team of ${conversationContext.numEmployees}`;
+                }
+                if (conversationContext.interestedPlans && conversationContext.interestedPlans.length > 0) {
+                    contextDetails += ` and ${conversationContext.interestedPlans.join(' and ')}`;
+                }
+                const followUp = contextDetails
+                    ? `Thanks for the call! I've got good notes on our conversation${contextDetails}. Feel free to continue chatting here if you have any follow-up questions.`
+                    : `Thanks for the call! Feel free to continue chatting here if you have any follow-up questions.`;
+                addMessage(followUp, 'human-agent', true);
             }, 1000);
             
             // Reset call screen
             setTimeout(() => {
+                document.getElementById('callAvatar').textContent = '🤖';
                 document.getElementById('callAgentName').textContent = 'Connecting...';
                 document.getElementById('callStatus').textContent = 'Finding available agent';
                 document.getElementById('callStatus').classList.add('connecting');
