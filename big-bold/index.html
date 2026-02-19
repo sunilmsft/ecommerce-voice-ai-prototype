@@ -2978,6 +2978,26 @@
                         setTimeout(() => {
                             // Launch the call screen with David
                             const callScreen = document.getElementById('callScreen');
+
+                            // Clear any old AI assistant transcript and disconnect options
+                            const transcriptArea = document.getElementById('callTranscriptArea');
+                            transcriptArea.innerHTML = '';
+                            transcriptArea.classList.add('active');
+                            const disconnectOptions = document.getElementById('disconnectOptions');
+                            if (disconnectOptions) disconnectOptions.classList.remove('active');
+
+                            // Ensure all call screen elements are visible (may be hidden from prior endAICall)
+                            document.getElementById('callAgentName').style.display = '';
+                            document.getElementById('callStatus').style.display = '';
+                            document.getElementById('callTimer').style.display = 'none';
+                            const callControls = document.querySelector('.call-controls');
+                            if (callControls) callControls.style.display = '';
+                            const callAvatar = document.getElementById('callAvatar');
+                            if (callAvatar) {
+                                callAvatar.style.display = '';
+                                callAvatar.style.transform = 'scale(1)';
+                            }
+
                             callScreen.classList.add('active');
                             document.getElementById('callAvatar').textContent = '👤';
                             document.getElementById('callAgentName').textContent = 'David — Microsoft 365 Sales Specialist';
@@ -2990,6 +3010,26 @@
                                 document.getElementById('callTimer').style.display = 'block';
                                 startCallTimer();
                                 addSystemMessage('📞 Phone call connected with David, Microsoft 365 sales specialist');
+
+                                // David's greeting in the call transcript
+                                setTimeout(() => {
+                                    // Build context-aware greeting
+                                    let contextRef = '';
+                                    if (conversationContext.numEmployees) {
+                                        contextRef += `your team of ${conversationContext.numEmployees}`;
+                                    }
+                                    if (conversationContext.interestedPlans && conversationContext.interestedPlans.length > 0) {
+                                        contextRef += `${contextRef ? ' and the ' : 'the '}plan comparison`;
+                                    }
+                                    if (conversationContext.securityNeeds) {
+                                        contextRef += `${contextRef ? ', plus your security requirements' : 'your security requirements'}`;
+                                    }
+                                    const contextLine = contextRef
+                                        ? `, including the details about ${contextRef},`
+                                        : '';
+
+                                    addCallTranscriptEntry('David', `Hi, this is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything. Let's pick up right where you left off.`);
+                                }, 800);
                             }, 1500);
                         }, 1000);
                     }, 1500);
