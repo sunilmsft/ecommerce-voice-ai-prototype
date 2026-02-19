@@ -3,7 +3,7 @@
 ╔════════════════════════════════════════════════════════════════╗
 ║  PROTOTYPE: eCommerce Big Bold — Voice AI Agent               ║
 ║  Location: eCommerce Big Bold/                                 ║
-║  Variants: Voice Initiated · Modality Switch                   ║
+║  Variants: Voice-First Entry · Modality Switch                 ║
 ╚════════════════════════════════════════════════════════════════╝
 -->
 <html lang="en">
@@ -2011,11 +2011,11 @@
                     <button class="context-refresh" title="Refresh" onclick="refreshPrototype()" aria-label="Refresh">↻</button>
                 </div>
             </div>
-            <h3 class="context-title" id="contextTitle">Voice Initiated</h3>
-            <p class="context-description" id="contextDescription">Customer prefers voice interaction instead of chat interaction.</p>
+            <h3 class="context-title" id="contextTitle">Voice-First Entry</h3>
+            <p class="context-description" id="contextDescription">Start the interaction with Sales AI Assistant via voice directly within Ask Microsoft.</p>
             <div class="context-divider"></div>
             <div class="variant-switcher">
-                <button class="variant-btn" id="variantVoiceInitiated" onclick="switchPrototypeVariant('voice_initiated')">Voice Initiated</button>
+                <button class="variant-btn" id="variantVoiceInitiated" onclick="switchPrototypeVariant('voice_initiated')">Voice-First Entry</button>
                 <button class="variant-btn" id="variantModalitySwitch" onclick="switchPrototypeVariant('modality_switch')">Modality Switch</button>
             </div>
             <div style="margin-top: 16px;">
@@ -2403,12 +2403,12 @@
 
         const prototypeVariants = {
             voice_initiated: {
-                title: 'Voice Initiated',
-                description: 'Customer prefers voice interaction instead of chat interaction.'
+                title: 'Voice-First Entry',
+                description: 'Start the interaction with Sales AI Assistant via voice directly within Ask Microsoft.'
             },
             modality_switch: {
                 title: 'Modality Switch',
-                description: 'Customer switches from chat interaction to voice interaction mid-way thru the conversation and retains context.'
+                description: 'Seamlessly switch from chat to voice mid-conversation with full context retained.'
             }
         };
 
