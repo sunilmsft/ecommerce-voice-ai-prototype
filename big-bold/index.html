@@ -3011,6 +3011,7 @@
                             }
 
                             callScreen.classList.add('active');
+                            isLiveAgentPhoneCall = true;  // Mark as David's call as soon as screen opens
                             document.getElementById('callAvatar').textContent = '👤';
                             document.getElementById('callAgentName').textContent = 'David — Microsoft 365 Sales Specialist';
                             document.getElementById('callStatus').textContent = 'Connecting call...';
@@ -3020,7 +3021,6 @@
                             setTimeout(() => {
                                 document.getElementById('callStatus').textContent = 'Connected';
                                 document.getElementById('callTimer').style.display = 'block';
-                                isLiveAgentPhoneCall = true;  // Mark this as David's call
                                 startCallTimer();
                                 addSystemMessage('📞 Phone call connected with David, Microsoft 365 sales specialist');
 
