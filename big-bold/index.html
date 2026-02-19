@@ -2928,11 +2928,31 @@
                             isHumanAgent = true;
                             document.getElementById('agentAvatar').textContent = '👤';
                             document.getElementById('agentName').textContent = 'Microsoft Sales Specialist';
-                            document.getElementById('handoffBanner').classList.add('active');
+                            document.getElementById('handoffBanner').classList.remove('active');
                             document.getElementById('quickActions').style.display = 'none';
-                            addMessage('Hi there! I\'m David, a Microsoft 365 sales specialist. I\'ve reviewed your conversation and I\'m ready to help. What questions can I answer for you today?', 'human-agent', true);
-                        }, 2000);
-                    }, 4000);
+
+                            // Build context-aware intro from conversation
+                            let contextDetails = '';
+                            if (conversationContext.numEmployees) {
+                                contextDetails += ` I can see you have a team of about ${conversationContext.numEmployees}`;
+                            }
+                            if (conversationContext.securityNeeds) {
+                                contextDetails += ` and security is a top priority for you`;
+                            }
+                            if (conversationContext.interestedPlans && conversationContext.interestedPlans.length > 0) {
+                                contextDetails += `. You were looking at ${conversationContext.interestedPlans.join(' and ')}`;
+                            }
+                            if (contextDetails) {
+                                contextDetails += '.';
+                            }
+
+                            const introMsg = contextDetails
+                                ? `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation.${contextDetails} I'm here to pick up right where you left off — what questions can I answer for you?`
+                                : `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation and I'm here to pick up right where you left off — what questions can I answer for you?`;
+
+                            addMessage(introMsg, 'human-agent', true);
+                        }, 1000);
+                    }, 1500);
                 }, 1000);
             }, 500);
         }
