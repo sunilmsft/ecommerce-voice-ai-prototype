@@ -292,7 +292,7 @@
             border-radius: 6px;
             padding: 16px 18px;
             margin: 12px 20px;
-            max-width: 420px;
+            max-width: 480px;
             width: auto;
             box-shadow:
                 0 2px 6px rgba(15, 118, 110, 0.18),
@@ -523,6 +523,97 @@
         .variant-btn.active:hover {
             background: #0d9488;
             border-color: #0d9488;
+        }
+
+        /* Flow Section */
+        .flow-section {
+            margin: 10px 0 2px 0;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.65);
+            border-radius: 8px;
+            border: 1px solid #d1fae5;
+        }
+
+        .flow-heading {
+            font-size: 10px;
+            font-weight: 700;
+            color: #0f766e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-hours-badge {
+            font-size: 9px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .flow-hours-badge.biz {
+            background: rgba(20, 184, 166, 0.15);
+            color: #0d9488;
+        }
+
+        .flow-hours-badge.after {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        .flow-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .flow-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .flow-num {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 9px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .flow-icon {
+            font-size: 13px;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .flow-text {
+            font-size: 11px;
+            color: #1e293b;
+            line-height: 1.3;
+        }
+
+        .flow-connector {
+            width: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .flow-connector::before {
+            content: '';
+            width: 1px;
+            height: 4px;
+            background: #99f6e4;
         }
 
         /* Prototype Variant Confirmation Modal */
@@ -2148,6 +2239,7 @@
             </div>
             <h3 class="context-title" id="contextTitle">Voice-First Entry</h3>
             <p class="context-description" id="contextDescription">Start the interaction with Sales AI Assistant via voice directly within Ask Microsoft.</p>
+            <div class="flow-section" id="variantFlowDetails"></div>
             <div class="context-divider"></div>
             <div class="business-hours-toggle">
                 <div>
@@ -2562,19 +2654,47 @@
         const prototypeVariants = {
             voice_initiated: {
                 title: 'Voice-First Entry',
-                description: 'Start the interaction with Sales AI Assistant via voice directly within Ask Microsoft.'
+                description: 'Customer clicks the voice icon and talks directly with the Sales AI Assistant — entirely via voice.',
+                flowBizHours: [
+                    { icon: '🎙️', text: 'Click the voice icon in the chat header' },
+                    { icon: '🤖', text: 'AI discusses your business needs via voice' },
+                    { icon: '🔄', text: 'AI offers transfer to a live specialist' },
+                    { icon: '👤', text: 'David joins the call with full context' },
+                    { icon: '✅', text: 'Recap, next steps & follow-up options' }
+                ],
+                flowAfterHours: [
+                    { icon: '🎙️', text: 'Click the voice icon in the chat header' },
+                    { icon: '🤖', text: 'AI discusses your business needs via voice' },
+                    { icon: '📝', text: 'After hours — AI offers callback scheduling' },
+                    { icon: '📋', text: 'Submit form — conversation summary saved' }
+                ]
             },
             modality_switch: {
                 title: 'Modality Switch',
-                description: 'Seamlessly switch from chat to voice mid-conversation with full context retained.'
+                description: 'Customer starts in chat, then switches to voice mid-conversation — full context carries over seamlessly.',
+                flowBizHours: [
+                    { icon: '💬', text: 'Chat with AI about your business needs' },
+                    { icon: '🎙️', text: 'Click voice icon to switch to voice' },
+                    { icon: '🔄', text: 'AI continues conversation with full context' },
+                    { icon: '👤', text: 'David joins the call with full context' },
+                    { icon: '✅', text: 'Recap, next steps & follow-up options' }
+                ],
+                flowAfterHours: [
+                    { icon: '💬', text: 'Chat with AI about your business needs' },
+                    { icon: '🎙️', text: 'Click voice icon to switch to voice' },
+                    { icon: '🔄', text: 'AI continues conversation with full context' },
+                    { icon: '📝', text: 'After hours — AI offers callback scheduling' },
+                    { icon: '📋', text: 'Submit form — conversation summary saved' }
+                ]
             }
         };
 
         function applyVariantState(variant) {
             offHoursAiFirstFlow = variant === 'voice_initiated';
 
-            document.getElementById('contextTitle').textContent = prototypeVariants[variant].title;
-            document.getElementById('contextDescription').textContent = prototypeVariants[variant].description;
+            const variantData = prototypeVariants[variant];
+            document.getElementById('contextTitle').textContent = variantData.title;
+            document.getElementById('contextDescription').textContent = variantData.description;
 
             document.getElementById('variantVoiceInitiated').classList.remove('active');
             document.getElementById('variantModalitySwitch').classList.remove('active');
@@ -2589,6 +2709,25 @@
             const playBtn = document.getElementById('modalitySwitchPlayBtn');
             if (playBtn) {
                 playBtn.style.display = variant === 'modality_switch' ? 'block' : 'none';
+            }
+
+            // Render the flow details
+            const flowSteps = isBusinessHours ? variantData.flowBizHours : variantData.flowAfterHours;
+            const flowContainer = document.getElementById('variantFlowDetails');
+            if (flowContainer) {
+                const hoursLabel = isBusinessHours ? 'During Business Hours' : 'After Hours';
+                const badgeClass = isBusinessHours ? 'biz' : 'after';
+                let html = '<div class="flow-heading">What to Expect <span class="flow-hours-badge ' + badgeClass + '">' + hoursLabel + '</span></div>';
+                html += '<div class="flow-list">';
+                flowSteps.forEach(function(step, i) {
+                    html += '<div class="flow-item">' +
+                        '<span class="flow-num">' + (i + 1) + '</span>' +
+                        '<span class="flow-icon">' + step.icon + '</span>' +
+                        '<span class="flow-text">' + step.text + '</span>' +
+                    '</div>';
+                });
+                html += '</div>';
+                flowContainer.innerHTML = html;
             }
         }
 
