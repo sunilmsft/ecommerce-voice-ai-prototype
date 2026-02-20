@@ -4152,6 +4152,8 @@
                     
                     // If an Online/Neural voice failed, retry with a local fallback
                     if (preferredVoice && !preferredVoice.localService) {
+                        // Don't retry if session was ended (disconnect)
+                        if (!audioEnabled || !isVoiceMode || speechGenerationAtStart !== voiceSessionGeneration) return;
                         console.log(`[Voice] Retrying ${speaker} with local fallback voice...`);
                         const retryUtterance = new SpeechSynthesisUtterance(text);
                         retryUtterance.rate = 1.0;
