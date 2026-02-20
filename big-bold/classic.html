@@ -2207,145 +2207,6 @@
             gap: 8px;
             margin-top: 12px;
         }
-
-        /* Quote Summary Card */
-        .quote-card {
-            margin-top: 14px;
-            padding: 16px 18px;
-            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0fdfa 100%);
-            border-radius: 10px;
-            border-left: 4px solid #16a34a;
-            box-shadow: 0 2px 8px rgba(22, 163, 106, 0.1);
-            animation: quoteSlideIn 0.5s ease-out;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quote-card::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle, rgba(22, 163, 106, 0.08) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .quote-card-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .quote-card-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 10px;
-            background: #16a34a;
-            color: white;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-        }
-
-        .quote-card-ref {
-            font-size: 11px;
-            color: #6b7280;
-            font-family: 'Courier New', monospace;
-        }
-
-        .quote-card-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px 16px;
-            margin: 10px 0;
-        }
-
-        .quote-card-item {
-            font-size: 13px;
-            color: #374151;
-            line-height: 1.4;
-        }
-
-        .quote-card-item strong {
-            color: #111827;
-            font-weight: 600;
-        }
-
-        .quote-card-total {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px dashed #bbf7d0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .quote-card-total-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .quote-card-total-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: #16a34a;
-        }
-
-        .quote-card-footer {
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px solid #d1fae5;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .quote-card-email {
-            font-size: 12px;
-            color: #059669;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .quote-card-validity {
-            font-size: 11px;
-            color: #6b7280;
-        }
-
-        .quote-pending-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 10px;
-            background: #f59e0b;
-            color: white;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .quote-sent-pulse {
-            animation: quoteSentPulse 2s ease-in-out;
-        }
-
-        @keyframes quoteSlideIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes quoteSentPulse {
-            0% { box-shadow: 0 0 0 0 rgba(22, 163, 106, 0.3); }
-            50% { box-shadow: 0 0 0 8px rgba(22, 163, 106, 0); }
-            100% { box-shadow: 0 2px 8px rgba(22, 163, 106, 0.1); }
-        }
     </style>
 </head>
 <body>
@@ -2462,17 +2323,6 @@
                     </label>
                     <span class="toggle-status off" id="businessHoursStatus">Off</span>
                 </div>
-            </div>
-            <div class="context-divider"></div>
-            <div style="margin-bottom: 4px;">
-                <div class="toggle-label" style="margin-bottom: 6px;">Quote Scenario</div>
-                <div class="toggle-sublabel" style="margin-bottom: 8px;">Controls AI quoting behavior during voice call</div>
-                <div class="variant-switcher" id="quoteScenarioSwitcher">
-                    <button class="variant-btn" id="quoteHappyPath" onclick="switchQuoteScenario('happy_path')" title="Customer accepts quote and shares email">✅ Happy Path</button>
-                    <button class="variant-btn" id="quoteEmailLater" onclick="switchQuoteScenario('email_later')" title="Customer accepts quote but declines to share email — captured later on callback form">📨 Email Later</button>
-                    <button class="variant-btn" id="quoteNoQuote" onclick="switchQuoteScenario('no_quote')" title="Customer declines the quote offer">⏭ No Quote</button>
-                </div>
-                <div id="quoteScenarioHint" style="margin-top: 6px; font-size: 10px; color: #5f9e94; line-height: 1.4;"></div>
             </div>
             <div class="context-divider"></div>
             <div class="variant-switcher">
@@ -2833,23 +2683,13 @@
         let isLiveAgentPhoneCall = false;   // true when David's phone call is active
         let chatAutoPlayTimeouts = [];      // track setTimeout IDs from auto-play chat
         let voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false, fromModalitySwitch: false };
-        let quoteScenario = localStorage.getItem('quoteScenario_bigbold') || 'happy_path';
         let conversationContext = {
-            customerName: null,
             numEmployees: null,
             businessType: null,
             workLocation: null,
             securityNeeds: null,
             timeline: null,
-            interestedPlans: [],
-            // Quoting fields
-            customerEmail: null,
-            quoteGenerated: false,
-            quoteId: null,
-            quoteSentToEmail: false,
-            monthlyTotal: null,
-            pricePerUser: null,
-            quoteReadyForSend: false
+            interestedPlans: []
         };
 
         // Simulated Microsoft 365 knowledge base (in production, this would query the actual website)
@@ -2968,19 +2808,8 @@
             }
 
             // Render the flow details
-            let flowSteps = (isBusinessHours ? variantData.flowBizHours : variantData.flowAfterHours).slice();
-            const chainNodes = (isBusinessHours ? variantData.chainBizHours : variantData.chainAfterHours).slice();
-
-            // Inject quote step into flow based on active quote scenario
-            if (quoteScenario !== 'no_quote') {
-                // Find the index of the "offers transfer/callback" step and insert quote step before it
-                const offerIdx = flowSteps.findIndex(s => s.text.indexOf('offers') !== -1 || s.text.indexOf('callback') !== -1);
-                const insertAt = offerIdx !== -1 ? offerIdx : flowSteps.length - 1;
-                const quoteStepText = quoteScenario === 'happy_path'
-                    ? '— generates & sends personalized quote via email'
-                    : '— generates quote (sent with callback form)';
-                flowSteps.splice(insertAt, 0, { party: 'Sales AI Assistant', pcls: 'ai-voice', text: quoteStepText });
-            }
+            const flowSteps = isBusinessHours ? variantData.flowBizHours : variantData.flowAfterHours;
+            const chainNodes = isBusinessHours ? variantData.chainBizHours : variantData.chainAfterHours;
             const flowContainer = document.getElementById('variantFlowDetails');
             if (flowContainer) {
                 const hoursLabel = isBusinessHours ? 'During Business Hours' : 'After Hours';
@@ -3007,118 +2836,6 @@
         }
 
         applyVariantState(prototypeVariant);
-
-        // --- Quote Scenario Management ---
-        const quoteScenarioMeta = {
-            happy_path: { label: '\u2705 Happy Path', hint: 'Customer accepts the quote offer and shares their email. Quote is generated and sent during the voice call.' },
-            email_later: { label: '\ud83d\udce8 Email Later', hint: 'Customer wants the quote but declines to share email during the call. Quote is sent later when they fill out the callback form.' },
-            no_quote: { label: '\u23ed No Quote', hint: 'Customer declines the quote offer entirely. Flow proceeds as before with no quote generated.' }
-        };
-
-        function switchQuoteScenario(scenario) {
-            quoteScenario = scenario;
-            localStorage.setItem('quoteScenario_bigbold', scenario);
-            applyQuoteScenarioState(scenario);
-            resetChatForVariantSwitch();
-            applyVariantState(prototypeVariant);
-        }
-
-        function applyQuoteScenarioState(scenario) {
-            document.getElementById('quoteHappyPath').classList.remove('active');
-            document.getElementById('quoteEmailLater').classList.remove('active');
-            document.getElementById('quoteNoQuote').classList.remove('active');
-
-            if (scenario === 'happy_path') document.getElementById('quoteHappyPath').classList.add('active');
-            else if (scenario === 'email_later') document.getElementById('quoteEmailLater').classList.add('active');
-            else document.getElementById('quoteNoQuote').classList.add('active');
-
-            const hint = document.getElementById('quoteScenarioHint');
-            if (hint) hint.textContent = quoteScenarioMeta[scenario].hint;
-        }
-
-        applyQuoteScenarioState(quoteScenario);
-
-        // --- Quote Summary Card Generator ---
-        function generateQuoteCardHTML(options) {
-            const ctx = conversationContext;
-            const plan = (ctx.interestedPlans && ctx.interestedPlans.length > 0) ? ctx.interestedPlans[0] : 'Microsoft 365 Business Premium';
-            const users = ctx.numEmployees || 20;
-            const pricePerUser = ctx.pricePerUser || 22;
-            const monthly = ctx.monthlyTotal || (users * pricePerUser);
-            const annual = monthly * 12;
-            const quoteId = ctx.quoteId || 'Q-00000000-000';
-            const email = ctx.customerEmail;
-            const isSent = ctx.quoteSentToEmail;
-            const isPending = ctx.quoteReadyForSend && !ctx.quoteSentToEmail;
-            const showEmail = options && options.showEmail !== undefined ? options.showEmail : true;
-            const overrideEmail = options && options.overrideEmail ? options.overrideEmail : null;
-            const displayEmail = overrideEmail || email;
-
-            let badgeHTML = '';
-            if (isSent) {
-                badgeHTML = '<span class="quote-card-badge">\ud83d\udce7 Quote Sent</span>';
-            } else if (isPending) {
-                badgeHTML = '<span class="quote-pending-badge">\u23f3 Quote Ready</span>';
-            } else {
-                badgeHTML = '<span class="quote-card-badge">\ud83d\udccb Quote Generated</span>';
-            }
-
-            let footerHTML = '';
-            if (isSent && displayEmail && showEmail) {
-                footerHTML = `
-                    <div class="quote-card-footer">
-                        <div class="quote-card-email">\ud83d\udce7 Sent to ${displayEmail}</div>
-                        <div class="quote-card-validity">Valid for 30 days</div>
-                    </div>`;
-            } else if (isPending) {
-                footerHTML = `
-                    <div class="quote-card-footer">
-                        <div class="quote-card-email" style="color: #d97706;">\u23f3 Will be sent with callback confirmation</div>
-                        <div class="quote-card-validity">Valid for 30 days</div>
-                    </div>`;
-            } else {
-                footerHTML = `
-                    <div class="quote-card-footer">
-                        <div class="quote-card-validity">Valid for 30 days</div>
-                    </div>`;
-            }
-
-            const businessName = (prototypeVariant === 'modality_switch') ? 'Spark + Co Creative Agency' : 'Summit Outdoor Gear Co.';
-
-            return `
-                <div class="quote-card ${isSent ? 'quote-sent-pulse' : ''}">
-                    <div class="quote-card-header">
-                        ${badgeHTML}
-                        <span class="quote-card-ref">${quoteId}</span>
-                    </div>
-                    <div class="quote-card-grid">
-                        <div class="quote-card-item"><strong>Plan</strong><br/>Microsoft 365 ${plan}</div>
-                        <div class="quote-card-item"><strong>Business</strong><br/>${businessName}</div>
-                        <div class="quote-card-item"><strong>Users</strong><br/>${users} users</div>
-                        <div class="quote-card-item"><strong>Per User</strong><br/>$${pricePerUser}/user/mo</div>
-                    </div>
-                    <div class="quote-card-total">
-                        <div>
-                            <div class="quote-card-total-label">Monthly Total</div>
-                            <div style="font-size: 11px; color: #6b7280;">Annual: $${annual.toLocaleString()}/year</div>
-                        </div>
-                        <div class="quote-card-total-value">$${monthly}/mo</div>
-                    </div>
-                    ${footerHTML}
-                </div>
-            `;
-        }
-
-        function addQuoteCardToChat(options) {
-            if (!conversationContext.quoteGenerated && !conversationContext.quoteReadyForSend) return;
-            const html = generateQuoteCardHTML(options);
-            const chatMessages = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message bot';
-            messageDiv.innerHTML = '<div class="message-bubble">' + html + '<div class="message-time">just now</div></div>';
-            chatMessages.appendChild(messageDiv);
-            scrollToBottom();
-        }
 
         function toggleBusinessHours(checked) {
             isBusinessHours = checked;
@@ -3572,16 +3289,12 @@
                             if (conversationContext.timeline) {
                                 contextDetails += ` I also see you're looking to move on this ${conversationContext.timeline}.`;
                             }
-                            if (conversationContext.quoteSentToEmail && conversationContext.customerEmail) {
-                                contextDetails += ` I can also see we sent you a quote to ${conversationContext.customerEmail} — you should have that in your inbox already. If you have any questions about the pricing or you're ready to move forward with the purchase, I can help with that right now.`;
-                            }
 
                             const introMsg = contextDetails
-                                ? `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation.${contextDetails}`
+                                ? `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation.${contextDetails} I'm here to pick up right where you left off — what questions can I answer for you?`
                                 : `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation and I'm here to pick up right where you left off — what questions can I answer for you?`;
 
                             addMessage(introMsg, 'human-agent', true);
-                            speakAsDavid(introMsg);
                         }, 1000);
                     }, 1500);
                 }, 1000);
@@ -3656,8 +3369,7 @@
                                         ? `, including the details about ${contextRef},`
                                         : '';
 
-                                    const nameGreet = conversationContext.customerName ? `Hi ${conversationContext.customerName}, this` : 'Hi, this';
-                                    const greetingText = `${nameGreet} is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything. Let's pick up right where you left off.`;
+                                    const greetingText = `Hi, this is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything. Let's pick up right where you left off.`;
                                     addCallTranscriptEntry('David', greetingText);
                                     speakAsDavid(greetingText);
                                 }, 800);
@@ -3810,12 +3522,9 @@
                 if (conversationContext.timeline) {
                     contextDetails += ` I also see you're looking to move on this ${conversationContext.timeline}.`;
                 }
-                if (conversationContext.quoteSentToEmail && conversationContext.customerEmail) {
-                    contextDetails += ` I can also see we sent you a quote to ${conversationContext.customerEmail} — you should have that in your inbox already. If you have any questions about the pricing or you're ready to move forward with the purchase, I can help with that right now.`;
-                }
 
                 const introMsg = contextDetails
-                    ? `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation.${contextDetails}`
+                    ? `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation.${contextDetails} I'm here to pick up right where you left off — what questions can I answer for you?`
                     : `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation and I'm here to pick up right where you left off — what questions can I answer for you?`;
 
                 addMessage(introMsg, 'human-agent', true);
@@ -3893,14 +3602,6 @@
                 }
             });
 
-            // Pre-fill email from voice conversation if captured
-            if (conversationContext.customerEmail) {
-                const emailField = document.getElementById('callbackEmail');
-                if (emailField) {
-                    emailField.value = conversationContext.customerEmail;
-                }
-            }
-
             // Populate the conversation summary section on the form
             const summarySection = document.getElementById('callbackSummarySection');
             const summaryList = document.getElementById('callbackSummaryList');
@@ -3912,11 +3613,6 @@
                 if (conversationContext.securityNeeds) parts.push('Security priority: ' + (conversationContext.securityNeeds === 'high' ? 'High — handles sensitive data' : conversationContext.securityNeeds));
                 if (conversationContext.timeline) parts.push('Timeline: ' + conversationContext.timeline);
                 parts.push('Recommended plan: Microsoft 365 Business Premium');
-                if (conversationContext.quoteSentToEmail && conversationContext.customerEmail) {
-                    parts.push('✅ Quote sent to ' + conversationContext.customerEmail + ' (ID: ' + conversationContext.quoteId + ')');
-                } else if (conversationContext.quoteReadyForSend) {
-                    parts.push('📨 Quote ready — will be sent on form submission');
-                }
 
                 if (parts.length > 0) {
                     summaryList.innerHTML = parts.map(function(p) { return '<li>' + p + '</li>'; }).join('');
@@ -3944,14 +3640,6 @@
             // Log form data (in production, this would be sent to backend)
             console.log('Callback request:', { name, business, email, phone, users });
             
-            // If quote was ready but email wasn't captured during voice, send it now
-            if (conversationContext.quoteReadyForSend && !conversationContext.quoteSentToEmail && email) {
-                conversationContext.customerEmail = email;
-                conversationContext.quoteGenerated = true;
-                conversationContext.quoteSentToEmail = true;
-                console.log('Quote sent to:', email, 'Quote ID:', conversationContext.quoteId);
-            }
-
             // Set callback state BEFORE closing form
             callbackRequested = true;
             
@@ -3997,13 +3685,7 @@
                         summaryDiv.innerHTML = `<div class="message-bubble">${summaryHTML}<div class="message-time">just now</div></div>`;
                         chatMessages.appendChild(summaryDiv);
                         scrollToBottom();
-                        // Add quote card if applicable
-                        if (conversationContext.quoteGenerated || conversationContext.quoteSentToEmail) {
-                            setTimeout(() => { addQuoteCardToChat(); }, 600);
-                        }
                     }, 500);
-                } else if (conversationContext.quoteGenerated || conversationContext.quoteSentToEmail) {
-                    setTimeout(() => { addQuoteCardToChat(); }, 800);
                 }
             } else {
                 showCallbackConfirmation();
@@ -4018,13 +3700,7 @@
                         summaryDiv.innerHTML = `<div class="message-bubble">${summaryHTML}<div class="message-time">just now</div></div>`;
                         chatMessages.appendChild(summaryDiv);
                         scrollToBottom();
-                        // Add quote card if applicable
-                        if (conversationContext.quoteGenerated || conversationContext.quoteSentToEmail) {
-                            setTimeout(() => { addQuoteCardToChat(); }, 600);
-                        }
                     }, 500);
-                } else if (conversationContext.quoteGenerated || conversationContext.quoteSentToEmail) {
-                    setTimeout(() => { addQuoteCardToChat(); }, 800);
                 }
             }
         }
@@ -4156,64 +3832,26 @@
             if (voiceSessionContext.fromModalitySwitch) {
                 voiceSessionContext.fromModalitySwitch = false;
 
-                conversationContext.customerName = 'Priya';
                 await playLine('Sales AI Assistant', 'Hi there! I\'m your Sales AI Assistant. I can see you\'ve been chatting about Microsoft 365 plans for your marketing agency — a team of about 15 people. Let me pick up right where you left off so you don\'t have to repeat anything.', 600);
                 await playLine('You', 'That\'s great — yes, we were discussing plans for the agency and I wanted to understand the differences better.', 420);
                 await playLine('Sales AI Assistant', 'Of course. Based on your agency\'s team size of 15, the collaboration needs you mentioned, and the fact that you handle client data, I\'d say the key decision is between Business Standard at $12.50 per user per month and Business Premium at $22 per user per month.', 500);
                 await playLine('You', 'What\'s the main difference between those two?', 420);
                 await playLine('Sales AI Assistant', 'Great question. Business Standard gives you desktop Office apps, Teams, email, and 1TB OneDrive storage — solid for day-to-day agency collaboration. Business Premium adds advanced security — threat protection, device management, and data loss prevention. Since your agency handles client campaigns and sensitive data, Premium is usually worth the step up.', 500);
                 await playLine('You', 'That makes sense for us. What would Premium cost for our whole team?', 420);
-                await playLine('Sales AI Assistant', 'For 15 users on Business Premium, you\'d be looking at $330 per month. That includes everything in Standard plus the full security suite. There may also be volume or promotional pricing available — I can help you get the exact numbers.', 500);
-
-                conversationContext.pricePerUser = 22;
-                conversationContext.monthlyTotal = conversationContext.numEmployees * conversationContext.pricePerUser;
-
-                // --- QUOTING FLOW (Modality Switch) ---
-                if (quoteScenario === 'happy_path') {
-                    await playLine('Sales AI Assistant', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
-                    await playLine('You', 'Definitely, yes.', 420);
-                    await playLine('Sales AI Assistant', 'Great — what email should I send it to?', 420);
-
-                    const demoEmail = 'priya@sparkco-example.com';
-                    await playLine('You', 'It\'s ' + demoEmail, 420);
-                    conversationContext.customerEmail = demoEmail;
-
-                    conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
-                    conversationContext.quoteGenerated = true;
-                    conversationContext.quoteSentToEmail = true;
-
-                    await playLine('Sales AI Assistant', 'Done — I\'ll get that sent to ' + demoEmail + ' right away. You\'ll have it in your inbox shortly. It\'s valid for 30 days.', 500);
-
-                } else if (quoteScenario === 'email_later') {
-                    await playLine('Sales AI Assistant', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
-                    await playLine('You', 'Yes, but I\'d prefer not to share my email right now.', 420);
-                    await playLine('Sales AI Assistant', 'Totally fine. I\'ve prepared the quote — we\'ll send it along when you share your email on the callback form after our call.', 500);
-                    conversationContext.quoteGenerated = false;
-                    conversationContext.quoteReadyForSend = true;
-                    conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
-
-                } else {
-                    await playLine('Sales AI Assistant', 'I can also send you a personalized quote with that pricing breakdown if you\'d like.', 480);
-                    await playLine('You', 'Not right now — let me just talk to someone first.', 420);
-                    await playLine('Sales AI Assistant', 'No problem at all.', 400);
-                }
-                // --- END QUOTING FLOW ---
-
+                await playLine('Sales AI Assistant', 'For 15 users on Business Premium, you\'d be looking at $330 per month. That includes everything in Standard plus the full security suite. There may also be volume or promotional pricing available — a Microsoft specialist can walk you through the exact numbers.', 500);
                 await playLine('You', 'That\'s helpful. I think I\'d like to talk to someone about next steps.', 420);
 
                 if (isBusinessHours) {
                     // Business hours: seamless handoff to David (no button click needed)
-                    await playLine('Sales AI Assistant', 'Absolutely! Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', and they\'ll also have the quote I sent you.' : '') + ' You won\'t need to repeat anything.', 500);
+                    await playLine('Sales AI Assistant', 'Absolutely! Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now. They\'ll have the full context of our conversation so you won\'t need to repeat anything.', 500);
                     await playLine('You', 'Yes, that would be great.', 420);
                     await playLine('Sales AI Assistant', 'Perfect. Let me hand you over now — transferring you to a specialist.', 500);
 
                     // Seamless handoff: keep call screen open, transition from AI to David
                     if (sessionGen !== voiceSessionGeneration) return;
 
-                    // Stop AI session — do NOT call speechSynthesis.cancel() here!
-                    // cancel() permanently corrupts Chrome/Edge's speech engine,
-                    // preventing David's greeting from playing. Let the last AI
-                    // utterance finish naturally; voiceSessionGeneration++ prevents new ones.
+                    // Stop AI speech and timer
+                    try { speechSynthesis.cancel(); } catch(e) {}
                     if (callTimer) { clearInterval(callTimer); callTimer = null; }
                     isSpeaking = false;
                     isVoiceMode = false;
@@ -4270,9 +3908,7 @@
                                     ? `, including the details about ${contextRef},`
                                     : '';
 
-                                const quoteRef = conversationContext.quoteSentToEmail ? ` I can also see we sent you a quote — we can walk through that together if you'd like.` : '';
-                                const nameGreet2 = conversationContext.customerName ? `Hi ${conversationContext.customerName}, this` : 'Hi, this';
-                                const greetingText = `${nameGreet2} is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything.${quoteRef} Let's pick up right where you left off.`;
+                                const greetingText = `Hi, this is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything. Let's pick up right where you left off.`;
                                 addCallTranscriptEntry('David', greetingText);
                                 speakAsDavid(greetingText);
                             }, 800);
@@ -4280,8 +3916,7 @@
                     }, 1500);
                 } else {
                     // Off hours: callback form
-                    const offHoursQuoteNote = conversationContext.quoteSentToEmail ? ' Your quote is in your inbox, so you can review it while you wait.' : (conversationContext.quoteReadyForSend ? ' I\'ve got your quote ready — we\'ll send it over once you fill out the callback form.' : '');
-                    await playLine('Sales AI Assistant', 'Absolutely! I can set up a callback with a Microsoft sales specialist who can finalize pricing, answer any remaining questions, and help you get started.' + offHoursQuoteNote + ' Would you like me to arrange that?', 500);
+                    await playLine('Sales AI Assistant', 'Absolutely! I can set up a callback with a Microsoft sales specialist who can finalize pricing, answer any remaining questions, and help you get started. Would you like me to arrange that?', 500);
                     await playLine('You', 'Yes, please.', 420);
                     await playLine('Sales AI Assistant', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
 
@@ -4299,7 +3934,6 @@
 
             await playLine('Sales AI Assistant', 'Hi there — I am Sales AI Assistant. Happy to help. What can I help you with today?', 500);
             await playLine('You', 'Hi, I run a growing e-commerce company — we sell outdoor gear online. We\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
-            conversationContext.customerName = 'Alex';
             conversationContext.numEmployees = 20;
             conversationContext.businessType = 'e-commerce company selling outdoor gear';
 
@@ -4315,64 +3949,22 @@
             await playLine('You', 'Ideally this quarter — we\'re scaling up and need to get everyone on the same platform.', 450);
             conversationContext.timeline = 'this quarter';
             conversationContext.interestedPlans = ['Business Premium'];
-            conversationContext.pricePerUser = 22;
-            conversationContext.monthlyTotal = conversationContext.numEmployees * conversationContext.pricePerUser;
-
-            await playLine('Sales AI Assistant', 'Great — based on your team size of 20, hybrid setup across warehouse and remote staff, and the device mix, Microsoft 365 Business Premium at $22 per user per month is likely a strong fit. That comes to $440 per month for your team.', 500);
-
-            // --- QUOTING FLOW (controlled by quoteScenario preset) ---
-            if (quoteScenario === 'happy_path') {
-                // Happy Path: customer accepts quote AND shares email
-                await playLine('Sales AI Assistant', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
-                await playLine('You', 'Yeah, that would be really helpful.', 420);
-                await playLine('Sales AI Assistant', 'Perfect. What\'s the best email address to send it to?', 420);
-
-                const demoEmail = (prototypeVariant === 'modality_switch') ? 'priya@sparkco-example.com' : 'alex@summitgear-example.com';
-                await playLine('You', 'It\'s ' + demoEmail, 420);
-                conversationContext.customerEmail = demoEmail;
-
-                // Simulated quote generation (invisible API call)
-                conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
-                conversationContext.quoteGenerated = true;
-                conversationContext.quoteSentToEmail = true;
-
-                await playLine('Sales AI Assistant', 'Got it — I\'ve just sent the quote to ' + demoEmail + '. It\'s in your inbox now with the full pricing breakdown, and it\'s valid for 30 days.', 500);
-
-            } else if (quoteScenario === 'email_later') {
-                // Email Later: customer accepts quote but declines to share email now
-                await playLine('Sales AI Assistant', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
-                await playLine('You', 'Yeah, that sounds great — but I\'d rather not share my email over the call if that\'s okay.', 420);
-                await playLine('Sales AI Assistant', 'Completely understand — no problem at all. I\'ve got the quote ready on my end. When you fill out the callback form after our call, we\'ll use that email to send the quote over. Nothing lost.', 500);
-                conversationContext.quoteGenerated = false;
-                conversationContext.quoteReadyForSend = true;
-                conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
-                await playLine('You', 'That works perfectly.', 420);
-
-            } else {
-                // No Quote: customer declines the offer entirely
-                await playLine('Sales AI Assistant', 'I can put together a personalized quote with that breakdown and send it over to you — would that be helpful?', 500);
-                await playLine('You', 'Not right now, thanks. I just want to talk to someone about next steps.', 420);
-                await playLine('Sales AI Assistant', 'No problem at all. If you change your mind later, we can always generate one.', 420);
-            }
-            // --- END QUOTING FLOW ---
-
             if (isBusinessHours) {
-                await playLine('Sales AI Assistant', 'Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now via chat who can go deeper on licensing and next steps. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', including the quote I just sent you.' : '.'), 500);
+                await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now via chat who can go deeper on licensing and next steps. They\'ll have the full context of our conversation.', 500);
                 await playLine('You', 'That would be great — I\'d love to talk through next steps with someone.', 420);
                 await playLine('Sales AI Assistant', 'Perfect. Once you end this call, I\'ll connect you with a specialist in the chat who\'ll have the full context of everything we discussed. It was great chatting with you!', 500);
 
                 // End voice call and seamlessly hand off to live agent chat
                 if (sessionGen !== voiceSessionGeneration) return;
                 setTimeout(() => {
-                    endAICall(true); // skipCancel=true so David's speech engine stays healthy
+                    endAICall();
                     // After call closes, seamlessly connect to live agent in chat
                     setTimeout(() => {
                         joinLiveQueue();
                     }, 800);
                 }, 2500);
             } else {
-                const quoteRef = conversationContext.quoteSentToEmail ? ' Your quote is in your inbox, so you\'ll have that to review while you wait.' : (conversationContext.quoteReadyForSend ? ' I\'ve got your quote ready — we\'ll send it over once you fill out the callback form.' : '');
-                await playLine('Sales AI Assistant', 'If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.' + quoteRef, 500);
+                await playLine('Sales AI Assistant', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
                 await playLine('You', 'Yes, please set that up.', 420);
                 await playLine('Sales AI Assistant', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
 
@@ -4458,30 +4050,17 @@
                         voices.find(v => v.lang === 'en-US') ||
                         voices[0];
                 } else {
-                    // User's voice — pick gender based on variant
-                    if (prototypeVariant === 'modality_switch') {
-                        // Modality Switch customer is Priya — use female voice
-                        preferredVoice = 
-                            voices.find(v => v.name.includes('Aria') && v.name.includes('Online') && v !== utterance.voice) ||
-                            voices.find(v => v.name.includes('Sara') && v.name.includes('Online')) ||
-                            voices.find(v => v.name.includes('Microsoft Zira')) ||
-                            voices.find(v => v.name.includes('Google US English Female')) ||
-                            voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
-                            voices.find(v => v.lang === 'en-US') ||
-                            voices[0];
-                    } else {
-                        // Voice-First customer is Alex — use male voice
-                        preferredVoice = 
-                            voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
-                            voices.find(v => v.name.includes('Ryan') && v.name.includes('Online')) ||
-                            voices.find(v => v.name.includes('Andrew') && v.name.includes('Online')) ||
-                            voices.find(v => v.name.includes('Guy')) ||
-                            voices.find(v => v.name.includes('Microsoft David')) ||
-                            voices.find(v => v.name.includes('Google US English Male')) ||
-                            voices.find(v => v.lang === 'en-US' && v.name.includes('Male')) ||
-                            voices.find(v => v.lang === 'en-US') ||
-                            voices[0];
-                    }
+                    // User's voice — prefer natural-sounding male Neural voices
+                    preferredVoice = 
+                        voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Ryan') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Andrew') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Guy')) ||
+                        voices.find(v => v.name.includes('Microsoft David')) ||
+                        voices.find(v => v.name.includes('Google US English Male')) ||
+                        voices.find(v => v.lang === 'en-US' && v.name.includes('Male')) ||
+                        voices.find(v => v.lang === 'en-US') ||
+                        voices[0];
                 }
                 
                 if (preferredVoice) {
@@ -4554,109 +4133,43 @@
         }
 
         function speakAsDavid(text) {
-            // Speak David's lines in a distinct male voice
-            // IMPORTANT: Use LOCAL voices only — Edge Neural/Online voices get
-            // exhausted after many utterances and return synthesis-failed.
-            console.log('[David] Preparing to speak:', text.substring(0, 60) + '...');
+            // Speak David's lines in a distinct male voice (different from AI Assistant's female voice)
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.92;
+            utterance.pitch = 0.85;
+            utterance.volume = 1.0;
 
-            function attemptSpeak(useLocalOnly) {
-                // Resume + cancel to fully reset engine state
-                try { speechSynthesis.cancel(); } catch(e) {}
-                try { speechSynthesis.resume(); } catch(e) {}
-
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 1.0;    // Natural pace — lower values sound more robotic on Desktop voices
-                utterance.pitch = 1.05;  // Slightly above default for warmth
-                utterance.volume = 1.0;
-
-                const voices = speechSynthesis.getVoices();
-                console.log('[David] Voices available:', voices.length, '| localOnly:', useLocalOnly);
-                setDavidVoice(utterance, voices, useLocalOnly);
-
-                utterance.onstart = () => {
-                    console.log('[David] ✅ Speech started');
-                    const avatar = document.getElementById('callAvatar');
-                    const indicator = document.getElementById('speakingIndicator');
-                    if (avatar) avatar.style.transform = 'scale(1.05)';
-                    if (indicator) indicator.classList.add('active');
-                };
-                utterance.onend = () => {
-                    console.log('[David] Speech ended');
-                    const avatar = document.getElementById('callAvatar');
-                    const indicator = document.getElementById('speakingIndicator');
-                    if (avatar) avatar.style.transform = 'scale(1)';
-                    if (indicator) indicator.classList.remove('active');
-                };
-                utterance.onerror = (e) => {
-                    console.error('[David] ❌ Speech error:', e.error, '| localOnly:', useLocalOnly);
-                    if (!useLocalOnly) {
-                        // First attempt with Online voice failed → retry with local-only
-                        console.log('[David] Retrying with local-only voice...');
-                        setTimeout(() => attemptSpeak(true), 300);
-                    }
-                };
-
-                // Wait for any prior utterance to finish, then speak
-                function waitAndSpeak() {
-                    if (speechSynthesis.speaking) {
-                        console.log('[David] Waiting for prior speech to finish...');
-                        setTimeout(waitAndSpeak, 200);
-                    } else {
-                        console.log('[David] Engine idle, speaking now');
-                        try {
-                            speechSynthesis.speak(utterance);
-                        } catch(e) {
-                            console.error('[David] speak() threw:', e);
-                        }
-                    }
-                }
-                waitAndSpeak();
-            }
-
-            // Wait for voices to load if needed, then try with local voice first
             const voices = speechSynthesis.getVoices();
-            if (voices.length === 0) {
-                speechSynthesis.onvoiceschanged = () => {
-                    setTimeout(() => attemptSpeak(true), 300);
-                };
-            } else {
-                setTimeout(() => attemptSpeak(true), 300);
-            }
-        }
+            // Prefer Edge Neural voices for David → fallback to classic
+            const davidVoice =
+                voices.find(v => v.name.includes('Christopher') && v.name.includes('Online')) ||
+                voices.find(v => v.name.includes('Eric') && v.name.includes('Online')) ||
+                voices.find(v => v.name.includes('Roger') && v.name.includes('Online')) ||
+                voices.find(v => v.name.includes('Christopher')) ||
+                voices.find(v => v.name.includes('Microsoft Mark')) ||
+                voices.find(v => v.name.includes('Microsoft Guy')) ||
+                voices.find(v => v.name.includes('Google UK English Male')) ||
+                voices.find(v => v.lang === 'en-US' && v.name.includes('Male') && !v.name.includes('David')) ||
+                voices.find(v => v.name.includes('Microsoft David')) ||
+                voices.find(v => v.lang === 'en-US') ||
+                voices[0];
 
-        function setDavidVoice(utterance, voices, localOnly) {
-            let davidVoice;
-            if (localOnly) {
-                // Use LOCAL/OFFLINE voices only — immune to Neural TTS exhaustion
-                davidVoice =
-                    voices.find(v => v.name.includes('Microsoft David') && v.localService) ||
-                    voices.find(v => v.name.includes('Microsoft Mark') && v.localService) ||
-                    voices.find(v => v.name === 'Microsoft David - English (United States)') ||
-                    voices.find(v => v.name === 'Microsoft Mark - English (United States)') ||
-                    voices.find(v => v.name.includes('Microsoft David')) ||
-                    voices.find(v => v.name.includes('Microsoft Mark')) ||
-                    voices.find(v => v.lang === 'en-US' && v.localService && v.name.toLowerCase().includes('male')) ||
-                    voices.find(v => v.lang === 'en-US' && v.localService) ||
-                    voices.find(v => v.localService && v.lang.startsWith('en'));
-            } else {
-                // Try Neural/Online voices first, then local fallbacks
-                davidVoice =
-                    voices.find(v => v.name.includes('Christopher') && v.name.includes('Online')) ||
-                    voices.find(v => v.name.includes('Eric') && v.name.includes('Online')) ||
-                    voices.find(v => v.name.includes('Roger') && v.name.includes('Online')) ||
-                    voices.find(v => v.name.includes('Christopher')) ||
-                    voices.find(v => v.name.includes('Microsoft Mark')) ||
-                    voices.find(v => v.name.includes('Microsoft Guy')) ||
-                    voices.find(v => v.name.includes('Microsoft David')) ||
-                    voices.find(v => v.lang === 'en-US') ||
-                    voices[0];
-            }
-            if (davidVoice) {
-                utterance.voice = davidVoice;
-                console.log('[Voice] David →', davidVoice.name, '(local:', davidVoice.localService, ')');
-            } else {
-                console.warn('[Voice] No suitable voice found for David');
-            }
+            if (davidVoice) utterance.voice = davidVoice;
+
+            utterance.onstart = () => {
+                const avatar = document.getElementById('callAvatar');
+                const indicator = document.getElementById('speakingIndicator');
+                if (avatar) avatar.style.transform = 'scale(1.05)';
+                if (indicator) indicator.classList.add('active');
+            };
+            utterance.onend = utterance.onerror = () => {
+                const avatar = document.getElementById('callAvatar');
+                const indicator = document.getElementById('speakingIndicator');
+                if (avatar) avatar.style.transform = 'scale(1)';
+                if (indicator) indicator.classList.remove('active');
+            };
+
+            try { speechSynthesis.speak(utterance); } catch (e) { console.error('David TTS error:', e); }
         }
 
         function toggleSpeaker() {
@@ -4699,7 +4212,7 @@
             }
         }
 
-        function endAICall(skipCancel) {
+        function endAICall() {
             // Cancel any remaining auto-play chat timeouts
             chatAutoPlayTimeouts.forEach(id => clearTimeout(id));
             chatAutoPlayTimeouts = [];
@@ -4716,19 +4229,15 @@
                 callTimer = null;
             }
             
-            // Stop any ongoing speech — but SKIP cancel when handing off to David,
-            // because cancel() permanently corrupts Chrome/Edge's speech engine.
-            if (!skipCancel) {
-                try {
-                    if (speechSynthesis.speaking) {
-                        speechSynthesis.cancel();
-                    }
+            // Stop any ongoing speech immediately and forcefully
+            try {
+                if (speechSynthesis.speaking) {
                     speechSynthesis.cancel();
-                } catch (e) {
-                    console.error('Error stopping speech:', e);
                 }
-            } else {
-                console.log('[endAICall] Skipping speechSynthesis.cancel() — David will speak next');
+                // Call cancel again to ensure it stops
+                speechSynthesis.cancel();
+            } catch (e) {
+                console.error('Error stopping speech:', e);
             }
             
             // Hide call controls and info immediately
@@ -4795,11 +4304,9 @@
                         <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
                             We hope this conversation was helpful. Here's a quick summary of your session:<br/><br/>
                             ✅ Spoke with <strong>Sales AI Assistant</strong> about Microsoft 365 plans<br/>
-                            ✅ Connected with <strong>David</strong>, Microsoft 365 Sales Specialist, via phone<br/>
-                            ${conversationContext.quoteSentToEmail ? '✅ Personalized quote sent to <strong>' + conversationContext.customerEmail + '</strong><br/>' : ''}<br/>
+                            ✅ Connected with <strong>David</strong>, Microsoft 365 Sales Specialist, via phone<br/><br/>
                             If you have any follow-up questions, feel free to start a new conversation anytime. We're available during business hours M-F, 6 AM to 6 PM PT.
                         </div>
-                        ${conversationContext.quoteSentToEmail || conversationContext.quoteReadyForSend ? generateQuoteCardHTML() : ''}
                         <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
                             Thanks for considering Microsoft 365 for your business.
                         </div>
@@ -4971,11 +4478,10 @@
                 <div class="message-bubble">
                     <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Sales AI Assistant.</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
-                        I hope this conversation was helpful.${conversationContext.quoteSentToEmail ? '<br/><br/><span style="color: #16a34a; font-weight: 500;">📧 Your personalized quote has been sent to ' + conversationContext.customerEmail + '.</span>' : ''}<br/><br/>
-                        Your callback request is still scheduled so you can continue the discussion with a Microsoft specialist if you'd like.${conversationContext.quoteSentToEmail ? ' They\'ll have your quote for reference too.' : ''}<br/><br/>
+                        I hope this conversation was helpful.<br/><br/>
+                        Your callback request is still scheduled so you can continue the discussion with a Microsoft specialist if you'd like.<br/><br/>
                         <span style="font-weight: 500; color: #262626;">You're in control — please choose what works best for you.</span>
                     </div>
-                    ${conversationContext.quoteSentToEmail || conversationContext.quoteReadyForSend ? generateQuoteCardHTML() : ''}
                     ${optionsHTML}
                     <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
                         ${brandCloseText}
@@ -5043,11 +4549,10 @@
                 <div class="message-bubble">
                     <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Sales AI Assistant.</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
-                        I hope this conversation was helpful.${conversationContext.quoteSentToEmail ? '<br/><br/><span style="color: #16a34a; font-weight: 500;">📧 Your personalized quote has been sent to ' + conversationContext.customerEmail + '.</span>' : (conversationContext.quoteReadyForSend ? '<br/><br/><span style="color: #d97706; font-weight: 500;">📋 Your quote is ready — we\'ll send it when you share your email.</span>' : '')}<br/><br/>
+                        I hope this conversation was helpful.<br/><br/>
                         If you'd still like to connect with a Microsoft specialist, you can request a callback below.<br/><br/>
                         <span style="font-weight: 500; color: #262626;">You're in control — please choose what works best for you.</span>
                     </div>
-                    ${conversationContext.quoteSentToEmail || conversationContext.quoteReadyForSend ? generateQuoteCardHTML() : ''}
                     ${optionsHTML}
                     <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
                         ${brandCloseText}
@@ -5072,11 +4577,7 @@
             addMessage("I'm all set for now", 'user');
             voiceSessionContext.fromOffHoursAiFirst = false;
             setTimeout(() => {
-                const quoteNote = conversationContext.quoteSentToEmail ? ' Your quote is in your inbox at ' + conversationContext.customerEmail + ' whenever you\'re ready — it\'s valid for 30 days.' : '';
-                addMessage('Thanks for letting me know. If anything comes up, I\'m here to help.' + quoteNote, 'bot', false);
-                if (conversationContext.quoteSentToEmail || conversationContext.quoteReadyForSend) {
-                    setTimeout(() => { addQuoteCardToChat(); }, 600);
-                }
+                addMessage('Thanks for letting me know. If anything comes up, I\'m here to help.', 'bot', false);
             }, 500);
         }
 
@@ -5129,10 +4630,9 @@
                     <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Sales AI Assistant.</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
                         I hope this conversation was helpful.<br/><br/>
-                        Since we're within business hours, a live Microsoft sales specialist is available right now to help with next steps, purchasing, or any specific questions.${conversationContext.quoteSentToEmail ? '<br/><br/><span style="color: #16a34a; font-weight: 500;">📧 Your personalized quote has been sent to ' + conversationContext.customerEmail + '.</span>' : (conversationContext.quoteReadyForSend ? '<br/><br/><span style="color: #d97706; font-weight: 500;">📋 Your quote is ready and will be sent when you share your email.</span>' : '')}<br/><br/>
+                        Since we're within business hours, a live Microsoft sales specialist is available right now to help with next steps, purchasing, or any specific questions.<br/><br/>
                         <span style="font-weight: 500; color: #262626;">Would you like to connect?</span>
                     </div>
-                    ${conversationContext.quoteSentToEmail || conversationContext.quoteReadyForSend ? generateQuoteCardHTML() : ''}
                     ${optionsHTML}
                     <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
                         ${brandCloseText}
@@ -5383,20 +4883,12 @@
             callbackFlowContext = null;
             voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false, fromModalitySwitch: false };
             conversationContext = {
-                customerName: null,
                 numEmployees: null,
                 businessType: null,
                 workLocation: null,
                 securityNeeds: null,
                 timeline: null,
-                interestedPlans: [],
-                customerEmail: null,
-                quoteGenerated: false,
-                quoteId: null,
-                quoteSentToEmail: false,
-                monthlyTotal: null,
-                pricePerUser: null,
-                quoteReadyForSend: false
+                interestedPlans: []
             };
 
             try {
@@ -5885,17 +5377,12 @@
                 if (conversationContext.timeline) {
                     contextDetails += ` I also see you're looking to move on this ${conversationContext.timeline}.`;
                 }
-                if (conversationContext.quoteSentToEmail && conversationContext.customerEmail) {
-                    contextDetails += ` I can also see we sent you a quote to ${conversationContext.customerEmail} — you should have that in your inbox already. If you have any questions about the pricing or you're ready to move forward with the purchase, I can help with that right now.`;
-                }
 
-                const nameGreeting = conversationContext.customerName ? `Hi ${conversationContext.customerName}!` : 'Hi there!';
                 const introMsg = contextDetails
-                    ? `${nameGreeting} I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation.${contextDetails}`
-                    : `${nameGreeting} I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation and I'm here to pick up right where you left off — what questions can I answer for you?`;
+                    ? `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation.${contextDetails} I'm here to pick up right where you left off — what questions can I answer for you?`
+                    : `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation and I'm here to pick up right where you left off — what questions can I answer for you?`;
 
                 addMessage(introMsg, 'human-agent', true);
-                speakAsDavid(introMsg);
             }, 1000);
         }
 
