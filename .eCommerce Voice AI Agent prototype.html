@@ -3028,20 +3028,21 @@
                 }
                 contextGreeting += 'How can I help you today?';
                 await playLine('AI Assistant', contextGreeting, 500);
-                await playLine('You', 'Thanks! Yes, we\'re a growing e-commerce company — we sell outdoor gear online. I wanted to learn more about Microsoft 365 while I wait.', 420);
+                await playLine('You', 'Thanks! Yes, we\'re looking to explore Microsoft 365 options for ' + (bizName || 'our team') + '. I wanted to learn more while I wait.', 420);
             } else {
                 await playLine('AI Assistant', 'Hi there — I am Sales AI Assistant. Happy to help. What can I help you with today?', 500);
-                await playLine('You', 'Hi, I run a growing e-commerce company — we sell outdoor gear online. We\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
+                await playLine('You', 'Hi, we\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
                 conversationContext.numEmployees = 20;
             }
-            conversationContext.businessType = 'e-commerce company selling outdoor gear';
+            if (!conversationContext.businessType) conversationContext.businessType = bizName || null;
 
             const teamSize = conversationContext.numEmployees || 20;
-            await playLine('AI Assistant', 'Great, an e-commerce business with ' + teamSize + ' employees — that\'s a perfect fit for our Business plans. Are your teams mostly in-office, fully remote, or hybrid?', 420);
-            await playLine('You', 'We\'re mostly hybrid. Our warehouse crew is on-site, but marketing and customer support work remotely.', 420);
+            const bizLabel = bizName || 'your business';
+            await playLine('AI Assistant', 'Great, ' + bizLabel + ' with ' + teamSize + ' employees — that\'s a perfect fit for our Business plans. Are your teams mostly in-office, fully remote, or hybrid?', 420);
+            await playLine('You', 'We\'re mostly hybrid, with a few fully remote staff.', 420);
             conversationContext.workLocation = 'hybrid';
 
-            await playLine('AI Assistant', 'That makes sense for e-commerce. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
+            await playLine('AI Assistant', 'That makes sense. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
             await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
             conversationContext.securityNeeds = 'moderate';
 
@@ -3059,7 +3060,7 @@
             await playLine('You', 'That\'s great — I\'ll keep the callback for now. Thanks again!', 420);
 
             const nameRef = custName ? (', ' + custName) : '';
-            const bizRef = conversationContext.businessType ? (' helping your ' + conversationContext.businessType + ' business') : '';
+            const bizRef = conversationContext.businessType ? (' helping ' + conversationContext.businessType) : '';
             await playLine('AI Assistant', 'Sounds good' + nameRef + '! It was a pleasure chatting with you. Have a wonderful day, and we look forward to' + bizRef + ' thrive with Microsoft 365.', 500);
         }
 
