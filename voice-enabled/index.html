@@ -3944,6 +3944,14 @@
             // Log form data (in production, this would be sent to backend)
             console.log('Callback request:', { name, business, email, phone, users });
             
+            // Store callback info in conversation context for AI greeting
+            conversationContext.customerName = name.split(' ')[0];
+            conversationContext.customerFullName = name;
+            conversationContext.businessName = business;
+            conversationContext.customerEmail = conversationContext.customerEmail || email;
+            conversationContext.customerPhone = phone;
+            if (users && !conversationContext.numEmployees) conversationContext.numEmployees = parseInt(users) || null;
+            
             // If quote was ready but email wasn't captured during voice, send it now
             if (conversationContext.quoteReadyForSend && !conversationContext.quoteSentToEmail && email) {
                 conversationContext.customerEmail = email;
@@ -4297,6 +4305,39 @@
                 return;
             }
 
+            // Callback-aware: personalized greeting using callback form data
+            const custName = conversationContext.customerName;
+            const bizName = conversationContext.businessName;
+            const numEmp = conversationContext.numEmployees;
+
+            if ((voiceSessionContext.fromCallback || callbackRequested) && custName) {
+                const greeting = bizName
+                    ? `Hi ${custName}, thanks for your interest and for sharing your details about ${bizName}. I'm the Sales AI Assistant — while we get a specialist lined up for your callback, I'd love to help you get a head start.`
+                    : `Hi ${custName}, thanks for requesting a callback. I'm the Sales AI Assistant — happy to help you get started while you wait.`;
+                await playLine('Sales AI Assistant', greeting, 500);
+
+                const teamSize = numEmp || 20;
+                await playLine('You', `Yes, we're looking for Microsoft 365 licensing information for around ${teamSize} employees.`, 420);
+                if (!conversationContext.numEmployees) conversationContext.numEmployees = teamSize;
+                if (!conversationContext.businessType && bizName) conversationContext.businessType = bizName;
+
+                await playLine('Sales AI Assistant', 'Great — are your teams mostly in-office, fully remote, or hybrid?', 420);
+                await playLine('You', 'We\'re mostly hybrid, with a few fully remote staff.', 420);
+                conversationContext.workLocation = conversationContext.workLocation || 'hybrid';
+
+                await playLine('Sales AI Assistant', 'Makes sense. Are devices mostly company-managed, or do people also use personal devices?', 450);
+                await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
+                conversationContext.securityNeeds = conversationContext.securityNeeds || 'moderate';
+
+                await playLine('Sales AI Assistant', 'Perfect. What decision timeline are you working toward?', 420);
+                await playLine('You', 'Ideally this quarter.', 450);
+                conversationContext.timeline = conversationContext.timeline || 'this quarter';
+                conversationContext.interestedPlans = conversationContext.interestedPlans || ['Business Premium'];
+
+                await playLine('Sales AI Assistant', `Great — based on ${bizName ? bizName + "'s" : 'your'} team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. Your callback is confirmed, and your specialist will have all these details ready to pick up right where we left off.`, 500);
+                return;
+            }
+
             await playLine('Sales AI Assistant', 'Hi there — I am Sales AI Assistant. Happy to help. What can I help you with today?', 500);
             await playLine('You', 'Hi, I run a growing e-commerce company — we sell outdoor gear online. We\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
             conversationContext.customerName = 'Alex';
@@ -4444,6 +4485,10 @@
                 const voices = speechSynthesis.getVoices();
                 
                 let preferredVoice;
+                const isFemaleCustomer = prototypeVariant === 'modality_switch' ||
+                    ['Priya','Sarah','Maria','Lisa','Emma','Sophia','Aisha','Mei']
+                        .some(n => (conversationContext.customerName || '').toLowerCase() === n.toLowerCase());
+
                 if (speaker === 'Sales AI Assistant') {
                     // Prefer Edge Neural voices (much more natural) → fallback to classic
                     preferredVoice = 
@@ -4458,9 +4503,9 @@
                         voices.find(v => v.lang === 'en-US') ||
                         voices[0];
                 } else {
-                    // User's voice — pick gender based on variant
-                    if (prototypeVariant === 'modality_switch') {
-                        // Modality Switch customer is Priya — use female voice
+                    // User's voice — pick gender based on customer name / variant
+                    if (isFemaleCustomer) {
+                        // Female customer voice
                         preferredVoice = 
                             voices.find(v => v.name.includes('Aria') && v.name.includes('Online') && v !== utterance.voice) ||
                             voices.find(v => v.name.includes('Sara') && v.name.includes('Online')) ||
@@ -4470,7 +4515,7 @@
                             voices.find(v => v.lang === 'en-US') ||
                             voices[0];
                     } else {
-                        // Voice-First customer is Alex — use male voice
+                        // Male customer voice
                         preferredVoice = 
                             voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Ryan') && v.name.includes('Online')) ||

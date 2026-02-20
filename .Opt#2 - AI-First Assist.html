@@ -2935,6 +2935,14 @@
             // Log form data (in production, this would be sent to backend)
             console.log('Callback request:', { name, business, email, phone, users });
             
+            // Store callback info in conversation context for AI greeting
+            conversationContext.customerName = name.split(' ')[0];
+            conversationContext.customerFullName = name;
+            conversationContext.businessName = business;
+            conversationContext.customerEmail = email;
+            conversationContext.customerPhone = phone;
+            conversationContext.numEmployees = parseInt(users) || null;
+            
             // Set callback state BEFORE closing form
             callbackRequested = true;
             
@@ -3048,23 +3056,50 @@
         }
 
         async function startAIVoiceConversation() {
+            const sessionGen = voiceSessionGeneration;
             const playLine = async (speaker, text, pauseAfterMs = 450) => {
+                if (sessionGen !== voiceSessionGeneration) return;
                 addCallTranscriptEntry(speaker, text);
                 await waitForTranscriptSpeechCompletion(text);
+                if (sessionGen !== voiceSessionGeneration) return;
                 await new Promise((resolve) => setTimeout(resolve, pauseAfterMs));
             };
 
-            await playLine('AI Assistant', 'Hi there — I am Sales AI Assistant. Happy to help. What can I help you with today?', 500);
-            await playLine('You', 'We\'re looking for Microsoft 365 licensing information for around 20 employees.', 420);
-            conversationContext.numEmployees = 20;
+            const custName = conversationContext.customerName;
+            const bizName = conversationContext.businessName;
+            const numEmp = conversationContext.numEmployees;
 
-            await playLine('AI Assistant', 'Got it, thanks. Are your teams mostly in-office, fully remote, or hybrid?', 420);
-            await playLine('You', 'We\'re mostly hybrid, with a few fully remote staff.', 420);
-            await playLine('AI Assistant', 'That makes sense. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
-            await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
-            await playLine('AI Assistant', 'Perfect, that helps. What decision timeline are you working toward?', 420);
-            await playLine('You', 'Ideally this quarter.', 450);
-            await playLine('AI Assistant', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
+            if ((voiceSessionContext.fromCallback || callbackRequested) && custName) {
+                // Personalized greeting using callback form data
+                const greeting = bizName
+                    ? `Hi ${custName}, thanks for your interest and for sharing your details about ${bizName}. I'm the Sales AI Assistant — while we get a specialist lined up for your callback, I'd love to help you get a head start.`
+                    : `Hi ${custName}, thanks for requesting a callback. I'm the Sales AI Assistant — happy to help you get started while you wait.`;
+                await playLine('AI Assistant', greeting, 500);
+
+                const teamSize = numEmp || 20;
+                await playLine('You', `Yes, we're looking for Microsoft 365 licensing information for around ${teamSize} employees.`, 420);
+                if (!conversationContext.numEmployees) conversationContext.numEmployees = teamSize;
+
+                await playLine('AI Assistant', 'Great — are your teams mostly in-office, fully remote, or hybrid?', 420);
+                await playLine('You', 'We\'re mostly hybrid, with a few fully remote staff.', 420);
+                await playLine('AI Assistant', 'Makes sense. Are devices mostly company-managed, or do people also use personal devices?', 450);
+                await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
+                await playLine('AI Assistant', 'Perfect. What decision timeline are you working toward?', 420);
+                await playLine('You', 'Ideally this quarter.', 450);
+                await playLine('AI Assistant', `Great — based on ${bizName ? bizName + "'s" : 'your'} team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. Your callback is confirmed, and your specialist will have all these details ready to pick up right where we left off.`, 500);
+            } else {
+                await playLine('AI Assistant', 'Hi there — I am Sales AI Assistant. Happy to help. What can I help you with today?', 500);
+                await playLine('You', 'We\'re looking for Microsoft 365 licensing information for around 20 employees.', 420);
+                conversationContext.numEmployees = 20;
+
+                await playLine('AI Assistant', 'Got it, thanks. Are your teams mostly in-office, fully remote, or hybrid?', 420);
+                await playLine('You', 'We\'re mostly hybrid, with a few fully remote staff.', 420);
+                await playLine('AI Assistant', 'That makes sense. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
+                await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
+                await playLine('AI Assistant', 'Perfect, that helps. What decision timeline are you working toward?', 420);
+                await playLine('You', 'Ideally this quarter.', 450);
+                await playLine('AI Assistant', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
+            }
         }
 
         function addCallTranscriptEntry(speaker, text) {
@@ -3123,6 +3158,9 @@
                 const voices = speechSynthesis.getVoices();
                 
                 let preferredVoice;
+                const isFemaleCustomer = ['Priya','Sarah','Maria','Lisa','Emma','Sophia','Aisha','Mei']
+                    .some(n => (conversationContext.customerName || '').toLowerCase() === n.toLowerCase());
+
                 if (speaker === 'AI Assistant') {
                     // Use female/higher voice for AI
                     preferredVoice = 
@@ -3133,13 +3171,22 @@
                         voices.find(voice => voice.lang === 'en-US') ||
                         voices[0];
                 } else {
-                    // Use male/lower voice for User
-                    preferredVoice = 
-                        voices.find(voice => voice.name.includes('Microsoft David')) ||
-                        voices.find(voice => voice.name.includes('Google US English Male')) ||
-                        voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Male')) ||
-                        voices.find(voice => voice.lang === 'en-US') ||
-                        voices[0];
+                    // Use voice matching customer gender for User
+                    if (isFemaleCustomer) {
+                        preferredVoice = 
+                            voices.find(voice => voice.name.includes('Microsoft Zira')) ||
+                            voices.find(voice => voice.name.includes('Google US English Female')) ||
+                            voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Female')) ||
+                            voices.find(voice => voice.lang === 'en-US') ||
+                            voices[0];
+                    } else {
+                        preferredVoice = 
+                            voices.find(voice => voice.name.includes('Microsoft David')) ||
+                            voices.find(voice => voice.name.includes('Google US English Male')) ||
+                            voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Male')) ||
+                            voices.find(voice => voice.lang === 'en-US') ||
+                            voices[0];
+                    }
                 }
                 
                 if (preferredVoice) {
