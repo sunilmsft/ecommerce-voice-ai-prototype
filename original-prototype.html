@@ -3056,12 +3056,12 @@
                 
                 // Configure voice settings based on speaker
                 if (speaker === 'AI Assistant') {
-                    utterance.rate = 0.95;  // Slightly slower for clarity
-                    utterance.pitch = 1.1;  // Slightly higher pitch
+                    utterance.rate = 1.0;   // Natural pace
+                    utterance.pitch = 1.0;  // Natural pitch (Neural voices handle this well)
                 } else {
-                    // User's voice - slightly different settings
+                    // User's voice
                     utterance.rate = 1.0;   // Normal speed
-                    utterance.pitch = 0.9;  // Lower pitch for contrast
+                    utterance.pitch = 1.0;  // Natural pitch
                 }
                 utterance.volume = 1.0;
                 
@@ -3070,26 +3070,35 @@
                 
                 let preferredVoice;
                 if (speaker === 'AI Assistant') {
-                    // Use female/higher voice for AI
+                    // Prefer Edge Neural voices (much more natural) → fallback to classic
                     preferredVoice = 
-                        voices.find(voice => voice.name.includes('Microsoft Zira')) ||
-                        voices.find(voice => voice.name.includes('Google US English Female')) ||
-                        voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Female')) ||
-                        voices.find(voice => voice.lang === 'en-US' && voice.localService) ||
-                        voices.find(voice => voice.lang === 'en-US') ||
+                        voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Aria') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Jenny')) ||
+                        voices.find(v => v.name.includes('Aria')) ||
+                        voices.find(v => v.name.includes('Microsoft Zira')) ||
+                        voices.find(v => v.name.includes('Google US English Female')) ||
+                        voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
+                        voices.find(v => v.lang === 'en-US' && v.localService) ||
+                        voices.find(v => v.lang === 'en-US') ||
                         voices[0];
                 } else {
-                    // Use male/lower voice for User
+                    // User's voice — use distinct male Neural voice
                     preferredVoice = 
-                        voices.find(voice => voice.name.includes('Microsoft David')) ||
-                        voices.find(voice => voice.name.includes('Google US English Male')) ||
-                        voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Male')) ||
-                        voices.find(voice => voice.lang === 'en-US') ||
+                        voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Ryan') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Andrew') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Aria') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Microsoft David')) ||
+                        voices.find(v => v.name.includes('Google US English Male')) ||
+                        voices.find(v => v.lang === 'en-US' && v.name.includes('Male')) ||
+                        voices.find(v => v.lang === 'en-US') ||
                         voices[0];
                 }
                 
                 if (preferredVoice) {
                     utterance.voice = preferredVoice;
+                    console.log(`[Voice] ${speaker} → ${preferredVoice.name}`);
                 }
                 
                 // Show speaking indicator
@@ -3110,12 +3119,38 @@
                 };
                 
                 utterance.onerror = function(event) {
-                    console.error('Speech synthesis error:', event);
+                    console.error(`Speech synthesis error for ${speaker}:`, event.error, '| Voice:', preferredVoice?.name);
                     isSpeaking = false;
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.remove('active');
                     if (avatar) avatar.style.transform = 'scale(1)';
+                    
+                    // If an Online/Neural voice failed, retry with a local fallback
+                    if (preferredVoice && !preferredVoice.localService) {
+                        console.log(`[Voice] Retrying ${speaker} with local fallback voice...`);
+                        const retryUtterance = new SpeechSynthesisUtterance(text);
+                        retryUtterance.rate = 1.0;
+                        retryUtterance.pitch = 1.0;
+                        retryUtterance.volume = 1.0;
+                        const localVoices = speechSynthesis.getVoices();
+                        let fallback;
+                        if (speaker === 'AI Assistant') {
+                            fallback = localVoices.find(v => v.name.includes('Microsoft Zira') && v.localService) ||
+                                       localVoices.find(v => v.lang === 'en-US' && v.localService);
+                        } else {
+                            fallback = localVoices.find(v => v.name.includes('Microsoft David') && v.localService) ||
+                                       localVoices.find(v => v.lang === 'en-US' && v.localService && v.name.includes('Male'));
+                        }
+                        if (fallback) {
+                            retryUtterance.voice = fallback;
+                            console.log(`[Voice] Fallback → ${fallback.name}`);
+                        }
+                        retryUtterance.onstart = utterance.onstart;
+                        retryUtterance.onend = utterance.onend;
+                        retryUtterance.onerror = () => { isSpeaking = false; };
+                        try { speechSynthesis.speak(retryUtterance); } catch(e) {}
+                    }
                 };
                 
                 // Speak the text
