@@ -1025,7 +1025,7 @@
             height: 120%;
             object-fit: cover;
             border-radius: 50%;
-            filter: none;
+            filter: invert(38%) sepia(85%) saturate(500%) hue-rotate(165deg) brightness(95%);
         }
 
         .voice-icon-btn:hover {
@@ -1643,7 +1643,7 @@
             height: 84px;
             object-fit: contain;
             border-radius: 50%;
-            filter: none;
+            filter: invert(38%) sepia(85%) saturate(500%) hue-rotate(165deg) brightness(95%);
         }
 
         .call-info {
@@ -2767,7 +2767,7 @@
         </div>
         <div class="call-screen-content">
             <div class="pulse-ring" id="pulseRing" style="display: none;"></div>
-            <div class="call-avatar" id="callAvatar"><img src="Voice ai.jpg" alt="Sales AI Assistant" /></div>
+            <div class="call-avatar" id="callAvatar"><img src="voice.png" alt="Sales AI Assistant" /></div>
             <div class="call-info">
                 <div class="call-agent-name" id="callAgentName">Connecting...</div>
                 <div class="call-status connecting" id="callStatus">Connecting you to Sales AI Assistant...</div>
@@ -6160,7 +6160,7 @@
             
             // Reset call screen
             setTimeout(() => {
-                document.getElementById('callAvatar').innerHTML = '<img src="Voice ai.jpg" alt="Sales AI Assistant" />';
+                document.getElementById('callAvatar').innerHTML = '<img src="voice.png" alt="Sales AI Assistant" />';
                 document.getElementById('callAgentName').textContent = 'Connecting...';
                 document.getElementById('callStatus').textContent = 'Finding available agent';
                 document.getElementById('callStatus').classList.add('connecting');
