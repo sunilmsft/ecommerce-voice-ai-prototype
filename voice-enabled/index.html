@@ -2894,7 +2894,7 @@
                 chainBizHours: [
                     { label: 'Ask Microsoft', cls: 'ask-ms' },
                     { label: 'Sales AI Assistant (Voice)', cls: 'ai-voice' },
-                    { label: 'Live Specialist (Chat)', cls: 'live-chat' }
+                    { label: 'Live Specialist (Voice)', cls: 'live-voice' }
                 ],
                 chainAfterHours: [
                     { label: 'Ask Microsoft', cls: 'ask-ms' },
@@ -2905,8 +2905,8 @@
                     { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click the voice icon' },
                     { party: 'Sales AI Assistant (Voice)', pcls: 'ai-voice', text: '— discusses your needs via voice' },
                     { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— offers transfer to specialist' },
-                    { party: 'Live Specialist (Chat)', pcls: 'live-chat', text: '— David joins in chat with full context' },
-                    { party: 'Live Specialist (Chat)', pcls: 'live-chat', text: '— recap, next steps & follow-up' }
+                    { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— David calls you with full context' },
+                    { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— recap, next steps & follow-up' }
                 ],
                 flowAfterHours: [
                     { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click the voice icon' },
@@ -3483,14 +3483,11 @@
         }
 
         function showBusinessHoursOptions() {
-            // Variant-specific: Voice-First Entry -> live chat, Modality Switch -> live phone
-            const isPhoneHandoff = (prototypeVariant === 'modality_switch');
-            const liveAgentAction = isPhoneHandoff ? 'joinLivePhoneQueue()' : 'joinLiveQueue()';
-            const liveAgentIcon = isPhoneHandoff ? '📞' : '🎧';
-            const liveAgentTitle = isPhoneHandoff ? 'Call a Live Agent' : 'Connect with a Live Agent';
-            const liveAgentDesc = isPhoneHandoff
-                ? 'Join the live phone queue and speak directly with a Microsoft sales specialist. Estimated wait: ~2 minutes.'
-                : 'Join the live queue and chat with a Microsoft sales specialist. Estimated wait: ~2 minutes.';
+            // Both Voice-First and Modality Switch -> live phone (voice queue)
+            const liveAgentAction = 'joinLivePhoneQueue()';
+            const liveAgentIcon = '📞';
+            const liveAgentTitle = 'Call a Live Agent';
+            const liveAgentDesc = 'Join the live phone queue and speak directly with a Microsoft sales specialist. Estimated wait: ~2 minutes.';
 
             const optionsHTML = `
                 <div style="margin: 0 0 12px 0; font-size: 14px; color: #555555; line-height: 1.6;">
@@ -4398,19 +4395,81 @@
             // --- END QUOTING FLOW ---
 
             if (isBusinessHours) {
-                await playLine('Sales AI Assistant', 'Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now via chat who can go deeper on licensing and next steps. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', including the quote I just sent you.' : '.'), 500);
+                await playLine('Sales AI Assistant', 'Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', including the quote I just sent you.' : '') + ' — you won\'t need to repeat anything.', 500);
                 await playLine('You', 'That would be great — I\'d love to talk through next steps with someone.', 420);
-                await playLine('Sales AI Assistant', 'Perfect. Once you end this call, I\'ll connect you with a specialist in the chat who\'ll have the full context of everything we discussed. It was great chatting with you!', 500);
+                await playLine('Sales AI Assistant', 'Perfect. Let me hand you over now — transferring you to a specialist.', 500);
 
-                // End voice call and seamlessly hand off to live agent chat
+                // Seamless voice handoff: keep call screen open, transition from AI to David
                 if (sessionGen !== voiceSessionGeneration) return;
+
+                // Stop AI session — do NOT call speechSynthesis.cancel() here!
+                // cancel() permanently corrupts Chrome/Edge's speech engine,
+                // preventing David's greeting from playing. Let the last AI
+                // utterance finish naturally; voiceSessionGeneration++ prevents new ones.
+                if (callTimer) { clearInterval(callTimer); callTimer = null; }
+                isSpeaking = false;
+                isVoiceMode = false;
+                audioEnabled = false;
+                voiceSessionGeneration++;
+
+                // Phase 1: Show "Transferring call..." on the same call screen
                 setTimeout(() => {
-                    endAICall(true); // skipCancel=true so David's speech engine stays healthy
-                    // After call closes, seamlessly connect to live agent in chat
+                    document.getElementById('callAgentName').textContent = 'Transferring call...';
+                    document.getElementById('callStatus').textContent = 'Connecting you to a Microsoft sales specialist';
+                    document.getElementById('callStatus').classList.add('connecting');
+                    document.getElementById('callTimer').style.display = 'none';
+                    document.getElementById('pulseRing').style.display = 'block';
+                    document.getElementById('callTranscriptArea').innerHTML = '';
+                    const avatar = document.getElementById('callAvatar');
+                    if (avatar) {
+                        avatar.innerHTML = '&#128260;';
+                        avatar.style.display = '';
+                    }
+
+                    // Phase 2: David connects after 3 seconds
                     setTimeout(() => {
-                        joinLiveQueue();
-                    }, 800);
-                }, 2500);
+                        isLiveAgentPhoneCall = true;
+                        audioEnabled = true;
+                        document.getElementById('callAvatar').textContent = '\uD83D\uDC64';
+                        document.getElementById('callAgentName').textContent = 'David — Microsoft 365 Sales Specialist';
+                        document.getElementById('callStatus').textContent = 'Connected';
+                        document.getElementById('callStatus').classList.remove('connecting');
+                        document.getElementById('callTimer').style.display = 'block';
+                        document.getElementById('pulseRing').style.display = 'none';
+                        document.getElementById('callTranscriptArea').classList.add('active');
+                        startCallTimer();
+
+                        addSystemMessage('\uD83D\uDCDE Call transferred to David, Microsoft 365 sales specialist');
+
+                        // David's greeting with full context from the AI conversation
+                        setTimeout(() => {
+                            let contextRef = '';
+                            if (conversationContext.businessType) {
+                                contextRef += `your ${conversationContext.businessType}`;
+                                if (conversationContext.numEmployees) {
+                                    contextRef += ` with ${conversationContext.numEmployees} people`;
+                                }
+                            } else if (conversationContext.numEmployees) {
+                                contextRef += `your team of ${conversationContext.numEmployees}`;
+                            }
+                            if (conversationContext.interestedPlans && conversationContext.interestedPlans.length > 0) {
+                                contextRef += `${contextRef ? ', the recommendation for ' : 'the recommendation for '}${conversationContext.interestedPlans.join(' and ')}`;
+                            }
+                            if (conversationContext.securityNeeds) {
+                                contextRef += `${contextRef ? ', and your security needs' : 'your security requirements'}`;
+                            }
+                            const contextLine = contextRef
+                                ? `, including the details about ${contextRef},`
+                                : '';
+
+                            const quoteRef = conversationContext.quoteSentToEmail ? ` I can also see we sent you a quote — we can walk through that together if you'd like.` : '';
+                            const nameGreet2 = conversationContext.customerName ? `Hi ${conversationContext.customerName}, this` : 'Hi, this';
+                            const greetingText = `${nameGreet2} is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything.${quoteRef} Let's pick up right where you left off.`;
+                            addCallTranscriptEntry('David', greetingText);
+                            speakAsDavid(greetingText);
+                        }, 800);
+                    }, 3000);
+                }, 1500);
             } else {
                 const quoteRef = conversationContext.quoteSentToEmail ? ' Your quote is in your inbox, so you\'ll have that to review while you wait.' : (conversationContext.quoteReadyForSend ? ' I\'ve got your quote ready — we\'ll send it over once you fill out the callback form.' : '');
                 await playLine('Sales AI Assistant', 'If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.' + quoteRef, 500);
