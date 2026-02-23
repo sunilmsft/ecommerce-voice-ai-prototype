@@ -996,10 +996,10 @@
             background: #e8f2ff;
         }
 
-        /* Speak to Sales AI Assistant — voice icon */
+        /* Speak to Sales AI Assistant — voice icon in title bar */
         .voice-icon-btn {
-            width: 44px;
-            height: 44px;
+            width: 36px;
+            height: 36px;
             background: transparent;
             border: none;
             color: #0f6cbd;
@@ -1016,6 +1016,8 @@
             animation: voicePulse 3s ease-in-out infinite;
             overflow: hidden;
             padding: 0;
+            margin-left: 6px;
+            flex-shrink: 0;
         }
 
         .voice-icon-btn img {
@@ -2557,9 +2559,9 @@
                 <div class="agent-info">
                     <div class="agent-name" id="agentName">Ask Microsoft</div>
                 </div>
+                <button class="voice-icon-btn" id="voiceIconBtn" onclick="initiateVoiceCall()" title="Speak to Sales AI Assistant"><img src="voice.png" alt="Sales AI Assistant" /></button>
             </div>
             <div style="display: flex; gap: 4px;">
-                <button class="voice-icon-btn" id="voiceIconBtn" onclick="initiateVoiceCall()" title="Speak to Sales AI Assistant"><img src="Voice%20ai.jpg" alt="Sales AI Assistant" /></button>
                 <button class="minimize-btn" onclick="minimizeChat()" title="Minimize">−</button>
                 <button class="close-btn" onclick="closeChat()" title="Close">✕</button>
             </div>
