@@ -2849,7 +2849,10 @@
             quoteSentToEmail: false,
             monthlyTotal: null,
             pricePerUser: null,
-            quoteReadyForSend: false
+            quoteReadyForSend: false,
+            quoteCompanyName: null,
+            quoteContactName: null,
+            billingCycle: null
         };
 
         // Simulated Microsoft 365 knowledge base (in production, this would query the actual website)
@@ -3083,7 +3086,8 @@
                     </div>`;
             }
 
-            const businessName = (prototypeVariant === 'modality_switch') ? 'Spark + Co Creative Agency' : 'Summit Outdoor Gear Co.';
+            const businessName = ctx.quoteCompanyName || ((prototypeVariant === 'modality_switch') ? 'Spark + Co Creative Agency' : 'Summit Outdoor Gear Co.');
+            const billingLabel = ctx.billingCycle === 'annual' ? 'Annual' : 'Monthly';
 
             return `
                 <div class="quote-card ${isSent ? 'quote-sent-pulse' : ''}">
@@ -3095,11 +3099,12 @@
                         <div class="quote-card-item"><strong>Plan</strong><br/>Microsoft 365 ${plan}</div>
                         <div class="quote-card-item"><strong>Business</strong><br/>${businessName}</div>
                         <div class="quote-card-item"><strong>Users</strong><br/>${users} users</div>
-                        <div class="quote-card-item"><strong>Per User</strong><br/>$${pricePerUser}/user/mo</div>
+                        <div class="quote-card-item"><strong>Billing</strong><br/>${billingLabel}</div>
                     </div>
                     <div class="quote-card-total">
                         <div>
                             <div class="quote-card-total-label">Monthly Total</div>
+                            <div style="font-size: 11px; color: #6b7280;">$${pricePerUser}/user/mo &middot; ${billingLabel} billing</div>
                             <div style="font-size: 11px; color: #6b7280;">Annual: $${annual.toLocaleString()}/year</div>
                         </div>
                         <div class="quote-card-total-value">$${monthly}/mo</div>
@@ -3904,11 +3909,13 @@
             if (summarySection && summaryList) {
                 const parts = [];
                 if (conversationContext.businessType) parts.push('Business: ' + conversationContext.businessType);
+                if (conversationContext.quoteCompanyName) parts.push('Company name: ' + conversationContext.quoteCompanyName);
                 if (conversationContext.numEmployees) parts.push('Team size: ~' + conversationContext.numEmployees + ' employees');
                 if (conversationContext.workLocation) parts.push('Work setup: ' + conversationContext.workLocation);
                 if (conversationContext.securityNeeds) parts.push('Security priority: ' + (conversationContext.securityNeeds === 'high' ? 'High — handles sensitive data' : conversationContext.securityNeeds));
                 if (conversationContext.timeline) parts.push('Timeline: ' + conversationContext.timeline);
                 parts.push('Recommended plan: Microsoft 365 Business Premium');
+                if (conversationContext.billingCycle) parts.push('Billing preference: ' + conversationContext.billingCycle);
                 if (conversationContext.quoteSentToEmail && conversationContext.customerEmail) {
                     parts.push('✅ Quote sent to ' + conversationContext.customerEmail + ' (ID: ' + conversationContext.quoteId + ')');
                 } else if (conversationContext.quoteReadyForSend) {
@@ -4177,7 +4184,18 @@
                 if (quoteScenario === 'happy_path') {
                     await playLine('Sales AI Assistant', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
                     await playLine('You', 'Definitely, yes.', 420);
-                    await playLine('Sales AI Assistant', 'Great — what email should I send it to?', 420);
+
+                    // Pre-quote qualification questions
+                    await playLine('Sales AI Assistant', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company or agency name for the quote?', 450);
+                    const demoCompanyMS = 'Spark + Co Creative Agency';
+                    await playLine('You', 'It\'s ' + demoCompanyMS + '.', 420);
+                    conversationContext.quoteCompanyName = demoCompanyMS;
+
+                    await playLine('Sales AI Assistant', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
+                    await playLine('You', 'Annual, definitely.', 420);
+                    conversationContext.billingCycle = 'annual';
+
+                    await playLine('Sales AI Assistant', 'Perfect. What email should I send the quote to?', 420);
 
                     const demoEmail = 'priya@sparkco-example.com';
                     await playLine('You', 'It\'s ' + demoEmail, 420);
@@ -4187,12 +4205,25 @@
                     conversationContext.quoteGenerated = true;
                     conversationContext.quoteSentToEmail = true;
 
-                    await playLine('Sales AI Assistant', 'Done — I\'ll get that sent to ' + demoEmail + ' right away. You\'ll have it in your inbox shortly. It\'s valid for 30 days.', 500);
+                    await playLine('Sales AI Assistant', 'Done — I\'ve generated the quote for ' + demoCompanyMS + ' and sent it to ' + demoEmail + '. You\'ll have it in your inbox shortly — it\'s valid for 30 days.', 500);
 
                 } else if (quoteScenario === 'email_later') {
                     await playLine('Sales AI Assistant', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
-                    await playLine('You', 'Yes, but I\'d prefer not to share my email right now.', 420);
-                    await playLine('Sales AI Assistant', 'Totally fine. I\'ve prepared the quote — we\'ll send it along when you share your email on the callback form after our call.', 500);
+                    await playLine('You', 'Yes, that sounds great.', 420);
+
+                    // Pre-quote qualification questions
+                    await playLine('Sales AI Assistant', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company or agency name for the quote?', 450);
+                    const demoCompanyMS2 = 'Spark + Co Creative Agency';
+                    await playLine('You', 'It\'s ' + demoCompanyMS2 + '.', 420);
+                    conversationContext.quoteCompanyName = demoCompanyMS2;
+
+                    await playLine('Sales AI Assistant', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
+                    await playLine('You', 'Let\'s go annual.', 420);
+                    conversationContext.billingCycle = 'annual';
+
+                    await playLine('Sales AI Assistant', 'Perfect. And what email should I send it to?', 420);
+                    await playLine('You', 'I\'d prefer not to share my email right now.', 420);
+                    await playLine('Sales AI Assistant', 'Totally fine. I\'ve prepared the quote for ' + demoCompanyMS2 + ' — we\'ll send it along when you share your email on the callback form after our call.', 500);
                     conversationContext.quoteGenerated = false;
                     conversationContext.quoteReadyForSend = true;
                     conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
@@ -4363,9 +4394,20 @@
                 // Happy Path: customer accepts quote AND shares email
                 await playLine('Sales AI Assistant', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
                 await playLine('You', 'Yeah, that would be really helpful.', 420);
+
+                // Pre-quote qualification questions
+                await playLine('Sales AI Assistant', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company name for the quote?', 450);
+                const demoCompany = 'Summit Outdoor Gear Co.';
+                await playLine('You', 'It\'s ' + demoCompany + '.', 420);
+                conversationContext.quoteCompanyName = demoCompany;
+
+                await playLine('Sales AI Assistant', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
+                await playLine('You', 'Let\'s go with annual.', 420);
+                conversationContext.billingCycle = 'annual';
+
                 await playLine('Sales AI Assistant', 'Perfect. What\'s the best email address to send it to?', 420);
 
-                const demoEmail = (prototypeVariant === 'modality_switch') ? 'priya@sparkco-example.com' : 'alex@summitgear-example.com';
+                const demoEmail = 'alex@summitgear-example.com';
                 await playLine('You', 'It\'s ' + demoEmail, 420);
                 conversationContext.customerEmail = demoEmail;
 
@@ -4374,13 +4416,26 @@
                 conversationContext.quoteGenerated = true;
                 conversationContext.quoteSentToEmail = true;
 
-                await playLine('Sales AI Assistant', 'Got it — I\'ve just sent the quote to ' + demoEmail + '. It\'s in your inbox now with the full pricing breakdown, and it\'s valid for 30 days.', 500);
+                await playLine('Sales AI Assistant', 'Got it — I\'ve generated the quote for ' + demoCompany + ' and sent it to ' + demoEmail + '. It\'s in your inbox now with the full pricing breakdown, and it\'s valid for 30 days.', 500);
 
             } else if (quoteScenario === 'email_later') {
                 // Email Later: customer accepts quote but declines to share email now
                 await playLine('Sales AI Assistant', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
-                await playLine('You', 'Yeah, that sounds great — but I\'d rather not share my email over the call if that\'s okay.', 420);
-                await playLine('Sales AI Assistant', 'Completely understand — no problem at all. I\'ve got the quote ready on my end. When you fill out the callback form after our call, we\'ll use that email to send the quote over. Nothing lost.', 500);
+                await playLine('You', 'Yeah, that sounds great.', 420);
+
+                // Pre-quote qualification questions
+                await playLine('Sales AI Assistant', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company name for the quote?', 450);
+                const demoCompany2 = 'Summit Outdoor Gear Co.';
+                await playLine('You', 'It\'s ' + demoCompany2 + '.', 420);
+                conversationContext.quoteCompanyName = demoCompany2;
+
+                await playLine('Sales AI Assistant', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
+                await playLine('You', 'Annual sounds good.', 420);
+                conversationContext.billingCycle = 'annual';
+
+                await playLine('Sales AI Assistant', 'Perfect. And what\'s the best email address to send the quote to?', 420);
+                await playLine('You', 'Actually, I\'d rather not share my email over the call if that\'s okay.', 420);
+                await playLine('Sales AI Assistant', 'Completely understand — no problem at all. I\'ve got the quote ready for ' + demoCompany2 + ' on my end. When you fill out the callback form after our call, we\'ll use that email to send the quote over. Nothing lost.', 500);
                 conversationContext.quoteGenerated = false;
                 conversationContext.quoteReadyForSend = true;
                 conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
