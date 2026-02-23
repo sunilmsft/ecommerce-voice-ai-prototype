@@ -1257,6 +1257,15 @@
             margin-bottom: 24px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
             position: relative;
+            overflow: hidden;
+        }
+
+        .call-avatar img {
+            width: 84px;
+            height: 84px;
+            object-fit: contain;
+            border-radius: 50%;
+            filter: invert(38%) sepia(85%) saturate(500%) hue-rotate(165deg) brightness(95%);
         }
 
         .call-info {
@@ -2169,7 +2178,7 @@
         </div>
         <div class="call-screen-content">
             <div class="pulse-ring" id="pulseRing" style="display: none;"></div>
-            <div class="call-avatar" id="callAvatar">🤖</div>
+            <div class="call-avatar" id="callAvatar"><img src="voice.png" alt="Sales AI Assistant" /></div>
             <div class="call-info">
                 <div class="call-agent-name" id="callAgentName">Connecting...</div>
                 <div class="call-status connecting" id="callStatus">Connecting you to Sales AI Assistant...</div>
