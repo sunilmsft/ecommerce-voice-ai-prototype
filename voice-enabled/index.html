@@ -4515,17 +4515,14 @@
                         .some(n => (conversationContext.customerName || '').toLowerCase() === n.toLowerCase());
 
                 if (speaker === 'Ask Microsoft Voice Agent') {
-                    // Prefer LOCAL voices first for screen-share reliability,
-                    // then fall back to Online/Neural voices
+                    // Prefer Edge Online (Neural) voices for natural sound,
+                    // fall back to local voices if unavailable (e.g. Chrome)
                     preferredVoice = 
-                        voices.find(v => v.name.includes('Microsoft Zira') && v.localService) ||
-                        voices.find(v => v.name.includes('Jenny') && v.localService) ||
-                        voices.find(v => v.name.includes('Aria') && v.localService) ||
-                        voices.find(v => v.lang === 'en-US' && v.localService && v.name.includes('Female')) ||
                         voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
                         voices.find(v => v.name.includes('Aria') && v.name.includes('Online')) ||
                         voices.find(v => v.name.includes('Jenny')) ||
                         voices.find(v => v.name.includes('Aria')) ||
+                        voices.find(v => v.name.includes('Microsoft Zira') && v.localService) ||
                         voices.find(v => v.name.includes('Microsoft Zira')) ||
                         voices.find(v => v.name.includes('Google US English Female')) ||
                         voices.find(v => v.lang === 'en-US' && v.localService) ||
@@ -4534,26 +4531,23 @@
                 } else {
                     // User's voice — pick gender based on customer name / variant
                     if (isFemaleCustomer) {
-                        // Female customer voice — prefer local for reliability
+                        // Female customer voice — Neural first, local fallback
                         preferredVoice = 
-                            voices.find(v => v.name.includes('Microsoft Zira') && v.localService) ||
-                            voices.find(v => v.lang === 'en-US' && v.localService && v.name.includes('Female')) ||
                             voices.find(v => v.name.includes('Aria') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Sara') && v.name.includes('Online')) ||
+                            voices.find(v => v.name.includes('Microsoft Zira') && v.localService) ||
                             voices.find(v => v.name.includes('Microsoft Zira')) ||
                             voices.find(v => v.name.includes('Google US English Female')) ||
                             voices.find(v => v.lang === 'en-US') ||
                             voices[0];
                     } else {
-                        // Male customer voice — prefer local for reliability
+                        // Male customer voice — Neural first, local fallback
                         preferredVoice = 
-                            voices.find(v => v.name.includes('Microsoft David') && v.localService) ||
-                            voices.find(v => v.name.includes('Guy') && v.localService) ||
-                            voices.find(v => v.lang === 'en-US' && v.localService && v.name.includes('Male')) ||
                             voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Ryan') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Andrew') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Guy')) ||
+                            voices.find(v => v.name.includes('Microsoft David') && v.localService) ||
                             voices.find(v => v.name.includes('Microsoft David')) ||
                             voices.find(v => v.name.includes('Google US English Male')) ||
                             voices.find(v => v.lang === 'en-US') ||

@@ -3019,11 +3019,15 @@
                 
                 let preferredVoice;
                 if (speaker === 'AI Assistant') {
-                    // Use female/higher voice for AI
+                    // Edge Online (Neural) for natural sound, fall back to local
                     preferredVoice = 
+                        voices.find(voice => voice.name.includes('Jenny') && voice.name.includes('Online')) ||
+                        voices.find(voice => voice.name.includes('Aria') && voice.name.includes('Online')) ||
+                        voices.find(voice => voice.name.includes('Jenny')) ||
+                        voices.find(voice => voice.name.includes('Aria')) ||
+                        voices.find(voice => voice.name.includes('Microsoft Zira') && voice.localService) ||
                         voices.find(voice => voice.name.includes('Microsoft Zira')) ||
                         voices.find(voice => voice.name.includes('Google US English Female')) ||
-                        voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Female')) ||
                         voices.find(voice => voice.lang === 'en-US' && voice.localService) ||
                         voices.find(voice => voice.lang === 'en-US') ||
                         voices[0];
@@ -3032,17 +3036,24 @@
                     const isFemaleCustomer = conversationContext.customerName && 
                         ['Priya', 'Sarah', 'Maria', 'Lisa', 'Emma', 'Sophia', 'Aisha', 'Mei'].includes(conversationContext.customerName);
                     if (isFemaleCustomer) {
+                        // Edge Online (Neural) for natural sound, fall back to local
                         preferredVoice = 
+                            voices.find(voice => voice.name.includes('Aria') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Sara') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Microsoft Zira') && voice.localService) ||
                             voices.find(voice => voice.name.includes('Microsoft Zira')) ||
                             voices.find(voice => voice.name.includes('Google US English Female')) ||
-                            voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Female')) ||
                             voices.find(voice => voice.lang === 'en-US') ||
                             voices[0];
                     } else {
+                        // Edge Online (Neural) for natural sound, fall back to local
                         preferredVoice = 
+                            voices.find(voice => voice.name.includes('Guy') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Ryan') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Andrew') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Microsoft David') && voice.localService) ||
                             voices.find(voice => voice.name.includes('Microsoft David')) ||
                             voices.find(voice => voice.name.includes('Google US English Male')) ||
-                            voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Male')) ||
                             voices.find(voice => voice.lang === 'en-US') ||
                             voices[0];
                     }

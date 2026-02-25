@@ -3148,16 +3148,19 @@
                 }
                 utterance.volume = 1.0;
                 
-                // Get available voices — prefer LOCAL voices for screen-share reliability
+                // Get available voices — prefer Edge Online (Neural) for natural sound,
+                // fall back to local voices if unavailable (e.g. Chrome)
                 const voices = speechSynthesis.getVoices();
                 
                 let preferredVoice;
                 if (speaker === 'AI Assistant') {
-                    // Prefer local voices first (no network dependency during screen share)
+                    // Edge Neural voices first, then local fallback
                     preferredVoice = 
+                        voices.find(voice => voice.name.includes('Jenny') && voice.name.includes('Online')) ||
+                        voices.find(voice => voice.name.includes('Aria') && voice.name.includes('Online')) ||
+                        voices.find(voice => voice.name.includes('Jenny')) ||
+                        voices.find(voice => voice.name.includes('Aria')) ||
                         voices.find(voice => voice.name.includes('Microsoft Zira') && voice.localService) ||
-                        voices.find(voice => voice.name.includes('Jenny') && voice.localService) ||
-                        voices.find(voice => voice.lang === 'en-US' && voice.localService && voice.name.includes('Female')) ||
                         voices.find(voice => voice.name.includes('Microsoft Zira')) ||
                         voices.find(voice => voice.name.includes('Google US English Female')) ||
                         voices.find(voice => voice.lang === 'en-US' && voice.localService) ||
@@ -3169,16 +3172,19 @@
                         ['Priya', 'Sarah', 'Maria', 'Lisa', 'Emma', 'Sophia', 'Aisha', 'Mei'].includes(conversationContext.customerName);
                     if (isFemaleCustomer) {
                         preferredVoice = 
+                            voices.find(voice => voice.name.includes('Aria') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Sara') && voice.name.includes('Online')) ||
                             voices.find(voice => voice.name.includes('Microsoft Zira') && voice.localService) ||
-                            voices.find(voice => voice.lang === 'en-US' && voice.localService && voice.name.includes('Female')) ||
                             voices.find(voice => voice.name.includes('Microsoft Zira')) ||
                             voices.find(voice => voice.name.includes('Google US English Female')) ||
                             voices.find(voice => voice.lang === 'en-US') ||
                             voices[0];
                     } else {
                         preferredVoice = 
+                            voices.find(voice => voice.name.includes('Guy') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Ryan') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Andrew') && voice.name.includes('Online')) ||
                             voices.find(voice => voice.name.includes('Microsoft David') && voice.localService) ||
-                            voices.find(voice => voice.lang === 'en-US' && voice.localService && voice.name.includes('Male')) ||
                             voices.find(voice => voice.name.includes('Microsoft David')) ||
                             voices.find(voice => voice.name.includes('Google US English Male')) ||
                             voices.find(voice => voice.lang === 'en-US') ||
