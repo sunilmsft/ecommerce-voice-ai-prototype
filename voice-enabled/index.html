@@ -996,7 +996,7 @@
             background: #e8f2ff;
         }
 
-        /* Speak to Sales AI Assistant — voice icon in title bar */
+        /* Speak to Ask Microsoft Voice Agent — voice icon in title bar */
         .voice-icon-btn {
             width: 36px;
             height: 36px;
@@ -2449,7 +2449,7 @@
                 </div>
             </div>
             <h3 class="context-title" id="contextTitle">Voice-First Entry</h3>
-            <p class="context-description" id="contextDescription">Start the interaction with Sales AI Assistant via voice directly within Ask Microsoft.</p>
+            <p class="context-description" id="contextDescription">Start the interaction with Ask Microsoft Voice Agent via voice directly within Ask Microsoft.</p>
             <div class="flow-section" id="variantFlowDetails"></div>
             <div class="context-divider"></div>
             <div class="business-hours-toggle">
@@ -2559,7 +2559,7 @@
                 <div class="agent-info">
                     <div class="agent-name" id="agentName">Ask Microsoft</div>
                 </div>
-                <button class="voice-icon-btn" id="voiceIconBtn" onclick="initiateVoiceCall()" title="Speak to Sales AI Assistant"><img src="voice.png" alt="Sales AI Assistant" /></button>
+                <button class="voice-icon-btn" id="voiceIconBtn" onclick="initiateVoiceCall()" title="Speak to Ask Microsoft Voice Agent"><img src="voice.png" alt="Ask Microsoft Voice Agent" /></button>
             </div>
             <div style="display: flex; gap: 4px;">
                 <button class="minimize-btn" onclick="minimizeChat()" title="Minimize">−</button>
@@ -2678,9 +2678,9 @@
                     </div>
                 </div>
                 <div class="choice-card" onclick="selectSalesOption('ai-assistant')">
-                    <div class="choice-card-icon"><img src="voice.png" alt="Sales AI Assistant" style="width: 36px; height: 36px; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" /></div>
+                    <div class="choice-card-icon"><img src="voice.png" alt="Ask Microsoft Voice Agent" style="width: 36px; height: 36px; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" /></div>
                     <div class="choice-card-content">
-                        <div class="choice-card-title">Sales AI Assistant</div>
+                        <div class="choice-card-title">Ask Microsoft Voice Agent</div>
                         <div class="choice-card-description">Available immediately. Can answer most product and plan questions.</div>
                     </div>
                 </div>
@@ -2750,12 +2750,12 @@
             <div class="modal-header">
                 <div class="modal-icon">⏱️</div>
                 <div class="modal-title">Get Answers While You Wait</div>
-                <div class="modal-subtitle">Speak with our Sales AI Assistant in the meantime</div>
+                <div class="modal-subtitle">Speak with our Ask Microsoft Voice Agent in the meantime</div>
             </div>
             <p style="margin: 20px 0; color: #666; font-size: 14px; line-height: 1.6;">
-                Your callback request is confirmed. While you wait for a human agent, you can speak with our Sales AI Assistant to learn more about Microsoft 365.
+                Your callback request is confirmed. While you wait for a human agent, you can speak with our Ask Microsoft Voice Agent to learn more about Microsoft 365.
             </p>
-            <button class="form-submit" onclick="startVoiceSessionFromCallback()">Speak with Sales AI Assistant</button>
+            <button class="form-submit" onclick="startVoiceSessionFromCallback()">Speak with Ask Microsoft Voice Agent</button>
             <button class="modal-cancel" style="margin-top: 12px;" onclick="closeSpeakWhileYouWaitModal()">Skip, Just Wait</button>
         </div>
     </div>
@@ -2767,10 +2767,10 @@
         </div>
         <div class="call-screen-content">
             <div class="pulse-ring" id="pulseRing" style="display: none;"></div>
-            <div class="call-avatar" id="callAvatar"><img src="voice.png" alt="Sales AI Assistant" /></div>
+            <div class="call-avatar" id="callAvatar"><img src="voice.png" alt="Ask Microsoft Voice Agent" /></div>
             <div class="call-info">
                 <div class="call-agent-name" id="callAgentName">Connecting...</div>
-                <div class="call-status connecting" id="callStatus">Connecting you to Sales AI Assistant...</div>
+                <div class="call-status connecting" id="callStatus">Connecting you to Ask Microsoft Voice Agent...</div>
                 <div class="call-timer" id="callTimer" style="display: none;">00:00</div>
             </div>
             <div class="call-transcript-area" id="callTranscriptArea">
@@ -2895,28 +2895,28 @@
         const prototypeVariants = {
             voice_initiated: {
                 title: 'Voice-First Entry',
-                description: 'Customer clicks the voice icon and talks directly with the Sales AI Assistant — entirely via voice.',
+                description: 'Customer clicks the voice icon and talks directly with the Ask Microsoft Voice Agent — entirely via voice.',
                 chainBizHours: [
                     { label: 'Ask Microsoft', cls: 'ask-ms' },
-                    { label: 'Sales AI Assistant (Voice)', cls: 'ai-voice' },
+                    { label: 'Ask Microsoft Voice Agent (Voice)', cls: 'ai-voice' },
                     { label: 'Live Specialist (Voice)', cls: 'live-voice' }
                 ],
                 chainAfterHours: [
                     { label: 'Ask Microsoft', cls: 'ask-ms' },
-                    { label: 'Sales AI Assistant (Voice)', cls: 'ai-voice' },
+                    { label: 'Ask Microsoft Voice Agent (Voice)', cls: 'ai-voice' },
                     { label: 'Callback Queue', cls: 'callback' }
                 ],
                 flowBizHours: [
                     { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click the voice icon' },
-                    { party: 'Sales AI Assistant (Voice)', pcls: 'ai-voice', text: '— discusses your needs via voice' },
-                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— offers transfer to specialist' },
+                    { party: 'Ask Microsoft Voice Agent (Voice)', pcls: 'ai-voice', text: '— discusses your needs via voice' },
+                    { party: 'Ask Microsoft Voice Agent', pcls: 'ai-voice', text: '— offers transfer to specialist' },
                     { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— David calls you with full context' },
                     { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— recap, next steps & follow-up' }
                 ],
                 flowAfterHours: [
                     { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click the voice icon' },
-                    { party: 'Sales AI Assistant (Voice)', pcls: 'ai-voice', text: '— discusses your needs via voice' },
-                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— offers callback scheduling' },
+                    { party: 'Ask Microsoft Voice Agent (Voice)', pcls: 'ai-voice', text: '— discusses your needs via voice' },
+                    { party: 'Ask Microsoft Voice Agent', pcls: 'ai-voice', text: '— offers callback scheduling' },
                     { party: 'Callback Queue', pcls: 'callback', text: '— submit form, summary saved' }
                 ]
             },
@@ -2925,26 +2925,26 @@
                 description: 'Customer starts in chat, then switches to voice mid-conversation — full context carries over seamlessly.',
                 chainBizHours: [
                     { label: 'Ask Microsoft (Chat)', cls: 'ask-ms' },
-                    { label: 'Sales AI Assistant (Voice)', cls: 'ai-voice' },
+                    { label: 'Ask Microsoft Voice Agent (Voice)', cls: 'ai-voice' },
                     { label: 'Live Specialist (Voice)', cls: 'live-voice' }
                 ],
                 chainAfterHours: [
                     { label: 'Ask Microsoft (Chat)', cls: 'ask-ms' },
-                    { label: 'Sales AI Assistant (Voice)', cls: 'ai-voice' },
+                    { label: 'Ask Microsoft Voice Agent (Voice)', cls: 'ai-voice' },
                     { label: 'Callback Queue', cls: 'callback' }
                 ],
                 flowBizHours: [
                     { party: 'Ask Microsoft (Chat)', pcls: 'ask-ms', text: '— chat about your business needs' },
                     { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click voice icon to switch to voice' },
-                    { party: 'Sales AI Assistant (Voice)', pcls: 'ai-voice', text: '— continues with full context via voice' },
+                    { party: 'Ask Microsoft Voice Agent (Voice)', pcls: 'ai-voice', text: '— continues with full context via voice' },
                     { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— David calls you with full context' },
                     { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— recap, next steps & follow-up' }
                 ],
                 flowAfterHours: [
                     { party: 'Ask Microsoft (Chat)', pcls: 'ask-ms', text: '— chat about your business needs' },
                     { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click voice icon to switch to voice' },
-                    { party: 'Sales AI Assistant (Voice)', pcls: 'ai-voice', text: '— continues with full context via voice' },
-                    { party: 'Sales AI Assistant', pcls: 'ai-voice', text: '— offers callback scheduling' },
+                    { party: 'Ask Microsoft Voice Agent (Voice)', pcls: 'ai-voice', text: '— continues with full context via voice' },
+                    { party: 'Ask Microsoft Voice Agent', pcls: 'ai-voice', text: '— offers callback scheduling' },
                     { party: 'Callback Queue', pcls: 'callback', text: '— submit form, summary saved' }
                 ]
             }
@@ -2984,7 +2984,7 @@
                 const quoteStepText = quoteScenario === 'happy_path'
                     ? '— generates & sends personalized quote via email'
                     : '— generates quote (sent with callback form)';
-                flowSteps.splice(insertAt, 0, { party: 'Sales AI Assistant', pcls: 'ai-voice', text: quoteStepText });
+                flowSteps.splice(insertAt, 0, { party: 'Ask Microsoft Voice Agent', pcls: 'ai-voice', text: quoteStepText });
             }
             const flowContainer = document.getElementById('variantFlowDetails');
             if (flowContainer) {
@@ -3189,7 +3189,7 @@
             // After chat plays out, add a subtle hint about the voice icon
             accumulated += 1500;
             const tipTid = setTimeout(() => {
-                addSystemMessage('💡 <em>Tip: Click the Speak with Sales AI Assistant icon at the top to switch this conversation to voice — your context carries over seamlessly.</em>');
+                addSystemMessage('💡 <em>Tip: Click the Speak with Ask Microsoft Voice Agent icon at the top to switch this conversation to voice — your context carries over seamlessly.</em>');
             }, accumulated);
             chatAutoPlayTimeouts.push(tipTid);
         }
@@ -3236,7 +3236,7 @@
             chatFab.classList.add('visible');
         }
 
-        /* Speak to Sales AI Assistant — triggers same flow as the card */
+        /* Speak to Ask Microsoft Voice Agent — triggers same flow as the card */
         function initiateVoiceCall() {
             // Cancel any remaining auto-play chat timeouts so they don't fire after switching to voice
             chatAutoPlayTimeouts.forEach(id => clearTimeout(id));
@@ -3245,9 +3245,9 @@
             if (prototypeVariant === 'modality_switch' && conversation.length > 0) {
                 // Modality Switch: capture chat context and go straight to voice
                 voiceSessionContext.fromModalitySwitch = true;
-                addMessage('I\'d actually prefer to continue this over voice — can I speak with the Sales AI Assistant?', 'user');
+                addMessage('I\'d actually prefer to continue this over voice — can I speak with the Ask Microsoft Voice Agent?', 'user');
                 setTimeout(() => {
-                    addMessage('Absolutely! Switching you to voice now. The Sales AI Assistant will have the full context of our chat — no need to repeat anything.', 'bot', false);
+                    addMessage('Absolutely! Switching you to voice now. The Ask Microsoft Voice Agent will have the full context of our chat — no need to repeat anything.', 'bot', false);
                     setTimeout(() => {
                         voiceSessionContext.fromCallback = false;
                         startVoiceSession();
@@ -3510,10 +3510,10 @@
                     </div>
                     <div class="chat-option-card" onclick="selectSalesOption('ai-assistant')" role="button" tabindex="0">
                         <div class="chat-option-icon" style="background: white;">
-                            <img src="voice.png" alt="Sales AI Assistant" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
+                            <img src="voice.png" alt="Ask Microsoft Voice Agent" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
                         </div>
                         <div class="chat-option-content">
-                            <div class="chat-option-title">Speak with Sales AI Assistant</div>
+                            <div class="chat-option-title">Speak with Ask Microsoft Voice Agent</div>
                             <div class="chat-option-description">Available immediately. Get answers to product and plan questions through an interactive voice conversation.</div>
                         </div>
                     </div>
@@ -3661,7 +3661,7 @@
                                         : '';
 
                                     const nameGreet = conversationContext.customerName ? `Hi ${conversationContext.customerName}, this` : 'Hi, this';
-                                    const greetingText = `${nameGreet} is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything. Let's pick up right where you left off.`;
+                                    const greetingText = `${nameGreet} is David from Microsoft Sales. I've reviewed your conversation with our Ask Microsoft Voice Agent${contextLine} so you won't need to repeat anything. Let's pick up right where you left off.`;
                                     addCallTranscriptEntry('David', greetingText);
                                     speakAsDavid(greetingText);
                                 }, 800);
@@ -3682,10 +3682,10 @@
                 <div class="options-container">
                     <div class="chat-option-card" onclick="selectSalesOption('ai-assistant')" role="button" tabindex="0">
                         <div class="chat-option-icon" style="background: white;">
-                            <img src="voice.png" alt="Sales AI Assistant" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
+                            <img src="voice.png" alt="Ask Microsoft Voice Agent" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
                         </div>
                         <div class="chat-option-content">
-                            <div class="chat-option-title">Speak with Sales AI Assistant</div>
+                            <div class="chat-option-title">Speak with Ask Microsoft Voice Agent</div>
                             <div class="chat-option-description">Available immediately. Get answers to product and plan questions through an interactive voice conversation.</div>
                         </div>
                     </div>
@@ -3837,9 +3837,9 @@
         function selectSalesOption(option) {
             // Add user's choice to chat
             if (option === 'ai-assistant') {
-                addMessage('I\'d like to speak with the Sales AI Assistant now', 'user');
+                addMessage('I\'d like to speak with the Ask Microsoft Voice Agent now', 'user');
                 setTimeout(() => {
-                    addMessage('Great choice! Connecting you to our Sales AI Assistant...', 'bot', false);
+                    addMessage('Great choice! Connecting you to our Ask Microsoft Voice Agent...', 'bot', false);
                     setTimeout(() => {
                         voiceSessionContext.fromCallback = false;
                         startVoiceSession();
@@ -4051,9 +4051,9 @@
             document.getElementById('callbackConfirmationModal').classList.remove('active');
 
             if (callbackRequestedAfterVoiceCall) {
-                // User already spoke with Sales AI Assistant — no need to offer it again
+                // User already spoke with Ask Microsoft Voice Agent — no need to offer it again
                 callbackRequestedAfterVoiceCall = false;
-                addMessage('You\'re all set! Your callback has been confirmed and a Microsoft sales specialist will reach out within 48 hours. In the meantime, I\'m right here if you need anything — feel free to type a question or click the Speak with Sales AI Assistant icon at the top anytime to start another voice conversation. Happy to help!', 'bot', false);
+                addMessage('You\'re all set! Your callback has been confirmed and a Microsoft sales specialist will reach out within 48 hours. In the meantime, I\'m right here if you need anything — feel free to type a question or click the Speak with Ask Microsoft Voice Agent icon at the top anytime to start another voice conversation. Happy to help!', 'bot', false);
                 return;
             }
 
@@ -4097,7 +4097,7 @@
             
             // Reset call screen elements
             document.getElementById('callAgentName').textContent = 'Connecting...';
-            document.getElementById('callStatus').textContent = 'Connecting you to Sales AI Assistant...';
+            document.getElementById('callStatus').textContent = 'Connecting you to Ask Microsoft Voice Agent...';
             document.getElementById('callStatus').classList.add('connecting');
             document.getElementById('callTimer').style.display = 'none';
             document.getElementById('callTranscriptArea').classList.remove('active');
@@ -4109,7 +4109,7 @@
             
             // Simulate connection
             setTimeout(() => {
-                document.getElementById('callAgentName').textContent = 'Sales AI Assistant';
+                document.getElementById('callAgentName').textContent = 'Ask Microsoft Voice Agent';
                 document.getElementById('callStatus').textContent = 'Starting AI voice session...';
                 document.getElementById('pulseRing').style.display = 'none';
             }, 2000);
@@ -4171,33 +4171,33 @@
                 voiceSessionContext.fromModalitySwitch = false;
 
                 conversationContext.customerName = 'Priya';
-                await playLine('Sales AI Assistant', 'Hi there! I\'m your Sales AI Assistant. I can see you\'ve been chatting about Microsoft 365 plans for your marketing agency — a team of about 15 people. Let me pick up right where you left off so you don\'t have to repeat anything.', 600);
+                await playLine('Ask Microsoft Voice Agent', 'Hi there! I\'m your Ask Microsoft Voice Agent. I can see you\'ve been chatting about Microsoft 365 plans for your marketing agency — a team of about 15 people. Let me pick up right where you left off so you don\'t have to repeat anything.', 600);
                 await playLine('You', 'That\'s great — yes, we were discussing plans for the agency and I wanted to understand the differences better.', 420);
-                await playLine('Sales AI Assistant', 'Of course. Based on your agency\'s team size of 15, the collaboration needs you mentioned, and the fact that you handle client data, I\'d say the key decision is between Business Standard at $12.50 per user per month and Business Premium at $22 per user per month.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Of course. Based on your agency\'s team size of 15, the collaboration needs you mentioned, and the fact that you handle client data, I\'d say the key decision is between Business Standard at $12.50 per user per month and Business Premium at $22 per user per month.', 500);
                 await playLine('You', 'What\'s the main difference between those two?', 420);
-                await playLine('Sales AI Assistant', 'Great question. Business Standard gives you desktop Office apps, Teams, email, and 1TB OneDrive storage — solid for day-to-day agency collaboration. Business Premium adds advanced security — threat protection, device management, and data loss prevention. Since your agency handles client campaigns and sensitive data, Premium is usually worth the step up.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Great question. Business Standard gives you desktop Office apps, Teams, email, and 1TB OneDrive storage — solid for day-to-day agency collaboration. Business Premium adds advanced security — threat protection, device management, and data loss prevention. Since your agency handles client campaigns and sensitive data, Premium is usually worth the step up.', 500);
                 await playLine('You', 'That makes sense for us. What would Premium cost for our whole team?', 420);
-                await playLine('Sales AI Assistant', 'For 15 users on Business Premium, you\'d be looking at $330 per month. That includes everything in Standard plus the full security suite. There may also be volume or promotional pricing available — I can help you get the exact numbers.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'For 15 users on Business Premium, you\'d be looking at $330 per month. That includes everything in Standard plus the full security suite. There may also be volume or promotional pricing available — I can help you get the exact numbers.', 500);
 
                 conversationContext.pricePerUser = 22;
                 conversationContext.monthlyTotal = conversationContext.numEmployees * conversationContext.pricePerUser;
 
                 // --- QUOTING FLOW (Modality Switch) ---
                 if (quoteScenario === 'happy_path') {
-                    await playLine('Sales AI Assistant', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
                     await playLine('You', 'Definitely, yes.', 420);
 
                     // Pre-quote qualification questions
-                    await playLine('Sales AI Assistant', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company or agency name for the quote?', 450);
+                    await playLine('Ask Microsoft Voice Agent', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company or agency name for the quote?', 450);
                     const demoCompanyMS = 'Spark + Co Creative Agency';
                     await playLine('You', 'It\'s ' + demoCompanyMS + '.', 420);
                     conversationContext.quoteCompanyName = demoCompanyMS;
 
-                    await playLine('Sales AI Assistant', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
+                    await playLine('Ask Microsoft Voice Agent', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
                     await playLine('You', 'Annual, definitely.', 420);
                     conversationContext.billingCycle = 'annual';
 
-                    await playLine('Sales AI Assistant', 'Perfect. What email should I send the quote to?', 420);
+                    await playLine('Ask Microsoft Voice Agent', 'Perfect. What email should I send the quote to?', 420);
 
                     const demoEmail = 'priya@sparkco-example.com';
                     await playLine('You', 'It\'s ' + demoEmail, 420);
@@ -4207,33 +4207,33 @@
                     conversationContext.quoteGenerated = true;
                     conversationContext.quoteSentToEmail = true;
 
-                    await playLine('Sales AI Assistant', 'Done — I\'ve generated the quote for ' + demoCompanyMS + ' and sent it to ' + demoEmail + '. You\'ll have it in your inbox shortly — it\'s valid for 30 days.', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'Done — I\'ve generated the quote for ' + demoCompanyMS + ' and sent it to ' + demoEmail + '. You\'ll have it in your inbox shortly — it\'s valid for 30 days.', 500);
 
                 } else if (quoteScenario === 'email_later') {
-                    await playLine('Sales AI Assistant', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
                     await playLine('You', 'Yes, that sounds great.', 420);
 
                     // Pre-quote qualification questions
-                    await playLine('Sales AI Assistant', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company or agency name for the quote?', 450);
+                    await playLine('Ask Microsoft Voice Agent', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company or agency name for the quote?', 450);
                     const demoCompanyMS2 = 'Spark + Co Creative Agency';
                     await playLine('You', 'It\'s ' + demoCompanyMS2 + '.', 420);
                     conversationContext.quoteCompanyName = demoCompanyMS2;
 
-                    await playLine('Sales AI Assistant', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
+                    await playLine('Ask Microsoft Voice Agent', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
                     await playLine('You', 'Let\'s go annual.', 420);
                     conversationContext.billingCycle = 'annual';
 
-                    await playLine('Sales AI Assistant', 'Perfect. And what email should I send it to?', 420);
+                    await playLine('Ask Microsoft Voice Agent', 'Perfect. And what email should I send it to?', 420);
                     await playLine('You', 'I\'d prefer not to share my email right now.', 420);
-                    await playLine('Sales AI Assistant', 'Totally fine. I\'ve prepared the quote for ' + demoCompanyMS2 + ' — we\'ll send it along when you share your email on the callback form after our call.', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'Totally fine. I\'ve prepared the quote for ' + demoCompanyMS2 + ' — we\'ll send it along when you share your email on the callback form after our call.', 500);
                     conversationContext.quoteGenerated = false;
                     conversationContext.quoteReadyForSend = true;
                     conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
 
                 } else {
-                    await playLine('Sales AI Assistant', 'I can also send you a personalized quote with that pricing breakdown if you\'d like.', 480);
+                    await playLine('Ask Microsoft Voice Agent', 'I can also send you a personalized quote with that pricing breakdown if you\'d like.', 480);
                     await playLine('You', 'Not right now — let me just talk to someone first.', 420);
-                    await playLine('Sales AI Assistant', 'No problem at all.', 400);
+                    await playLine('Ask Microsoft Voice Agent', 'No problem at all.', 400);
                 }
                 // --- END QUOTING FLOW ---
 
@@ -4241,9 +4241,9 @@
 
                 if (isBusinessHours) {
                     // Business hours: seamless handoff to David (no button click needed)
-                    await playLine('Sales AI Assistant', 'Absolutely! Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', and they\'ll also have the quote I sent you.' : '') + ' You won\'t need to repeat anything.', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'Absolutely! Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', and they\'ll also have the quote I sent you.' : '') + ' You won\'t need to repeat anything.', 500);
                     await playLine('You', 'Yes, that would be great.', 420);
-                    await playLine('Sales AI Assistant', 'Perfect. Let me hand you over now — transferring you to a specialist.', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'Perfect. Let me hand you over now — transferring you to a specialist.', 500);
 
                     // Seamless handoff: keep call screen open, transition from AI to David
                     if (sessionGen !== voiceSessionGeneration) return;
@@ -4310,7 +4310,7 @@
 
                                 const quoteRef = conversationContext.quoteSentToEmail ? ` I can also see we sent you a quote — we can walk through that together if you'd like.` : '';
                                 const nameGreet2 = conversationContext.customerName ? `Hi ${conversationContext.customerName}, this` : 'Hi, this';
-                                const greetingText = `${nameGreet2} is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything.${quoteRef} Let's pick up right where you left off.`;
+                                const greetingText = `${nameGreet2} is David from Microsoft Sales. I've reviewed your conversation with our Ask Microsoft Voice Agent${contextLine} so you won't need to repeat anything.${quoteRef} Let's pick up right where you left off.`;
                                 addCallTranscriptEntry('David', greetingText);
                                 speakAsDavid(greetingText);
                             }, 800);
@@ -4319,9 +4319,9 @@
                 } else {
                     // Off hours: callback form
                     const offHoursQuoteNote = conversationContext.quoteSentToEmail ? ' Your quote is in your inbox, so you can review it while you wait.' : (conversationContext.quoteReadyForSend ? ' I\'ve got your quote ready — we\'ll send it over once you fill out the callback form.' : '');
-                    await playLine('Sales AI Assistant', 'Absolutely! I can set up a callback with a Microsoft sales specialist who can finalize pricing, answer any remaining questions, and help you get started.' + offHoursQuoteNote + ' Would you like me to arrange that?', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'Absolutely! I can set up a callback with a Microsoft sales specialist who can finalize pricing, answer any remaining questions, and help you get started.' + offHoursQuoteNote + ' Would you like me to arrange that?', 500);
                     await playLine('You', 'Yes, please.', 420);
-                    await playLine('Sales AI Assistant', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
 
                     // End call and show callback
                     if (sessionGen !== voiceSessionGeneration) return;
@@ -4342,72 +4342,72 @@
 
             if ((voiceSessionContext.fromCallback || callbackRequested) && custName) {
                 const greeting = bizName
-                    ? `Hi ${custName}, thanks for your interest and for sharing your details about ${bizName}. I'm the Sales AI Assistant — while we get a specialist lined up for your callback, I'd love to help you get a head start.`
-                    : `Hi ${custName}, thanks for requesting a callback. I'm the Sales AI Assistant — happy to help you get started while you wait.`;
-                await playLine('Sales AI Assistant', greeting, 500);
+                    ? `Hi ${custName}, thanks for your interest and for sharing your details about ${bizName}. I'm the Ask Microsoft Voice Agent — while we get a specialist lined up for your callback, I'd love to help you get a head start.`
+                    : `Hi ${custName}, thanks for requesting a callback. I'm the Ask Microsoft Voice Agent — happy to help you get started while you wait.`;
+                await playLine('Ask Microsoft Voice Agent', greeting, 500);
 
                 const teamSize = numEmp || 20;
                 await playLine('You', `Yes, we're looking for Microsoft 365 licensing information for around ${teamSize} employees.`, 420);
                 if (!conversationContext.numEmployees) conversationContext.numEmployees = teamSize;
                 if (!conversationContext.businessType && bizName) conversationContext.businessType = bizName;
 
-                await playLine('Sales AI Assistant', 'Great — are your teams mostly in-office, fully remote, or hybrid?', 420);
+                await playLine('Ask Microsoft Voice Agent', 'Great — are your teams mostly in-office, fully remote, or hybrid?', 420);
                 await playLine('You', 'We\'re mostly hybrid, with a few fully remote staff.', 420);
                 conversationContext.workLocation = conversationContext.workLocation || 'hybrid';
 
-                await playLine('Sales AI Assistant', 'Makes sense. Are devices mostly company-managed, or do people also use personal devices?', 450);
+                await playLine('Ask Microsoft Voice Agent', 'Makes sense. Are devices mostly company-managed, or do people also use personal devices?', 450);
                 await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
                 conversationContext.securityNeeds = conversationContext.securityNeeds || 'moderate';
 
-                await playLine('Sales AI Assistant', 'Perfect. What decision timeline are you working toward?', 420);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect. What decision timeline are you working toward?', 420);
                 await playLine('You', 'Ideally this quarter.', 450);
                 conversationContext.timeline = conversationContext.timeline || 'this quarter';
                 conversationContext.interestedPlans = conversationContext.interestedPlans || ['Business Premium'];
 
-                await playLine('Sales AI Assistant', `Great — based on ${bizName ? bizName + "'s" : 'your'} team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. Your callback is confirmed, and your specialist will have all these details ready to pick up right where we left off.`, 500);
+                await playLine('Ask Microsoft Voice Agent', `Great — based on ${bizName ? bizName + "'s" : 'your'} team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. Your callback is confirmed, and your specialist will have all these details ready to pick up right where we left off.`, 500);
                 return;
             }
 
-            await playLine('Sales AI Assistant', 'Hi there — I am Sales AI Assistant. Happy to help. What can I help you with today?', 500);
+            await playLine('Ask Microsoft Voice Agent', 'Hi there — I am Ask Microsoft Voice Agent. Happy to help. What can I help you with today?', 500);
             await playLine('You', 'Hi, I run a growing e-commerce company — we sell outdoor gear online. We\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
             conversationContext.customerName = 'Alex';
             conversationContext.numEmployees = 20;
             conversationContext.businessType = 'e-commerce company selling outdoor gear';
 
-            await playLine('Sales AI Assistant', 'Great, an e-commerce business with 20 employees — that\'s a perfect fit for our Business plans. Are your teams mostly in-office, fully remote, or hybrid?', 420);
+            await playLine('Ask Microsoft Voice Agent', 'Great, an e-commerce business with 20 employees — that\'s a perfect fit for our Business plans. Are your teams mostly in-office, fully remote, or hybrid?', 420);
             await playLine('You', 'We\'re mostly hybrid. Our warehouse crew is on-site, but marketing and customer support work remotely.', 420);
             conversationContext.workLocation = 'hybrid';
 
-            await playLine('Sales AI Assistant', 'That makes sense for e-commerce. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
+            await playLine('Ask Microsoft Voice Agent', 'That makes sense for e-commerce. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
             await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
             conversationContext.securityNeeds = 'moderate';
 
-            await playLine('Sales AI Assistant', 'Perfect, that helps. What decision timeline are you working toward?', 420);
+            await playLine('Ask Microsoft Voice Agent', 'Perfect, that helps. What decision timeline are you working toward?', 420);
             await playLine('You', 'Ideally this quarter — we\'re scaling up and need to get everyone on the same platform.', 450);
             conversationContext.timeline = 'this quarter';
             conversationContext.interestedPlans = ['Business Premium'];
             conversationContext.pricePerUser = 22;
             conversationContext.monthlyTotal = conversationContext.numEmployees * conversationContext.pricePerUser;
 
-            await playLine('Sales AI Assistant', 'Great — based on your team size of 20, hybrid setup across warehouse and remote staff, and the device mix, Microsoft 365 Business Premium at $22 per user per month is likely a strong fit. That comes to $440 per month for your team.', 500);
+            await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size of 20, hybrid setup across warehouse and remote staff, and the device mix, Microsoft 365 Business Premium at $22 per user per month is likely a strong fit. That comes to $440 per month for your team.', 500);
 
             // --- QUOTING FLOW (controlled by quoteScenario preset) ---
             if (quoteScenario === 'happy_path') {
                 // Happy Path: customer accepts quote AND shares email
-                await playLine('Sales AI Assistant', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
+                await playLine('Ask Microsoft Voice Agent', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
                 await playLine('You', 'Yeah, that would be really helpful.', 420);
 
                 // Pre-quote qualification questions
-                await playLine('Sales AI Assistant', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company name for the quote?', 450);
+                await playLine('Ask Microsoft Voice Agent', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company name for the quote?', 450);
                 const demoCompany = 'Summit Outdoor Gear Co.';
                 await playLine('You', 'It\'s ' + demoCompany + '.', 420);
                 conversationContext.quoteCompanyName = demoCompany;
 
-                await playLine('Sales AI Assistant', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
+                await playLine('Ask Microsoft Voice Agent', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
                 await playLine('You', 'Let\'s go with annual.', 420);
                 conversationContext.billingCycle = 'annual';
 
-                await playLine('Sales AI Assistant', 'Perfect. What\'s the best email address to send it to?', 420);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect. What\'s the best email address to send it to?', 420);
 
                 const demoEmail = 'alex@summitgear-example.com';
                 await playLine('You', 'It\'s ' + demoEmail, 420);
@@ -4418,26 +4418,26 @@
                 conversationContext.quoteGenerated = true;
                 conversationContext.quoteSentToEmail = true;
 
-                await playLine('Sales AI Assistant', 'Got it — I\'ve generated the quote for ' + demoCompany + ' and sent it to ' + demoEmail + '. It\'s in your inbox now with the full pricing breakdown, and it\'s valid for 30 days.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Got it — I\'ve generated the quote for ' + demoCompany + ' and sent it to ' + demoEmail + '. It\'s in your inbox now with the full pricing breakdown, and it\'s valid for 30 days.', 500);
 
             } else if (quoteScenario === 'email_later') {
                 // Email Later: customer accepts quote but declines to share email now
-                await playLine('Sales AI Assistant', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
+                await playLine('Ask Microsoft Voice Agent', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
                 await playLine('You', 'Yeah, that sounds great.', 420);
 
                 // Pre-quote qualification questions
-                await playLine('Sales AI Assistant', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company name for the quote?', 450);
+                await playLine('Ask Microsoft Voice Agent', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company name for the quote?', 450);
                 const demoCompany2 = 'Summit Outdoor Gear Co.';
                 await playLine('You', 'It\'s ' + demoCompany2 + '.', 420);
                 conversationContext.quoteCompanyName = demoCompany2;
 
-                await playLine('Sales AI Assistant', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
+                await playLine('Ask Microsoft Voice Agent', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
                 await playLine('You', 'Annual sounds good.', 420);
                 conversationContext.billingCycle = 'annual';
 
-                await playLine('Sales AI Assistant', 'Perfect. And what\'s the best email address to send the quote to?', 420);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect. And what\'s the best email address to send the quote to?', 420);
                 await playLine('You', 'Actually, I\'d rather not share my email over the call if that\'s okay.', 420);
-                await playLine('Sales AI Assistant', 'Completely understand — no problem at all. I\'ve got the quote ready for ' + demoCompany2 + ' on my end. When you fill out the callback form after our call, we\'ll use that email to send the quote over. Nothing lost.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Completely understand — no problem at all. I\'ve got the quote ready for ' + demoCompany2 + ' on my end. When you fill out the callback form after our call, we\'ll use that email to send the quote over. Nothing lost.', 500);
                 conversationContext.quoteGenerated = false;
                 conversationContext.quoteReadyForSend = true;
                 conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
@@ -4445,16 +4445,16 @@
 
             } else {
                 // No Quote: customer declines the offer entirely
-                await playLine('Sales AI Assistant', 'I can put together a personalized quote with that breakdown and send it over to you — would that be helpful?', 500);
+                await playLine('Ask Microsoft Voice Agent', 'I can put together a personalized quote with that breakdown and send it over to you — would that be helpful?', 500);
                 await playLine('You', 'Not right now, thanks. I just want to talk to someone about next steps.', 420);
-                await playLine('Sales AI Assistant', 'No problem at all. If you change your mind later, we can always generate one.', 420);
+                await playLine('Ask Microsoft Voice Agent', 'No problem at all. If you change your mind later, we can always generate one.', 420);
             }
             // --- END QUOTING FLOW ---
 
             if (isBusinessHours) {
-                await playLine('Sales AI Assistant', 'Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', including the quote I just sent you.' : '') + ' — you won\'t need to repeat anything.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', including the quote I just sent you.' : '') + ' — you won\'t need to repeat anything.', 500);
                 await playLine('You', 'That would be great — I\'d love to talk through next steps with someone.', 420);
-                await playLine('Sales AI Assistant', 'Perfect. Let me hand you over now — transferring you to a specialist.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect. Let me hand you over now — transferring you to a specialist.', 500);
 
                 // Seamless voice handoff: keep call screen open, transition from AI to David
                 if (sessionGen !== voiceSessionGeneration) return;
@@ -4521,7 +4521,7 @@
 
                             const quoteRef = conversationContext.quoteSentToEmail ? ` I can also see we sent you a quote — we can walk through that together if you'd like.` : '';
                             const nameGreet2 = conversationContext.customerName ? `Hi ${conversationContext.customerName}, this` : 'Hi, this';
-                            const greetingText = `${nameGreet2} is David from Microsoft Sales. I've reviewed your conversation with our Sales AI Assistant${contextLine} so you won't need to repeat anything.${quoteRef} Let's pick up right where you left off.`;
+                            const greetingText = `${nameGreet2} is David from Microsoft Sales. I've reviewed your conversation with our Ask Microsoft Voice Agent${contextLine} so you won't need to repeat anything.${quoteRef} Let's pick up right where you left off.`;
                             addCallTranscriptEntry('David', greetingText);
                             speakAsDavid(greetingText);
                         }, 800);
@@ -4529,9 +4529,9 @@
                 }, 1500);
             } else {
                 const quoteRef = conversationContext.quoteSentToEmail ? ' Your quote is in your inbox, so you\'ll have that to review while you wait.' : (conversationContext.quoteReadyForSend ? ' I\'ve got your quote ready — we\'ll send it over once you fill out the callback form.' : '');
-                await playLine('Sales AI Assistant', 'If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.' + quoteRef, 500);
+                await playLine('Ask Microsoft Voice Agent', 'If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.' + quoteRef, 500);
                 await playLine('You', 'Yes, please set that up.', 420);
-                await playLine('Sales AI Assistant', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
 
                 // End call and show callback
                 if (sessionGen !== voiceSessionGeneration) return;
@@ -4557,7 +4557,7 @@
             transcriptArea.scrollTop = transcriptArea.scrollHeight;
             
             // If this is any speaker (AI or You) and audio is enabled, use text-to-speech
-            if ((speaker === 'Sales AI Assistant' || speaker === 'You') && audioEnabled && isVoiceMode) {
+            if ((speaker === 'Ask Microsoft Voice Agent' || speaker === 'You') && audioEnabled && isVoiceMode) {
                 speakText(text, speaker);
             }
         }
@@ -4587,7 +4587,7 @@
                 const utterance = new SpeechSynthesisUtterance(text);
                 
                 // Configure voice settings based on speaker
-                if (speaker === 'Sales AI Assistant') {
+                if (speaker === 'Ask Microsoft Voice Agent') {
                     utterance.rate = 1.0;   // Natural pace
                     utterance.pitch = 1.0;  // Natural pitch (Neural voices handle this well)
                 } else {
@@ -4605,7 +4605,7 @@
                     ['Priya','Sarah','Maria','Lisa','Emma','Sophia','Aisha','Mei']
                         .some(n => (conversationContext.customerName || '').toLowerCase() === n.toLowerCase());
 
-                if (speaker === 'Sales AI Assistant') {
+                if (speaker === 'Ask Microsoft Voice Agent') {
                     // Prefer Edge Neural voices (much more natural) → fallback to classic
                     preferredVoice = 
                         voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
@@ -4686,7 +4686,7 @@
                         retryUtterance.volume = 1.0;
                         const localVoices = speechSynthesis.getVoices();
                         let fallback;
-                        if (speaker === 'Sales AI Assistant') {
+                        if (speaker === 'Ask Microsoft Voice Agent') {
                             fallback = localVoices.find(v => v.name.includes('Microsoft Zira') && v.localService) ||
                                        localVoices.find(v => v.lang === 'en-US' && v.localService);
                         } else {
@@ -4957,7 +4957,7 @@
                         <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with David!</div>
                         <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
                             We hope this conversation was helpful. Here's a quick summary of your session:<br/><br/>
-                            ✅ Spoke with <strong>Sales AI Assistant</strong> about Microsoft 365 plans<br/>
+                            ✅ Spoke with <strong>Ask Microsoft Voice Agent</strong> about Microsoft 365 plans<br/>
                             ✅ Connected with <strong>David</strong>, Microsoft 365 Sales Specialist, via phone<br/>
                             ${conversationContext.quoteSentToEmail ? '✅ Personalized quote sent to <strong>' + conversationContext.customerEmail + '</strong><br/>' : ''}<br/>
                             If you have any follow-up questions, feel free to start a new conversation anytime. We're available during business hours M-F, 6 AM to 6 PM PT.
@@ -4983,7 +4983,7 @@
                     const resetTimer = document.getElementById('callTimer');
                     const resetControls = document.querySelector('.call-controls');
                     const resetTranscript = document.getElementById('callTranscriptArea');
-                    if (resetAvatar) { resetAvatar.style.display = ''; resetAvatar.innerHTML = '<img src="voice.png" alt="Sales AI Assistant" />'; resetAvatar.style.transform = 'scale(1)'; }
+                    if (resetAvatar) { resetAvatar.style.display = ''; resetAvatar.innerHTML = '<img src="voice.png" alt="Ask Microsoft Voice Agent" />'; resetAvatar.style.transform = 'scale(1)'; }
                     if (resetName) { resetName.style.display = ''; resetName.textContent = 'Connecting...'; }
                     if (resetStatus) { resetStatus.style.display = ''; resetStatus.textContent = 'Finding available agent'; resetStatus.classList.add('connecting'); }
                     if (resetTimer) { resetTimer.style.display = 'none'; resetTimer.textContent = '00:00'; }
@@ -5022,17 +5022,17 @@
                     <div>You've reached us outside of business hours (M-F, 6 AM to 6 PM PT). I'm still here to help — please choose one of the options below.</div>
                 </div>
                 <div style="margin: 4px 0 12px 0; font-size: 14px; color: #555555; line-height: 1.6;">
-                    If you'd like immediate help, you can speak with our Sales AI Assistant now.
+                    If you'd like immediate help, you can speak with our Ask Microsoft Voice Agent now.
                     <br/><br/>
                     You can also request a callback from a Microsoft specialist.
                 </div>
                 <div class="options-container">
                     <div class="chat-option-card" onclick="handleOffHoursAiFirstSpeakNow()" role="button" tabindex="0" style="border-color: #0f6cbd; background: #e1efff; box-shadow: 0 10px 24px rgba(15, 108, 189, 0.24);">
                         <div class="chat-option-icon" style="background: white;">
-                            <img src="voice.png" alt="Sales AI Assistant" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
+                            <img src="voice.png" alt="Ask Microsoft Voice Agent" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
                         </div>
                         <div class="chat-option-content">
-                            <div class="chat-option-title">Speak with Sales AI Assistant</div>
+                            <div class="chat-option-title">Speak with Ask Microsoft Voice Agent</div>
                             <div class="chat-option-description">Available immediately. Get answers to product and plan questions through an interactive voice conversation.</div>
                         </div>
                     </div>
@@ -5064,9 +5064,9 @@
         }
 
         function handleOffHoursAiFirstSpeakNow() {
-            addMessage('I\'d like to speak with the Sales AI Assistant now', 'user');
+            addMessage('I\'d like to speak with the Ask Microsoft Voice Agent now', 'user');
             setTimeout(() => {
-                addMessage('Absolutely. Connecting you to our Sales AI Assistant now.', 'bot', false);
+                addMessage('Absolutely. Connecting you to our Ask Microsoft Voice Agent now.', 'bot', false);
                 setTimeout(() => {
                     voiceSessionContext.fromCallback = false;
                     voiceSessionContext.fromOffHoursAiFirst = true;
@@ -5132,7 +5132,7 @@
             messageDiv.className = 'message bot';
             messageDiv.innerHTML = `
                 <div class="message-bubble">
-                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Sales AI Assistant.</div>
+                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Ask Microsoft Voice Agent.</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
                         I hope this conversation was helpful.${conversationContext.quoteSentToEmail ? '<br/><br/><span style="color: #16a34a; font-weight: 500;">📧 Your personalized quote has been sent to ' + conversationContext.customerEmail + '.</span>' : ''}<br/><br/>
                         Your callback request is still scheduled so you can continue the discussion with a Microsoft specialist if you'd like.${conversationContext.quoteSentToEmail ? ' They\'ll have your quote for reference too.' : ''}<br/><br/>
@@ -5204,7 +5204,7 @@
             messageDiv.className = 'message bot';
             messageDiv.innerHTML = `
                 <div class="message-bubble">
-                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Sales AI Assistant.</div>
+                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Ask Microsoft Voice Agent.</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
                         I hope this conversation was helpful.${conversationContext.quoteSentToEmail ? '<br/><br/><span style="color: #16a34a; font-weight: 500;">📧 Your personalized quote has been sent to ' + conversationContext.customerEmail + '.</span>' : (conversationContext.quoteReadyForSend ? '<br/><br/><span style="color: #d97706; font-weight: 500;">📋 Your quote is ready — we\'ll send it when you share your email.</span>' : '')}<br/><br/>
                         If you'd still like to connect with a Microsoft specialist, you can request a callback below.<br/><br/>
@@ -5289,7 +5289,7 @@
             messageDiv.className = 'message bot';
             messageDiv.innerHTML = `
                 <div class="message-bubble">
-                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Sales AI Assistant.</div>
+                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Ask Microsoft Voice Agent.</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
                         I hope this conversation was helpful.<br/><br/>
                         Since we're within business hours, a live Microsoft sales specialist is available right now to help with next steps, purchasing, or any specific questions.${conversationContext.quoteSentToEmail ? '<br/><br/><span style="color: #16a34a; font-weight: 500;">📧 Your personalized quote has been sent to ' + conversationContext.customerEmail + '.</span>' : (conversationContext.quoteReadyForSend ? '<br/><br/><span style="color: #d97706; font-weight: 500;">📋 Your quote is ready and will be sent when you share your email.</span>' : '')}<br/><br/>
@@ -5650,7 +5650,7 @@
             }
 
             if (callStatus) {
-                callStatus.textContent = 'Connecting you to Sales AI Assistant...';
+                callStatus.textContent = 'Connecting you to Ask Microsoft Voice Agent...';
                 callStatus.classList.add('connecting');
             }
 
@@ -5785,14 +5785,14 @@
             // Add message to chat
             const minutes = Math.floor(callDuration / 60);
             const seconds = callDuration % 60;
-            addSystemMessage(`Thanks for speaking with the Sales AI Assistant! Your conversation lasted ${minutes}m ${seconds}s. I'm still here if you'd like to continue in chat — just type below.`);
+            addSystemMessage(`Thanks for speaking with the Ask Microsoft Voice Agent! Your conversation lasted ${minutes}m ${seconds}s. I'm still here if you'd like to continue in chat — just type below.`);
         }
 
         function startVoiceConversation() {
             const transcript = document.getElementById('voiceTranscript');
             
             // Initial greeting
-            addTranscriptEntry('Sales AI Assistant', 'Hello! I\'m your Sales AI Assistant for Microsoft 365 Business. I\'m here to help you find the right plan for your business. To get started, could you tell me a bit about your company — what industry are you in and how many employees do you have?');
+            addTranscriptEntry('Ask Microsoft Voice Agent', 'Hello! I\'m your Ask Microsoft Voice Agent for Microsoft 365 Business. I\'m here to help you find the right plan for your business. To get started, could you tell me a bit about your company — what industry are you in and how many employees do you have?');
             
             // Simulate an interactive conversation flow
             setTimeout(() => {
@@ -5801,40 +5801,40 @@
                 conversationContext.businessType = 'regional marketing agency';
                 
                 setTimeout(() => {
-                    addTranscriptEntry('Sales AI Assistant', 'A 15-person marketing agency — great! Microsoft 365 Business is an excellent fit for creative and collaborative teams like yours. Are your employees primarily working in the office, remotely, or a hybrid setup?');
+                    addTranscriptEntry('Ask Microsoft Voice Agent', 'A 15-person marketing agency — great! Microsoft 365 Business is an excellent fit for creative and collaborative teams like yours. Are your employees primarily working in the office, remotely, or a hybrid setup?');
                     
                     setTimeout(() => {
                         addTranscriptEntry('You', 'We\'re mostly remote with some hybrid workers. Our designers often work from home but come in for client presentations.');
                         conversationContext.workLocation = 'hybrid/remote';
                         
                         setTimeout(() => {
-                            addTranscriptEntry('Sales AI Assistant', 'That\'s very common for agencies these days. Microsoft 365 is excellent for remote and hybrid teams with Microsoft Teams for collaboration and OneDrive for cloud storage — especially useful for sharing campaign assets and client deliverables. Now, how important is security to your agency? Do you handle sensitive client data or have any specific compliance requirements?');
+                            addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s very common for agencies these days. Microsoft 365 is excellent for remote and hybrid teams with Microsoft Teams for collaboration and OneDrive for cloud storage — especially useful for sharing campaign assets and client deliverables. Now, how important is security to your agency? Do you handle sensitive client data or have any specific compliance requirements?');
                             
                             setTimeout(() => {
                                 addTranscriptEntry('You', 'Security is pretty important to us. We handle client campaign data, brand assets, and sometimes financial information for ad budgets.');
                                 conversationContext.securityNeeds = 'high';
                                 
                                 setTimeout(() => {
-                                    addTranscriptEntry('Sales AI Assistant', 'I completely understand. Protecting client data is critical for an agency\'s reputation and trust. Based on what you\'ve shared — a 15-person agency working remotely with security needs around client data — I\'d recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, data loss prevention, and all the productivity apps like Word, Excel, PowerPoint, Teams, and 1TB of OneDrive storage per user. What\'s your timeline for making a decision?');
+                                    addTranscriptEntry('Ask Microsoft Voice Agent', 'I completely understand. Protecting client data is critical for an agency\'s reputation and trust. Based on what you\'ve shared — a 15-person agency working remotely with security needs around client data — I\'d recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, data loss prevention, and all the productivity apps like Word, Excel, PowerPoint, Teams, and 1TB of OneDrive storage per user. What\'s your timeline for making a decision?');
                                     
                                     setTimeout(() => {
                                         addTranscriptEntry('You', 'We\'re looking to move forward pretty soon, maybe this month. We just landed a big client and need to scale up our tools.');
                                         conversationContext.timeline = 'this month';
                                         
                                         setTimeout(() => {
-                                            addTranscriptEntry('Sales AI Assistant', 'That\'s great to hear — congratulations on the new client! I can connect you with a Microsoft specialist who can help finalize the next steps, provide detailed pricing for your specific needs, and ensure you get the right setup for your agency. Would you like me to arrange a callback?');
+                                            addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s great to hear — congratulations on the new client! I can connect you with a Microsoft specialist who can help finalize the next steps, provide detailed pricing for your specific needs, and ensure you get the right setup for your agency. Would you like me to arrange a callback?');
                                             
                                             setTimeout(() => {
                                                 addTranscriptEntry('You', 'Yes, that would be helpful. What about pricing? Can you give me an idea of the costs?');
                                                 
                                                 setTimeout(() => {
-                                                    addTranscriptEntry('Sales AI Assistant', 'Microsoft 365 Business Premium is $22 per user per month. For your 15-person agency, that would be $330 per month. However, a Microsoft specialist can discuss volume licensing, payment options, and help you understand the full value. They\'ll also make sure you\'re aware of any current promotions. Shall I set up that callback for you?');
+                                                    addTranscriptEntry('Ask Microsoft Voice Agent', 'Microsoft 365 Business Premium is $22 per user per month. For your 15-person agency, that would be $330 per month. However, a Microsoft specialist can discuss volume licensing, payment options, and help you understand the full value. They\'ll also make sure you\'re aware of any current promotions. Shall I set up that callback for you?');
                                                     
                                                     setTimeout(() => {
                                                         addTranscriptEntry('You', 'Yes, please set up the callback.');
                                                         
                                                         setTimeout(() => {
-                                                            addTranscriptEntry('Sales AI Assistant', 'Perfect! I\'ll transition you to our callback request form to capture your details. A Microsoft sales associate will reach out to you within 48 hours to discuss your agency\'s specific needs and next steps. Let me switch you over now.');
+                                                            addTranscriptEntry('Ask Microsoft Voice Agent', 'Perfect! I\'ll transition you to our callback request form to capture your details. A Microsoft sales associate will reach out to you within 48 hours to discuss your agency\'s specific needs and next steps. Let me switch you over now.');
                                                             
                                                             setTimeout(() => {
                                                                 endVoiceSession();
@@ -5873,35 +5873,35 @@
             
             // Handle common M365 questions
             if (lowerMessage.includes('difference between') && (lowerMessage.includes('standard') || lowerMessage.includes('premium'))) {
-                addTranscriptEntry('Sales AI Assistant', 'Great question! Microsoft 365 Business Standard includes all the core productivity apps like Word, Excel, PowerPoint, Outlook, and Teams, plus 1TB of cloud storage and email hosting for $12.50 per user per month. Business Premium, at $22 per user per month, includes everything in Standard plus advanced security features like advanced threat protection, device management, and data loss prevention. For businesses handling sensitive data or those with security compliance needs, Premium is the better choice.');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'Great question! Microsoft 365 Business Standard includes all the core productivity apps like Word, Excel, PowerPoint, Outlook, and Teams, plus 1TB of cloud storage and email hosting for $12.50 per user per month. Business Premium, at $22 per user per month, includes everything in Standard plus advanced security features like advanced threat protection, device management, and data loss prevention. For businesses handling sensitive data or those with security compliance needs, Premium is the better choice.');
                 return;
             }
 
             if (lowerMessage.includes('what') && lowerMessage.includes('plan') && lowerMessage.includes('best')) {
-                addTranscriptEntry('Sales AI Assistant', 'To recommend the best plan for you, I\'d like to know a bit more about your business. How many employees do you have, and what are your primary needs - basic productivity tools, or do you also need advanced security and compliance features?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'To recommend the best plan for you, I\'d like to know a bit more about your business. How many employees do you have, and what are your primary needs - basic productivity tools, or do you also need advanced security and compliance features?');
                 return;
             }
 
             if (lowerMessage.includes('security') && lowerMessage.includes('add')) {
-                addTranscriptEntry('Sales AI Assistant', 'Microsoft 365 Business Premium includes comprehensive security features built-in, including Microsoft Defender for Business, which provides threat protection, device management, and data loss prevention. For most small to medium businesses, the security in Premium is sufficient. However, if you have specific compliance requirements or need advanced security management, a specialist can help assess your needs. Would you like me to connect you with someone who can provide a detailed security assessment?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'Microsoft 365 Business Premium includes comprehensive security features built-in, including Microsoft Defender for Business, which provides threat protection, device management, and data loss prevention. For most small to medium businesses, the security in Premium is sufficient. However, if you have specific compliance requirements or need advanced security management, a specialist can help assess your needs. Would you like me to connect you with someone who can provide a detailed security assessment?');
                 return;
             }
             
             // Handle callback request during voice conversation
             if (lowerMessage.includes('callback') || lowerMessage.includes('specialist') || lowerMessage.includes('representative')) {
-                addTranscriptEntry('Sales AI Assistant', 'I understand you\'d like to speak with a Microsoft specialist. I can arrange a callback for you right away. Would you like me to do that?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'I understand you\'d like to speak with a Microsoft specialist. I can arrange a callback for you right away. Would you like me to do that?');
                 return;
             }
             
             // Handle discount/pricing questions
             if (lowerMessage.includes('discount') || lowerMessage.includes('deal') || lowerMessage.includes('cheaper') || lowerMessage.includes('negotiate')) {
-                addTranscriptEntry('Sales AI Assistant', 'I\'m not able to adjust pricing or negotiate discounts. A Microsoft specialist can help you with detailed pricing, volume licensing options, and make sure you\'re aware of any current promotions or special offers. Would you like me to arrange a callback with a specialist?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'I\'m not able to adjust pricing or negotiate discounts. A Microsoft specialist can help you with detailed pricing, volume licensing options, and make sure you\'re aware of any current promotions or special offers. Would you like me to arrange a callback with a specialist?');
                 return;
             }
             
             // Handle purchase intent
             if (lowerMessage.includes('move forward') || lowerMessage.includes('purchase') || lowerMessage.includes('buy') || lowerMessage.includes('sign up')) {
-                addTranscriptEntry('Sales AI Assistant', 'That\'s excellent! I\'m glad I could help you find the right solution. To finalize your purchase and get your team set up, I\'ll connect you with a Microsoft specialist who can process your order, help with onboarding, and answer any final questions. Would you like me to arrange that callback now?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s excellent! I\'m glad I could help you find the right solution. To finalize your purchase and get your team set up, I\'ll connect you with a Microsoft specialist who can process your order, help with onboarding, and answer any final questions. Would you like me to arrange that callback now?');
                 return;
             }
             
@@ -5909,33 +5909,33 @@
             if (lowerMessage.match(/\d+/) && (lowerMessage.includes('employee') || lowerMessage.includes('people') || lowerMessage.includes('user'))) {
                 const num = lowerMessage.match(/\d+/)[0];
                 conversationContext.numEmployees = parseInt(num);
-                addTranscriptEntry('Sales AI Assistant', `Perfect! For a ${num}-person business, Microsoft 365 Business plans are ideal. Are your employees primarily working in the office, remotely, or a hybrid setup?`);
+                addTranscriptEntry('Ask Microsoft Voice Agent', `Perfect! For a ${num}-person business, Microsoft 365 Business plans are ideal. Are your employees primarily working in the office, remotely, or a hybrid setup?`);
                 return;
             }
             
             // Work location
             if (lowerMessage.includes('remote') || lowerMessage.includes('hybrid') || lowerMessage.includes('office') || lowerMessage.includes('home')) {
                 conversationContext.workLocation = lowerMessage.includes('remote') ? 'remote' : lowerMessage.includes('hybrid') ? 'hybrid' : 'office';
-                addTranscriptEntry('Sales AI Assistant', 'That\'s helpful to know. Microsoft 365 works great for all work environments with cloud-based collaboration tools. Now, how important is security to your organization? Do you handle sensitive customer data?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s helpful to know. Microsoft 365 works great for all work environments with cloud-based collaboration tools. Now, how important is security to your organization? Do you handle sensitive customer data?');
                 return;
             }
             
             // Security needs
             if ((lowerMessage.includes('security') || lowerMessage.includes('secure') || lowerMessage.includes('important') || lowerMessage.includes('yes')) && conversationContext.securityNeeds === null) {
                 conversationContext.securityNeeds = 'high';
-                addTranscriptEntry('Sales AI Assistant', 'Security is definitely critical. For organizations with security concerns, I\'d strongly recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, and data loss prevention to keep your data safe. What\'s your timeline for making a decision?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'Security is definitely critical. For organizations with security concerns, I\'d strongly recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, and data loss prevention to keep your data safe. What\'s your timeline for making a decision?');
                 return;
             }
 
             // Timeline
             if (lowerMessage.includes('soon') || lowerMessage.includes('month') || lowerMessage.includes('week') || lowerMessage.includes('asap')) {
                 conversationContext.timeline = lowerMessage.includes('week') ? 'this week' : 'soon';
-                addTranscriptEntry('Sales AI Assistant', 'Great timing! I can help expedite your setup. Based on your needs, I recommend connecting with a Microsoft specialist who can finalize everything quickly and get your team up and running. Shall I arrange that for you?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'Great timing! I can help expedite your setup. Based on your needs, I recommend connecting with a Microsoft specialist who can finalize everything quickly and get your team up and running. Shall I arrange that for you?');
                 return;
             }
             
             // Default helpful response
-            addTranscriptEntry('Sales AI Assistant', 'I see. Let me provide some additional context. Microsoft 365 Business offers three main plans: Basic ($6/user/month) for web-only apps, Standard ($12.50/user/month) with desktop apps and email, and Premium ($22/user/month) with advanced security. Based on what you\'ve shared, would you like a specific recommendation, or would you prefer to speak with a Microsoft specialist for a more detailed consultation?');
+            addTranscriptEntry('Ask Microsoft Voice Agent', 'I see. Let me provide some additional context. Microsoft 365 Business offers three main plans: Basic ($6/user/month) for web-only apps, Standard ($12.50/user/month) with desktop apps and email, and Premium ($22/user/month) with advanced security. Based on what you\'ve shared, would you like a specific recommendation, or would you prefer to speak with a Microsoft specialist for a more detailed consultation?');
         }
 
         function toggleVoiceMute() {
@@ -5960,12 +5960,12 @@
             document.getElementById('agentName').textContent = 'Ask Microsoft';
             
             // Add summary to chat
-            addSystemMessage('🤖 Sales AI Assistant session ended. Transcript saved.');
+            addSystemMessage('🤖 Ask Microsoft Voice Agent session ended. Transcript saved.');
             
             // Copy transcript to chat as a system message
             const transcriptEntries = document.querySelectorAll('.transcript-entry');
             if (transcriptEntries.length > 0) {
-                addMessage('Thank you for speaking with our Sales AI Assistant! If you need further assistance, feel free to ask or request a callback with a Microsoft specialist.', 'bot', true);
+                addMessage('Thank you for speaking with our Ask Microsoft Voice Agent! If you need further assistance, feel free to ask or request a callback with a Microsoft specialist.', 'bot', true);
             }
             
             // Reset interface
@@ -5979,7 +5979,7 @@
         }
 
         function toggleBackToChat() {
-            addTranscriptEntry('Sales AI Assistant', 'Switching to text chat. Your conversation history is saved. How else can I help you?');
+            addTranscriptEntry('Ask Microsoft Voice Agent', 'Switching to text chat. Your conversation history is saved. How else can I help you?');
             
             setTimeout(() => {
                 endVoiceSession();
@@ -6142,7 +6142,7 @@
                     <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with David!</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
                         We hope this conversation was helpful. Here's a quick summary of your session:<br/><br/>
-                        ✅ Spoke with <strong>Sales AI Assistant</strong> about Microsoft 365 plans<br/>
+                        ✅ Spoke with <strong>Ask Microsoft Voice Agent</strong> about Microsoft 365 plans<br/>
                         ✅ Connected with <strong>David</strong>, Microsoft 365 Sales Specialist, via phone<br/><br/>
                         If you have any follow-up questions, feel free to start a new conversation anytime. We're available during business hours M-F, 6 AM to 6 PM PT.
                     </div>
@@ -6160,7 +6160,7 @@
             
             // Reset call screen
             setTimeout(() => {
-                document.getElementById('callAvatar').innerHTML = '<img src="voice.png" alt="Sales AI Assistant" />';
+                document.getElementById('callAvatar').innerHTML = '<img src="voice.png" alt="Ask Microsoft Voice Agent" />';
                 document.getElementById('callAgentName').textContent = 'Connecting...';
                 document.getElementById('callStatus').textContent = 'Finding available agent';
                 document.getElementById('callStatus').classList.add('connecting');
