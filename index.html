@@ -142,6 +142,36 @@
             color: #475569;
             font-size: 12px;
         }
+        .archive-section {
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(71, 85, 105, 0.3);
+        }
+        .archive-label {
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+        .archive-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 13px;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            transition: all 0.2s;
+        }
+        .archive-link:hover {
+            color: #94a3b8;
+            border-color: rgba(148, 163, 184, 0.4);
+            background: rgba(30, 41, 59, 0.5);
+        }
         @media (max-width: 600px) {
             .cards { grid-template-columns: 1fr; }
             h1 { font-size: 24px; }
@@ -151,51 +181,45 @@
 <body>
     <div class="container">
         <div class="badge">Prototype Gallery</div>
-        <h1>AI Voice Assistant Prototypes</h1>
+        <h1>Ask Microsoft — Voice AI Prototypes</h1>
         <p class="subtitle">eCommerce Voice AI Agent — Microsoft 365</p>
 
         <div class="cards">
             <a href="voice-enabled/" class="card">
                 <span class="card-badge latest">★ Latest</span>
-                <h2>Voice-Enabled + Quoting</h2>
-                <p>Full-featured prototype with quoting flow, scenario presets, and enhanced voice handoff.</p>
+                <h2>Ask Microsoft — Always-On Voice</h2>
+                <p>Full-featured prototype with always-available voice AI, quoting via Quotex, scenario presets, and seamless handoff to live specialists.</p>
                 <ul class="card-features">
                     <li>Quoting flow (Happy Path / Email Later / No Quote)</li>
-                    <li>Voice Initiated &amp; Modality Switch scenarios</li>
+                    <li>Voice-First Entry &amp; Modality Switch scenarios</li>
                     <li>Context-aware voice handoff to David</li>
                     <li>Quote card with personalized pricing</li>
                 </ul>
                 <span class="card-link primary">Launch Prototype →</span>
             </a>
 
-            <a href="voice-enabled/classic.html" class="card">
-                <span class="card-badge original">Classic</span>
-                <h2>Voice-Enabled (Classic)</h2>
-                <p>The pre-quoting prototype — original voice and chat experience.</p>
-                <ul class="card-features">
-                    <li>Voice Initiated scenario</li>
-                    <li>Modality Switch (chat → voice)</li>
-                    <li>Context-aware voice handoff</li>
-                    <li>Sales AI Assistant integration</li>
-                </ul>
-                <span class="card-link secondary">Launch Prototype →</span>
-            </a>
-
             <a href="original-prototype.html" class="card">
-                <span class="card-badge original">Original</span>
-                <h2>Original eCommerce</h2>
-                <p>The initial eCommerce Voice AI prototype with core chat and voice capabilities.</p>
+                <span class="card-badge original">Off-Hours</span>
+                <h2>Ask Microsoft — Enable Voice for Off Business Hours</h2>
+                <p>After-hours voice AI prototype — customers can speak with the Sales AI Assistant when live agents are unavailable, with callback scheduling and context handoff.</p>
                 <ul class="card-features">
-                    <li>Chat-based support flow</li>
-                    <li>Voice AI assistant</li>
+                    <li>After-hours voice AI assistant</li>
+                    <li>Callback form with context handoff</li>
                     <li>Microsoft 365 knowledge base</li>
-                    <li>Callback scheduling</li>
+                    <li>Sales associate context summary</li>
                 </ul>
                 <span class="card-link secondary">Launch Prototype →</span>
             </a>
         </div>
 
-        <p class="footer">AI Voice Assistant Prototypes — Internal Demo</p>
+        <div class="archive-section">
+            <p class="archive-label">Archive</p>
+            <a href="voice-enabled/classic.html" class="archive-link">
+                📂 Voice-Enabled Classic (Pre-Quoting)
+            </a>
+        </div>
+
+        <p class="footer">Ask Microsoft — Voice AI Prototypes — Internal Demo</p>
     </div>
 </body>
 </html>
