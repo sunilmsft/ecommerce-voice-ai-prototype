@@ -996,10 +996,10 @@
             background: #e8f2ff;
         }
 
-        /* Speak to Ask Microsoft Voice Agent — voice icon in title bar */
+        /* Speak to Ask Microsoft Voice Agent — voice icon */
         .voice-icon-btn {
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             background: transparent;
             border: none;
             color: #0f6cbd;
@@ -1016,8 +1016,6 @@
             animation: voicePulse 3s ease-in-out infinite;
             overflow: hidden;
             padding: 0;
-            margin-left: 6px;
-            flex-shrink: 0;
         }
 
         .voice-icon-btn img {
@@ -2559,9 +2557,9 @@
                 <div class="agent-info">
                     <div class="agent-name" id="agentName">Ask Microsoft</div>
                 </div>
-                <button class="voice-icon-btn" id="voiceIconBtn" onclick="initiateVoiceCall()" title="Speak to Ask Microsoft Voice Agent"><img src="voice.png" alt="Ask Microsoft Voice Agent" /></button>
             </div>
             <div style="display: flex; gap: 4px;">
+                <button class="voice-icon-btn" id="voiceIconBtn" onclick="initiateVoiceCall()" title="Speak to Ask Microsoft Voice Agent"><img src="Voice%20ai.jpg" alt="Ask Microsoft Voice Agent" /></button>
                 <button class="minimize-btn" onclick="minimizeChat()" title="Minimize">−</button>
                 <button class="close-btn" onclick="closeChat()" title="Close">✕</button>
             </div>
@@ -2827,6 +2825,23 @@
         let isSpeaking = false;
         let audioEnabled = true;
         let voiceSessionGeneration = 0;
+        let speechKeepAliveTimer = null;  // Chrome 15-second TTS bug workaround
+
+        // ── Chrome/Edge speechSynthesis keepalive ──────────────────────────
+        // Chrome silently kills any utterance longer than ~15 s.
+        // Workaround: pause() + resume() every 10 s while speaking.
+        function startSpeechKeepAlive() {
+            stopSpeechKeepAlive();
+            speechKeepAliveTimer = setInterval(() => {
+                if (speechSynthesis.speaking && !speechSynthesis.paused) {
+                    speechSynthesis.pause();
+                    speechSynthesis.resume();
+                }
+            }, 10000);
+        }
+        function stopSpeechKeepAlive() {
+            if (speechKeepAliveTimer) { clearInterval(speechKeepAliveTimer); speechKeepAliveTimer = null; }
+        }
         let callbackRequested = false;
         let callbackRequestedAfterVoiceCall = false;
         let offHoursAiFirstFlow = false;
@@ -2851,10 +2866,7 @@
             quoteSentToEmail: false,
             monthlyTotal: null,
             pricePerUser: null,
-            quoteReadyForSend: false,
-            quoteCompanyName: null,
-            quoteContactName: null,
-            billingCycle: null
+            quoteReadyForSend: false
         };
 
         // Simulated Microsoft 365 knowledge base (in production, this would query the actual website)
@@ -2899,7 +2911,7 @@
                 chainBizHours: [
                     { label: 'Ask Microsoft', cls: 'ask-ms' },
                     { label: 'Ask Microsoft Voice Agent (Voice)', cls: 'ai-voice' },
-                    { label: 'Live Specialist (Voice)', cls: 'live-voice' }
+                    { label: 'Live Specialist (Chat)', cls: 'live-chat' }
                 ],
                 chainAfterHours: [
                     { label: 'Ask Microsoft', cls: 'ask-ms' },
@@ -2910,8 +2922,8 @@
                     { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click the voice icon' },
                     { party: 'Ask Microsoft Voice Agent (Voice)', pcls: 'ai-voice', text: '— discusses your needs via voice' },
                     { party: 'Ask Microsoft Voice Agent', pcls: 'ai-voice', text: '— offers transfer to specialist' },
-                    { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— David calls you with full context' },
-                    { party: 'Live Specialist (Voice)', pcls: 'live-voice', text: '— recap, next steps & follow-up' }
+                    { party: 'Live Specialist (Chat)', pcls: 'live-chat', text: '— David joins in chat with full context' },
+                    { party: 'Live Specialist (Chat)', pcls: 'live-chat', text: '— recap, next steps & follow-up' }
                 ],
                 flowAfterHours: [
                     { party: 'Ask Microsoft', pcls: 'ask-ms', text: '— click the voice icon' },
@@ -3088,8 +3100,7 @@
                     </div>`;
             }
 
-            const businessName = ctx.quoteCompanyName || ((prototypeVariant === 'modality_switch') ? 'Spark + Co Creative Agency' : 'Summit Outdoor Gear Co.');
-            const billingLabel = ctx.billingCycle === 'annual' ? 'Annual' : 'Monthly';
+            const businessName = (prototypeVariant === 'modality_switch') ? 'Spark + Co Creative Agency' : 'Summit Outdoor Gear Co.';
 
             return `
                 <div class="quote-card ${isSent ? 'quote-sent-pulse' : ''}">
@@ -3101,12 +3112,11 @@
                         <div class="quote-card-item"><strong>Plan</strong><br/>Microsoft 365 ${plan}</div>
                         <div class="quote-card-item"><strong>Business</strong><br/>${businessName}</div>
                         <div class="quote-card-item"><strong>Users</strong><br/>${users} users</div>
-                        <div class="quote-card-item"><strong>Billing</strong><br/>${billingLabel}</div>
+                        <div class="quote-card-item"><strong>Per User</strong><br/>$${pricePerUser}/user/mo</div>
                     </div>
                     <div class="quote-card-total">
                         <div>
                             <div class="quote-card-total-label">Monthly Total</div>
-                            <div style="font-size: 11px; color: #6b7280;">$${pricePerUser}/user/mo &middot; ${billingLabel} billing</div>
                             <div style="font-size: 11px; color: #6b7280;">Annual: $${annual.toLocaleString()}/year</div>
                         </div>
                         <div class="quote-card-total-value">$${monthly}/mo</div>
@@ -3490,11 +3500,14 @@
         }
 
         function showBusinessHoursOptions() {
-            // Both Voice-First and Modality Switch -> live phone (voice queue)
-            const liveAgentAction = 'joinLivePhoneQueue()';
-            const liveAgentIcon = '📞';
-            const liveAgentTitle = 'Call a Live Agent';
-            const liveAgentDesc = 'Join the live phone queue and speak directly with a Microsoft sales specialist. Estimated wait: ~2 minutes.';
+            // Variant-specific: Voice-First Entry -> live chat, Modality Switch -> live phone
+            const isPhoneHandoff = (prototypeVariant === 'modality_switch');
+            const liveAgentAction = isPhoneHandoff ? 'joinLivePhoneQueue()' : 'joinLiveQueue()';
+            const liveAgentIcon = isPhoneHandoff ? '📞' : '🎧';
+            const liveAgentTitle = isPhoneHandoff ? 'Call a Live Agent' : 'Connect with a Live Agent';
+            const liveAgentDesc = isPhoneHandoff
+                ? 'Join the live phone queue and speak directly with a Microsoft sales specialist. Estimated wait: ~2 minutes.'
+                : 'Join the live queue and chat with a Microsoft sales specialist. Estimated wait: ~2 minutes.';
 
             const optionsHTML = `
                 <div style="margin: 0 0 12px 0; font-size: 14px; color: #555555; line-height: 1.6;">
@@ -3911,13 +3924,11 @@
             if (summarySection && summaryList) {
                 const parts = [];
                 if (conversationContext.businessType) parts.push('Business: ' + conversationContext.businessType);
-                if (conversationContext.quoteCompanyName) parts.push('Company name: ' + conversationContext.quoteCompanyName);
                 if (conversationContext.numEmployees) parts.push('Team size: ~' + conversationContext.numEmployees + ' employees');
                 if (conversationContext.workLocation) parts.push('Work setup: ' + conversationContext.workLocation);
                 if (conversationContext.securityNeeds) parts.push('Security priority: ' + (conversationContext.securityNeeds === 'high' ? 'High — handles sensitive data' : conversationContext.securityNeeds));
                 if (conversationContext.timeline) parts.push('Timeline: ' + conversationContext.timeline);
                 parts.push('Recommended plan: Microsoft 365 Business Premium');
-                if (conversationContext.billingCycle) parts.push('Billing preference: ' + conversationContext.billingCycle);
                 if (conversationContext.quoteSentToEmail && conversationContext.customerEmail) {
                     parts.push('✅ Quote sent to ' + conversationContext.customerEmail + ' (ID: ' + conversationContext.quoteId + ')');
                 } else if (conversationContext.quoteReadyForSend) {
@@ -4138,6 +4149,9 @@
 
             return new Promise((resolve) => {
                 const checkSpeech = () => {
+                    // Poke the engine awake — prevents stall when tab is backgrounded
+                    try { if (speechSynthesis.paused) speechSynthesis.resume(); } catch(e) {}
+
                     const speakingNow = isSpeaking || speechSynthesis.speaking || speechSynthesis.pending;
                     const timedOut = Date.now() - startedAt > maxWaitMs;
 
@@ -4186,18 +4200,7 @@
                 if (quoteScenario === 'happy_path') {
                     await playLine('Ask Microsoft Voice Agent', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
                     await playLine('You', 'Definitely, yes.', 420);
-
-                    // Pre-quote qualification questions
-                    await playLine('Ask Microsoft Voice Agent', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company or agency name for the quote?', 450);
-                    const demoCompanyMS = 'Spark + Co Creative Agency';
-                    await playLine('You', 'It\'s ' + demoCompanyMS + '.', 420);
-                    conversationContext.quoteCompanyName = demoCompanyMS;
-
-                    await playLine('Ask Microsoft Voice Agent', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
-                    await playLine('You', 'Annual, definitely.', 420);
-                    conversationContext.billingCycle = 'annual';
-
-                    await playLine('Ask Microsoft Voice Agent', 'Perfect. What email should I send the quote to?', 420);
+                    await playLine('Ask Microsoft Voice Agent', 'Great — what email should I send it to?', 420);
 
                     const demoEmail = 'priya@sparkco-example.com';
                     await playLine('You', 'It\'s ' + demoEmail, 420);
@@ -4207,25 +4210,12 @@
                     conversationContext.quoteGenerated = true;
                     conversationContext.quoteSentToEmail = true;
 
-                    await playLine('Ask Microsoft Voice Agent', 'Done — I\'ve generated the quote for ' + demoCompanyMS + ' and sent it to ' + demoEmail + '. You\'ll have it in your inbox shortly — it\'s valid for 30 days.', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'Done — I\'ll get that sent to ' + demoEmail + ' right away. You\'ll have it in your inbox shortly. It\'s valid for 30 days.', 500);
 
                 } else if (quoteScenario === 'email_later') {
                     await playLine('Ask Microsoft Voice Agent', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
-                    await playLine('You', 'Yes, that sounds great.', 420);
-
-                    // Pre-quote qualification questions
-                    await playLine('Ask Microsoft Voice Agent', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company or agency name for the quote?', 450);
-                    const demoCompanyMS2 = 'Spark + Co Creative Agency';
-                    await playLine('You', 'It\'s ' + demoCompanyMS2 + '.', 420);
-                    conversationContext.quoteCompanyName = demoCompanyMS2;
-
-                    await playLine('Ask Microsoft Voice Agent', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
-                    await playLine('You', 'Let\'s go annual.', 420);
-                    conversationContext.billingCycle = 'annual';
-
-                    await playLine('Ask Microsoft Voice Agent', 'Perfect. And what email should I send it to?', 420);
-                    await playLine('You', 'I\'d prefer not to share my email right now.', 420);
-                    await playLine('Ask Microsoft Voice Agent', 'Totally fine. I\'ve prepared the quote for ' + demoCompanyMS2 + ' — we\'ll send it along when you share your email on the callback form after our call.', 500);
+                    await playLine('You', 'Yes, but I\'d prefer not to share my email right now.', 420);
+                    await playLine('Ask Microsoft Voice Agent', 'Totally fine. I\'ve prepared the quote — we\'ll send it along when you share your email on the callback form after our call.', 500);
                     conversationContext.quoteGenerated = false;
                     conversationContext.quoteReadyForSend = true;
                     conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
@@ -4369,16 +4359,18 @@
             }
 
             await playLine('Ask Microsoft Voice Agent', 'Hi there — I am Ask Microsoft Voice Agent. Happy to help. What can I help you with today?', 500);
-            await playLine('You', 'Hi, I run a growing e-commerce company — we sell outdoor gear online. We\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
+            await playLine('You', 'Hi, we\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
             conversationContext.customerName = 'Alex';
             conversationContext.numEmployees = 20;
-            conversationContext.businessType = 'e-commerce company selling outdoor gear';
+            if (!conversationContext.businessType) conversationContext.businessType = bizName || null;
+            const teamSize = conversationContext.numEmployees || 20;
+            const bizLabel = bizName || 'your business';
 
-            await playLine('Ask Microsoft Voice Agent', 'Great, an e-commerce business with 20 employees — that\'s a perfect fit for our Business plans. Are your teams mostly in-office, fully remote, or hybrid?', 420);
-            await playLine('You', 'We\'re mostly hybrid. Our warehouse crew is on-site, but marketing and customer support work remotely.', 420);
+            await playLine('Ask Microsoft Voice Agent', 'Great, ' + bizLabel + ' with ' + teamSize + ' employees — that\'s a perfect fit for our Business plans. Are your teams mostly in-office, fully remote, or hybrid?', 420);
+            await playLine('You', 'We\'re mostly hybrid, with a few fully remote staff.', 420);
             conversationContext.workLocation = 'hybrid';
 
-            await playLine('Ask Microsoft Voice Agent', 'That makes sense for e-commerce. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
+            await playLine('Ask Microsoft Voice Agent', 'That makes sense. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
             await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
             conversationContext.securityNeeds = 'moderate';
 
@@ -4396,20 +4388,9 @@
                 // Happy Path: customer accepts quote AND shares email
                 await playLine('Ask Microsoft Voice Agent', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
                 await playLine('You', 'Yeah, that would be really helpful.', 420);
-
-                // Pre-quote qualification questions
-                await playLine('Ask Microsoft Voice Agent', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company name for the quote?', 450);
-                const demoCompany = 'Summit Outdoor Gear Co.';
-                await playLine('You', 'It\'s ' + demoCompany + '.', 420);
-                conversationContext.quoteCompanyName = demoCompany;
-
-                await playLine('Ask Microsoft Voice Agent', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
-                await playLine('You', 'Let\'s go with annual.', 420);
-                conversationContext.billingCycle = 'annual';
-
                 await playLine('Ask Microsoft Voice Agent', 'Perfect. What\'s the best email address to send it to?', 420);
 
-                const demoEmail = 'alex@summitgear-example.com';
+                const demoEmail = (prototypeVariant === 'modality_switch') ? 'priya@sparkco-example.com' : 'alex@summitgear-example.com';
                 await playLine('You', 'It\'s ' + demoEmail, 420);
                 conversationContext.customerEmail = demoEmail;
 
@@ -4418,26 +4399,13 @@
                 conversationContext.quoteGenerated = true;
                 conversationContext.quoteSentToEmail = true;
 
-                await playLine('Ask Microsoft Voice Agent', 'Got it — I\'ve generated the quote for ' + demoCompany + ' and sent it to ' + demoEmail + '. It\'s in your inbox now with the full pricing breakdown, and it\'s valid for 30 days.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Got it — I\'ve just sent the quote to ' + demoEmail + '. It\'s in your inbox now with the full pricing breakdown, and it\'s valid for 30 days.', 500);
 
             } else if (quoteScenario === 'email_later') {
                 // Email Later: customer accepts quote but declines to share email now
                 await playLine('Ask Microsoft Voice Agent', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
-                await playLine('You', 'Yeah, that sounds great.', 420);
-
-                // Pre-quote qualification questions
-                await playLine('Ask Microsoft Voice Agent', 'Great! Just a couple of quick details so I can make the quote accurate. What\'s the official company name for the quote?', 450);
-                const demoCompany2 = 'Summit Outdoor Gear Co.';
-                await playLine('You', 'It\'s ' + demoCompany2 + '.', 420);
-                conversationContext.quoteCompanyName = demoCompany2;
-
-                await playLine('Ask Microsoft Voice Agent', 'Got it. And would you prefer annual billing — which saves about 16% — or month-to-month?', 450);
-                await playLine('You', 'Annual sounds good.', 420);
-                conversationContext.billingCycle = 'annual';
-
-                await playLine('Ask Microsoft Voice Agent', 'Perfect. And what\'s the best email address to send the quote to?', 420);
-                await playLine('You', 'Actually, I\'d rather not share my email over the call if that\'s okay.', 420);
-                await playLine('Ask Microsoft Voice Agent', 'Completely understand — no problem at all. I\'ve got the quote ready for ' + demoCompany2 + ' on my end. When you fill out the callback form after our call, we\'ll use that email to send the quote over. Nothing lost.', 500);
+                await playLine('You', 'Yeah, that sounds great — but I\'d rather not share my email over the call if that\'s okay.', 420);
+                await playLine('Ask Microsoft Voice Agent', 'Completely understand — no problem at all. I\'ve got the quote ready on my end. When you fill out the callback form after our call, we\'ll use that email to send the quote over. Nothing lost.', 500);
                 conversationContext.quoteGenerated = false;
                 conversationContext.quoteReadyForSend = true;
                 conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
@@ -4452,81 +4420,19 @@
             // --- END QUOTING FLOW ---
 
             if (isBusinessHours) {
-                await playLine('Ask Microsoft Voice Agent', 'Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', including the quote I just sent you.' : '') + ' — you won\'t need to repeat anything.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now via chat who can go deeper on licensing and next steps. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', including the quote I just sent you.' : '.'), 500);
                 await playLine('You', 'That would be great — I\'d love to talk through next steps with someone.', 420);
-                await playLine('Ask Microsoft Voice Agent', 'Perfect. Let me hand you over now — transferring you to a specialist.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you end this call, I\'ll connect you with a specialist in the chat who\'ll have the full context of everything we discussed. It was great chatting with you!', 500);
 
-                // Seamless voice handoff: keep call screen open, transition from AI to David
+                // End voice call and seamlessly hand off to live agent chat
                 if (sessionGen !== voiceSessionGeneration) return;
-
-                // Stop AI session — do NOT call speechSynthesis.cancel() here!
-                // cancel() permanently corrupts Chrome/Edge's speech engine,
-                // preventing David's greeting from playing. Let the last AI
-                // utterance finish naturally; voiceSessionGeneration++ prevents new ones.
-                if (callTimer) { clearInterval(callTimer); callTimer = null; }
-                isSpeaking = false;
-                isVoiceMode = false;
-                audioEnabled = false;
-                voiceSessionGeneration++;
-
-                // Phase 1: Show "Transferring call..." on the same call screen
                 setTimeout(() => {
-                    document.getElementById('callAgentName').textContent = 'Transferring call...';
-                    document.getElementById('callStatus').textContent = 'Connecting you to a Microsoft sales specialist';
-                    document.getElementById('callStatus').classList.add('connecting');
-                    document.getElementById('callTimer').style.display = 'none';
-                    document.getElementById('pulseRing').style.display = 'block';
-                    document.getElementById('callTranscriptArea').innerHTML = '';
-                    const avatar = document.getElementById('callAvatar');
-                    if (avatar) {
-                        avatar.innerHTML = '&#128260;';
-                        avatar.style.display = '';
-                    }
-
-                    // Phase 2: David connects after 3 seconds
+                    endAICall(true); // skipCancel=true so David's speech engine stays healthy
+                    // After call closes, seamlessly connect to live agent in chat
                     setTimeout(() => {
-                        isLiveAgentPhoneCall = true;
-                        audioEnabled = true;
-                        document.getElementById('callAvatar').textContent = '\uD83D\uDC64';
-                        document.getElementById('callAgentName').textContent = 'David — Microsoft 365 Sales Specialist';
-                        document.getElementById('callStatus').textContent = 'Connected';
-                        document.getElementById('callStatus').classList.remove('connecting');
-                        document.getElementById('callTimer').style.display = 'block';
-                        document.getElementById('pulseRing').style.display = 'none';
-                        document.getElementById('callTranscriptArea').classList.add('active');
-                        startCallTimer();
-
-                        addSystemMessage('\uD83D\uDCDE Call transferred to David, Microsoft 365 sales specialist');
-
-                        // David's greeting with full context from the AI conversation
-                        setTimeout(() => {
-                            let contextRef = '';
-                            if (conversationContext.businessType) {
-                                contextRef += `your ${conversationContext.businessType}`;
-                                if (conversationContext.numEmployees) {
-                                    contextRef += ` with ${conversationContext.numEmployees} people`;
-                                }
-                            } else if (conversationContext.numEmployees) {
-                                contextRef += `your team of ${conversationContext.numEmployees}`;
-                            }
-                            if (conversationContext.interestedPlans && conversationContext.interestedPlans.length > 0) {
-                                contextRef += `${contextRef ? ', the recommendation for ' : 'the recommendation for '}${conversationContext.interestedPlans.join(' and ')}`;
-                            }
-                            if (conversationContext.securityNeeds) {
-                                contextRef += `${contextRef ? ', and your security needs' : 'your security requirements'}`;
-                            }
-                            const contextLine = contextRef
-                                ? `, including the details about ${contextRef},`
-                                : '';
-
-                            const quoteRef = conversationContext.quoteSentToEmail ? ` I can also see we sent you a quote — we can walk through that together if you'd like.` : '';
-                            const nameGreet2 = conversationContext.customerName ? `Hi ${conversationContext.customerName}, this` : 'Hi, this';
-                            const greetingText = `${nameGreet2} is David from Microsoft Sales. I've reviewed your conversation with our Ask Microsoft Voice Agent${contextLine} so you won't need to repeat anything.${quoteRef} Let's pick up right where you left off.`;
-                            addCallTranscriptEntry('David', greetingText);
-                            speakAsDavid(greetingText);
-                        }, 800);
-                    }, 3000);
-                }, 1500);
+                        joinLiveQueue();
+                    }, 800);
+                }, 2500);
             } else {
                 const quoteRef = conversationContext.quoteSentToEmail ? ' Your quote is in your inbox, so you\'ll have that to review while you wait.' : (conversationContext.quoteReadyForSend ? ' I\'ve got your quote ready — we\'ll send it over once you fill out the callback form.' : '');
                 await playLine('Ask Microsoft Voice Agent', 'If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.' + quoteRef, 500);
@@ -4584,12 +4490,15 @@
                     return;
                 }
                 
+                // Reset engine before each utterance — prevents stale queue
+                try { speechSynthesis.resume(); } catch(e) {}
+
                 const utterance = new SpeechSynthesisUtterance(text);
                 
                 // Configure voice settings based on speaker
                 if (speaker === 'Ask Microsoft Voice Agent') {
                     utterance.rate = 1.0;   // Natural pace
-                    utterance.pitch = 1.0;  // Natural pitch (Neural voices handle this well)
+                    utterance.pitch = 1.0;  // Natural pitch
                 } else {
                     // User's voice
                     utterance.rate = 1.0;   // Normal speed
@@ -4606,40 +4515,47 @@
                         .some(n => (conversationContext.customerName || '').toLowerCase() === n.toLowerCase());
 
                 if (speaker === 'Ask Microsoft Voice Agent') {
-                    // Prefer Edge Neural voices (much more natural) → fallback to classic
+                    // Prefer LOCAL voices first for screen-share reliability,
+                    // then fall back to Online/Neural voices
                     preferredVoice = 
+                        voices.find(v => v.name.includes('Microsoft Zira') && v.localService) ||
+                        voices.find(v => v.name.includes('Jenny') && v.localService) ||
+                        voices.find(v => v.name.includes('Aria') && v.localService) ||
+                        voices.find(v => v.lang === 'en-US' && v.localService && v.name.includes('Female')) ||
                         voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
                         voices.find(v => v.name.includes('Aria') && v.name.includes('Online')) ||
                         voices.find(v => v.name.includes('Jenny')) ||
                         voices.find(v => v.name.includes('Aria')) ||
                         voices.find(v => v.name.includes('Microsoft Zira')) ||
                         voices.find(v => v.name.includes('Google US English Female')) ||
-                        voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
                         voices.find(v => v.lang === 'en-US' && v.localService) ||
                         voices.find(v => v.lang === 'en-US') ||
                         voices[0];
                 } else {
                     // User's voice — pick gender based on customer name / variant
                     if (isFemaleCustomer) {
-                        // Female customer voice
+                        // Female customer voice — prefer local for reliability
                         preferredVoice = 
-                            voices.find(v => v.name.includes('Aria') && v.name.includes('Online') && v !== utterance.voice) ||
+                            voices.find(v => v.name.includes('Microsoft Zira') && v.localService) ||
+                            voices.find(v => v.lang === 'en-US' && v.localService && v.name.includes('Female')) ||
+                            voices.find(v => v.name.includes('Aria') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Sara') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Microsoft Zira')) ||
                             voices.find(v => v.name.includes('Google US English Female')) ||
-                            voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
                             voices.find(v => v.lang === 'en-US') ||
                             voices[0];
                     } else {
-                        // Male customer voice
+                        // Male customer voice — prefer local for reliability
                         preferredVoice = 
+                            voices.find(v => v.name.includes('Microsoft David') && v.localService) ||
+                            voices.find(v => v.name.includes('Guy') && v.localService) ||
+                            voices.find(v => v.lang === 'en-US' && v.localService && v.name.includes('Male')) ||
                             voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Ryan') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Andrew') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Guy')) ||
                             voices.find(v => v.name.includes('Microsoft David')) ||
                             voices.find(v => v.name.includes('Google US English Male')) ||
-                            voices.find(v => v.lang === 'en-US' && v.name.includes('Male')) ||
                             voices.find(v => v.lang === 'en-US') ||
                             voices[0];
                     }
@@ -4647,12 +4563,13 @@
                 
                 if (preferredVoice) {
                     utterance.voice = preferredVoice;
-                    console.log(`[Voice] ${speaker} → ${preferredVoice.name}`);
+                    console.log(`[Voice] ${speaker} → ${preferredVoice.name} (local: ${preferredVoice.localService})`);
                 }
                 
                 // Show speaking indicator
                 utterance.onstart = function() {
                     isSpeaking = true;
+                    startSpeechKeepAlive();  // prevent Chrome 15-sec cutoff
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.add('active');
@@ -4661,6 +4578,7 @@
                 
                 utterance.onend = function() {
                     isSpeaking = false;
+                    stopSpeechKeepAlive();
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.remove('active');
@@ -4670,15 +4588,15 @@
                 utterance.onerror = function(event) {
                     console.error(`Speech synthesis error for ${speaker}:`, event.error, '| Voice:', preferredVoice?.name);
                     isSpeaking = false;
+                    stopSpeechKeepAlive();
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.remove('active');
                     if (avatar) avatar.style.transform = 'scale(1)';
                     
-                    // If an Online/Neural voice failed, retry with a local fallback
-                    if (preferredVoice && !preferredVoice.localService) {
-                        // Don't retry if session was ended (disconnect)
-                        if (!audioEnabled || !isVoiceMode || speechGenerationAtStart !== voiceSessionGeneration) return;
+                    // If voice failed, retry with a local fallback
+                    if (!audioEnabled || !isVoiceMode || speechGenerationAtStart !== voiceSessionGeneration) return;
+                    if (preferredVoice) {
                         console.log(`[Voice] Retrying ${speaker} with local fallback voice...`);
                         const retryUtterance = new SpeechSynthesisUtterance(text);
                         retryUtterance.rate = 1.0;
@@ -4699,7 +4617,7 @@
                         }
                         retryUtterance.onstart = utterance.onstart;
                         retryUtterance.onend = utterance.onend;
-                        retryUtterance.onerror = () => { isSpeaking = false; };
+                        retryUtterance.onerror = () => { isSpeaking = false; stopSpeechKeepAlive(); };
                         try { speechSynthesis.speak(retryUtterance); } catch(e) {}
                     }
                 };
@@ -4709,6 +4627,7 @@
                     speechSynthesis.speak(utterance);
                 } catch (error) {
                     console.error('Speech synthesis failed:', error);
+                    stopSpeechKeepAlive();
                 }
             };
             
@@ -4866,6 +4785,7 @@
             // Cancel any remaining auto-play chat timeouts
             chatAutoPlayTimeouts.forEach(id => clearTimeout(id));
             chatAutoPlayTimeouts = [];
+            stopSpeechKeepAlive();  // clean up keepalive timer
 
             // Disable voice mode to prevent new audio from starting
             isVoiceMode = false;
@@ -5954,6 +5874,7 @@
         function endVoiceSession() {
             isVoiceMode = false;
             voiceMuted = false;
+            stopSpeechKeepAlive();  // clean up keepalive timer
             
             // Restore header to original state
             document.getElementById('agentAvatar').innerHTML = '<img src="Icon.jpg" alt="Ask Microsoft" />';

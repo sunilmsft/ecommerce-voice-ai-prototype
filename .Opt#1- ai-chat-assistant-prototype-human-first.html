@@ -2321,6 +2321,24 @@
         let isSpeaking = false;
         let audioEnabled = true;
         let voiceSessionGeneration = 0;
+        let speechKeepAliveTimer = null;  // Chrome 15-second TTS bug workaround
+
+        // ── Chrome/Edge speechSynthesis keepalive ──────────────────────────
+        // Chrome silently kills any utterance longer than ~15 s.
+        // Workaround: pause() + resume() every 10 s while speaking.
+        function startSpeechKeepAlive() {
+            stopSpeechKeepAlive();
+            speechKeepAliveTimer = setInterval(() => {
+                if (speechSynthesis.speaking && !speechSynthesis.paused) {
+                    speechSynthesis.pause();
+                    speechSynthesis.resume();
+                }
+            }, 10000);
+        }
+        function stopSpeechKeepAlive() {
+            if (speechKeepAliveTimer) { clearInterval(speechKeepAliveTimer); speechKeepAliveTimer = null; }
+        }
+
         let callbackRequested = false;
         let voiceSessionContext = { fromCallback: false };
         let conversationContext = {
@@ -3003,6 +3021,9 @@
 
             return new Promise((resolve) => {
                 const checkSpeech = () => {
+                    // Poke the engine awake — prevents stall when tab is backgrounded
+                    try { if (speechSynthesis.paused) speechSynthesis.resume(); } catch(e) {}
+
                     const speakingNow = isSpeaking || speechSynthesis.speaking || speechSynthesis.pending;
                     const timedOut = Date.now() - startedAt > maxWaitMs;
 
@@ -3120,6 +3141,9 @@
                     return;
                 }
                 
+                // Reset engine before each utterance — prevents stale queue
+                try { speechSynthesis.resume(); } catch(e) {}
+
                 const utterance = new SpeechSynthesisUtterance(text);
                 
                 // Configure voice settings based on speaker
@@ -3174,6 +3198,7 @@
                 // Show speaking indicator
                 utterance.onstart = function() {
                     isSpeaking = true;
+                    startSpeechKeepAlive();  // prevent Chrome 15-sec cutoff
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.add('active');
@@ -3182,6 +3207,7 @@
                 
                 utterance.onend = function() {
                     isSpeaking = false;
+                    stopSpeechKeepAlive();
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.remove('active');
@@ -3191,6 +3217,7 @@
                 utterance.onerror = function(event) {
                     console.error('Speech synthesis error:', event);
                     isSpeaking = false;
+                    stopSpeechKeepAlive();
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.remove('active');
@@ -3255,8 +3282,7 @@
             audioEnabled = false;
             isSpeaking = false;
             voiceSessionGeneration++;
-            
-            // Stop call timer
+            stopSpeechKeepAlive();  // clean up keepalive timer
             if (callTimer) {
                 clearInterval(callTimer);
                 callTimer = null;
@@ -3782,22 +3808,7 @@
         function endVoiceSession() {
             isVoiceMode = false;
             voiceMuted = false;
-            
-            // Restore header to original state
-            document.getElementById('agentAvatar').textContent = '💬';
-            document.getElementById('agentName').textContent = 'Ask Microsoft';
-            
-            // Add summary to chat
-            addSystemMessage('🤖 Ask Microsoft Voice Agent session ended. Transcript saved.');
-            
-            // Copy transcript to chat as a system message
-            const transcriptEntries = document.querySelectorAll('.transcript-entry');
-            if (transcriptEntries.length > 0) {
-                addMessage('Thank you for speaking with our Ask Microsoft Voice Agent! If you need further assistance, feel free to ask or request a callback with a Microsoft specialist.', 'bot', true);
-            }
-            
-            // Reset interface
-            document.getElementById('voiceInterface').classList.remove('active');
+            stopSpeechKeepAlive();  // clean up keepalive timer
             document.getElementById('chatMessages').style.display = 'block';
             document.getElementById('disclaimer').style.display = 'block';
             document.querySelector('.chat-input-area').style.display = 'flex';

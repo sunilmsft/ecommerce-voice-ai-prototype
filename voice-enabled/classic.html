@@ -2675,6 +2675,24 @@
         let isSpeaking = false;
         let audioEnabled = true;
         let voiceSessionGeneration = 0;
+        let speechKeepAliveTimer = null;  // Chrome 15-second TTS bug workaround
+
+        // ── Chrome/Edge speechSynthesis keepalive ──────────────────────────
+        // Chrome silently kills any utterance longer than ~15 s.
+        // Workaround: pause() + resume() every 10 s while speaking.
+        function startSpeechKeepAlive() {
+            stopSpeechKeepAlive();
+            speechKeepAliveTimer = setInterval(() => {
+                if (speechSynthesis.speaking && !speechSynthesis.paused) {
+                    speechSynthesis.pause();
+                    speechSynthesis.resume();
+                }
+            }, 10000);
+        }
+        function stopSpeechKeepAlive() {
+            if (speechKeepAliveTimer) { clearInterval(speechKeepAliveTimer); speechKeepAliveTimer = null; }
+        }
+
         let callbackRequested = false;
         let callbackRequestedAfterVoiceCall = false;
         let offHoursAiFirstFlow = false;
@@ -3808,6 +3826,9 @@
 
             return new Promise((resolve) => {
                 const checkSpeech = () => {
+                    // Poke the engine awake — prevents stall when tab is backgrounded
+                    try { if (speechSynthesis.paused) speechSynthesis.resume(); } catch(e) {}
+
                     const speakingNow = isSpeaking || speechSynthesis.speaking || speechSynthesis.pending;
                     const timedOut = Date.now() - startedAt > maxWaitMs;
 
@@ -4060,6 +4081,9 @@
                     return;
                 }
                 
+                // Reset engine before each utterance — prevents stale queue
+                try { speechSynthesis.resume(); } catch(e) {}
+
                 const utterance = new SpeechSynthesisUtterance(text);
                 
                 // Configure voice settings based on speaker
@@ -4128,6 +4152,7 @@
                 // Show speaking indicator
                 utterance.onstart = function() {
                     isSpeaking = true;
+                    startSpeechKeepAlive();  // prevent Chrome 15-sec cutoff
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.add('active');
@@ -4136,6 +4161,7 @@
                 
                 utterance.onend = function() {
                     isSpeaking = false;
+                    stopSpeechKeepAlive();
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.remove('active');
@@ -4145,6 +4171,7 @@
                 utterance.onerror = function(event) {
                     console.error(`Speech synthesis error for ${speaker}:`, event.error, '| Voice:', preferredVoice?.name);
                     isSpeaking = false;
+                    stopSpeechKeepAlive();
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.remove('active');
@@ -4281,8 +4308,7 @@
             audioEnabled = false;
             isSpeaking = false;
             voiceSessionGeneration++;
-            
-            // Stop call timer
+            stopSpeechKeepAlive();  // clean up keepalive timer
             if (callTimer) {
                 clearInterval(callTimer);
                 callTimer = null;
@@ -5342,9 +5368,7 @@
         function endVoiceSession() {
             isVoiceMode = false;
             voiceMuted = false;
-            
-            // Restore header to original state
-            document.getElementById('agentAvatar').innerHTML = '<img src="Icon.jpg" alt="Ask Microsoft" />';
+            stopSpeechKeepAlive();  // clean up keepalive timer
             document.getElementById('agentName').textContent = 'Ask Microsoft';
             
             // Add summary to chat
