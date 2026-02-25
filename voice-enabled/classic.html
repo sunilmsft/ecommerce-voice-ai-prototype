@@ -4091,9 +4091,9 @@
                     utterance.rate = 1.0;   // Natural pace
                     utterance.pitch = 1.0;  // Natural pitch (Neural voices handle this well)
                 } else {
-                    // User's voice
-                    utterance.rate = 1.0;   // Normal speed
-                    utterance.pitch = 1.0;  // Natural pitch
+                    // User's voice — slightly different rate/pitch to ensure audible contrast
+                    utterance.rate = 0.95;
+                    utterance.pitch = 0.9;  // Lower pitch = distinct from AI
                 }
                 utterance.volume = 1.0;
                 
@@ -4105,12 +4105,10 @@
                     .some(n => (conversationContext.customerName || '').toLowerCase() === n.toLowerCase());
 
                 if (speaker === 'Ask Microsoft Voice Agent') {
-                    // Prefer Edge Neural voices (much more natural) → fallback to classic
+                    // AI voice — Jenny Online exclusive (no Aria to avoid overlap with female user)
                     preferredVoice = 
                         voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
-                        voices.find(v => v.name.includes('Aria') && v.name.includes('Online')) ||
                         voices.find(v => v.name.includes('Jenny')) ||
-                        voices.find(v => v.name.includes('Aria')) ||
                         voices.find(v => v.name.includes('Microsoft Zira')) ||
                         voices.find(v => v.name.includes('Google US English Female')) ||
                         voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
@@ -4120,11 +4118,10 @@
                 } else {
                     // User's voice — select based on customer gender
                     if (isFemaleCustomer) {
+                        utterance.pitch = 1.05;  // Override: slightly higher for female user
                         preferredVoice = 
-                            voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Aria') && v.name.includes('Online')) ||
-                            voices.find(v => v.name.includes('Jenny')) ||
-                            voices.find(v => v.name.includes('Aria')) ||
+                            voices.find(v => v.name.includes('Sara') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Microsoft Zira')) ||
                             voices.find(v => v.name.includes('Google US English Female')) ||
                             voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
@@ -4135,7 +4132,6 @@
                             voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Ryan') && v.name.includes('Online')) ||
                             voices.find(v => v.name.includes('Andrew') && v.name.includes('Online')) ||
-                            voices.find(v => v.name.includes('Guy')) ||
                             voices.find(v => v.name.includes('Microsoft David')) ||
                             voices.find(v => v.name.includes('Google US English Male')) ||
                             voices.find(v => v.lang === 'en-US' && v.name.includes('Male')) ||

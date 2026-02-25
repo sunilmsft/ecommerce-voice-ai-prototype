@@ -3005,12 +3005,12 @@
                 
                 // Configure voice settings based on speaker
                 if (speaker === 'AI Assistant') {
-                    utterance.rate = 0.95;  // Slightly slower for clarity
-                    utterance.pitch = 1.1;  // Slightly higher pitch
+                    utterance.rate = 1.0;   // Natural pace
+                    utterance.pitch = 1.0;  // Natural pitch
                 } else {
-                    // User's voice - slightly different settings
-                    utterance.rate = 1.0;   // Normal speed
-                    utterance.pitch = 0.9;  // Lower pitch for contrast
+                    // User's voice — slightly different rate/pitch to ensure audible contrast
+                    utterance.rate = 0.95;
+                    utterance.pitch = 0.9;  // Lower pitch = distinct from AI
                 }
                 utterance.volume = 1.0;
                 
@@ -3019,15 +3019,14 @@
                 
                 let preferredVoice;
                 if (speaker === 'AI Assistant') {
-                    // Edge Online (Neural) for natural sound, fall back to local
+                    // AI voice — Jenny Online exclusive (no Aria to avoid overlap with female user)
                     preferredVoice = 
                         voices.find(voice => voice.name.includes('Jenny') && voice.name.includes('Online')) ||
-                        voices.find(voice => voice.name.includes('Aria') && voice.name.includes('Online')) ||
                         voices.find(voice => voice.name.includes('Jenny')) ||
-                        voices.find(voice => voice.name.includes('Aria')) ||
                         voices.find(voice => voice.name.includes('Microsoft Zira') && voice.localService) ||
                         voices.find(voice => voice.name.includes('Microsoft Zira')) ||
                         voices.find(voice => voice.name.includes('Google US English Female')) ||
+                        voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Female')) ||
                         voices.find(voice => voice.lang === 'en-US' && voice.localService) ||
                         voices.find(voice => voice.lang === 'en-US') ||
                         voices[0];
@@ -3036,17 +3035,19 @@
                     const isFemaleCustomer = conversationContext.customerName && 
                         ['Priya', 'Sarah', 'Maria', 'Lisa', 'Emma', 'Sophia', 'Aisha', 'Mei'].includes(conversationContext.customerName);
                     if (isFemaleCustomer) {
-                        // Edge Online (Neural) for natural sound, fall back to local
+                        // Female user voice — Aria Online exclusive (no Jenny to avoid AI overlap)
+                        utterance.pitch = 1.05;  // Override: slightly higher for female user
                         preferredVoice = 
                             voices.find(voice => voice.name.includes('Aria') && voice.name.includes('Online')) ||
                             voices.find(voice => voice.name.includes('Sara') && voice.name.includes('Online')) ||
                             voices.find(voice => voice.name.includes('Microsoft Zira') && voice.localService) ||
                             voices.find(voice => voice.name.includes('Microsoft Zira')) ||
                             voices.find(voice => voice.name.includes('Google US English Female')) ||
+                            voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Female')) ||
                             voices.find(voice => voice.lang === 'en-US') ||
                             voices[0];
                     } else {
-                        // Edge Online (Neural) for natural sound, fall back to local
+                        // Male user voice — Guy Online exclusive
                         preferredVoice = 
                             voices.find(voice => voice.name.includes('Guy') && voice.name.includes('Online')) ||
                             voices.find(voice => voice.name.includes('Ryan') && voice.name.includes('Online')) ||
@@ -3054,6 +3055,7 @@
                             voices.find(voice => voice.name.includes('Microsoft David') && voice.localService) ||
                             voices.find(voice => voice.name.includes('Microsoft David')) ||
                             voices.find(voice => voice.name.includes('Google US English Male')) ||
+                            voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Male')) ||
                             voices.find(voice => voice.lang === 'en-US') ||
                             voices[0];
                     }
