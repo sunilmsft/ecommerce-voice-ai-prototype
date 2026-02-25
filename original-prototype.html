@@ -3310,6 +3310,10 @@
             }
             // --- END QUOTING FLOW ---
 
+            // Follow-up before closing
+            await playLine('AI Assistant', 'Before we wrap up — is there anything else I can help you with today?', 420);
+            await playLine('You', 'No, I think that covers everything. Really appreciate it.', 420);
+
             await playLine('AI Assistant', 'My pleasure! Just so you know, your callback request with a Microsoft specialist is still in place — so they\'ll be reaching out to you as scheduled. They\'ll also have the quote details and a summary of our conversation so you won\'t need to repeat anything. When you disconnect, you\'ll have the option to keep that callback or cancel it.', 600);
             await playLine('You', 'That\'s great — I\'ll keep the callback for now. Thanks again!', 420);
 
@@ -3740,13 +3744,24 @@
         }
 
         function showVoiceWrapUpScreen() {
-            // SCREEN 1: Voice Wrap-Up (immediately after voice session ends)
-            const quoteNote = conversationContext.quoteSentToEmail && conversationContext.customerEmail
-                ? '<br/><br/>✅ We\'ve sent a personalized quote to <strong>' + conversationContext.customerEmail + '</strong> — check your inbox.'
-                : '';
+            // SCREEN 1: Voice Wrap-Up — compact summary with buttons visible immediately
+            const durationMin = Math.floor(callDuration / 60);
+            const durationSec = callDuration % 60;
+            const durationText = durationMin > 0
+                ? durationMin + ' min ' + durationSec + ' sec'
+                : durationSec + ' sec';
+
+            // Build compact summary lines
+            let summaryLines = '';
+            summaryLines += '<div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: #16a34a; font-size: 16px;">✅</span><span>Callback request submitted</span></div>';
+            summaryLines += '<div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: #0f6cbd; font-size: 16px;">🎙️</span><span>Connected with Ask Microsoft Voice Agent <span style="color: #888; font-size: 12px;">(Duration: ' + durationText + ')</span></span></div>';
+            if (conversationContext.quoteSentToEmail && conversationContext.customerEmail) {
+                summaryLines += '<div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: #16a34a; font-size: 16px;">📧</span><span>Personalized quote sent to <strong>' + conversationContext.customerEmail + '</strong></span></div>';
+            }
+            summaryLines += '<div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: #f59e0b; font-size: 16px;">📞</span><span>Callback status: <strong style="color: #0f6cbd;">Scheduled</strong> — a specialist will follow up</span></div>';
 
             const optionsHTML = `
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
                     <button style="
                         background: #0f6cbd;
                         color: white;
@@ -3780,7 +3795,7 @@
                         I'm All Set for Now
                     </button>
                 </div>
-                <div style="margin-top: 14px; font-size: 12px; color: #888888; font-style: italic;">
+                <div style="margin-top: 10px; font-size: 12px; color: #888888; font-style: italic;">
                     You can request a specialist at any time.
                 </div>
             `;
@@ -3791,13 +3806,12 @@
             messageDiv.innerHTML = `
                 <div class="message-bubble">
                     <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Ask Microsoft Voice Agent.</div>
-                    <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
-                        I hope this conversation was helpful.${quoteNote}<br/><br/>
-                        Your callback request is still scheduled so you can continue the discussion with a Microsoft specialist if you'd like.<br/><br/>
-                        <span style="font-weight: 500; color: #262626;">You're in control — please choose what works best for you.</span>
+                    <div style="margin-top: 12px; font-size: 13px; color: #444; line-height: 1.6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; background: #fafafa;">
+                        ${summaryLines}
                     </div>
+                    <div style="margin-top: 12px; font-size: 14px; color: #555; font-weight: 500;">You're in control — please choose what works best for you.</div>
                     ${optionsHTML}
-                    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
+                    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
                         ${brandCloseText}
                     </div>
                     <div class="message-time">just now</div>
@@ -3805,11 +3819,6 @@
             `;
             chatMessages.appendChild(messageDiv);
             scrollToBottom();
-
-            // Show the quote card below the wrap-up message
-            if (conversationContext.quoteGenerated || conversationContext.quoteSentToEmail) {
-                setTimeout(() => { addQuoteCardToChat(); }, 600);
-            }
         }
 
         function handleKeepCallback() {
@@ -3959,9 +3968,8 @@
         }
 
         function showKeepCallbackConfirmation() {
-            // SCREEN 2: Keep Callback Confirmation
+            // SCREEN 2: Keep Callback Confirmation — compact with summary shared to sales associate
             const summaryHTML = generateSummaryCardHTML();
-            const quoteHTML = (conversationContext.quoteGenerated || conversationContext.quoteSentToEmail) ? generateQuoteCardHTML() : '';
 
             const optionsHTML = `
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
@@ -4007,9 +4015,8 @@
                 <div class="message-bubble">
                     <div style="font-size: 16px; font-weight: 600; color: #262626;">Great — your callback request remains scheduled.</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
-                        A Microsoft specialist will follow up as planned. We've shared the details below with them so they can pick up right where we left off — you won't need to repeat anything.
+                        A Microsoft specialist will follow up as planned. We've shared the conversation summary and quote details with them so they can pick up right where you left off — you won't need to repeat anything.
                     </div>
-                    ${quoteHTML}
                     ${summaryHTML}
                     ${optionsHTML}
                     <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
