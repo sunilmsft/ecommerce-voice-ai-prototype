@@ -3579,39 +3579,7 @@
                             document.getElementById('handoffBanner').classList.remove('active');
                             document.getElementById('quickActions').style.display = 'none';
 
-                            // Build context-aware intro from conversation
-                            let contextDetails = '';
-                            if (conversationContext.businessType) {
-                                contextDetails += ` I can see you're running a ${conversationContext.businessType}`;
-                                if (conversationContext.numEmployees) {
-                                    contextDetails += ` with about ${conversationContext.numEmployees} people`;
-                                }
-                                contextDetails += '.';
-                            } else if (conversationContext.numEmployees) {
-                                contextDetails += ` I can see you have a team of about ${conversationContext.numEmployees}.`;
-                            }
-                            if (conversationContext.workLocation) {
-                                contextDetails += ` Your team is ${conversationContext.workLocation}, and you mentioned a mix of company and personal devices.`;
-                            }
-                            if (conversationContext.interestedPlans && conversationContext.interestedPlans.length > 0) {
-                                contextDetails += ` The AI recommended ${conversationContext.interestedPlans.join(' and ')} as a strong fit`;
-                                if (conversationContext.securityNeeds) {
-                                    contextDetails += ', especially given your security and device management needs';
-                                }
-                                contextDetails += '.';
-                            } else if (conversationContext.securityNeeds) {
-                                contextDetails += ` Security was flagged as a priority for you.`;
-                            }
-                            if (conversationContext.timeline) {
-                                contextDetails += ` I also see you're looking to move on this ${conversationContext.timeline}.`;
-                            }
-                            if (conversationContext.quoteSentToEmail && conversationContext.customerEmail) {
-                                contextDetails += ` I can also see we sent you a quote to ${conversationContext.customerEmail} — you should have that in your inbox already. If you have any questions about the pricing or you're ready to move forward with the purchase, I can help with that right now.`;
-                            }
-
-                            const introMsg = contextDetails
-                                ? `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation.${contextDetails}`
-                                : `Hi there! I'm David, a Microsoft 365 sales specialist. I've reviewed the full transcript of your conversation and I'm here to pick up right where you left off — what questions can I answer for you?`;
+                            const introMsg = buildDavidGreeting();
 
                             addMessage(introMsg, 'human-agent', true);
                             speakAsDavid(introMsg);
@@ -3669,45 +3637,7 @@
 
                                 // David's greeting in the call transcript
                                 setTimeout(() => {
-                                    // Build context-aware greeting with full conversation context
-                                    let contextDetails = '';
-                                    if (conversationContext.businessType) {
-                                        contextDetails += ` I see you have a ${conversationContext.businessType}`;
-                                        if (conversationContext.numEmployees) {
-                                            contextDetails += ` with about ${conversationContext.numEmployees} people`;
-                                        }
-                                        contextDetails += '.';
-                                    } else if (conversationContext.numEmployees) {
-                                        contextDetails += ` I see you have a team of about ${conversationContext.numEmployees}.`;
-                                    }
-                                    if (conversationContext.workLocation) {
-                                        contextDetails += ` Your team is ${conversationContext.workLocation}, with a mix of company and personal devices.`;
-                                    }
-                                    if (conversationContext.interestedPlans && conversationContext.interestedPlans.length > 0) {
-                                        contextDetails += ` The AI recommended ${conversationContext.interestedPlans.join(' and ')}`;
-                                        if (conversationContext.pricePerUser) {
-                                            contextDetails += ` at $${conversationContext.pricePerUser} per user per month`;
-                                        }
-                                        if (conversationContext.securityNeeds) {
-                                            contextDetails += ', especially given your security and device management needs';
-                                        }
-                                        contextDetails += '.';
-                                    } else if (conversationContext.securityNeeds) {
-                                        contextDetails += ` Security was flagged as a priority for you.`;
-                                    }
-                                    if (conversationContext.quoteSentToEmail && conversationContext.customerEmail) {
-                                        contextDetails += ` I can also see we sent you a quote to ${conversationContext.customerEmail} — you should have that in your inbox already.`;
-                                    } else if (conversationContext.quoteReadyForSend) {
-                                        contextDetails += ` I also have your personalized quote ready to send once we confirm your email.`;
-                                    }
-                                    if (conversationContext.timeline) {
-                                        contextDetails += ` And I understand you're looking to move forward ${conversationContext.timeline}.`;
-                                    }
-
-                                    const nameGreet = conversationContext.customerName ? `Hi ${conversationContext.customerName}, this` : 'Hi, this';
-                                    const greetingText = contextDetails
-                                        ? `${nameGreet} is David from Microsoft Sales. I've reviewed the full transcript of your conversation with our Ask Microsoft Voice Agent.${contextDetails} You won't need to repeat any of that — I'm here to help you with next steps.`
-                                        : `${nameGreet} is David from Microsoft Sales. I've reviewed the full transcript of your conversation with our Ask Microsoft Voice Agent, so you won't need to repeat anything. What questions can I help answer?`;
+                                    const greetingText = buildDavidGreeting();
                                     addCallTranscriptEntry('David', greetingText);
                                     speakAsDavid(greetingText);
                                 }, 800);
@@ -4675,8 +4605,8 @@
                 try { speechSynthesis.resume(); } catch(e) {}
 
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 1.0;    // Natural pace — lower values sound more robotic on Desktop voices
-                utterance.pitch = 1.05;  // Slightly above default for warmth
+                utterance.rate = 0.95;   // Slightly slower for warm, conversational feel
+                utterance.pitch = 1.0;   // Natural pitch
                 utterance.volume = 1.0;
 
                 const voices = speechSynthesis.getVoices();
@@ -4723,15 +4653,66 @@
                 waitAndSpeak();
             }
 
-            // Wait for voices to load if needed, then try with local voice first
+            // Wait for voices to load if needed — try Online/Neural first for natural sound
             const voices = speechSynthesis.getVoices();
             if (voices.length === 0) {
                 speechSynthesis.onvoiceschanged = () => {
-                    setTimeout(() => attemptSpeak(true), 300);
+                    setTimeout(() => attemptSpeak(false), 300);
                 };
             } else {
-                setTimeout(() => attemptSpeak(true), 300);
+                setTimeout(() => attemptSpeak(false), 300);
             }
+        }
+
+        function buildDavidGreeting() {
+            // Build a natural, conversational greeting that mirrors how a real specialist would speak
+            const name = conversationContext.customerName;
+            const nameGreet = name ? `Hi ${name}` : 'Hi there';
+            const teamSize = conversationContext.numEmployees;
+            const workStyle = conversationContext.workLocation;
+            const plans = conversationContext.interestedPlans;
+            const timeline = conversationContext.timeline;
+            const quoteSent = conversationContext.quoteSentToEmail && conversationContext.customerEmail;
+            const quoteReady = conversationContext.quoteReadyForSend;
+
+            // Opening — warm and human
+            let greeting = `${nameGreet} — this is David from Microsoft Sales. Thanks for taking the time to connect.`;
+            greeting += ` I've reviewed your earlier conversation, so we're all set on context.`;
+
+            // Build a single natural sentence summarizing what we know
+            let summary = '';
+            if (plans && plans.length > 0) {
+                summary += `you're evaluating ${plans.join(' and ')}`;
+                if (workStyle && teamSize) {
+                    summary += ` for your ${workStyle} team of about ${teamSize}`;
+                } else if (teamSize) {
+                    summary += ` for your team of about ${teamSize}`;
+                } else if (workStyle) {
+                    summary += ` for your ${workStyle} team`;
+                }
+            } else if (teamSize) {
+                summary += `you have a team of about ${teamSize}`;
+                if (workStyle) {
+                    summary += ` working ${workStyle}`;
+                }
+            }
+            if (timeline) {
+                summary += summary ? ` and are hoping to move forward ${timeline}` : `you're looking to move forward ${timeline}`;
+            }
+            if (summary) {
+                greeting += ` I understand ${summary}.`;
+            }
+
+            // Quote reference if applicable
+            if (quoteSent) {
+                greeting += ` I can also see we sent a quote to ${conversationContext.customerEmail} — that should be in your inbox.`;
+            } else if (quoteReady) {
+                greeting += ` I also have a personalized quote ready to send once we confirm your email.`;
+            }
+
+            // Closing — action-oriented
+            greeting += ` Let's walk through next steps together.`;
+            return greeting;
         }
 
         function setDavidVoice(utterance, voices, localOnly) {
