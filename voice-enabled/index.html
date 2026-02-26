@@ -3500,8 +3500,8 @@
         }
 
         function showBusinessHoursOptions() {
-            // Variant-specific: Voice-First Entry -> live chat, Modality Switch -> live phone
-            const isPhoneHandoff = (prototypeVariant === 'modality_switch');
+            // Always use voice/phone handoff during business hours for seamless experience
+            const isPhoneHandoff = true;
             const liveAgentAction = isPhoneHandoff ? 'joinLivePhoneQueue()' : 'joinLiveQueue()';
             const liveAgentIcon = isPhoneHandoff ? '📞' : '🎧';
             const liveAgentTitle = isPhoneHandoff ? 'Call a Live Agent' : 'Connect with a Live Agent';
@@ -3887,9 +3887,9 @@
                     callbackUsers: String(conversationContext.numEmployees || 20)
                 },
                 {
-                    callbackName: 'Priya Nair',
+                    callbackName: 'Marcus Thompson',
                     callbackBusiness: businessName,
-                    callbackEmail: 'priya.nair@' + (prototypeVariant === 'modality_switch' ? 'sparkco-example.com' : 'summitgear-example.com'),
+                    callbackEmail: 'marcus.thompson@' + (prototypeVariant === 'modality_switch' ? 'sparkco-example.com' : 'summitgear-example.com'),
                     callbackPhone: '(415) 555-0126',
                     callbackUsers: String(conversationContext.numEmployees || 20)
                 },
@@ -4184,7 +4184,7 @@
             if (voiceSessionContext.fromModalitySwitch) {
                 voiceSessionContext.fromModalitySwitch = false;
 
-                conversationContext.customerName = 'Priya';
+                conversationContext.customerName = 'Marcus';
                 await playLine('Ask Microsoft Voice Agent', 'Hi there! I\'m your Ask Microsoft Voice Agent. I can see you\'ve been chatting about Microsoft 365 plans for your marketing agency — a team of about 15 people. Let me pick up right where you left off so you don\'t have to repeat anything.', 600);
                 await playLine('You', 'That\'s great — yes, we were discussing plans for the agency and I wanted to understand the differences better.', 420);
                 await playLine('Ask Microsoft Voice Agent', 'Of course. Based on your agency\'s team size of 15, the collaboration needs you mentioned, and the fact that you handle client data, I\'d say the key decision is between Business Standard at $12.50 per user per month and Business Premium at $22 per user per month.', 500);
@@ -4202,7 +4202,7 @@
                     await playLine('You', 'Definitely, yes.', 420);
                     await playLine('Ask Microsoft Voice Agent', 'Great — what email should I send it to?', 420);
 
-                    const demoEmail = 'priya@sparkco-example.com';
+                    const demoEmail = 'marcus@sparkco-example.com';
                     await playLine('You', 'It\'s ' + demoEmail, 420);
                     conversationContext.customerEmail = demoEmail;
 
@@ -4390,7 +4390,7 @@
                 await playLine('You', 'Yeah, that would be really helpful.', 420);
                 await playLine('Ask Microsoft Voice Agent', 'Perfect. What\'s the best email address to send it to?', 420);
 
-                const demoEmail = (prototypeVariant === 'modality_switch') ? 'priya@sparkco-example.com' : 'alex@summitgear-example.com';
+                const demoEmail = (prototypeVariant === 'modality_switch') ? 'marcus@sparkco-example.com' : 'alex@summitgear-example.com';
                 await playLine('You', 'It\'s ' + demoEmail, 420);
                 conversationContext.customerEmail = demoEmail;
 
