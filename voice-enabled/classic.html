@@ -4029,17 +4029,17 @@
             conversationContext.timeline = 'this quarter';
             conversationContext.interestedPlans = ['Business Premium'];
             if (isBusinessHours) {
-                await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now via chat who can go deeper on licensing and next steps. They\'ll have the full context of our conversation.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now over the phone who can go deeper on licensing and next steps. They\'ll have the full context of our conversation.', 500);
                 await playLine('You', 'That would be great — I\'d love to talk through next steps with someone.', 420);
-                await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you end this call, I\'ll connect you with a specialist in the chat who\'ll have the full context of everything we discussed. It was great chatting with you!', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you end this call, I\'ll connect you with a specialist over the phone who\'ll have the full context of everything we discussed. It was great chatting with you!', 500);
 
-                // End voice call and seamlessly hand off to live agent chat
+                // End voice call and seamlessly hand off to live agent phone call
                 if (sessionGen !== voiceSessionGeneration) return;
                 setTimeout(() => {
                     endAICall();
-                    // After call closes, seamlessly connect to live agent in chat
+                    // After call closes, seamlessly connect to live agent via phone
                     setTimeout(() => {
-                        joinLiveQueue();
+                        joinLivePhoneQueue();
                     }, 800);
                 }, 2500);
             } else {
@@ -4743,7 +4743,7 @@
         }
 
         function handlePostVoiceLiveAgent() {
-            if (prototypeVariant === 'modality_switch') {
+            if (prototypeVariant === 'modality_switch' || isBusinessHours) {
                 addMessage('Yes, connect me with a live agent over the phone', 'user');
                 setTimeout(() => {
                     joinLivePhoneQueue();
