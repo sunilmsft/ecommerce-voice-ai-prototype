@@ -3669,28 +3669,45 @@
 
                                 // David's greeting in the call transcript
                                 setTimeout(() => {
-                                    // Build context-aware greeting
-                                    let contextRef = '';
+                                    // Build context-aware greeting with full conversation context
+                                    let contextDetails = '';
                                     if (conversationContext.businessType) {
-                                        contextRef += `your ${conversationContext.businessType}`;
+                                        contextDetails += ` I see you have a ${conversationContext.businessType}`;
                                         if (conversationContext.numEmployees) {
-                                            contextRef += ` with ${conversationContext.numEmployees} people`;
+                                            contextDetails += ` with about ${conversationContext.numEmployees} people`;
                                         }
+                                        contextDetails += '.';
                                     } else if (conversationContext.numEmployees) {
-                                        contextRef += `your team of ${conversationContext.numEmployees}`;
+                                        contextDetails += ` I see you have a team of about ${conversationContext.numEmployees}.`;
+                                    }
+                                    if (conversationContext.workLocation) {
+                                        contextDetails += ` Your team is ${conversationContext.workLocation}, with a mix of company and personal devices.`;
                                     }
                                     if (conversationContext.interestedPlans && conversationContext.interestedPlans.length > 0) {
-                                        contextRef += `${contextRef ? ', the recommendation for ' : 'the recommendation for '}${conversationContext.interestedPlans.join(' and ')}`;
+                                        contextDetails += ` The AI recommended ${conversationContext.interestedPlans.join(' and ')}`;
+                                        if (conversationContext.pricePerUser) {
+                                            contextDetails += ` at $${conversationContext.pricePerUser} per user per month`;
+                                        }
+                                        if (conversationContext.securityNeeds) {
+                                            contextDetails += ', especially given your security and device management needs';
+                                        }
+                                        contextDetails += '.';
+                                    } else if (conversationContext.securityNeeds) {
+                                        contextDetails += ` Security was flagged as a priority for you.`;
                                     }
-                                    if (conversationContext.securityNeeds) {
-                                        contextRef += `${contextRef ? ', and your security needs' : 'your security requirements'}`;
+                                    if (conversationContext.quoteSentToEmail && conversationContext.customerEmail) {
+                                        contextDetails += ` I can also see we sent you a quote to ${conversationContext.customerEmail} — you should have that in your inbox already.`;
+                                    } else if (conversationContext.quoteReadyForSend) {
+                                        contextDetails += ` I also have your personalized quote ready to send once we confirm your email.`;
                                     }
-                                    const contextLine = contextRef
-                                        ? `, including the details about ${contextRef},`
-                                        : '';
+                                    if (conversationContext.timeline) {
+                                        contextDetails += ` And I understand you're looking to move forward ${conversationContext.timeline}.`;
+                                    }
 
                                     const nameGreet = conversationContext.customerName ? `Hi ${conversationContext.customerName}, this` : 'Hi, this';
-                                    const greetingText = `${nameGreet} is David from Microsoft Sales. I've reviewed your conversation with our Ask Microsoft Voice Agent${contextLine} so you won't need to repeat anything. Let's pick up right where you left off.`;
+                                    const greetingText = contextDetails
+                                        ? `${nameGreet} is David from Microsoft Sales. I've reviewed the full transcript of your conversation with our Ask Microsoft Voice Agent.${contextDetails} You won't need to repeat any of that — I'm here to help you with next steps.`
+                                        : `${nameGreet} is David from Microsoft Sales. I've reviewed the full transcript of your conversation with our Ask Microsoft Voice Agent, so you won't need to repeat anything. What questions can I help answer?`;
                                     addCallTranscriptEntry('David', greetingText);
                                     speakAsDavid(greetingText);
                                 }, 800);
@@ -4438,7 +4455,8 @@
             if (isBusinessHours) {
                 await playLine('Ask Microsoft Voice Agent', 'Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now over the phone who can go deeper on licensing and next steps. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', including the quote I just sent you.' : '.'), 500);
                 await playLine('You', 'That would be great — I\'d love to talk through next steps with someone.', 420);
-                await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you end this call, I\'ll connect you with a specialist over the phone who\'ll have the full context of everything we discussed. It was great chatting with you!', 500);
+                const farewellName = conversationContext.customerName ? ', ' + conversationContext.customerName : '';
+                await playLine('Ask Microsoft Voice Agent', 'Perfect — I\'m going to transfer you now to a Microsoft sales specialist. They\'ll have the full context of everything we\'ve discussed, so you won\'t need to repeat a thing. It was great chatting with you' + farewellName + '!', 500);
 
                 // End voice call and seamlessly hand off to live agent phone call
                 if (sessionGen !== voiceSessionGeneration) return;
