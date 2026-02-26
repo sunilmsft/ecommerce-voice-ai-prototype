@@ -3051,9 +3051,9 @@
                     callbackUsers: '42'
                 },
                 {
-                    callbackName: 'Priya Nair',
+                    callbackName: 'Marcus Thompson',
                     callbackBusiness: 'Fabrikam Health Partners',
-                    callbackEmail: 'priya.nair@fabrikam-example.com',
+                    callbackEmail: 'marcus.thompson@fabrikam-example.com',
                     callbackPhone: '(415) 555-0126',
                     callbackUsers: '85'
                 },
@@ -3470,32 +3470,16 @@
                         voices.find(v => v.lang === 'en-US') ||
                         voices[0];
                 } else {
-                    // Select voice based on customer's name/gender
-                    const isFemaleCustomer = conversationContext.customerName && 
-                        ['Priya', 'Sarah', 'Maria', 'Lisa', 'Emma', 'Sophia', 'Aisha', 'Mei'].includes(conversationContext.customerName);
-                    if (isFemaleCustomer) {
-                        // Female customer — Aria/Sara Online (distinct from AI's Jenny)
-                        utterance.pitch = 1.05;  // Slightly higher than AI
-                        preferredVoice = 
-                            voices.find(v => v.name.includes('Aria') && v.name.includes('Online')) ||
-                            voices.find(v => v.name.includes('Sara') && v.name.includes('Online')) ||
-                            voices.find(v => v.name.includes('Microsoft Zira')) ||
-                            voices.find(v => v.name.includes('Google US English Female')) ||
-                            voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
-                            voices.find(v => v.lang === 'en-US') ||
-                            voices[0];
-                    } else {
-                        // Male customer — Guy/Ryan/Andrew Online (no Aria/Jenny overlap)
-                        preferredVoice = 
-                            voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
-                            voices.find(v => v.name.includes('Ryan') && v.name.includes('Online')) ||
-                            voices.find(v => v.name.includes('Andrew') && v.name.includes('Online')) ||
-                            voices.find(v => v.name.includes('Microsoft David')) ||
-                            voices.find(v => v.name.includes('Google US English Male')) ||
-                            voices.find(v => v.lang === 'en-US' && v.name.includes('Male')) ||
-                            voices.find(v => v.lang === 'en-US') ||
-                            voices[0];
-                    }
+                    // Customer — Guy/Ryan/Andrew Online (male voice, distinct from AI's Jenny)
+                    preferredVoice = 
+                        voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Ryan') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Andrew') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Microsoft David')) ||
+                        voices.find(v => v.name.includes('Google US English Male')) ||
+                        voices.find(v => v.lang === 'en-US' && v.name.includes('Male')) ||
+                        voices.find(v => v.lang === 'en-US') ||
+                        voices[0];
                 }
                 
                 if (preferredVoice) {
