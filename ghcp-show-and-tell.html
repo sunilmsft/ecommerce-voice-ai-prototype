@@ -95,12 +95,12 @@
 
   /* ── SECTION LABELS ── */
   .section-label {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 2.5px;
     text-transform: uppercase;
     margin-bottom: 16px;
-    padding: 5px 14px;
+    padding: 6px 18px;
     border-radius: 16px;
     display: inline-block;
   }
@@ -944,8 +944,8 @@
       <div class="timeline-date">Day 1</div>
       <div class="timeline-dot teal"></div>
       <div class="timeline-content">
-        <h4>🚀 Initial commit — first working prototype</h4>
-        <p>Full eCommerce chat prototype with AI conversation flow, callback system, and responsive UI. Single HTML file, deployed to GitHub Pages.</p>
+        <h4>🚀 First working prototype</h4>
+        <p>Full chat prototype with AI conversation flow, callbacks, and responsive UI — deployed to GitHub Pages.</p>
       </div>
     </div>
 
@@ -953,8 +953,8 @@
       <div class="timeline-date">Day 3</div>
       <div class="timeline-dot blue"></div>
       <div class="timeline-content">
-        <h4>🎙️ Voice-enabled variant added</h4>
-        <p>Described "add a voice version where the customer talks to the AI instead of typing" — Copilot generated the full speech synthesis integration, voice selection, and transcript sync.</p>
+        <h4>🎙️ Voice variant added</h4>
+        <p>Described "add voice so the customer talks instead of typing" — Copilot built the full speech synthesis integration.</p>
       </div>
     </div>
 
@@ -962,35 +962,8 @@
       <div class="timeline-date">Day 5</div>
       <div class="timeline-dot amber"></div>
       <div class="timeline-content">
-        <h4>🐛 Audio lag during screen sharing</h4>
-        <p>Described: "Voice stops mid-sentence during demos." Copilot diagnosed 3 root causes: Chrome's 15-second utterance kill, tab throttling, network voice latency. Fixed with keepalive timer, resume pokes, timeout buffers.</p>
-      </div>
-    </div>
-
-    <div class="timeline-item">
-      <div class="timeline-date">Day 7</div>
-      <div class="timeline-dot red"></div>
-      <div class="timeline-content">
-        <h4>🔊 AI and customer using the same voice</h4>
-        <p>Described: "Both speakers sound the same — it's confusing." Copilot audited all 9 prototype files, found overlapping voice chains, assigned distinct Neural voices (Jenny for AI, Guy/Aria for customer), added pitch/rate differentiation. One commit.</p>
-      </div>
-    </div>
-
-    <div class="timeline-item">
-      <div class="timeline-date">Day 8</div>
-      <div class="timeline-dot purple"></div>
-      <div class="timeline-content">
-        <h4>📋 Quoting flow added</h4>
-        <p>Described: "After the AI recommends a plan, it should generate a personalized quote and email it." Copilot built the quote card UI, email simulation, qualification questions, and integrated it into the voice conversation.</p>
-      </div>
-    </div>
-
-    <div class="timeline-item">
-      <div class="timeline-date">Day 9</div>
-      <div class="timeline-dot amber"></div>
-      <div class="timeline-content">
-        <h4>🔄 Mass rename across 8 files</h4>
-        <p>Described: "Rename 'Sales AI Assistant' to 'Ask Microsoft Voice Agent' everywhere." Copilot found and replaced every reference across 8 files — titles, headers, voice prompts, alt text — in one operation.</p>
+        <h4>🐛 Audio lag — diagnosed &amp; fixed</h4>
+        <p>"Voice stops mid-sentence during demos." Copilot found 3 root causes and shipped the fix in one sitting.</p>
       </div>
     </div>
 
@@ -998,8 +971,8 @@
       <div class="timeline-date">Day 10</div>
       <div class="timeline-dot green"></div>
       <div class="timeline-content">
-        <h4>✨ Wrap-up redesign + follow-up question</h4>
-        <p>Described two UX issues in one prompt. Copilot added a natural follow-up question before closing and redesigned the post-call screen to show a compact summary with action buttons visible by default.</p>
+        <h4>✨ Quoting, rename, wrap-up redesign</h4>
+        <p>Added quoting flow, renamed across 8 files, redesigned post-call screen — each described in plain English.</p>
       </div>
     </div>
 
@@ -1008,16 +981,11 @@
   <!-- Commit log -->
   <div class="commit-log" style="margin-top: 36px;">
     <div style="font-size: 11px; color: #64748b; margin-bottom: 10px; font-family: 'Segoe UI', sans-serif; font-weight: 600; letter-spacing: 1px;">COMMIT LOG (SELECTED)</div>
-    <div><span class="hash">543c9f4</span> <span class="msg">Add follow-up question before closing, redesign compact wrap-up screen</span></div>
-    <div><span class="hash">1b853dc</span> <span class="msg">Add quoting flow, email quote, sales associate summary, fix audio-text sync</span></div>
     <div class="highlight-line"><span class="hash">8656ab9</span> <span class="msg">Fix same-voice issue: separate AI (Jenny) from User (Guy/Aria) with distinct pitch/rate</span></div>
     <div><span class="hash">c6774a1</span> <span class="msg">Fix audio lag: Chrome 15s keepalive, local voice preference, background tab resume</span></div>
-    <div class="highlight-line"><span class="hash">148fd29</span> <span class="msg">Rename Sales AI Assistant to Ask Microsoft Voice Agent across all prototypes</span></div>
-    <div><span class="hash">4868297</span> <span class="msg">Rename prototypes: Always-On Voice + Enable Voice for Off Business Hours</span></div>
-    <div><span class="hash">ce9fa9e</span> <span class="msg">Add pre-quote qualification questions and dynamic quote card</span></div>
-    <div><span class="hash">364d328</span> <span class="msg">Voice-First Entry: seamless voice queue transfer to David</span></div>
+    <div><span class="hash">148fd29</span> <span class="msg">Rename Sales AI Assistant to Ask Microsoft Voice Agent across all prototypes</span></div>
     <div><span class="hash">f60e7fe</span> <span class="msg">Initial commit: eCommerce Voice AI Agent prototype</span></div>
-    <div style="color: #475569; margin-top: 4px;">... and 80 more commits</div>
+    <div style="color: #475569; margin-top: 4px;">... and 85 more commits</div>
   </div>
 </div>
 
