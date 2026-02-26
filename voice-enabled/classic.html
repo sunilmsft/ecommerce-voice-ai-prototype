@@ -1161,6 +1161,14 @@
         .message.bot .chat-avatar-icon {
             background: #e1efff;
             border: 1px solid #b3d4f5;
+            overflow: hidden;
+        }
+
+        .chat-avatar-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .message.user .chat-avatar-icon {
@@ -3073,7 +3081,7 @@
             // Choose avatar icon based on message type
             let avatarIcon = '';
             if (type === 'bot') {
-                avatarIcon = '<div class="chat-avatar-icon">🤖</div>';
+                avatarIcon = '<div class="chat-avatar-icon"><img src="Icon.jpg" alt="Ask Microsoft" /></div>';
             } else if (type === 'user') {
                 avatarIcon = '<div class="chat-avatar-icon">👤</div>';
             } else if (type === 'human-agent') {
