@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM as Builder — GitHub Copilot Show &amp; Tell</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0a0a0a;
+    color: #e2e8f0;
+    overflow-x: hidden;
+  }
+
+  /* ── SLIDE LAYOUT ── */
+  .slide {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 80px;
+    position: relative;
+  }
+
+  .slide-number {
+    position: absolute;
+    top: 32px;
+    right: 40px;
+    font-size: 12px;
+    color: #475569;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .slide-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #1e293b, transparent);
+  }
+
+  /* ── TITLE SLIDE ── */
+  .title-slide {
+    background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+  }
+
+  .title-badge {
+    display: inline-block;
+    background: rgba(14, 165, 233, 0.12);
+    color: #38bdf8;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 20px;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    margin-bottom: 24px;
+  }
+
+  .title-slide h1 {
+    font-size: 48px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 12px;
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  .title-slide h1 span {
+    background: linear-gradient(135deg, #38bdf8, #14b8a6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .title-subtitle {
+    font-size: 20px;
+    color: #94a3b8;
+    font-weight: 300;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .title-meta {
+    font-size: 13px;
+    color: #475569;
+    margin-top: 48px;
+    text-align: center;
+  }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding: 5px 14px;
+    border-radius: 16px;
+    display: inline-block;
+  }
+
+  .section-label.problem { background: rgba(239, 68, 68, 0.12); color: #f87171; }
+  .section-label.solution { background: rgba(20, 184, 166, 0.12); color: #5eead4; }
+  .section-label.value { background: rgba(14, 165, 233, 0.12); color: #38bdf8; }
+  .section-label.journey { background: rgba(168, 85, 247, 0.12); color: #c084fc; }
+  .section-label.speed { background: rgba(251, 191, 36, 0.12); color: #fbbf24; }
+  .section-label.demo { background: rgba(34, 197, 94, 0.12); color: #4ade80; }
+
+  .slide h2 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 40px;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  /* ── STAT CARDS ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .stat-card {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 28px 24px;
+    text-align: center;
+  }
+
+  .stat-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .stat-value {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .stat-value.teal { color: #14b8a6; }
+  .stat-value.blue { color: #38bdf8; }
+  .stat-value.amber { color: #fbbf24; }
+  .stat-value.purple { color: #a78bfa; }
+
+  .stat-label {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* ── COMPARISON ── */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 0;
+    width: 100%;
+    max-width: 1100px;
+    align-items: start;
+  }
+
+  .compare-col {
+    padding: 36px;
+    border-radius: 16px;
+    position: relative;
+  }
+
+  .compare-col.before {
+    background: rgba(239, 68, 68, 0.04);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+  }
+
+  .compare-col.after {
+    background: rgba(20, 184, 166, 0.04);
+    border: 1px solid rgba(20, 184, 166, 0.15);
+  }
+
+  .compare-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #475569;
+    padding-top: 40px;
+  }
+
+  .compare-header {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .compare-header.red { color: #f87171; }
+  .compare-header.green { color: #5eead4; }
+
+  .journey-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+
+  .step-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-icon.bad { background: rgba(239, 68, 68, 0.12); }
+  .step-icon.good { background: rgba(20, 184, 166, 0.12); }
+  .step-icon.neutral { background: rgba(100, 116, 139, 0.15); }
+
+  .step-content h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 3px;
+  }
+
+  .step-content p {
+    font-size: 12.5px;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  .step-connector {
+    position: absolute;
+    left: 15px;
+    top: 34px;
+    width: 2px;
+    height: 18px;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .outcome-box {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .outcome-box.bad {
+    background: rgba(239, 68, 68, 0.08);
+    border-left: 3px solid #ef4444;
+    color: #fca5a5;
+  }
+
+  .outcome-box.good {
+    background: rgba(20, 184, 166, 0.08);
+    border-left: 3px solid #14b8a6;
+    color: #99f6e4;
+  }
+
+  .outcome-box strong { color: #f1f5f9; }
+
+  /* ── WORKFLOW DIAGRAM ── */
+  .workflow-container {
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .workflow-step {
+    display: flex;
+    align-items: stretch;
+    gap: 24px;
+    margin-bottom: 16px;
+  }
+
+  .workflow-number {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .workflow-number.step-1 { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3); }
+  .workflow-number.step-2 { background: rgba(20, 184, 166, 0.15); color: #5eead4; border: 1px solid rgba(20, 184, 166, 0.3); }
+  .workflow-number.step-3 { background: rgba(251, 191, 36, 0.15); color: #fde68a; border: 1px solid rgba(251, 191, 36, 0.3); }
+  .workflow-number.step-4 { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+  .workflow-line {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 18px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .workflow-card {
+    flex: 1;
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+
+  .workflow-card.step-1 { background: rgba(99, 102, 241, 0.06); border: 1px solid rgba(99, 102, 241, 0.15); }
+  .workflow-card.step-2 { background: rgba(20, 184, 166, 0.06); border: 1px solid rgba(20, 184, 166, 0.15); }
+  .workflow-card.step-3 { background: rgba(251, 191, 36, 0.06); border: 1px solid rgba(251, 191, 36, 0.15); }
+  .workflow-card.step-4 { background: rgba(168, 85, 247, 0.06); border: 1px solid rgba(168, 85, 247, 0.15); }
+
+  .workflow-card h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 6px;
+  }
+
+  .workflow-card p {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.55;
+  }
+
+  .workflow-card .example {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    font-size: 12px;
+    color: #cbd5e1;
+    font-style: italic;
+    line-height: 1.5;
+    border-left: 2px solid rgba(255,255,255,0.1);
+  }
+
+  /* ── TIMELINE ── */
+  .timeline-container {
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+
+  .timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+    position: relative;
+  }
+
+  .timeline-dot::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 5px;
+    width: 2px;
+    height: 28px;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .timeline-item:last-child .timeline-dot::after { display: none; }
+
+  .timeline-dot.teal { background: #14b8a6; }
+  .timeline-dot.blue { background: #38bdf8; }
+  .timeline-dot.amber { background: #fbbf24; }
+  .timeline-dot.purple { background: #a78bfa; }
+  .timeline-dot.red { background: #f87171; }
+  .timeline-dot.green { background: #4ade80; }
+
+  .timeline-content {
+    flex: 1;
+    background: rgba(30, 41, 59, 0.3);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+
+  .timeline-content h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 4px;
+  }
+
+  .timeline-content p {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  .timeline-date {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    min-width: 48px;
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  /* ── CTA BOX ── */
+  .cta-box {
+    margin-top: 40px;
+    padding: 24px 40px;
+    background: rgba(14, 165, 233, 0.06);
+    border: 1px solid rgba(14, 165, 233, 0.2);
+    border-radius: 12px;
+    text-align: center;
+    max-width: 700px;
+  }
+
+  .cta-box p {
+    font-size: 16px;
+    color: #cbd5e1;
+    line-height: 1.6;
+  }
+
+  .cta-box strong {
+    color: #38bdf8;
+  }
+
+  /* ── QUOTE BLOCK ── */
+  .quote-block {
+    max-width: 760px;
+    padding: 28px 36px;
+    border-radius: 14px;
+    background: rgba(30, 41, 59, 0.4);
+    border-left: 4px solid #38bdf8;
+    margin: 20px 0;
+  }
+
+  .quote-block p {
+    font-size: 20px;
+    color: #cbd5e1;
+    line-height: 1.6;
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .quote-block .attribution {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #64748b;
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  /* ── TAKEAWAY CARDS ── */
+  .takeaway-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .takeaway-card {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 28px 24px;
+  }
+
+  .takeaway-card .takeaway-num {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .takeaway-card .takeaway-num.t1 { color: #14b8a6; }
+  .takeaway-card .takeaway-num.t2 { color: #38bdf8; }
+  .takeaway-card .takeaway-num.t3 { color: #fbbf24; }
+  .takeaway-card .takeaway-num.t4 { color: #a78bfa; }
+
+  .takeaway-card h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+  }
+
+  .takeaway-card p {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  /* ── NAV DOTS ── */
+  .nav-bar {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+  }
+
+  .nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #334155;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .nav-dot:hover, .nav-dot.active {
+    background: #14b8a6;
+    transform: scale(1.4);
+  }
+
+  /* ── PROTOTYPE GRID ── */
+  .proto-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .proto-card {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 20px 18px;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+
+  .proto-card:hover {
+    border-color: rgba(20, 184, 166, 0.3);
+  }
+
+  .proto-card .proto-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .proto-card .proto-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 4px;
+  }
+
+  .proto-card .proto-lines {
+    font-size: 11px;
+    color: #64748b;
+  }
+
+  .proto-card.highlight {
+    background: rgba(20, 184, 166, 0.06);
+    border-color: rgba(20, 184, 166, 0.25);
+  }
+
+  /* ── COMMIT LOG STYLE ── */
+  .commit-log {
+    width: 100%;
+    max-width: 800px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 20px 24px;
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: #94a3b8;
+  }
+
+  .commit-log .hash { color: #fbbf24; }
+  .commit-log .msg { color: #cbd5e1; }
+  .commit-log .highlight-line { color: #5eead4; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav-bar">
+  <a class="nav-dot active" href="#slide-1" title="Title"></a>
+  <a class="nav-dot" href="#slide-2" title="The Problem"></a>
+  <a class="nav-dot" href="#slide-3" title="The Punchline"></a>
+  <a class="nav-dot" href="#slide-4" title="How It Works"></a>
+  <a class="nav-dot" href="#slide-5" title="Iteration Speed"></a>
+  <a class="nav-dot" href="#slide-6" title="What I Built"></a>
+  <a class="nav-dot" href="#slide-7" title="Takeaways"></a>
+  <a class="nav-dot" href="#slide-8" title="See It Live"></a>
+</div>
+
+<!-- ═══════════ SLIDE 1: TITLE ═══════════ -->
+<div class="slide title-slide" id="slide-1">
+  <span class="slide-number">01 / 08</span>
+  <div class="title-badge">GHCP Show &amp; Tell</div>
+  <h1>PM as Builder:<br><span>GitHub Copilot in Action</span></h1>
+  <p class="title-subtitle">How I shipped a production-quality prototype without writing a single line of code</p>
+  <p class="title-meta">Sunil Venugopal · February 2026</p>
+</div>
+
+<div class="slide-divider"></div>
+
+<!-- ═══════════ SLIDE 2: THE PROBLEM ═══════════ -->
+<div class="slide" id="slide-2" style="background: linear-gradient(135deg, #1a1400 0%, #0f172a 100%);">
+  <span class="slide-number">02 / 08</span>
+  <span class="section-label problem">The Problem</span>
+  <h2>PMs have ideas.<br>Getting them built is the bottleneck.</h2>
+
+  <div class="comparison" style="margin-top: 8px;">
+
+    <!-- BEFORE -->
+    <div class="compare-col before">
+      <div class="compare-header red">❌ The Traditional PM Approach</div>
+
+      <div class="journey-step">
+        <div class="step-icon neutral">💡</div>
+        <div class="step-content">
+          <h4>PM has an idea for a new experience</h4>
+          <p>Voice AI for after-hours eCommerce calls on microsoft.com</p>
+        </div>
+        <div class="step-connector"></div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-icon neutral">📄</div>
+        <div class="step-content">
+          <h4>Writes a spec / PRD</h4>
+          <p>10-page document describing the experience, user flows</p>
+        </div>
+        <div class="step-connector"></div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-icon bad">🗓️</div>
+        <div class="step-content">
+          <h4>Requests eng capacity to explore</h4>
+          <p>"Can we get a sprint to prototype this?"</p>
+        </div>
+        <div class="step-connector"></div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-icon bad">🚫</div>
+        <div class="step-content">
+          <h4>"Not this quarter"</h4>
+          <p>Engineering is shipping features, not exploring ideas</p>
+        </div>
+        <div class="step-connector"></div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-icon bad">📋</div>
+        <div class="step-content">
+          <h4>Idea sits in the backlog</h4>
+          <p>No one sees it, no one believes it, momentum lost</p>
+        </div>
+      </div>
+
+      <div class="outcome-box bad">
+        <strong>Result:</strong> Good ideas die in documents. Stakeholders can't experience what they can't see.
+      </div>
+    </div>
+
+    <!-- ARROW -->
+    <div class="compare-arrow">→</div>
+
+    <!-- AFTER -->
+    <div class="compare-col after">
+      <div class="compare-header green">✅ PM + GitHub Copilot</div>
+
+      <div class="journey-step">
+        <div class="step-icon neutral">💡</div>
+        <div class="step-content">
+          <h4>PM has an idea for a new experience</h4>
+          <p>Same idea — Voice AI for after-hours calls</p>
+        </div>
+        <div class="step-connector"></div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-icon good">💬</div>
+        <div class="step-content">
+          <h4>Describes it to Copilot in natural language</h4>
+          <p>"Build a prototype where a customer talks to a Voice AI Agent..."</p>
+        </div>
+        <div class="step-connector"></div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-icon good">⚡</div>
+        <div class="step-content">
+          <h4>Copilot writes the code</h4>
+          <p>Full HTML/CSS/JS — voice synthesis, UI, conversation flow</p>
+        </div>
+        <div class="step-connector"></div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-icon good">🔄</div>
+        <div class="step-content">
+          <h4>PM iterates by describing changes</h4>
+          <p>"Make the AI ask discovery questions" → "Add a quoting flow" → "Fix the voice overlap"</p>
+        </div>
+        <div class="step-connector"></div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-icon good">🚀</div>
+        <div class="step-content">
+          <h4>Deploys to GitHub Pages — stakeholders experience it</h4>
+          <p>Live, interactive, shareable in 10 days</p>
+        </div>
+      </div>
+
+      <div class="outcome-box good">
+        <strong>Result:</strong> The conversation changes from "should we explore this?" to "when can we ship this?"
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="slide-divider"></div>
+
+<!-- ═══════════ SLIDE 3: THE PUNCHLINE ═══════════ -->
+<div class="slide" id="slide-3" style="background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #0c1527 100%);">
+  <span class="slide-number">03 / 08</span>
+  <span class="section-label value">The Result</span>
+  <h2 style="margin-bottom: 48px;">What I shipped — with zero engineering background</h2>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon">📅</div>
+      <div class="stat-value teal">10</div>
+      <div class="stat-label">Calendar days<br>from first commit to live</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🔄</div>
+      <div class="stat-value blue">89</div>
+      <div class="stat-label">Commits<br>avg 9 iterations/day</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📄</div>
+      <div class="stat-value amber">~30K</div>
+      <div class="stat-label">Lines of code<br>across 8 prototypes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">✍️</div>
+      <div class="stat-value purple">0</div>
+      <div class="stat-label">Lines written manually<br>Copilot wrote all of it</div>
+    </div>
+  </div>
+
+  <div class="quote-block" style="margin-top: 48px;">
+    <p>"I describe the experience like I'm writing a PRD. Copilot writes the implementation."</p>
+  </div>
+
+  <div style="margin-top: 32px; display: flex; gap: 20px; justify-content: center;">
+    <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 24px; text-align: center;">
+      <div style="font-size: 13px; font-weight: 600; color: #5eead4;">Tech Stack</div>
+      <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Pure HTML + CSS + JavaScript</div>
+      <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Zero frameworks · Zero build tools</div>
+    </div>
+    <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 24px; text-align: center;">
+      <div style="font-size: 13px; font-weight: 600; color: #38bdf8;">Voice Engine</div>
+      <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Browser speechSynthesis API</div>
+      <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Edge Neural Voices (Jenny, Aria, Guy)</div>
+    </div>
+    <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 24px; text-align: center;">
+      <div style="font-size: 13px; font-weight: 600; color: #fbbf24;">Deployment</div>
+      <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">GitHub Pages</div>
+      <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Push to main → live instantly</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide-divider"></div>
+
+<!-- ═══════════ SLIDE 4: HOW IT WORKS ═══════════ -->
+<div class="slide" id="slide-4" style="background: linear-gradient(135deg, #0f172a 0%, #020617 100%);">
+  <span class="slide-number">04 / 08</span>
+  <span class="section-label journey">The Workflow</span>
+  <h2 style="margin-bottom: 48px;">Conversation-driven development</h2>
+
+  <div class="workflow-container">
+
+    <div class="workflow-step">
+      <div class="workflow-number step-1">1<div class="workflow-line"></div></div>
+      <div class="workflow-card step-1">
+        <h4>Describe the experience in plain English</h4>
+        <p>I tell Copilot what I want the customer to experience — not how to code it.</p>
+        <div class="example">"When the customer requests a callback after hours, offer them the option to talk to a Voice AI Agent while they wait."</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-number step-2">2<div class="workflow-line"></div></div>
+      <div class="workflow-card step-2">
+        <h4>Copilot generates the full implementation</h4>
+        <p>HTML structure, CSS styling, JavaScript logic, voice synthesis setup, conversation flow — all generated from the description.</p>
+        <div class="example">Generated: callback form UI, voice session management, speech synthesis with Neural voices, transcript sync, responsive layout — 4,000+ lines.</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-number step-3">3<div class="workflow-line"></div></div>
+      <div class="workflow-card step-3">
+        <h4>Test, find issues, describe fixes</h4>
+        <p>I experience the prototype like a customer would. When something's wrong, I describe the problem — Copilot diagnoses and fixes it.</p>
+        <div class="example">"The AI and the customer are using the same voice — it's confusing. They should sound different."<br>→ Copilot audited 9 files, separated voice assignments, added pitch/rate differentiation.</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-number step-4">4</div>
+      <div class="workflow-card step-4">
+        <h4>Commit, push, deploy — repeat</h4>
+        <p>Every change is committed and pushed to GitHub Pages instantly. Stakeholders always see the latest version.</p>
+        <div class="example">89 commits in 10 days. Bug found during a live demo → fixed and deployed in minutes, not sprints.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="slide-divider"></div>
+
+<!-- ═══════════ SLIDE 5: ITERATION SPEED ═══════════ -->
+<div class="slide" id="slide-5" style="background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 100%);">
+  <span class="slide-number">05 / 08</span>
+  <span class="section-label speed">Iteration Speed</span>
+  <h2 style="margin-bottom: 16px;">Bug → Diagnosis → Fix → Deploy<br><span style="color: #fbbf24;">in minutes, not sprints</span></h2>
+
+  <p style="font-size: 15px; color: #94a3b8; text-align: center; max-width: 680px; margin-bottom: 40px; line-height: 1.6;">
+    Here's a real sequence from the build — every one of these was found, described, and fixed through Copilot in a single sitting.
+  </p>
+
+  <div class="timeline-container">
+
+    <div class="timeline-item">
+      <div class="timeline-date">Day 1</div>
+      <div class="timeline-dot teal"></div>
+      <div class="timeline-content">
+        <h4>🚀 Initial commit — first working prototype</h4>
+        <p>Full eCommerce chat prototype with AI conversation flow, callback system, and responsive UI. Single HTML file, deployed to GitHub Pages.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">Day 3</div>
+      <div class="timeline-dot blue"></div>
+      <div class="timeline-content">
+        <h4>🎙️ Voice-enabled variant added</h4>
+        <p>Described "add a voice version where the customer talks to the AI instead of typing" — Copilot generated the full speech synthesis integration, voice selection, and transcript sync.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">Day 5</div>
+      <div class="timeline-dot amber"></div>
+      <div class="timeline-content">
+        <h4>🐛 Audio lag during screen sharing</h4>
+        <p>Described: "Voice stops mid-sentence during demos." Copilot diagnosed 3 root causes: Chrome's 15-second utterance kill, tab throttling, network voice latency. Fixed with keepalive timer, resume pokes, timeout buffers.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">Day 7</div>
+      <div class="timeline-dot red"></div>
+      <div class="timeline-content">
+        <h4>🔊 AI and customer using the same voice</h4>
+        <p>Described: "Both speakers sound the same — it's confusing." Copilot audited all 9 prototype files, found overlapping voice chains, assigned distinct Neural voices (Jenny for AI, Guy/Aria for customer), added pitch/rate differentiation. One commit.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">Day 8</div>
+      <div class="timeline-dot purple"></div>
+      <div class="timeline-content">
+        <h4>📋 Quoting flow added</h4>
+        <p>Described: "After the AI recommends a plan, it should generate a personalized quote and email it." Copilot built the quote card UI, email simulation, qualification questions, and integrated it into the voice conversation.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">Day 9</div>
+      <div class="timeline-dot amber"></div>
+      <div class="timeline-content">
+        <h4>🔄 Mass rename across 8 files</h4>
+        <p>Described: "Rename 'Sales AI Assistant' to 'Ask Microsoft Voice Agent' everywhere." Copilot found and replaced every reference across 8 files — titles, headers, voice prompts, alt text — in one operation.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">Day 10</div>
+      <div class="timeline-dot green"></div>
+      <div class="timeline-content">
+        <h4>✨ Wrap-up redesign + follow-up question</h4>
+        <p>Described two UX issues in one prompt. Copilot added a natural follow-up question before closing and redesigned the post-call screen to show a compact summary with action buttons visible by default.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Commit log -->
+  <div class="commit-log" style="margin-top: 36px;">
+    <div style="font-size: 11px; color: #64748b; margin-bottom: 10px; font-family: 'Segoe UI', sans-serif; font-weight: 600; letter-spacing: 1px;">COMMIT LOG (SELECTED)</div>
+    <div><span class="hash">543c9f4</span> <span class="msg">Add follow-up question before closing, redesign compact wrap-up screen</span></div>
+    <div><span class="hash">1b853dc</span> <span class="msg">Add quoting flow, email quote, sales associate summary, fix audio-text sync</span></div>
+    <div class="highlight-line"><span class="hash">8656ab9</span> <span class="msg">Fix same-voice issue: separate AI (Jenny) from User (Guy/Aria) with distinct pitch/rate</span></div>
+    <div><span class="hash">c6774a1</span> <span class="msg">Fix audio lag: Chrome 15s keepalive, local voice preference, background tab resume</span></div>
+    <div class="highlight-line"><span class="hash">148fd29</span> <span class="msg">Rename Sales AI Assistant to Ask Microsoft Voice Agent across all prototypes</span></div>
+    <div><span class="hash">4868297</span> <span class="msg">Rename prototypes: Always-On Voice + Enable Voice for Off Business Hours</span></div>
+    <div><span class="hash">ce9fa9e</span> <span class="msg">Add pre-quote qualification questions and dynamic quote card</span></div>
+    <div><span class="hash">364d328</span> <span class="msg">Voice-First Entry: seamless voice queue transfer to David</span></div>
+    <div><span class="hash">f60e7fe</span> <span class="msg">Initial commit: eCommerce Voice AI Agent prototype</span></div>
+    <div style="color: #475569; margin-top: 4px;">... and 80 more commits</div>
+  </div>
+</div>
+
+<div class="slide-divider"></div>
+
+<!-- ═══════════ SLIDE 6: WHAT I BUILT ═══════════ -->
+<div class="slide" id="slide-6" style="background: linear-gradient(135deg, #0f172a 0%, #020617 100%);">
+  <span class="slide-number">06 / 08</span>
+  <span class="section-label solution">What I Built</span>
+  <h2 style="margin-bottom: 48px;">8 interactive prototypes — each a different approach</h2>
+
+  <div class="proto-grid">
+    <div class="proto-card">
+      <div class="proto-icon">💬</div>
+      <div class="proto-name">Customer Choice</div>
+      <div class="proto-lines">4,017 lines</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-icon">⚡</div>
+      <div class="proto-name">Immediate Assist</div>
+      <div class="proto-lines">3,907 lines</div>
+    </div>
+    <div class="proto-card highlight">
+      <div class="proto-icon">🎙️</div>
+      <div class="proto-name">Assisted Follow-Up</div>
+      <div class="proto-lines">4,320 lines</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-icon">🔄</div>
+      <div class="proto-name">Hybrid</div>
+      <div class="proto-lines">3,330 lines</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-icon">🎙️</div>
+      <div class="proto-name">Voice-Enabled (Big Bold)</div>
+      <div class="proto-lines">5,610 lines</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-icon">📋</div>
+      <div class="proto-name">Classic</div>
+      <div class="proto-lines">5,149 lines</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-icon">🕘</div>
+      <div class="proto-name">Off-Hours Voice</div>
+      <div class="proto-lines">4,320 lines</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-icon">🏠</div>
+      <div class="proto-name">Landing Page</div>
+      <div class="proto-lines">221 lines</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 40px; max-width: 800px; text-align: center;">
+    <p style="font-size: 14px; color: #94a3b8; line-height: 1.7;">
+      Each prototype is a <strong style="color: #e2e8f0;">single HTML file</strong> — no frameworks, no build tools, no dependencies. Open the file in a browser and it works. Every variant includes real-time voice synthesis, dynamic conversation flows, callback management, and responsive UI.
+    </p>
+  </div>
+
+  <div style="margin-top: 32px; display: flex; gap: 16px;">
+    <div style="background: rgba(20, 184, 166, 0.06); border: 1px solid rgba(20, 184, 166, 0.15); border-radius: 10px; padding: 14px 24px; text-align: center;">
+      <div style="font-size: 20px; font-weight: 700; color: #5eead4;">~30,000</div>
+      <div style="font-size: 11px; color: #94a3b8;">total lines of code</div>
+    </div>
+    <div style="background: rgba(14, 165, 233, 0.06); border: 1px solid rgba(14, 165, 233, 0.15); border-radius: 10px; padding: 14px 24px; text-align: center;">
+      <div style="font-size: 20px; font-weight: 700; color: #7dd3fc;">8</div>
+      <div style="font-size: 11px; color: #94a3b8;">working prototypes</div>
+    </div>
+    <div style="background: rgba(251, 191, 36, 0.06); border: 1px solid rgba(251, 191, 36, 0.15); border-radius: 10px; padding: 14px 24px; text-align: center;">
+      <div style="font-size: 20px; font-weight: 700; color: #fde68a;">0</div>
+      <div style="font-size: 11px; color: #94a3b8;">frameworks used</div>
+    </div>
+    <div style="background: rgba(168, 85, 247, 0.06); border: 1px solid rgba(168, 85, 247, 0.15); border-radius: 10px; padding: 14px 24px; text-align: center;">
+      <div style="font-size: 20px; font-weight: 700; color: #c084fc;">GitHub Pages</div>
+      <div style="font-size: 11px; color: #94a3b8;">deployed & live</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide-divider"></div>
+
+<!-- ═══════════ SLIDE 7: TAKEAWAYS ═══════════ -->
+<div class="slide" id="slide-7" style="background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 100%);">
+  <span class="slide-number">07 / 08</span>
+  <span class="section-label value">Takeaways</span>
+  <h2 style="margin-bottom: 48px;">What this means for PMs</h2>
+
+  <div class="takeaway-grid">
+
+    <div class="takeaway-card">
+      <div class="takeaway-num t1">01</div>
+      <h4>Copilot turns PMs into builders</h4>
+      <p>You don't need to wait for eng capacity to validate an idea. Describe the experience you want — Copilot builds it. The PM becomes the prototyper.</p>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num t2">02</div>
+      <h4>Prototypes beat slide decks</h4>
+      <p>This prototype got more traction in one live demo than any spec doc would have. People believe what they can experience — not what they read.</p>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num t3">03</div>
+      <h4>Iteration speed is the superpower</h4>
+      <p>89 iterations in 10 days. Bug found → fixed → deployed in minutes. The speed means you test more ideas, catch more edge cases, and arrive at a better product.</p>
+    </div>
+
+    <div class="takeaway-card">
+      <div class="takeaway-num t4">04</div>
+      <h4>Start with a real problem, not "hello world"</h4>
+      <p>This is compelling because it solves a real business problem — customers hitting dead ends after hours. The tool is powerful, but the problem is what makes people care.</p>
+    </div>
+
+  </div>
+
+  <div class="quote-block" style="margin-top: 48px;">
+    <p>"If you have a product idea stuck in the 'should we explore this?' phase — don't wait. Build it. GitHub Copilot makes that possible for PMs today."</p>
+  </div>
+</div>
+
+<div class="slide-divider"></div>
+
+<!-- ═══════════ SLIDE 8: LIVE DEMO CTA ═══════════ -->
+<div class="slide" id="slide-8" style="background: linear-gradient(135deg, #0f172a 0%, #020617 100%);">
+  <span class="slide-number">08 / 08</span>
+  <span class="section-label demo">Live Demo</span>
+  <h2 style="margin-bottom: 24px;">Let me show you the prototype</h2>
+
+  <p style="font-size: 16px; color: #94a3b8; text-align: center; max-width: 680px; line-height: 1.7; margin-bottom: 16px;">
+    The prototype walks through the full after-hours experience — from callback request to voice AI conversation, plan recommendation, quoting, and warm handoff to a specialist.
+  </p>
+
+  <p style="font-size: 14px; color: #64748b; text-align: center; max-width: 560px; line-height: 1.6; margin-bottom: 40px;">
+    Everything you're about to see — the UI, the conversation flow, the voice synthesis, the quoting — was built entirely by describing what I wanted to GitHub Copilot.
+  </p>
+
+  <div class="cta-box">
+    <p><strong>Experience it live</strong></p>
+    <p style="margin-top: 12px; font-size: 14px; color: #64748b;">
+      🔗 <a href="https://sunilmsft.github.io/ecommerce-voice-ai-prototype/original-prototype.html" style="color: #38bdf8; text-decoration: none; font-weight: 500;">sunilmsft.github.io/ecommerce-voice-ai-prototype</a>
+    </p>
+  </div>
+
+  <div style="margin-top: 48px; display: flex; gap: 20px;">
+    <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 24px; text-align: center; min-width: 180px;">
+      <div style="font-size: 20px; margin-bottom: 6px;">🎙️</div>
+      <div style="font-size: 13px; font-weight: 600; color: #e2e8f0;">Use Microsoft Edge</div>
+      <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Neural voices require Edge</div>
+    </div>
+    <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 24px; text-align: center; min-width: 180px;">
+      <div style="font-size: 20px; margin-bottom: 6px;">🔊</div>
+      <div style="font-size: 13px; font-weight: 600; color: #e2e8f0;">Unmute Speakers</div>
+      <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Audio is the wow moment</div>
+    </div>
+    <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 24px; text-align: center; min-width: 180px;">
+      <div style="font-size: 20px; margin-bottom: 6px;">📱</div>
+      <div style="font-size: 13px; font-weight: 600; color: #e2e8f0;">Try It Yourself</div>
+      <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Share the link after</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 48px; max-width: 600px; text-align: center;">
+    <p style="font-size: 13px; color: #475569; line-height: 1.7; font-style: italic;">
+      Built with GitHub Copilot in VS Code · Agent mode with Claude · February 2026
+    </p>
+  </div>
+</div>
+
+<!-- ── ACTIVE NAV DOT SCRIPT ── -->
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.nav-dot');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const index = Array.from(slides).indexOf(entry.target);
+        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      }
+    });
+  }, { threshold: 0.5 });
+
+  slides.forEach(slide => observer.observe(slide));
+</script>
+
+</body>
+</html>
