@@ -1019,11 +1019,10 @@
         }
 
         .voice-icon-btn img {
-            width: 120%;
-            height: 120%;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             border-radius: 50%;
-            filter: none;
         }
 
         .voice-icon-btn:hover {
@@ -2409,7 +2408,7 @@
                 </div>
             </div>
             <div style="display: flex; gap: 4px;">
-                <button class="voice-icon-btn" id="voiceIconBtn" onclick="initiateVoiceCall()" title="Speak to Ask Microsoft Voice Agent"><img src="Voice%20ai.jpg" alt="Ask Microsoft Voice Agent" /></button>
+                <button class="voice-icon-btn" id="voiceIconBtn" onclick="initiateVoiceCall()" title="Speak to Ask Microsoft Voice Agent"><img src="Icon.jpg" alt="Ask Microsoft Voice Agent" /></button>
                 <button class="minimize-btn" onclick="minimizeChat()" title="Minimize">−</button>
                 <button class="close-btn" onclick="closeChat()" title="Close">✕</button>
             </div>
@@ -2526,7 +2525,7 @@
                     </div>
                 </div>
                 <div class="choice-card" onclick="selectSalesOption('ai-assistant')">
-                    <div class="choice-card-icon"><img src="Voice ai.jpg" alt="Ask Microsoft Voice Agent" style="width: 36px; height: 36px; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" /></div>
+                    <div class="choice-card-icon"><img src="Icon.jpg" alt="Ask Microsoft Voice Agent" style="width: 36px; height: 36px; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" /></div>
                     <div class="choice-card-content">
                         <div class="choice-card-title">Ask Microsoft Voice Agent</div>
                         <div class="choice-card-description">Available immediately. Can answer most product and plan questions.</div>
@@ -2615,7 +2614,7 @@
         </div>
         <div class="call-screen-content">
             <div class="pulse-ring" id="pulseRing" style="display: none;"></div>
-            <div class="call-avatar" id="callAvatar"><img src="Voice ai.jpg" alt="Ask Microsoft Voice Agent" /></div>
+            <div class="call-avatar" id="callAvatar"><img src="Icon.jpg" alt="Ask Microsoft Voice Agent" /></div>
             <div class="call-info">
                 <div class="call-agent-name" id="callAgentName">Connecting...</div>
                 <div class="call-status connecting" id="callStatus">Connecting you to Ask Microsoft Voice Agent...</div>
@@ -3241,7 +3240,7 @@
                     </div>
                     <div class="chat-option-card" onclick="selectSalesOption('ai-assistant')" role="button" tabindex="0">
                         <div class="chat-option-icon" style="background: white;">
-                            <img src="Voice ai.jpg" alt="Ask Microsoft Voice Agent" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
+                            <img src="Icon.jpg" alt="Ask Microsoft Voice Agent" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
                         </div>
                         <div class="chat-option-content">
                             <div class="chat-option-title">Speak with Ask Microsoft Voice Agent</div>
@@ -3408,7 +3407,7 @@
                 <div class="options-container">
                     <div class="chat-option-card" onclick="selectSalesOption('ai-assistant')" role="button" tabindex="0">
                         <div class="chat-option-icon" style="background: white;">
-                            <img src="Voice ai.jpg" alt="Ask Microsoft Voice Agent" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
+                            <img src="Icon.jpg" alt="Ask Microsoft Voice Agent" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
                         </div>
                         <div class="chat-option-content">
                             <div class="chat-option-title">Speak with Ask Microsoft Voice Agent</div>
@@ -4408,7 +4407,7 @@
                     const resetTimer = document.getElementById('callTimer');
                     const resetControls = document.querySelector('.call-controls');
                     const resetTranscript = document.getElementById('callTranscriptArea');
-                    if (resetAvatar) { resetAvatar.style.display = ''; resetAvatar.innerHTML = '<img src="Voice ai.jpg" alt="Ask Microsoft Voice Agent" />'; resetAvatar.style.transform = 'scale(1)'; }
+                    if (resetAvatar) { resetAvatar.style.display = ''; resetAvatar.innerHTML = '<img src="Icon.jpg" alt="Ask Microsoft Voice Agent" />'; resetAvatar.style.transform = 'scale(1)'; }
                     if (resetName) { resetName.style.display = ''; resetName.textContent = 'Connecting...'; }
                     if (resetStatus) { resetStatus.style.display = ''; resetStatus.textContent = 'Finding available agent'; resetStatus.classList.add('connecting'); }
                     if (resetTimer) { resetTimer.style.display = 'none'; resetTimer.textContent = '00:00'; }
@@ -4454,7 +4453,7 @@
                 <div class="options-container">
                     <div class="chat-option-card" onclick="handleOffHoursAiFirstSpeakNow()" role="button" tabindex="0" style="border-color: #0f6cbd; background: #e1efff; box-shadow: 0 10px 24px rgba(15, 108, 189, 0.24);">
                         <div class="chat-option-icon" style="background: white;">
-                            <img src="Voice ai.jpg" alt="Ask Microsoft Voice Agent" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
+                            <img src="Icon.jpg" alt="Ask Microsoft Voice Agent" style="width: 44px; height: 44px; display: block; border-radius: 50%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />
                         </div>
                         <div class="chat-option-content">
                             <div class="chat-option-title">Speak with Ask Microsoft Voice Agent</div>
@@ -5563,7 +5562,7 @@
             
             // Reset call screen
             setTimeout(() => {
-                document.getElementById('callAvatar').innerHTML = '<img src="Voice ai.jpg" alt="Ask Microsoft Voice Agent" />';
+                document.getElementById('callAvatar').innerHTML = '<img src="Icon.jpg" alt="Ask Microsoft Voice Agent" />';
                 document.getElementById('callAgentName').textContent = 'Connecting...';
                 document.getElementById('callStatus').textContent = 'Finding available agent';
                 document.getElementById('callStatus').classList.add('connecting');
