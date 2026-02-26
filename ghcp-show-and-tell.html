@@ -599,9 +599,84 @@
   .commit-log .hash { color: #fbbf24; }
   .commit-log .msg { color: #e2e8f0; }
   .commit-log .highlight-line { color: #5eead4; font-weight: 600; }
+
+  /* ── FULLSCREEN MODE ── */
+  .fullscreen-btn {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    z-index: 200;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #e2e8f0;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .fullscreen-btn:hover {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  body.slideshow-mode {
+    overflow: hidden;
+  }
+
+  body.slideshow-mode .slide {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+    display: none;
+    z-index: 150;
+  }
+
+  body.slideshow-mode .slide.active-slide {
+    display: flex;
+  }
+
+  body.slideshow-mode .slide-divider {
+    display: none;
+  }
+
+  body.slideshow-mode .nav-bar {
+    z-index: 200;
+  }
+
+  .slide-hint {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    font-size: 12px;
+    color: #64748b;
+    background: rgba(15, 23, 42, 0.8);
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+    display: none;
+    backdrop-filter: blur(8px);
+  }
+
+  body.slideshow-mode .slide-hint {
+    display: block;
+  }
 </style>
 </head>
 <body>
+
+<!-- FULLSCREEN BUTTON -->
+<button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleSlideshow()" title="Enter slideshow mode (F key)">⛶ Present</button>
+<div class="slide-hint" id="slideHint">← → to navigate · Esc to exit</div>
 
 <!-- NAV -->
 <div class="nav-bar">
@@ -1120,17 +1195,75 @@
 <script>
   const slides = document.querySelectorAll('.slide');
   const dots = document.querySelectorAll('.nav-dot');
+  let slideshowMode = false;
+  let currentSlide = 0;
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const index = Array.from(slides).indexOf(entry.target);
         dots.forEach((d, i) => d.classList.toggle('active', i === index));
+        currentSlide = index;
       }
     });
   }, { threshold: 0.5 });
 
   slides.forEach(slide => observer.observe(slide));
+
+  function showSlide(index) {
+    if (index < 0 || index >= slides.length) return;
+    currentSlide = index;
+    slides.forEach((s, i) => s.classList.toggle('active-slide', i === index));
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+  }
+
+  function toggleSlideshow() {
+    slideshowMode = !slideshowMode;
+    document.body.classList.toggle('slideshow-mode', slideshowMode);
+    const btn = document.getElementById('fullscreenBtn');
+    if (slideshowMode) {
+      btn.textContent = '✕ Exit';
+      showSlide(currentSlide);
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      }
+    } else {
+      btn.textContent = '⛶ Present';
+      slides.forEach(s => s.classList.remove('active-slide'));
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+      // Scroll to current slide
+      slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'f' || e.key === 'F') {
+      if (!slideshowMode) toggleSlideshow();
+    }
+    if (e.key === 'Escape' && slideshowMode) {
+      e.preventDefault();
+      toggleSlideshow();
+    }
+    if (slideshowMode) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault();
+        showSlide(currentSlide + 1);
+      }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        showSlide(currentSlide - 1);
+      }
+    }
+  });
+
+  // Handle browser fullscreen exit (Esc exits browser fullscreen)
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && slideshowMode) {
+      toggleSlideshow();
+    }
+  });
 </script>
 
 </body>
