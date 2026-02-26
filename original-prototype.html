@@ -3243,19 +3243,19 @@
 
             if (voiceSessionContext.fromCallback && custName) {
                 // Personalized greeting — we already know the customer from the callback form
-                let contextGreeting = 'Hi ' + custName + '! I\'m your Ask Microsoft Voice Agent. ';
+                let contextGreeting = 'Hey ' + custName + ', thanks for hopping on! I\'m your Ask Microsoft Voice Agent. ';
                 if (bizName && numUsers) {
-                    contextGreeting += 'I see you\'ve requested a callback for ' + bizName + ' with about ' + numUsers + ' users — great to connect with you in the meantime. ';
+                    contextGreeting += 'I can see you\'ve got a callback coming up for ' + bizName + ' — team of about ' + numUsers + '. While we wait, I\'d love to help get you started. ';
                 } else if (bizName) {
-                    contextGreeting += 'I see you\'ve requested a callback for ' + bizName + ' — great to connect with you in the meantime. ';
+                    contextGreeting += 'I can see you\'ve got a callback coming up for ' + bizName + ' — and while we wait, I\'d love to help get you started. ';
                 } else if (numUsers) {
-                    contextGreeting += 'I see you\'ve requested a callback for a team of about ' + numUsers + ' — great to connect with you in the meantime. ';
+                    contextGreeting += 'I can see you\'ve got a callback coming up for a team of about ' + numUsers + ' — and while we wait, I\'d love to help get you started. ';
                 }
-                contextGreeting += 'How can I help you today?';
+                contextGreeting += 'What can I help you with?';
                 await playLine('AI Assistant', contextGreeting, 500);
                 await playLine('You', 'Thanks! Yes, we\'re looking to explore Microsoft 365 options for ' + (bizName || 'our team') + '. I wanted to learn more while I wait.', 420);
             } else {
-                await playLine('AI Assistant', 'Hi there — I am Ask Microsoft Voice Agent. Happy to help. What can I help you with today?', 500);
+                await playLine('AI Assistant', 'Hey there! Thanks for calling in. I\'m your Ask Microsoft Voice Agent — happy to help. What are you looking for today?', 500);
                 await playLine('You', 'Hi, we\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
                 conversationContext.numEmployees = 20;
             }
