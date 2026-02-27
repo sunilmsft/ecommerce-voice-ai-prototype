@@ -1505,24 +1505,33 @@
 
         .modal-header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .modal-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
+            font-size: 52px;
+            margin-bottom: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
         }
 
         .modal-title {
             font-size: 20px;
-            font-weight: 600;
-            color: #323130;
-            margin-bottom: 8px;
+            font-weight: 700;
+            color: #1b3a4b;
+            margin-bottom: 4px;
+            letter-spacing: -0.3px;
         }
 
         .modal-subtitle {
             font-size: 14px;
-            color: #605e5c;
+            color: #5a6a72;
         }
 
         .choice-options {
@@ -2779,12 +2788,11 @@
             <div class="modal-header">
                 <div class="modal-icon">⏱️</div>
                 <div class="modal-title">Get Answers While You Wait</div>
-                <div class="modal-subtitle">Speak with our Ask Microsoft Voice Agent in the meantime</div>
             </div>
-            <p style="margin: 20px 0; color: #666; font-size: 14px; line-height: 1.6;">
-                Your callback request is confirmed. While you wait for a human agent, you can speak with our Ask Microsoft Voice Agent to learn more about Microsoft 365.
+            <p style="margin: 16px 0 24px; color: #5a6a72; font-size: 14px; line-height: 1.6; text-align: center;">
+                Your callback is confirmed. While you wait, our Voice Agent can help you explore Microsoft 365 options.
             </p>
-            <button class="form-submit" onclick="startVoiceSessionFromCallback()">Speak with Ask Microsoft Voice Agent</button>
+            <button class="form-submit" onclick="startVoiceSessionFromCallback()">Talk to Voice Agent</button>
             <button class="modal-cancel" style="margin-top: 12px;" onclick="closeSpeakWhileYouWaitModal()">Skip, Just Wait</button>
         </div>
     </div>
