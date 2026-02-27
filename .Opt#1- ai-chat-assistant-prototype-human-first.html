@@ -3189,17 +3189,17 @@
             conversationContext.monthlyTotal = teamSize * conversationContext.pricePerUser;
 
             await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size of ' + teamSize + ', hybrid setup across warehouse and remote staff, and the device mix, Microsoft 365 Business Premium at $22 per user per month is likely a strong fit. That comes to $' + (teamSize * 22) + ' per month for your team.', 500);
-            await playLine('You', 'That\'s really helpful, thanks for walking me through all of that.', 420);
+            await playLine('You', 'That\'s very helpful \u2014 thank you for walking me through that.', 420);
 
             if (callbackRequested) {
-                await playLine('Ask Microsoft Voice Agent', 'My pleasure! Just so you know, your callback request with a Microsoft specialist is still in place — they\'ll be reaching out as scheduled. When you disconnect this call, you\'ll have the option to keep that callback or cancel it if your questions have been fully answered.', 600);
+                await playLine('Ask Microsoft Voice Agent', 'My pleasure. Just so you know, your callback request with a Microsoft specialist is still in place — they\'ll be reaching out as scheduled. When you disconnect this call, you\'ll have the option to keep that callback or cancel it if your questions have been fully answered.', 600);
                 await playLine('You', 'That\'s great — I\'ll keep the callback for now. Thanks again!', 420);
             } else {
                 await playLine('Ask Microsoft Voice Agent', 'My pleasure! If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
             }
 
             const nameRef = custName ? (', ' + custName) : '';
-            await playLine('Ask Microsoft Voice Agent', 'Sounds good' + nameRef + '! It was a pleasure chatting with you. Have a wonderful day, and we look forward to helping your outdoor gear business thrive with Microsoft 365.', 500);
+            await playLine('Ask Microsoft Voice Agent', 'Sounds good' + nameRef + '! It was a pleasure speaking with you. Have a wonderful day, and we look forward to helping your outdoor gear business thrive with Microsoft 365.', 500);
         }
 
         function addCallTranscriptEntry(speaker, text) {

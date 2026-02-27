@@ -3379,12 +3379,12 @@
             conversationContext.monthlyTotal = teamSize * conversationContext.pricePerUser;
 
             await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size of ' + teamSize + ', hybrid setup across warehouse and remote staff, and the device mix, Microsoft 365 Business Premium at $22 per user per month is likely a strong fit. That comes to $' + (teamSize * 22) + ' per month for your team.', 500);
-            await playLine('You', 'That\'s really helpful, thanks for walking me through all of that.', 420);
+            await playLine('You', 'That\'s very helpful \u2014 thank you for walking me through that.', 420);
 
             // --- QUOTING FLOW ---
             const custEmail = conversationContext.customerEmail || '';
-            await playLine('Ask Microsoft Voice Agent', 'I\'d love to send you a personalized quote with that pricing breakdown so you have something concrete to share with your team. Would that be helpful?', 500);
-            await playLine('You', 'Yeah, that would be great.', 420);
+            await playLine('Ask Microsoft Voice Agent', 'I\'d be happy to send you a personalized quote with that pricing breakdown so you have something concrete to share with your team. Would that be helpful?', 500);
+            await playLine('You', 'Yes, that would be very helpful.', 420);
 
             if (custEmail) {
                 // We already have email from callback form — use it directly
@@ -3393,7 +3393,7 @@
                 conversationContext.quoteSentToEmail = true;
 
                 await playLine('Ask Microsoft Voice Agent', 'Perfect — I already have your email from the callback form. I\'ve just generated and sent a personalized quote to ' + custEmail + '. You should have it in your inbox shortly. It\'s valid for 30 days.', 500);
-                await playLine('You', 'Oh nice, that\'s convenient. Thanks!', 420);
+                await playLine('You', 'That\'s very convenient \u2014 thank you.', 420);
             } else {
                 // No email on file — ask for it
                 await playLine('Ask Microsoft Voice Agent', 'Sure — what\'s the best email address to send it to?', 420);
@@ -3406,20 +3406,20 @@
                 conversationContext.quoteSentToEmail = true;
 
                 await playLine('Ask Microsoft Voice Agent', 'Got it — I\'ve just sent the quote to ' + demoEmail + '. You\'ll find the full pricing breakdown in your inbox. It\'s valid for 30 days.', 500);
-                await playLine('You', 'That\'s great, thank you.', 420);
+                await playLine('You', 'That\'s excellent \u2014 thank you.', 420);
             }
             // --- END QUOTING FLOW ---
 
             // Follow-up before closing
             await playLine('Ask Microsoft Voice Agent', 'Before we wrap up — is there anything else I can help you with today?', 420);
-            await playLine('You', 'No, I think that covers everything. Really appreciate it.', 420);
+            await playLine('You', 'No, I think that covers everything. I really appreciate your help.', 420);
 
-            await playLine('Ask Microsoft Voice Agent', 'My pleasure! Just so you know, your callback request with a Microsoft specialist is still in place — so they\'ll be reaching out to you as scheduled. They\'ll also have the quote details and a summary of our conversation so you won\'t need to repeat anything. And if you feel like we\'ve covered everything and you\'d rather cancel the callback, you\'ll have that option once we end this call.', 550);
-            await playLine('You', 'That\'s really helpful. Thanks so much!', 420);
+            await playLine('Ask Microsoft Voice Agent', 'My pleasure. Just so you know, your callback request with a Microsoft specialist is still in place — so they\'ll be reaching out to you as scheduled. They\'ll also have the quote details and a summary of our conversation so you won\'t need to repeat anything. And if you feel like we\'ve covered everything and you\'d rather cancel the callback, you\'ll have that option once we end this call.', 550);
+            await playLine('You', 'That\'s very helpful \u2014 thank you.', 420);
 
             const nameRef = custName ? (', ' + custName) : '';
             const bizRef = conversationContext.businessType ? (' helping ' + conversationContext.businessType) : '';
-            await playLine('Ask Microsoft Voice Agent', 'Sounds good' + nameRef + '! It was a pleasure chatting with you. Have a wonderful day, and we look forward to' + bizRef + ' thrive with Microsoft 365.', 500);
+            await playLine('Ask Microsoft Voice Agent', 'Sounds good' + nameRef + '! It was a pleasure speaking with you. Have a wonderful day, and we look forward to' + bizRef + ' thrive with Microsoft 365.', 500);
         }
 
         function addCallTranscriptEntry(speaker, text) {

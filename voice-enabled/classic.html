@@ -3917,7 +3917,7 @@
                     // Off hours: callback form
                     await playLine('Ask Microsoft Voice Agent', 'Absolutely! I can set up a callback with a Microsoft sales specialist who can finalize pricing, answer any remaining questions, and help you get started. Would you like me to arrange that?', 500);
                     await playLine('You', 'Yes, please.', 420);
-                    await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was a pleasure speaking with you!', 500);
 
                     // End call and show callback
                     if (sessionGen !== voiceSessionGeneration) return;
@@ -3986,7 +3986,7 @@
                 await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now over the phone who can go deeper on licensing and next steps. They\'ll have the full context of our conversation.', 500);
                 await playLine('You', 'That would be great — I\'d love to talk through next steps with someone.', 420);
                 const farewellName = conversationContext.customerName ? ', ' + conversationContext.customerName : '';
-                await playLine('Ask Microsoft Voice Agent', 'Perfect — I\'m transferring you now. It was great chatting with you' + farewellName + '!', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect — I\'m transferring you now. It was a pleasure speaking with you' + farewellName + '!', 500);
 
                 // Seamless inline transition: keep call screen open, swap from AI to David
                 if (sessionGen !== voiceSessionGeneration) return;
@@ -4039,7 +4039,7 @@
             } else {
                 await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
                 await playLine('You', 'Yes, please set that up.', 420);
-                await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was a pleasure speaking with you!', 500);
 
                 // End call and show callback
                 if (sessionGen !== voiceSessionGeneration) return;

@@ -4182,8 +4182,8 @@
 
                 // --- QUOTING FLOW (Modality Switch) ---
                 if (quoteScenario === 'happy_path') {
-                    await playLine('Ask Microsoft Voice Agent', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
-                    await playLine('You', 'Definitely, yes.', 420);
+                    await playLine('Ask Microsoft Voice Agent', 'I\'d be happy to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
+                    await playLine('You', 'Yes, please.', 420);
                     await playLine('Ask Microsoft Voice Agent', 'Great — what email should I send it to?', 420);
 
                     const demoEmail = 'marcus@sparkco-example.com';
@@ -4197,7 +4197,7 @@
                     await playLine('Ask Microsoft Voice Agent', 'Done — I\'ll get that sent to ' + demoEmail + ' right away. You\'ll have it in your inbox shortly. It\'s valid for 30 days.', 500);
 
                 } else if (quoteScenario === 'email_later') {
-                    await playLine('Ask Microsoft Voice Agent', 'I\'d love to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'I\'d be happy to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
                     await playLine('You', 'Yes, but I\'d prefer not to share my email right now.', 420);
                     await playLine('Ask Microsoft Voice Agent', 'Totally fine. I\'ve prepared the quote — we\'ll send it along when you share your email on the callback form after our call.', 500);
                     conversationContext.quoteGenerated = false;
@@ -4295,7 +4295,7 @@
                     const offHoursQuoteNote = conversationContext.quoteSentToEmail ? ' Your quote is in your inbox, so you can review it while you wait.' : (conversationContext.quoteReadyForSend ? ' I\'ve got your quote ready — we\'ll send it over once you fill out the callback form.' : '');
                     await playLine('Ask Microsoft Voice Agent', 'Absolutely! I can set up a callback with a Microsoft sales specialist who can finalize pricing, answer any remaining questions, and help you get started.' + offHoursQuoteNote + ' Would you like me to arrange that?', 500);
                     await playLine('You', 'Yes, please.', 420);
-                    await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
+                    await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was a pleasure speaking with you!', 500);
 
                     // End call and show callback
                     if (sessionGen !== voiceSessionGeneration) return;
@@ -4371,7 +4371,7 @@
             if (quoteScenario === 'happy_path') {
                 // Happy Path: customer accepts quote AND shares email
                 await playLine('Ask Microsoft Voice Agent', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
-                await playLine('You', 'Yeah, that would be really helpful.', 420);
+                await playLine('You', 'Yes, that would be very helpful.', 420);
                 await playLine('Ask Microsoft Voice Agent', 'Perfect. What\'s the best email address to send it to?', 420);
 
                 const demoEmail = (prototypeVariant === 'modality_switch') ? 'marcus@sparkco-example.com' : 'alex@summitgear-example.com';
@@ -4388,7 +4388,7 @@
             } else if (quoteScenario === 'email_later') {
                 // Email Later: customer accepts quote but declines to share email now
                 await playLine('Ask Microsoft Voice Agent', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
-                await playLine('You', 'Yeah, that sounds great — but I\'d rather not share my email over the call if that\'s okay.', 420);
+                await playLine('You', 'Yes, that sounds great — though I\'d prefer not to share my email over the call, if that\'s all right.', 420);
                 await playLine('Ask Microsoft Voice Agent', 'Completely understand — no problem at all. I\'ve got the quote ready on my end. When you fill out the callback form after our call, we\'ll use that email to send the quote over. Nothing lost.', 500);
                 conversationContext.quoteGenerated = false;
                 conversationContext.quoteReadyForSend = true;
@@ -4407,7 +4407,7 @@
                 await playLine('Ask Microsoft Voice Agent', 'Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now over the phone who can go deeper on licensing and next steps. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', including the quote I just sent you.' : '.'), 500);
                 await playLine('You', 'That would be great — I\'d love to talk through next steps with someone.', 420);
                 const farewellName = conversationContext.customerName ? ', ' + conversationContext.customerName : '';
-                await playLine('Ask Microsoft Voice Agent', 'Perfect — I\'m transferring you now. It was great chatting with you' + farewellName + '!', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect — I\'m transferring you now. It was a pleasure speaking with you' + farewellName + '!', 500);
 
                 // Seamless inline transition: keep call screen open, swap from AI to David
                 if (sessionGen !== voiceSessionGeneration) return;
@@ -4462,7 +4462,7 @@
                 const quoteRef = conversationContext.quoteSentToEmail ? ' Your quote is in your inbox, so you\'ll have that to review while you wait.' : (conversationContext.quoteReadyForSend ? ' I\'ve got your quote ready — we\'ll send it over once you fill out the callback form.' : '');
                 await playLine('Ask Microsoft Voice Agent', 'If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.' + quoteRef, 500);
                 await playLine('You', 'Yes, please set that up.', 420);
-                await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was great chatting with you!', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was a pleasure speaking with you!', 500);
 
                 // End call and show callback
                 if (sessionGen !== voiceSessionGeneration) return;
