@@ -4190,8 +4190,22 @@
                 conversationContext.customerName = 'Marcus';
                 await playLine('Ask Microsoft Voice Agent', 'Hi there! I\'m your Ask Microsoft Voice Agent. I can see you\'ve been chatting about Microsoft 365 plans for your marketing agency — a team of about 15 people. Let me pick up right where you left off so you don\'t have to repeat anything.', 600);
                 await playLine('You', 'That\'s great — yes, we were discussing plans for the agency and I wanted to understand the differences better.', 420);
+
+                // Natural follow-up discovery questions before recommendation
+                await playLine('Ask Microsoft Voice Agent', 'Absolutely. Before I make a recommendation, let me ask a couple of quick questions so I can tailor this to your team. Are your teams mostly in-office, fully remote, or hybrid?', 450);
+                await playLine('You', 'We\'re a hybrid team — most of us are in the office a few days a week, but we also have a couple of fully remote contractors.', 420);
+                conversationContext.workLocation = 'hybrid';
+
+                await playLine('Ask Microsoft Voice Agent', 'That\'s helpful. And are devices mostly company-managed, or do people also use personal devices for work?', 450);
+                await playLine('You', 'Mostly company laptops, but a few team members use personal phones for email and Teams on the go.', 420);
+                conversationContext.securityNeeds = 'moderate';
+
+                await playLine('Ask Microsoft Voice Agent', 'Understood. Last question — what kind of timeline are you working with for this decision?', 420);
+                await playLine('You', 'We\'d like to have everything in place this quarter if possible.', 450);
+                conversationContext.timeline = 'this quarter';
+
                 addCallTranscriptEntry('System', '🧠 Tailoring plan recommendation based on team size, work style, and device mix');
-                await playLine('Ask Microsoft Voice Agent', 'Of course. Based on your agency\'s team size of 15, the collaboration needs you mentioned, and the fact that you handle client data, I\'d say the key decision is between Business Standard at $12.50 per user per month and Business Premium at $22 per user per month.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Great — based on your agency\'s team of 15, the hybrid work style, and the mix of company and personal devices, the key decision comes down to Business Standard at $12.50 per user per month versus Business Premium at $22 per user per month.', 500);
                 await playLine('You', 'What\'s the main difference between those two?', 420);
                 await playLine('Ask Microsoft Voice Agent', 'Great question. Business Standard gives you desktop Office apps, Teams, email, and 1TB OneDrive storage — solid for day-to-day agency collaboration. Business Premium adds advanced security — threat protection, device management, and data loss prevention. Since your agency handles client campaigns and sensitive data, Premium is usually worth the step up.', 500);
                 await playLine('You', 'That makes sense for us. What would Premium cost for our whole team?', 420);
