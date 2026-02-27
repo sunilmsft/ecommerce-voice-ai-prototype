@@ -1407,6 +1407,25 @@
             color: #2563eb;
         }
 
+        .call-transcript-entry.speaker-system {
+            border-left: 2px dashed #c8c6c4;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        .call-transcript-entry.speaker-system .call-transcript-speaker {
+            display: none;
+        }
+
+        .call-transcript-entry.speaker-system .call-transcript-text {
+            font-size: 11.5px;
+            font-style: italic;
+            color: #8a8886;
+            line-height: 1.4;
+        }
+
         .call-controls {
             padding: 30px 20px;
             display: flex;
@@ -3046,10 +3065,12 @@
             conversationContext.pricePerUser = 22;
             conversationContext.monthlyTotal = teamSize * conversationContext.pricePerUser;
 
+            addCallTranscriptEntry('System', '🧠 Tailoring plan recommendation based on team size, work style, and device mix');
             await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size of ' + teamSize + ', hybrid setup across warehouse and remote staff, and the device mix, Microsoft 365 Business Premium at $22 per user per month is likely a strong fit. That comes to $' + (teamSize * 22) + ' per month for your team.', 500);
             await playLine('You', 'That\'s very helpful \u2014 thank you for walking me through that.', 420);
 
             if (callbackRequested) {
+                addCallTranscriptEntry('System', '📋 Passing full conversation context, quote details, and discovery notes to specialist');
                 await playLine('Ask Microsoft Voice Agent', 'My pleasure. Just so you know, your callback request with a Microsoft specialist is still in place — they\'ll be reaching out as scheduled. When you disconnect this call, you\'ll have the option to keep that callback or cancel it if your questions have been fully answered.', 600);
                 await playLine('You', 'That\'s great — I\'ll keep the callback for now. Thanks again!', 420);
             } else {
@@ -3063,7 +3084,7 @@
         function addCallTranscriptEntry(speaker, text) {
             const transcriptArea = document.getElementById('callTranscriptArea');
             const entry = document.createElement('div');
-            const speakerClass = speaker === 'You' ? 'speaker-you' : 'speaker-ai';
+            const speakerClass = speaker === 'You' ? 'speaker-you' : (speaker === 'System' ? 'speaker-system' : 'speaker-ai');
             entry.className = 'call-transcript-entry ' + speakerClass;
             entry.innerHTML = `
                 <div class="call-transcript-speaker">${speaker}</div>

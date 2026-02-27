@@ -1461,6 +1461,25 @@
             color: #2563eb;
         }
 
+        .call-transcript-entry.speaker-system {
+            border-left: 2px dashed #c8c6c4;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        .call-transcript-entry.speaker-system .call-transcript-speaker {
+            display: none;
+        }
+
+        .call-transcript-entry.speaker-system .call-transcript-text {
+            font-size: 11.5px;
+            font-style: italic;
+            color: #8a8886;
+            line-height: 1.4;
+        }
+
         .call-controls {
             padding: 30px 20px;
             display: flex;
@@ -3200,6 +3219,7 @@
             const numEmp = conversationContext.numEmployees;
 
             if ((voiceSessionContext.fromCallback || callbackRequested) && custName) {
+                addCallTranscriptEntry('System', '🔍 Retrieved customer context from callback form — name, business, team size');
                 // Personalized greeting using callback form data
                 const greeting = bizName
                     ? `Hi ${custName}, thanks for your interest and for sharing your details about ${bizName}. I'm the Ask Microsoft Voice Agent — while we get a specialist lined up for your callback, I'd love to help you get a head start.`
@@ -3216,6 +3236,8 @@
                 await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
                 await playLine('Ask Microsoft Voice Agent', 'Perfect. What decision timeline are you working toward?', 420);
                 await playLine('You', 'Ideally this quarter.', 450);
+                addCallTranscriptEntry('System', '🧠 Tailoring plan recommendation based on team size, work style, and device mix');
+                addCallTranscriptEntry('System', '📋 Passing full conversation context, quote details, and discovery notes to specialist');
                 await playLine('Ask Microsoft Voice Agent', `Great — based on ${bizName ? bizName + "'s" : 'your'} team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. Your callback is confirmed, and your specialist will have all these details ready to pick up right where we left off.`, 500);
             } else {
                 await playLine('Ask Microsoft Voice Agent', 'Hi there — I am Ask Microsoft Voice Agent. Happy to help. What can I help you with today?', 500);
@@ -3228,6 +3250,7 @@
                 await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
                 await playLine('Ask Microsoft Voice Agent', 'Perfect, that helps. What decision timeline are you working toward?', 420);
                 await playLine('You', 'Ideally this quarter.', 450);
+                addCallTranscriptEntry('System', '🧠 Tailoring plan recommendation based on team size, work style, and device mix');
                 await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
             }
         }
@@ -3235,7 +3258,7 @@
         function addCallTranscriptEntry(speaker, text) {
             const transcriptArea = document.getElementById('callTranscriptArea');
             const entry = document.createElement('div');
-            const speakerClass = speaker === 'You' ? 'speaker-you' : 'speaker-ai';
+            const speakerClass = speaker === 'You' ? 'speaker-you' : (speaker === 'System' ? 'speaker-system' : 'speaker-ai');
             entry.className = 'call-transcript-entry ' + speakerClass;
             entry.innerHTML = `
                 <div class="call-transcript-speaker">${speaker}</div>

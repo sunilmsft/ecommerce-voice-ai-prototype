@@ -1485,6 +1485,25 @@
             color: #2563eb;
         }
 
+        .call-transcript-entry.speaker-system {
+            border-left: 2px dashed #c8c6c4;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        .call-transcript-entry.speaker-system .call-transcript-speaker {
+            display: none;
+        }
+
+        .call-transcript-entry.speaker-system .call-transcript-text {
+            font-size: 11.5px;
+            font-style: italic;
+            color: #8a8886;
+            line-height: 1.4;
+        }
+
         .call-controls {
             padding: 30px 20px;
             display: flex;
@@ -3343,6 +3362,7 @@
 
             if (voiceSessionContext.fromCallback && custName) {
                 // Personalized greeting — we already know the customer from the callback form
+                addCallTranscriptEntry('System', '🔍 Retrieved customer context from callback form — name, business, team size');
                 let contextGreeting = 'Hello ' + custName + ' — this is the Ask Microsoft Voice Agent. ';
                 if (bizName && numUsers) {
                     contextGreeting += 'I see you\'ve requested a callback regarding Microsoft 365 for ' + bizName + ', approximately ' + numUsers + ' users. ';
@@ -3378,6 +3398,7 @@
             conversationContext.pricePerUser = 22;
             conversationContext.monthlyTotal = teamSize * conversationContext.pricePerUser;
 
+            addCallTranscriptEntry('System', '🧠 Tailoring plan recommendation based on team size, work style, and device mix');
             await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size of ' + teamSize + ', hybrid setup across warehouse and remote staff, and the device mix, Microsoft 365 Business Premium at $22 per user per month is likely a strong fit. That comes to $' + (teamSize * 22) + ' per month for your team.', 500);
             await playLine('You', 'That\'s very helpful \u2014 thank you for walking me through that.', 420);
 
@@ -3388,14 +3409,17 @@
 
             if (custEmail) {
                 // We already have email from callback form — use it directly
+                addCallTranscriptEntry('System', '📊 Generating personalized quote via pricing API — Business Premium, ' + teamSize + ' users');
                 conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
                 conversationContext.quoteGenerated = true;
                 conversationContext.quoteSentToEmail = true;
+                addCallTranscriptEntry('System', '📧 Using email from callback form — no need to ask the customer again');
 
                 await playLine('Ask Microsoft Voice Agent', 'Perfect — I already have your email from the callback form. I\'ve just generated and sent a personalized quote to ' + custEmail + '. You should have it in your inbox shortly. It\'s valid for 30 days.', 500);
                 await playLine('You', 'That\'s very convenient \u2014 thank you.', 420);
             } else {
                 // No email on file — ask for it
+                addCallTranscriptEntry('System', '📊 Generating personalized quote via pricing API — Business Premium, ' + teamSize + ' users');
                 await playLine('Ask Microsoft Voice Agent', 'Sure — what\'s the best email address to send it to?', 420);
                 const demoEmail = 'alex@summitgear-example.com';
                 await playLine('You', 'It\'s ' + demoEmail, 420);
@@ -3414,6 +3438,7 @@
             await playLine('Ask Microsoft Voice Agent', 'Before we wrap up — is there anything else I can help you with today?', 420);
             await playLine('You', 'No, I think that covers everything. I really appreciate your help.', 420);
 
+            addCallTranscriptEntry('System', '📋 Passing full conversation context, quote details, and discovery notes to specialist');
             await playLine('Ask Microsoft Voice Agent', 'My pleasure. Just so you know, your callback request with a Microsoft specialist is still in place — so they\'ll be reaching out to you as scheduled. They\'ll also have the quote details and a summary of our conversation so you won\'t need to repeat anything. And if you feel like we\'ve covered everything and you\'d rather cancel the callback, you\'ll have that option once we end this call.', 550);
             await playLine('You', 'That\'s very helpful \u2014 thank you.', 420);
 
@@ -3425,7 +3450,7 @@
         function addCallTranscriptEntry(speaker, text) {
             const transcriptArea = document.getElementById('callTranscriptArea');
             const entry = document.createElement('div');
-            const speakerClass = speaker === 'You' ? 'speaker-you' : 'speaker-ai';
+            const speakerClass = speaker === 'You' ? 'speaker-you' : (speaker === 'System' ? 'speaker-system' : 'speaker-ai');
             entry.className = 'call-transcript-entry ' + speakerClass;
             entry.innerHTML = `
                 <div class="call-transcript-speaker">${speaker}</div>

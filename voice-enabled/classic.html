@@ -1744,6 +1744,25 @@
             color: #2563eb;
         }
 
+        .call-transcript-entry.speaker-system {
+            border-left: 2px dashed #c8c6c4;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        .call-transcript-entry.speaker-system .call-transcript-speaker {
+            display: none;
+        }
+
+        .call-transcript-entry.speaker-system .call-transcript-text {
+            font-size: 11.5px;
+            font-style: italic;
+            color: #8a8886;
+            line-height: 1.4;
+        }
+
         .call-transcript-text {
             font-size: 14px;
             color: #323130;
@@ -3852,6 +3871,7 @@
 
                 await playLine('Ask Microsoft Voice Agent', 'Hi there! I\'m your Ask Microsoft Voice Agent. I can see you\'ve been chatting about Microsoft 365 plans for your marketing agency — a team of about 15 people. Let me pick up right where you left off so you don\'t have to repeat anything.', 600);
                 await playLine('You', 'That\'s great — yes, we were discussing plans for the agency and I wanted to understand the differences better.', 420);
+                addCallTranscriptEntry('System', '🧠 Tailoring plan recommendation based on team size, work style, and device mix');
                 await playLine('Ask Microsoft Voice Agent', 'Of course. Based on your agency\'s team size of 15, the collaboration needs you mentioned, and the fact that you handle client data, I\'d say the key decision is between Business Standard at $12.50 per user per month and Business Premium at $22 per user per month.', 500);
                 await playLine('You', 'What\'s the main difference between those two?', 420);
                 await playLine('Ask Microsoft Voice Agent', 'Great question. Business Standard gives you desktop Office apps, Teams, email, and 1TB OneDrive storage — solid for day-to-day agency collaboration. Business Premium adds advanced security — threat protection, device management, and data loss prevention. Since your agency handles client campaigns and sensitive data, Premium is usually worth the step up.', 500);
@@ -3861,6 +3881,7 @@
 
                 if (isBusinessHours) {
                     // Business hours: seamless handoff to David (no button click needed)
+                    addCallTranscriptEntry('System', '📋 Passing full conversation context, quote details, and discovery notes to specialist');
                     await playLine('Ask Microsoft Voice Agent', 'Absolutely! Since we\'re within business hours, I can connect you directly with a Microsoft sales specialist right now. They\'ll have the full context of our conversation so you won\'t need to repeat anything.', 500);
                     await playLine('You', 'Yes, that would be great.', 420);
                     await playLine('Ask Microsoft Voice Agent', 'Perfect. Let me hand you over now — transferring you to a specialist.', 500);
@@ -3915,6 +3936,7 @@
                     }, 1500);
                 } else {
                     // Off hours: callback form
+                    addCallTranscriptEntry('System', '📋 Passing full conversation context, quote details, and discovery notes to specialist');
                     await playLine('Ask Microsoft Voice Agent', 'Absolutely! I can set up a callback with a Microsoft sales specialist who can finalize pricing, answer any remaining questions, and help you get started. Would you like me to arrange that?', 500);
                     await playLine('You', 'Yes, please.', 420);
                     await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was a pleasure speaking with you!', 500);
@@ -3937,6 +3959,7 @@
             const numEmp = conversationContext.numEmployees;
 
             if ((voiceSessionContext.fromCallback || callbackRequested) && custName) {
+                addCallTranscriptEntry('System', '🔍 Retrieved customer context from callback form — name, business, team size');
                 const greeting = bizName
                     ? `Hi ${custName}, thanks for your interest and for sharing your details about ${bizName}. I'm the Ask Microsoft Voice Agent — while we get a specialist lined up for your callback, I'd love to help you get a head start.`
                     : `Hi ${custName}, thanks for requesting a callback. I'm the Ask Microsoft Voice Agent — happy to help you get started while you wait.`;
@@ -3960,6 +3983,8 @@
                 conversationContext.timeline = conversationContext.timeline || 'this quarter';
                 conversationContext.interestedPlans = conversationContext.interestedPlans || ['Business Premium'];
 
+                addCallTranscriptEntry('System', '🧠 Tailoring plan recommendation based on team size, work style, and device mix');
+                addCallTranscriptEntry('System', '📋 Passing full conversation context, quote details, and discovery notes to specialist');
                 await playLine('Ask Microsoft Voice Agent', `Great — based on ${bizName ? bizName + "'s" : 'your'} team size, hybrid setup, and device mix, Microsoft 365 Business Premium is likely a strong fit. Your callback is confirmed, and your specialist will have all these details ready to pick up right where we left off.`, 500);
                 return;
             }
@@ -3983,6 +4008,8 @@
             conversationContext.timeline = 'this quarter';
             conversationContext.interestedPlans = ['Business Premium'];
             if (isBusinessHours) {
+                addCallTranscriptEntry('System', '🧠 Tailoring plan recommendation based on team size, work style, and device mix');
+                addCallTranscriptEntry('System', '📋 Passing full conversation context, quote details, and discovery notes to specialist');
                 await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now over the phone who can go deeper on licensing and next steps. They\'ll have the full context of our conversation.', 500);
                 await playLine('You', 'That would be great — I\'d love to talk through next steps with someone.', 420);
                 const farewellName = conversationContext.customerName ? ', ' + conversationContext.customerName : '';
@@ -4037,6 +4064,8 @@
                     }, 3000);
                 }, 1500);
             } else {
+                addCallTranscriptEntry('System', '🧠 Tailoring plan recommendation based on team size, work style, and device mix');
+                addCallTranscriptEntry('System', '📋 Passing full conversation context, quote details, and discovery notes to specialist');
                 await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size, hybrid setup across warehouse and remote staff, and device mix, Microsoft 365 Business Premium is likely a strong fit. If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
                 await playLine('You', 'Yes, please set that up.', 420);
                 await playLine('Ask Microsoft Voice Agent', 'Perfect. Once you disconnect this call, I\'ll bring up the callback form so we can get your details. A specialist will reach out within 48 hours. It was a pleasure speaking with you!', 500);
@@ -4055,7 +4084,7 @@
         function addCallTranscriptEntry(speaker, text) {
             const transcriptArea = document.getElementById('callTranscriptArea');
             const entry = document.createElement('div');
-            const speakerClass = speaker === 'You' ? 'speaker-you' : 'speaker-ai';
+            const speakerClass = speaker === 'You' ? 'speaker-you' : (speaker === 'System' ? 'speaker-system' : 'speaker-ai');
             entry.className = 'call-transcript-entry ' + speakerClass;
             entry.innerHTML = `
                 <div class="call-transcript-speaker">${speaker}</div>
