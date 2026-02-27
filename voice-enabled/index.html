@@ -3590,62 +3590,52 @@
         }
 
         function joinLivePhoneQueue() {
-            addMessage('I\'d like to speak with a live agent over the phone', 'user');
+            addSystemMessage('📞 Connecting you with a Microsoft sales specialist...');
             setTimeout(() => {
-                addMessage('Great! Connecting you to the live phone queue now. A Microsoft sales specialist will call you shortly.', 'bot', false);
+                // Launch the call screen with David
+                const callScreen = document.getElementById('callScreen');
+
+                // Clear any old AI assistant transcript and disconnect options
+                const transcriptArea = document.getElementById('callTranscriptArea');
+                transcriptArea.innerHTML = '';
+                transcriptArea.classList.add('active');
+                const disconnectOptions = document.getElementById('disconnectOptions');
+                if (disconnectOptions) disconnectOptions.classList.remove('active');
+
+                // Ensure all call screen elements are visible (may be hidden from prior endAICall)
+                document.getElementById('callAgentName').style.display = '';
+                document.getElementById('callStatus').style.display = '';
+                document.getElementById('callTimer').style.display = 'none';
+                const callControls = document.querySelector('.call-controls');
+                if (callControls) callControls.style.display = '';
+                const callAvatar = document.getElementById('callAvatar');
+                if (callAvatar) {
+                    callAvatar.style.display = '';
+                    callAvatar.style.transform = 'scale(1)';
+                }
+
+                callScreen.classList.add('active');
+                isLiveAgentPhoneCall = true;
+                document.getElementById('callAvatar').textContent = '👤';
+                document.getElementById('callAgentName').textContent = 'David — Microsoft 365 Sales Specialist';
+                document.getElementById('callStatus').textContent = 'Connecting call...';
+                document.getElementById('callStatus').classList.remove('connecting');
+
+                // Call connects
                 setTimeout(() => {
-                    addSystemMessage('📞 <strong>You are now in the live phone queue.</strong> Estimated wait time: ~2 minutes.');
-                    // Simulate agent joining via phone
+                    document.getElementById('callStatus').textContent = 'Connected';
+                    document.getElementById('callTimer').style.display = 'block';
+                    startCallTimer();
+                    addSystemMessage('📞 Phone call connected with David, Microsoft 365 sales specialist');
+
+                    // David's greeting in the call transcript
                     setTimeout(() => {
-                        addSystemMessage('🔔 A sales specialist is available — connecting your call now...');
-                        setTimeout(() => {
-                            // Launch the call screen with David
-                            const callScreen = document.getElementById('callScreen');
-
-                            // Clear any old AI assistant transcript and disconnect options
-                            const transcriptArea = document.getElementById('callTranscriptArea');
-                            transcriptArea.innerHTML = '';
-                            transcriptArea.classList.add('active');
-                            const disconnectOptions = document.getElementById('disconnectOptions');
-                            if (disconnectOptions) disconnectOptions.classList.remove('active');
-
-                            // Ensure all call screen elements are visible (may be hidden from prior endAICall)
-                            document.getElementById('callAgentName').style.display = '';
-                            document.getElementById('callStatus').style.display = '';
-                            document.getElementById('callTimer').style.display = 'none';
-                            const callControls = document.querySelector('.call-controls');
-                            if (callControls) callControls.style.display = '';
-                            const callAvatar = document.getElementById('callAvatar');
-                            if (callAvatar) {
-                                callAvatar.style.display = '';
-                                callAvatar.style.transform = 'scale(1)';
-                            }
-
-                            callScreen.classList.add('active');
-                            isLiveAgentPhoneCall = true;  // Mark as David's call as soon as screen opens
-                            document.getElementById('callAvatar').textContent = '👤';
-                            document.getElementById('callAgentName').textContent = 'David — Microsoft 365 Sales Specialist';
-                            document.getElementById('callStatus').textContent = 'Connecting call...';
-                            document.getElementById('callStatus').classList.remove('connecting');
-
-                            // Call connects
-                            setTimeout(() => {
-                                document.getElementById('callStatus').textContent = 'Connected';
-                                document.getElementById('callTimer').style.display = 'block';
-                                startCallTimer();
-                                addSystemMessage('📞 Phone call connected with David, Microsoft 365 sales specialist');
-
-                                // David's greeting in the call transcript
-                                setTimeout(() => {
-                                    const greetingText = buildDavidGreeting();
-                                    addCallTranscriptEntry('David', greetingText);
-                                    speakAsDavid(greetingText);
-                                }, 800);
-                            }, 1500);
-                        }, 1000);
-                    }, 1500);
-                }, 1000);
-            }, 500);
+                        const greetingText = buildDavidGreeting();
+                        addCallTranscriptEntry('David', greetingText);
+                        speakAsDavid(greetingText);
+                    }, 800);
+                }, 1500);
+            }, 1500);
         }
 
         function showSalesOptionsInChat() {
@@ -4386,17 +4376,57 @@
                 await playLine('Ask Microsoft Voice Agent', 'Since we\'re within business hours, I can connect you with a Microsoft sales specialist right now over the phone who can go deeper on licensing and next steps. They\'ll have the full context of our conversation' + (conversationContext.quoteSentToEmail ? ', including the quote I just sent you.' : '.'), 500);
                 await playLine('You', 'That would be great — I\'d love to talk through next steps with someone.', 420);
                 const farewellName = conversationContext.customerName ? ', ' + conversationContext.customerName : '';
-                await playLine('Ask Microsoft Voice Agent', 'Perfect — I\'m going to transfer you now to a Microsoft sales specialist. They\'ll have the full context of everything we\'ve discussed, so you won\'t need to repeat a thing. It was great chatting with you' + farewellName + '!', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Perfect — I\'m transferring you now. It was great chatting with you' + farewellName + '!', 500);
 
-                // End voice call and seamlessly hand off to live agent phone call
+                // Seamless inline transition: keep call screen open, swap from AI to David
                 if (sessionGen !== voiceSessionGeneration) return;
+
+                // Stop AI speech and timer
+                try { speechSynthesis.cancel(); } catch(e) {}
+                if (callTimer) { clearInterval(callTimer); callTimer = null; }
+                isSpeaking = false;
+                isVoiceMode = false;
+                audioEnabled = false;
+                voiceSessionGeneration++;
+
+                // Phase 1: Show "Transferring call..." on the same call screen
                 setTimeout(() => {
-                    endAICall(true); // skipCancel=true so David's speech engine stays healthy
-                    // After call closes, seamlessly connect to live agent via phone
+                    document.getElementById('callAgentName').textContent = 'Transferring call...';
+                    document.getElementById('callStatus').textContent = 'Connecting you to a Microsoft sales specialist';
+                    document.getElementById('callStatus').classList.add('connecting');
+                    document.getElementById('callTimer').style.display = 'none';
+                    const pulseRing = document.getElementById('pulseRing');
+                    if (pulseRing) pulseRing.style.display = 'block';
+                    document.getElementById('callTranscriptArea').innerHTML = '';
+                    const avatar = document.getElementById('callAvatar');
+                    if (avatar) {
+                        avatar.innerHTML = '&#128260;';
+                        avatar.style.display = '';
+                    }
+
+                    // Phase 2: David connects after 3 seconds
                     setTimeout(() => {
-                        joinLivePhoneQueue();
-                    }, 800);
-                }, 2500);
+                        isLiveAgentPhoneCall = true;
+                        audioEnabled = true;
+                        document.getElementById('callAvatar').textContent = '\uD83D\uDC64';
+                        document.getElementById('callAgentName').textContent = 'David — Microsoft 365 Sales Specialist';
+                        document.getElementById('callStatus').textContent = 'Connected';
+                        document.getElementById('callStatus').classList.remove('connecting');
+                        document.getElementById('callTimer').style.display = 'block';
+                        if (pulseRing) pulseRing.style.display = 'none';
+                        document.getElementById('callTranscriptArea').classList.add('active');
+                        startCallTimer();
+
+                        addSystemMessage('\uD83D\uDCDE Call transferred to David, Microsoft 365 sales specialist');
+
+                        // David's greeting
+                        setTimeout(() => {
+                            const greetingText = buildDavidGreeting();
+                            addCallTranscriptEntry('David', greetingText);
+                            speakAsDavid(greetingText);
+                        }, 800);
+                    }, 3000);
+                }, 1500);
             } else {
                 const quoteRef = conversationContext.quoteSentToEmail ? ' Your quote is in your inbox, so you\'ll have that to review while you wait.' : (conversationContext.quoteReadyForSend ? ' I\'ve got your quote ready — we\'ll send it over once you fill out the callback form.' : '');
                 await playLine('Ask Microsoft Voice Agent', 'If you\'d like to pursue this further, I can arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.' + quoteRef, 500);
