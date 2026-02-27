@@ -875,7 +875,9 @@
 
         .message {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 8px;
             margin-bottom: 20px;
             animation: slideIn 0.3s ease-out;
         }
@@ -891,8 +893,48 @@
             }
         }
 
+        .chat-avatar-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .message.bot .chat-avatar-icon {
+            background: #e1efff;
+            border: 1px solid #b3d4f5;
+            overflow: hidden;
+        }
+
+        .chat-avatar-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .message.user .chat-avatar-icon {
+            background: #0f6cbd;
+            border: 1px solid #0d5ba3;
+            order: 2;
+        }
+
+        .message.human-agent .chat-avatar-icon {
+            background: #e1f5fe;
+            border: 1px solid #0078d4;
+        }
+
+        .message.system .chat-avatar-icon {
+            display: none;
+        }
+
         .message.user {
-            align-items: flex-end;
+            justify-content: flex-end;
         }
 
         .message-bubble {
@@ -1409,6 +1451,16 @@
         .call-transcript-entry {
             margin-bottom: 16px;
             animation: slideIn 0.3s ease-out;
+            padding-left: 10px;
+            border-left: 3px solid transparent;
+        }
+
+        .call-transcript-entry.speaker-ai {
+            border-left-color: #14b8a6;
+        }
+
+        .call-transcript-entry.speaker-you {
+            border-left-color: #3b82f6;
         }
 
         .call-transcript-speaker {
@@ -1423,6 +1475,14 @@
             font-size: 14px;
             color: #323130;
             line-height: 1.5;
+        }
+
+        .call-transcript-entry.speaker-ai .call-transcript-speaker {
+            color: #0f766e;
+        }
+
+        .call-transcript-entry.speaker-you .call-transcript-speaker {
+            color: #2563eb;
         }
 
         .call-controls {
@@ -2777,7 +2837,18 @@
                 `;
             }
             
+            // Choose avatar icon based on message type
+            let avatarIcon = '';
+            if (type === 'bot') {
+                avatarIcon = '<div class="chat-avatar-icon"><img src="Icon.jpg" alt="Ask Microsoft" /></div>';
+            } else if (type === 'user') {
+                avatarIcon = '<div class="chat-avatar-icon">👤</div>';
+            } else if (type === 'human-agent') {
+                avatarIcon = '<div class="chat-avatar-icon">🎧</div>';
+            }
+
             messageDiv.innerHTML = `
+                ${avatarIcon}
                 <div class="message-bubble">
                     ${text.replace(/\n/g, '<br>')}
                     <div class="message-time">${getCurrentTime()}</div>
@@ -3354,7 +3425,8 @@
         function addCallTranscriptEntry(speaker, text) {
             const transcriptArea = document.getElementById('callTranscriptArea');
             const entry = document.createElement('div');
-            entry.className = 'call-transcript-entry';
+            const speakerClass = speaker === 'You' ? 'speaker-you' : 'speaker-ai';
+            entry.className = 'call-transcript-entry ' + speakerClass;
             entry.innerHTML = `
                 <div class="call-transcript-speaker">${speaker}</div>
                 <div class="call-transcript-text">${text}</div>
