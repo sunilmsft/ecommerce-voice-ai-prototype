@@ -4224,7 +4224,7 @@
                     await playLine('You', 'It\'s ' + demoEmail, 420);
                     conversationContext.customerEmail = demoEmail;
 
-                    addCallTranscriptEntry('System', '📊 Generating personalized quote via pricing API');
+                    addCallTranscriptEntry('System', '📊 Generating personalized quote via QuoteX API');
                     conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
                     conversationContext.quoteGenerated = true;
                     conversationContext.quoteSentToEmail = true;
@@ -4235,7 +4235,7 @@
                     await playLine('Ask Microsoft Voice Agent', 'I\'d be happy to send you a personalized quote with that pricing breakdown so you have it on hand — would that be helpful?', 500);
                     await playLine('You', 'Yes, but I\'d prefer not to share my email right now.', 420);
                     await playLine('Ask Microsoft Voice Agent', 'Totally fine. I\'ve prepared the quote — we\'ll send it along when you share your email on the callback form after our call.', 500);
-                    addCallTranscriptEntry('System', '📊 Generating personalized quote via pricing API');
+                    addCallTranscriptEntry('System', '📊 Generating personalized quote via QuoteX API');
                     conversationContext.quoteGenerated = false;
                     conversationContext.quoteReadyForSend = true;
                     conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
@@ -4421,7 +4421,7 @@
                 conversationContext.customerEmail = demoEmail;
 
                 // Simulated quote generation (invisible API call)
-                addCallTranscriptEntry('System', '📊 Generating personalized quote via pricing API');
+                addCallTranscriptEntry('System', '📊 Generating personalized quote via QuoteX API');
                 conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
                 conversationContext.quoteGenerated = true;
                 conversationContext.quoteSentToEmail = true;
@@ -4433,7 +4433,7 @@
                 await playLine('Ask Microsoft Voice Agent', 'I can put together a personalized quote with that breakdown and send it over to you right now — that way you\'ll have something concrete to review with your team. Would you like me to do that?', 500);
                 await playLine('You', 'Yes, that sounds great — though I\'d prefer not to share my email over the call, if that\'s all right.', 420);
                 await playLine('Ask Microsoft Voice Agent', 'Completely understand — no problem at all. I\'ve got the quote ready on my end. When you fill out the callback form after our call, we\'ll use that email to send the quote over. Nothing lost.', 500);
-                addCallTranscriptEntry('System', '📊 Generating personalized quote via pricing API');
+                addCallTranscriptEntry('System', '📊 Generating personalized quote via QuoteX API');
                 conversationContext.quoteGenerated = false;
                 conversationContext.quoteReadyForSend = true;
                 conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);

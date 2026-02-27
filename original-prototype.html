@@ -3409,7 +3409,7 @@
 
             if (custEmail) {
                 // We already have email from callback form — use it directly
-                addCallTranscriptEntry('System', '📊 Generating personalized quote via pricing API — Business Premium, ' + teamSize + ' users');
+                addCallTranscriptEntry('System', '📊 Generating personalized quote via QuoteX API — Business Premium, ' + teamSize + ' users');
                 conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
                 conversationContext.quoteGenerated = true;
                 conversationContext.quoteSentToEmail = true;
@@ -3419,7 +3419,7 @@
                 await playLine('You', 'That\'s very convenient \u2014 thank you.', 420);
             } else {
                 // No email on file — ask for it
-                addCallTranscriptEntry('System', '📊 Generating personalized quote via pricing API — Business Premium, ' + teamSize + ' users');
+                addCallTranscriptEntry('System', '📊 Generating personalized quote via QuoteX API — Business Premium, ' + teamSize + ' users');
                 await playLine('Ask Microsoft Voice Agent', 'Sure — what\'s the best email address to send it to?', 420);
                 const demoEmail = 'alex@summitgear-example.com';
                 await playLine('You', 'It\'s ' + demoEmail, 420);
