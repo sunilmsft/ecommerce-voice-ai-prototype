@@ -4196,101 +4196,173 @@
         }
 
         function speakAsDavid(text) {
-            // ── Aggressive engine reset ──
-            // After the AI voice conversation, Online/Neural voices can get
-            // "exhausted" and silently fail, causing fallback to robotic local
-            // SAPI5 voices.  A cancel → resume → pause → resume cycle followed
-            // by a cooldown reliably re-enables the Neural pipeline in Edge.
+            // ── Fresh-iframe strategy ──────────────────────────────────────
+            // After the AI voice conversation, the main page's Neural/Online
+            // TTS pipeline is exhausted — every Online (Natural) voice returns
+            // "synthesis-failed".  Creating a hidden iframe gives us a FRESH
+            // speechSynthesis context whose Neural pipeline has not been used,
+            // so Online (Natural) voices work again.
+            console.log('[David] Preparing to speak:', text.substring(0, 60) + '...');
+
+            // Cancel any lingering main-page speech
             try { speechSynthesis.cancel(); } catch(e) {}
-            try { speechSynthesis.resume(); } catch(e) {}
-            setTimeout(() => {
-                try { speechSynthesis.pause(); speechSynthesis.resume(); } catch(e) {}
-            }, 100);
 
-            // 500 ms cooldown lets the engine fully recover
-            setTimeout(() => {
-                const maxRetries = 3;
-                let attempt = 0;
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.srcdoc = '<html><body></body></html>';
+            document.body.appendChild(iframe);
 
-                function trySpeak() {
-                    attempt++;
-                    console.log(`[David TTS] attempt ${attempt}/${maxRetries}`);
+            let fired = false;  // guard against double-fire
 
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.rate  = 0.95;
-                    utterance.pitch = 1.0;
-                    utterance.volume = 1.0;
+            iframe.onload = () => {
+                if (fired) return;
+                const freshSynth = iframe.contentWindow.speechSynthesis;
+                const FreshUtterance = iframe.contentWindow.SpeechSynthesisUtterance;
 
-                    // ── Voice priority ──
-                    // 1) Online (Natural) Neural voices  – best quality
-                    // 2) Online Neural voices             – good quality
-                    // 3) Any Christopher / Eric / Guy / Roger  – decent
-                    // 4) Local SAPI5 (Mark, David)         – last resort
-                    const voices = speechSynthesis.getVoices();
-                    const davidVoice =
-                        voices.find(v => v.name.includes('Christopher') && v.name.includes('Online (Natural)')) ||
-                        voices.find(v => v.name.includes('Eric')        && v.name.includes('Online (Natural)')) ||
-                        voices.find(v => v.name.includes('Guy')         && v.name.includes('Online (Natural)')) ||
-                        voices.find(v => v.name.includes('Roger')       && v.name.includes('Online (Natural)')) ||
-                        voices.find(v => v.name.includes('Christopher') && v.name.includes('Online')) ||
-                        voices.find(v => v.name.includes('Eric')        && v.name.includes('Online')) ||
-                        voices.find(v => v.name.includes('Guy')         && v.name.includes('Online')) ||
-                        voices.find(v => v.name.includes('Roger')       && v.name.includes('Online')) ||
-                        voices.find(v => v.name.includes('Christopher')) ||
-                        voices.find(v => v.name.includes('Microsoft Guy')) ||
-                        voices.find(v => v.name.includes('Microsoft Mark')) ||
-                        voices.find(v => v.name.includes('Microsoft David')) ||
-                        voices.find(v => v.lang === 'en-US') ||
-                        voices[0];
-
-                    if (davidVoice) {
-                        utterance.voice = davidVoice;
-                        console.log(`[David TTS] using voice: ${davidVoice.name}`);
-                    }
-
-                    utterance.onstart = () => {
-                        const avatar = document.getElementById('callAvatar');
-                        const indicator = document.getElementById('speakingIndicator');
-                        if (avatar) avatar.style.transform = 'scale(1.05)';
-                        if (indicator) indicator.classList.add('active');
-                    };
-
-                    utterance.onend = () => {
-                        const avatar = document.getElementById('callAvatar');
-                        const indicator = document.getElementById('speakingIndicator');
-                        if (avatar) avatar.style.transform = 'scale(1)';
-                        if (indicator) indicator.classList.remove('active');
-                    };
-
-                    utterance.onerror = (e) => {
-                        console.warn(`[David TTS] error on attempt ${attempt}:`, e.error || e);
-                        const avatar = document.getElementById('callAvatar');
-                        const indicator = document.getElementById('speakingIndicator');
-                        if (avatar) avatar.style.transform = 'scale(1)';
-                        if (indicator) indicator.classList.remove('active');
-
-                        if (attempt < maxRetries) {
-                            const delay = attempt * 500; // 500, 1000, 1500 ms
-                            console.log(`[David TTS] retrying in ${delay}ms…`);
-                            // Reset engine again before retry
-                            try { speechSynthesis.cancel(); } catch(ex) {}
-                            try { speechSynthesis.resume(); } catch(ex) {}
-                            setTimeout(trySpeak, delay);
-                        } else {
-                            console.error('[David TTS] all retries exhausted');
-                        }
-                    };
-
-                    try { speechSynthesis.speak(utterance); } catch (ex) {
-                        console.error('[David TTS] speak() threw:', ex);
-                        if (attempt < maxRetries) {
-                            setTimeout(trySpeak, attempt * 500);
-                        }
-                    }
+                function onVoicesReady() {
+                    if (fired) return;
+                    const voices = freshSynth.getVoices();
+                    if (voices.length === 0) return;
+                    fired = true;
+                    console.log('[David] Fresh iframe voices:', voices.length);
+                    speakDavidWithSynth(freshSynth, FreshUtterance, voices, text, iframe);
                 }
 
-                trySpeak();
-            }, 500);
+                // Voices may already be loaded or arrive via event
+                onVoicesReady();
+                if (!fired) {
+                    freshSynth.onvoiceschanged = onVoicesReady;
+                    // Timeout: if voices never load in iframe, fall back to main synth
+                    setTimeout(() => {
+                        if (!fired) {
+                            fired = true;
+                            const v = freshSynth.getVoices();
+                            if (v.length > 0) {
+                                speakDavidWithSynth(freshSynth, FreshUtterance, v, text, iframe);
+                            } else {
+                                console.warn('[David] iframe voices never loaded — local fallback');
+                                iframe.remove();
+                                speakDavidLocalFallback(text);
+                            }
+                        }
+                    }, 3000);
+                }
+            };
+
+            iframe.onerror = () => {
+                if (!fired) {
+                    fired = true;
+                    console.warn('[David] iframe creation failed — local fallback');
+                    speakDavidLocalFallback(text);
+                }
+            };
+        }
+
+        // ── Speak David using a given speechSynthesis context ──────────
+        function speakDavidWithSynth(synth, UtteranceClass, voices, text, iframe) {
+            const utterance = new UtteranceClass(text);
+            utterance.rate  = 0.95;   // Slightly slower for warm, conversational feel
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+
+            // Voice priority: Online (Natural) → Online → any Christopher → local
+            const davidVoice =
+                voices.find(v => v.name.includes('Christopher') && v.name.includes('Online') && v.name.includes('Natural')) ||
+                voices.find(v => v.name.includes('Eric')        && v.name.includes('Online') && v.name.includes('Natural')) ||
+                voices.find(v => v.name.includes('Guy')         && v.name.includes('Online') && v.name.includes('Natural')) ||
+                voices.find(v => v.name.includes('Roger')       && v.name.includes('Online') && v.name.includes('Natural')) ||
+                voices.find(v => v.name.includes('Christopher') && v.name.includes('Online')) ||
+                voices.find(v => v.name.includes('Eric')        && v.name.includes('Online')) ||
+                voices.find(v => v.name.includes('Guy')         && v.name.includes('Online')) ||
+                voices.find(v => v.name.includes('Roger')       && v.name.includes('Online')) ||
+                voices.find(v => v.name.includes('Christopher')) ||
+                voices.find(v => v.name.includes('Microsoft Mark')) ||
+                voices.find(v => v.name.includes('Microsoft David')) ||
+                voices.find(v => v.lang === 'en-US') ||
+                voices[0];
+
+            if (davidVoice) {
+                utterance.voice = davidVoice;
+                console.log('[David] → voice:', davidVoice.name, '(local:', davidVoice.localService, ')');
+            }
+
+            utterance.onstart = () => {
+                console.log('[David] ✅ Speech started (Neural)');
+                const avatar = document.getElementById('callAvatar');
+                const indicator = document.getElementById('speakingIndicator');
+                if (avatar) avatar.style.transform = 'scale(1.05)';
+                if (indicator) indicator.classList.add('active');
+            };
+            utterance.onend = () => {
+                console.log('[David] Speech ended');
+                const avatar = document.getElementById('callAvatar');
+                const indicator = document.getElementById('speakingIndicator');
+                if (avatar) avatar.style.transform = 'scale(1)';
+                if (indicator) indicator.classList.remove('active');
+                if (iframe) { try { iframe.remove(); } catch(e) {} }
+            };
+            utterance.onerror = (e) => {
+                console.warn('[David] ❌ Fresh synth error:', e.error, '— falling back to local');
+                const avatar = document.getElementById('callAvatar');
+                const indicator = document.getElementById('speakingIndicator');
+                if (avatar) avatar.style.transform = 'scale(1)';
+                if (indicator) indicator.classList.remove('active');
+                if (iframe) { try { iframe.remove(); } catch(e2) {} }
+                speakDavidLocalFallback(text);
+            };
+
+            try {
+                synth.speak(utterance);
+            } catch(e) {
+                console.error('[David] speak() threw:', e);
+                if (iframe) { try { iframe.remove(); } catch(e2) {} }
+                speakDavidLocalFallback(text);
+            }
+        }
+
+        // ── Last-resort: local SAPI5 voice ─────────────────────────────
+        function speakDavidLocalFallback(text) {
+            console.log('[David] Using local voice fallback');
+            try { speechSynthesis.cancel(); } catch(e) {}
+            try { speechSynthesis.resume(); } catch(e) {}
+
+            setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate  = 1.0;    // Natural pace for SAPI5
+                utterance.pitch = 1.05;   // Slightly warm
+                utterance.volume = 1.0;
+
+                const voices = speechSynthesis.getVoices();
+                const localVoice =
+                    voices.find(v => v.name.includes('Microsoft David') && v.localService) ||
+                    voices.find(v => v.name.includes('Microsoft Mark')  && v.localService) ||
+                    voices.find(v => v.name === 'Microsoft David - English (United States)') ||
+                    voices.find(v => v.lang === 'en-US' && v.localService) ||
+                    voices.find(v => v.localService && v.lang.startsWith('en'));
+
+                if (localVoice) {
+                    utterance.voice = localVoice;
+                    console.log('[David] Local voice:', localVoice.name);
+                }
+
+                utterance.onstart = () => {
+                    console.log('[David] ✅ Speech started (local fallback)');
+                    const avatar = document.getElementById('callAvatar');
+                    const indicator = document.getElementById('speakingIndicator');
+                    if (avatar) avatar.style.transform = 'scale(1.05)';
+                    if (indicator) indicator.classList.add('active');
+                };
+                utterance.onend = utterance.onerror = () => {
+                    const avatar = document.getElementById('callAvatar');
+                    const indicator = document.getElementById('speakingIndicator');
+                    if (avatar) avatar.style.transform = 'scale(1)';
+                    if (indicator) indicator.classList.remove('active');
+                };
+
+                try { speechSynthesis.speak(utterance); } catch(e) {
+                    console.error('[David] Local TTS error:', e);
+                }
+            }, 300);
         }
 
         function buildDavidGreeting() {
