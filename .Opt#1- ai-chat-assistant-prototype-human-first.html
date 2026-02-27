@@ -3163,43 +3163,43 @@
                     contextGreeting += 'I see you\'ve requested a callback for a team of about ' + numUsers + ' — great to connect with you in the meantime. ';
                 }
                 contextGreeting += 'How can I help you today?';
-                await playLine('AI Assistant', contextGreeting, 500);
+                await playLine('Ask Microsoft Voice Agent', contextGreeting, 500);
                 await playLine('You', 'Thanks! Yes, we\'re a growing e-commerce company — we sell outdoor gear online. I wanted to learn more about Microsoft 365 while I wait.', 420);
             } else {
-                await playLine('AI Assistant', 'Hi there — I am Ask Microsoft Voice Agent. Happy to help. What can I help you with today?', 500);
+                await playLine('Ask Microsoft Voice Agent', 'Hi there — I am Ask Microsoft Voice Agent. Happy to help. What can I help you with today?', 500);
                 await playLine('You', 'Hi, I run a growing e-commerce company — we sell outdoor gear online. We\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
                 conversationContext.numEmployees = 20;
             }
             conversationContext.businessType = 'e-commerce company selling outdoor gear';
 
             const teamSize = conversationContext.numEmployees || 20;
-            await playLine('AI Assistant', 'Great, an e-commerce business with ' + teamSize + ' employees — that\'s a perfect fit for our Business plans. Are your teams mostly in-office, fully remote, or hybrid?', 420);
+            await playLine('Ask Microsoft Voice Agent', 'Great, an e-commerce business with ' + teamSize + ' employees — that\'s a perfect fit for our Business plans. Are your teams mostly in-office, fully remote, or hybrid?', 420);
             await playLine('You', 'We\'re mostly hybrid. Our warehouse crew is on-site, but marketing and customer support work remotely.', 420);
             conversationContext.workLocation = 'hybrid';
 
-            await playLine('AI Assistant', 'That makes sense for e-commerce. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
+            await playLine('Ask Microsoft Voice Agent', 'That makes sense for e-commerce. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
             await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
             conversationContext.securityNeeds = 'moderate';
 
-            await playLine('AI Assistant', 'Perfect, that helps. What decision timeline are you working toward?', 420);
+            await playLine('Ask Microsoft Voice Agent', 'Perfect, that helps. What decision timeline are you working toward?', 420);
             await playLine('You', 'Ideally this quarter — we\'re scaling up and need to get everyone on the same platform.', 450);
             conversationContext.timeline = 'this quarter';
             conversationContext.interestedPlans = ['Business Premium'];
             conversationContext.pricePerUser = 22;
             conversationContext.monthlyTotal = teamSize * conversationContext.pricePerUser;
 
-            await playLine('AI Assistant', 'Great — based on your team size of ' + teamSize + ', hybrid setup across warehouse and remote staff, and the device mix, Microsoft 365 Business Premium at $22 per user per month is likely a strong fit. That comes to $' + (teamSize * 22) + ' per month for your team.', 500);
+            await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size of ' + teamSize + ', hybrid setup across warehouse and remote staff, and the device mix, Microsoft 365 Business Premium at $22 per user per month is likely a strong fit. That comes to $' + (teamSize * 22) + ' per month for your team.', 500);
             await playLine('You', 'That\'s really helpful, thanks for walking me through all of that.', 420);
 
             if (callbackRequested) {
-                await playLine('AI Assistant', 'My pleasure! Just so you know, your callback request with a Microsoft specialist is still in place — they\'ll be reaching out as scheduled. When you disconnect this call, you\'ll have the option to keep that callback or cancel it if your questions have been fully answered.', 600);
+                await playLine('Ask Microsoft Voice Agent', 'My pleasure! Just so you know, your callback request with a Microsoft specialist is still in place — they\'ll be reaching out as scheduled. When you disconnect this call, you\'ll have the option to keep that callback or cancel it if your questions have been fully answered.', 600);
                 await playLine('You', 'That\'s great — I\'ll keep the callback for now. Thanks again!', 420);
             } else {
-                await playLine('AI Assistant', 'My pleasure! If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
+                await playLine('Ask Microsoft Voice Agent', 'My pleasure! If you\'d like, I can help arrange a callback with a Microsoft specialist to go deeper on licensing and next steps.', 500);
             }
 
             const nameRef = custName ? (', ' + custName) : '';
-            await playLine('AI Assistant', 'Sounds good' + nameRef + '! It was a pleasure chatting with you. Have a wonderful day, and we look forward to helping your outdoor gear business thrive with Microsoft 365.', 500);
+            await playLine('Ask Microsoft Voice Agent', 'Sounds good' + nameRef + '! It was a pleasure chatting with you. Have a wonderful day, and we look forward to helping your outdoor gear business thrive with Microsoft 365.', 500);
         }
 
         function addCallTranscriptEntry(speaker, text) {
@@ -3215,7 +3215,7 @@
             transcriptArea.scrollTop = transcriptArea.scrollHeight;
             
             // If this is any speaker (AI or You) and audio is enabled, use text-to-speech
-            if ((speaker === 'AI Assistant' || speaker === 'You') && audioEnabled && isVoiceMode) {
+            if ((speaker === 'Ask Microsoft Voice Agent' || speaker === 'You') && audioEnabled && isVoiceMode) {
                 speakText(text, speaker);
             }
         }
@@ -3248,7 +3248,7 @@
                 const utterance = new SpeechSynthesisUtterance(text);
                 
                 // Configure voice settings based on speaker
-                if (speaker === 'AI Assistant') {
+                if (speaker === 'Ask Microsoft Voice Agent') {
                     utterance.rate = 1.0;   // Natural pace
                     utterance.pitch = 1.0;  // Natural pitch
                 } else {
@@ -3262,7 +3262,7 @@
                 const voices = speechSynthesis.getVoices();
                 
                 let preferredVoice;
-                if (speaker === 'AI Assistant') {
+                if (speaker === 'Ask Microsoft Voice Agent') {
                     // AI voice — Jenny Online exclusive (no Aria to avoid overlap with female user)
                     preferredVoice = 
                         voices.find(voice => voice.name.includes('Jenny') && voice.name.includes('Online')) ||
@@ -3761,7 +3761,7 @@
             const transcript = document.getElementById('voiceTranscript');
             
             // Initial greeting
-            addTranscriptEntry('AI Assistant', 'Hello! I\'m your Ask Microsoft Voice Agent for Microsoft 365 Business. I\'m here to help you find the right plan for your business. To get started, could you tell me a bit about your company? How many employees do you have?');
+            addTranscriptEntry('Ask Microsoft Voice Agent', 'Hello! I\'m your Ask Microsoft Voice Agent for Microsoft 365 Business. I\'m here to help you find the right plan for your business. To get started, could you tell me a bit about your company? How many employees do you have?');
             
             // Simulate an interactive conversation flow
             setTimeout(() => {
@@ -3769,40 +3769,40 @@
                 conversationContext.numEmployees = 15;
                 
                 setTimeout(() => {
-                    addTranscriptEntry('AI Assistant', 'Perfect! A 15-person team is ideal for our Microsoft 365 Business offerings. Are your employees primarily working in the office, remotely, or a hybrid setup?');
+                    addTranscriptEntry('Ask Microsoft Voice Agent', 'Perfect! A 15-person team is ideal for our Microsoft 365 Business offerings. Are your employees primarily working in the office, remotely, or a hybrid setup?');
                     
                     setTimeout(() => {
                         addTranscriptEntry('You', 'We\'re mostly remote with some hybrid workers.');
                         conversationContext.workLocation = 'hybrid/remote';
                         
                         setTimeout(() => {
-                            addTranscriptEntry('AI Assistant', 'That\'s very common these days. Microsoft 365 is excellent for remote and hybrid teams with Microsoft Teams for collaboration and OneDrive for cloud storage. Now, how important is security to your organization? Do you handle sensitive customer data or have any specific compliance requirements?');
+                            addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s very common these days. Microsoft 365 is excellent for remote and hybrid teams with Microsoft Teams for collaboration and OneDrive for cloud storage. Now, how important is security to your organization? Do you handle sensitive customer data or have any specific compliance requirements?');
                             
                             setTimeout(() => {
                                 addTranscriptEntry('You', 'Security is pretty important to us. We handle some customer information.');
                                 conversationContext.securityNeeds = 'high';
                                 
                                 setTimeout(() => {
-                                    addTranscriptEntry('AI Assistant', 'I completely understand. Security is critical for protecting customer information. Based on what you\'ve shared - a 15-person team working remotely with security needs - I\'d recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, data loss prevention, and all the productivity apps like Word, Excel, PowerPoint, Teams, and 1TB of OneDrive storage per user. What\'s your timeline for making a decision?');
+                                    addTranscriptEntry('Ask Microsoft Voice Agent', 'I completely understand. Security is critical for protecting customer information. Based on what you\'ve shared - a 15-person team working remotely with security needs - I\'d recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, data loss prevention, and all the productivity apps like Word, Excel, PowerPoint, Teams, and 1TB of OneDrive storage per user. What\'s your timeline for making a decision?');
                                     
                                     setTimeout(() => {
                                         addTranscriptEntry('You', 'We\'re looking to move forward pretty soon, maybe this month.');
                                         conversationContext.timeline = 'this month';
                                         
                                         setTimeout(() => {
-                                            addTranscriptEntry('AI Assistant', 'That\'s great to hear you\'re ready to move forward! I can connect you with a Microsoft specialist who can help finalize the next steps, provide detailed pricing for your specific needs, and ensure you get the right setup for your team. Would you like me to arrange a callback?');
+                                            addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s great to hear you\'re ready to move forward! I can connect you with a Microsoft specialist who can help finalize the next steps, provide detailed pricing for your specific needs, and ensure you get the right setup for your team. Would you like me to arrange a callback?');
                                             
                                             setTimeout(() => {
                                                 addTranscriptEntry('You', 'Yes, that would be helpful. What about pricing? Can you give me an idea of the costs?');
                                                 
                                                 setTimeout(() => {
-                                                    addTranscriptEntry('AI Assistant', 'Microsoft 365 Business Premium is $22 per user per month. For your 15-person team, that would be $330 per month. However, a Microsoft specialist can discuss volume licensing, payment options, and help you understand the full value. They\'ll also make sure you\'re aware of any current promotions. Shall I set up that callback for you?');
+                                                    addTranscriptEntry('Ask Microsoft Voice Agent', 'Microsoft 365 Business Premium is $22 per user per month. For your 15-person team, that would be $330 per month. However, a Microsoft specialist can discuss volume licensing, payment options, and help you understand the full value. They\'ll also make sure you\'re aware of any current promotions. Shall I set up that callback for you?');
                                                     
                                                     setTimeout(() => {
                                                         addTranscriptEntry('You', 'Yes, please set up the callback.');
                                                         
                                                         setTimeout(() => {
-                                                            addTranscriptEntry('AI Assistant', 'Perfect! I\'ll transition you to our callback request form to capture your details. A Microsoft sales associate will reach out to you within 48 hours to discuss your specific needs and next steps. Let me switch you over now.');
+                                                            addTranscriptEntry('Ask Microsoft Voice Agent', 'Perfect! I\'ll transition you to our callback request form to capture your details. A Microsoft sales associate will reach out to you within 48 hours to discuss your specific needs and next steps. Let me switch you over now.');
                                                             
                                                             setTimeout(() => {
                                                                 endVoiceSession();
@@ -3841,35 +3841,35 @@
             
             // Handle common M365 questions
             if (lowerMessage.includes('difference between') && (lowerMessage.includes('standard') || lowerMessage.includes('premium'))) {
-                addTranscriptEntry('AI Assistant', 'Great question! Microsoft 365 Business Standard includes all the core productivity apps like Word, Excel, PowerPoint, Outlook, and Teams, plus 1TB of cloud storage and email hosting for $12.50 per user per month. Business Premium, at $22 per user per month, includes everything in Standard plus advanced security features like advanced threat protection, device management, and data loss prevention. For businesses handling sensitive data or those with security compliance needs, Premium is the better choice.');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'Great question! Microsoft 365 Business Standard includes all the core productivity apps like Word, Excel, PowerPoint, Outlook, and Teams, plus 1TB of cloud storage and email hosting for $12.50 per user per month. Business Premium, at $22 per user per month, includes everything in Standard plus advanced security features like advanced threat protection, device management, and data loss prevention. For businesses handling sensitive data or those with security compliance needs, Premium is the better choice.');
                 return;
             }
 
             if (lowerMessage.includes('what') && lowerMessage.includes('plan') && lowerMessage.includes('best')) {
-                addTranscriptEntry('AI Assistant', 'To recommend the best plan for you, I\'d like to know a bit more about your business. How many employees do you have, and what are your primary needs - basic productivity tools, or do you also need advanced security and compliance features?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'To recommend the best plan for you, I\'d like to know a bit more about your business. How many employees do you have, and what are your primary needs - basic productivity tools, or do you also need advanced security and compliance features?');
                 return;
             }
 
             if (lowerMessage.includes('security') && lowerMessage.includes('add')) {
-                addTranscriptEntry('AI Assistant', 'Microsoft 365 Business Premium includes comprehensive security features built-in, including Microsoft Defender for Business, which provides threat protection, device management, and data loss prevention. For most small to medium businesses, the security in Premium is sufficient. However, if you have specific compliance requirements or need advanced security management, a specialist can help assess your needs. Would you like me to connect you with someone who can provide a detailed security assessment?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'Microsoft 365 Business Premium includes comprehensive security features built-in, including Microsoft Defender for Business, which provides threat protection, device management, and data loss prevention. For most small to medium businesses, the security in Premium is sufficient. However, if you have specific compliance requirements or need advanced security management, a specialist can help assess your needs. Would you like me to connect you with someone who can provide a detailed security assessment?');
                 return;
             }
             
             // Handle callback request during voice conversation
             if (lowerMessage.includes('callback') || lowerMessage.includes('specialist') || lowerMessage.includes('representative')) {
-                addTranscriptEntry('AI Assistant', 'I understand you\'d like to speak with a Microsoft specialist. I can arrange a callback for you right away. Would you like me to do that?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'I understand you\'d like to speak with a Microsoft specialist. I can arrange a callback for you right away. Would you like me to do that?');
                 return;
             }
             
             // Handle discount/pricing questions
             if (lowerMessage.includes('discount') || lowerMessage.includes('deal') || lowerMessage.includes('cheaper') || lowerMessage.includes('negotiate')) {
-                addTranscriptEntry('AI Assistant', 'I\'m not able to adjust pricing or negotiate discounts. A Microsoft specialist can help you with detailed pricing, volume licensing options, and make sure you\'re aware of any current promotions or special offers. Would you like me to arrange a callback with a specialist?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'I\'m not able to adjust pricing or negotiate discounts. A Microsoft specialist can help you with detailed pricing, volume licensing options, and make sure you\'re aware of any current promotions or special offers. Would you like me to arrange a callback with a specialist?');
                 return;
             }
             
             // Handle purchase intent
             if (lowerMessage.includes('move forward') || lowerMessage.includes('purchase') || lowerMessage.includes('buy') || lowerMessage.includes('sign up')) {
-                addTranscriptEntry('AI Assistant', 'That\'s excellent! I\'m glad I could help you find the right solution. To finalize your purchase and get your team set up, I\'ll connect you with a Microsoft specialist who can process your order, help with onboarding, and answer any final questions. Would you like me to arrange that callback now?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s excellent! I\'m glad I could help you find the right solution. To finalize your purchase and get your team set up, I\'ll connect you with a Microsoft specialist who can process your order, help with onboarding, and answer any final questions. Would you like me to arrange that callback now?');
                 return;
             }
             
@@ -3877,33 +3877,33 @@
             if (lowerMessage.match(/\d+/) && (lowerMessage.includes('employee') || lowerMessage.includes('people') || lowerMessage.includes('user'))) {
                 const num = lowerMessage.match(/\d+/)[0];
                 conversationContext.numEmployees = parseInt(num);
-                addTranscriptEntry('AI Assistant', `Perfect! For a ${num}-person business, Microsoft 365 Business plans are ideal. Are your employees primarily working in the office, remotely, or a hybrid setup?`);
+                addTranscriptEntry('Ask Microsoft Voice Agent', `Perfect! For a ${num}-person business, Microsoft 365 Business plans are ideal. Are your employees primarily working in the office, remotely, or a hybrid setup?`);
                 return;
             }
             
             // Work location
             if (lowerMessage.includes('remote') || lowerMessage.includes('hybrid') || lowerMessage.includes('office') || lowerMessage.includes('home')) {
                 conversationContext.workLocation = lowerMessage.includes('remote') ? 'remote' : lowerMessage.includes('hybrid') ? 'hybrid' : 'office';
-                addTranscriptEntry('AI Assistant', 'That\'s helpful to know. Microsoft 365 works great for all work environments with cloud-based collaboration tools. Now, how important is security to your organization? Do you handle sensitive customer data?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s helpful to know. Microsoft 365 works great for all work environments with cloud-based collaboration tools. Now, how important is security to your organization? Do you handle sensitive customer data?');
                 return;
             }
             
             // Security needs
             if ((lowerMessage.includes('security') || lowerMessage.includes('secure') || lowerMessage.includes('important') || lowerMessage.includes('yes')) && conversationContext.securityNeeds === null) {
                 conversationContext.securityNeeds = 'high';
-                addTranscriptEntry('AI Assistant', 'Security is definitely critical. For organizations with security concerns, I\'d strongly recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, and data loss prevention to keep your data safe. What\'s your timeline for making a decision?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'Security is definitely critical. For organizations with security concerns, I\'d strongly recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, and data loss prevention to keep your data safe. What\'s your timeline for making a decision?');
                 return;
             }
 
             // Timeline
             if (lowerMessage.includes('soon') || lowerMessage.includes('month') || lowerMessage.includes('week') || lowerMessage.includes('asap')) {
                 conversationContext.timeline = lowerMessage.includes('week') ? 'this week' : 'soon';
-                addTranscriptEntry('AI Assistant', 'Great timing! I can help expedite your setup. Based on your needs, I recommend connecting with a Microsoft specialist who can finalize everything quickly and get your team up and running. Shall I arrange that for you?');
+                addTranscriptEntry('Ask Microsoft Voice Agent', 'Great timing! I can help expedite your setup. Based on your needs, I recommend connecting with a Microsoft specialist who can finalize everything quickly and get your team up and running. Shall I arrange that for you?');
                 return;
             }
             
             // Default helpful response
-            addTranscriptEntry('AI Assistant', 'I see. Let me provide some additional context. Microsoft 365 Business offers three main plans: Basic ($6/user/month) for web-only apps, Standard ($12.50/user/month) with desktop apps and email, and Premium ($22/user/month) with advanced security. Based on what you\'ve shared, would you like a specific recommendation, or would you prefer to speak with a Microsoft specialist for a more detailed consultation?');
+            addTranscriptEntry('Ask Microsoft Voice Agent', 'I see. Let me provide some additional context. Microsoft 365 Business offers three main plans: Basic ($6/user/month) for web-only apps, Standard ($12.50/user/month) with desktop apps and email, and Premium ($22/user/month) with advanced security. Based on what you\'ve shared, would you like a specific recommendation, or would you prefer to speak with a Microsoft specialist for a more detailed consultation?');
         }
 
         function toggleVoiceMute() {
@@ -3932,7 +3932,7 @@
         }
 
         function toggleBackToChat() {
-            addTranscriptEntry('AI Assistant', 'Switching to text chat. Your conversation history is saved. How else can I help you?');
+            addTranscriptEntry('Ask Microsoft Voice Agent', 'Switching to text chat. Your conversation history is saved. How else can I help you?');
             
             setTimeout(() => {
                 endVoiceSession();
