@@ -4624,173 +4624,131 @@
         }
 
         function speakAsDavid(text) {
-            // ── Fresh-iframe strategy ──────────────────────────────────────
-            // After the AI voice conversation, the main page's Neural/Online
-            // TTS pipeline is exhausted — every Online (Natural) voice returns
-            // "synthesis-failed".  Creating a hidden iframe gives us a FRESH
-            // speechSynthesis context whose Neural pipeline has not been used,
-            // so Online (Natural) voices work again.
+            // ── Strategy: try Neural once → fast local fallback ────────
+            // After the AI voice conversation, Edge's Neural TTS service is
+            // globally exhausted — ALL Online (Natural) voices return
+            // "synthesis-failed". Retries and iframes don't help because
+            // the exhaustion is at the OS/browser level.
+            //
+            // So: try Neural ONCE.  If it fails → immediately use local
+            // SAPI5 voice.  Robotic but reliable — David always speaks.
             console.log('[David] Preparing to speak:', text.substring(0, 60) + '...');
 
-            // Cancel any lingering main-page speech
+            // Clean slate
             try { speechSynthesis.cancel(); } catch(e) {}
+            try { speechSynthesis.resume(); } catch(e) {}
 
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.srcdoc = '<html><body></body></html>';
-            document.body.appendChild(iframe);
-
-            let fired = false;  // guard against double-fire
-
-            iframe.onload = () => {
-                if (fired) return;
-                const freshSynth = iframe.contentWindow.speechSynthesis;
-                const FreshUtterance = iframe.contentWindow.SpeechSynthesisUtterance;
-
-                function onVoicesReady() {
-                    if (fired) return;
-                    const voices = freshSynth.getVoices();
-                    if (voices.length === 0) return;
-                    fired = true;
-                    console.log('[David] Fresh iframe voices:', voices.length);
-                    speakDavidWithSynth(freshSynth, FreshUtterance, voices, text, iframe);
+            // Short cooldown then attempt
+            setTimeout(() => {
+                const voices = speechSynthesis.getVoices();
+                if (voices.length === 0) {
+                    speechSynthesis.onvoiceschanged = () => davidTryNeural(text);
+                    return;
                 }
-
-                // Voices may already be loaded or arrive via event
-                onVoicesReady();
-                if (!fired) {
-                    freshSynth.onvoiceschanged = onVoicesReady;
-                    // Timeout: if voices never load in iframe, fall back to main synth
-                    setTimeout(() => {
-                        if (!fired) {
-                            fired = true;
-                            const v = freshSynth.getVoices();
-                            if (v.length > 0) {
-                                speakDavidWithSynth(freshSynth, FreshUtterance, v, text, iframe);
-                            } else {
-                                console.warn('[David] iframe voices never loaded — local fallback');
-                                iframe.remove();
-                                speakDavidLocalFallback(text);
-                            }
-                        }
-                    }, 3000);
-                }
-            };
-
-            iframe.onerror = () => {
-                if (!fired) {
-                    fired = true;
-                    console.warn('[David] iframe creation failed — local fallback');
-                    speakDavidLocalFallback(text);
-                }
-            };
+                davidTryNeural(text);
+            }, 400);
         }
 
-        // ── Speak David using a given speechSynthesis context ──────────
-        function speakDavidWithSynth(synth, UtteranceClass, voices, text, iframe) {
-            const utterance = new UtteranceClass(text);
-            utterance.rate  = 0.95;   // Slightly slower for warm, conversational feel
-            utterance.pitch = 1.0;
-            utterance.volume = 1.0;
+        function davidTryNeural(text) {
+            const voices = speechSynthesis.getVoices();
 
-            // Voice priority: Online (Natural) → Online → any Christopher → local
-            const davidVoice =
+            // Pick a Neural voice (Christopher preferred)
+            const neuralVoice =
                 voices.find(v => v.name.includes('Christopher') && v.name.includes('Online') && v.name.includes('Natural')) ||
                 voices.find(v => v.name.includes('Eric')        && v.name.includes('Online') && v.name.includes('Natural')) ||
                 voices.find(v => v.name.includes('Guy')         && v.name.includes('Online') && v.name.includes('Natural')) ||
-                voices.find(v => v.name.includes('Roger')       && v.name.includes('Online') && v.name.includes('Natural')) ||
                 voices.find(v => v.name.includes('Christopher') && v.name.includes('Online')) ||
-                voices.find(v => v.name.includes('Eric')        && v.name.includes('Online')) ||
-                voices.find(v => v.name.includes('Guy')         && v.name.includes('Online')) ||
-                voices.find(v => v.name.includes('Roger')       && v.name.includes('Online')) ||
-                voices.find(v => v.name.includes('Christopher')) ||
-                voices.find(v => v.name.includes('Microsoft Mark')) ||
-                voices.find(v => v.name.includes('Microsoft David')) ||
-                voices.find(v => v.lang === 'en-US') ||
-                voices[0];
+                voices.find(v => v.name.includes('Eric')        && v.name.includes('Online'));
 
-            if (davidVoice) {
-                utterance.voice = davidVoice;
-                console.log('[David] → voice:', davidVoice.name, '(local:', davidVoice.localService, ')');
+            if (!neuralVoice) {
+                console.log('[David] No Neural voice found — going straight to local');
+                davidSpeakLocal(text);
+                return;
             }
 
+            console.log('[David] Trying Neural voice:', neuralVoice.name);
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice  = neuralVoice;
+            utterance.rate   = 0.95;
+            utterance.pitch  = 1.0;
+            utterance.volume = 1.0;
+
+            let started = false;
+
             utterance.onstart = () => {
-                console.log('[David] ✅ Speech started (Neural)');
-                const avatar = document.getElementById('callAvatar');
-                const indicator = document.getElementById('speakingIndicator');
-                if (avatar) avatar.style.transform = 'scale(1.05)';
-                if (indicator) indicator.classList.add('active');
+                started = true;
+                console.log('[David] ✅ Neural speech started');
+                davidAnimateStart();
             };
             utterance.onend = () => {
-                console.log('[David] Speech ended');
-                const avatar = document.getElementById('callAvatar');
-                const indicator = document.getElementById('speakingIndicator');
-                if (avatar) avatar.style.transform = 'scale(1)';
-                if (indicator) indicator.classList.remove('active');
-                if (iframe) { try { iframe.remove(); } catch(e) {} }
+                console.log('[David] Neural speech ended');
+                davidAnimateStop();
             };
             utterance.onerror = (e) => {
-                console.warn('[David] ❌ Fresh synth error:', e.error, '— falling back to local');
-                const avatar = document.getElementById('callAvatar');
-                const indicator = document.getElementById('speakingIndicator');
-                if (avatar) avatar.style.transform = 'scale(1)';
-                if (indicator) indicator.classList.remove('active');
-                if (iframe) { try { iframe.remove(); } catch(e2) {} }
-                speakDavidLocalFallback(text);
+                console.warn('[David] Neural failed:', e.error, '— switching to local voice');
+                davidAnimateStop();
+                // Immediately fall back — no retry
+                davidSpeakLocal(text);
             };
 
             try {
-                synth.speak(utterance);
+                speechSynthesis.speak(utterance);
             } catch(e) {
-                console.error('[David] speak() threw:', e);
-                if (iframe) { try { iframe.remove(); } catch(e2) {} }
-                speakDavidLocalFallback(text);
+                console.warn('[David] Neural speak() threw — local fallback');
+                davidSpeakLocal(text);
             }
         }
 
-        // ── Last-resort: local SAPI5 voice ─────────────────────────────
-        function speakDavidLocalFallback(text) {
-            console.log('[David] Using local voice fallback');
+        function davidSpeakLocal(text) {
+            console.log('[David] Using local SAPI5 voice');
             try { speechSynthesis.cancel(); } catch(e) {}
             try { speechSynthesis.resume(); } catch(e) {}
 
             setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate  = 1.0;    // Natural pace for SAPI5
-                utterance.pitch = 1.05;   // Slightly warm
-                utterance.volume = 1.0;
-
                 const voices = speechSynthesis.getVoices();
                 const localVoice =
-                    voices.find(v => v.name.includes('Microsoft David') && v.localService) ||
+                    voices.find(v => v.name === 'Microsoft Mark - English (United States)') ||
                     voices.find(v => v.name.includes('Microsoft Mark')  && v.localService) ||
                     voices.find(v => v.name === 'Microsoft David - English (United States)') ||
+                    voices.find(v => v.name.includes('Microsoft David') && v.localService) ||
                     voices.find(v => v.lang === 'en-US' && v.localService) ||
-                    voices.find(v => v.localService && v.lang.startsWith('en'));
+                    voices.find(v => v.localService && v.lang.startsWith('en')) ||
+                    voices.find(v => v.lang === 'en-US');
 
+                const utterance = new SpeechSynthesisUtterance(text);
                 if (localVoice) {
                     utterance.voice = localVoice;
                     console.log('[David] Local voice:', localVoice.name);
                 }
+                utterance.rate   = 1.0;
+                utterance.pitch  = 1.0;
+                utterance.volume = 1.0;
 
                 utterance.onstart = () => {
-                    console.log('[David] ✅ Speech started (local fallback)');
-                    const avatar = document.getElementById('callAvatar');
-                    const indicator = document.getElementById('speakingIndicator');
-                    if (avatar) avatar.style.transform = 'scale(1.05)';
-                    if (indicator) indicator.classList.add('active');
+                    console.log('[David] ✅ Local speech started');
+                    davidAnimateStart();
                 };
                 utterance.onend = utterance.onerror = () => {
-                    const avatar = document.getElementById('callAvatar');
-                    const indicator = document.getElementById('speakingIndicator');
-                    if (avatar) avatar.style.transform = 'scale(1)';
-                    if (indicator) indicator.classList.remove('active');
+                    davidAnimateStop();
                 };
 
                 try { speechSynthesis.speak(utterance); } catch(e) {
-                    console.error('[David] Local TTS error:', e);
+                    console.error('[David] Local TTS failed:', e);
                 }
-            }, 300);
+            }, 200);
+        }
+
+        function davidAnimateStart() {
+            const avatar = document.getElementById('callAvatar');
+            const indicator = document.getElementById('speakingIndicator');
+            if (avatar) avatar.style.transform = 'scale(1.05)';
+            if (indicator) indicator.classList.add('active');
+        }
+        function davidAnimateStop() {
+            const avatar = document.getElementById('callAvatar');
+            const indicator = document.getElementById('speakingIndicator');
+            if (avatar) avatar.style.transform = 'scale(1)';
+            if (indicator) indicator.classList.remove('active');
         }
 
         function buildDavidGreeting() {
