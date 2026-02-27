@@ -4624,13 +4624,11 @@
         }
 
         function speakAsDavid(text) {
-            // Speak David's lines in a distinct male voice
-            // IMPORTANT: Use LOCAL voices only — Edge Neural/Online voices get
-            // exhausted after many utterances and return synthesis-failed.
+            // Speak David's lines using Edge Online (Natural) voices for human-like quality
             console.log('[David] Preparing to speak:', text.substring(0, 60) + '...');
 
-            function attemptSpeak(useLocalOnly) {
-                // Resume + cancel to fully reset engine state
+            function attemptSpeak(attemptNum) {
+                // Full engine reset — critical after AI voice conversation
                 try { speechSynthesis.cancel(); } catch(e) {}
                 try { speechSynthesis.resume(); } catch(e) {}
 
@@ -4640,8 +4638,32 @@
                 utterance.volume = 1.0;
 
                 const voices = speechSynthesis.getVoices();
-                console.log('[David] Voices available:', voices.length, '| localOnly:', useLocalOnly);
-                setDavidVoice(utterance, voices, useLocalOnly);
+                console.log('[David] Voices available:', voices.length, '| attempt:', attemptNum);
+
+                // Voice selection: strongly prefer Online (Natural) voices
+                let davidVoice =
+                    voices.find(v => v.name.includes('Christopher') && v.name.includes('Online') && v.name.includes('Natural')) ||
+                    voices.find(v => v.name.includes('Guy') && v.name.includes('Online') && v.name.includes('Natural')) ||
+                    voices.find(v => v.name.includes('Eric') && v.name.includes('Online') && v.name.includes('Natural')) ||
+                    voices.find(v => v.name.includes('Roger') && v.name.includes('Online') && v.name.includes('Natural')) ||
+                    voices.find(v => v.name.includes('Christopher') && v.name.includes('Online')) ||
+                    voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
+                    voices.find(v => v.name.includes('Eric') && v.name.includes('Online')) ||
+                    voices.find(v => v.name.includes('Roger') && v.name.includes('Online')) ||
+                    voices.find(v => v.name.includes('Christopher')) ||
+                    voices.find(v => v.name.includes('Google UK English Male')) ||
+                    // Last resort: local voices (robotic but functional)
+                    voices.find(v => v.name.includes('Microsoft Mark') && v.localService) ||
+                    voices.find(v => v.name.includes('Microsoft David') && v.localService) ||
+                    voices.find(v => v.lang === 'en-US' && v.localService) ||
+                    voices.find(v => v.lang.startsWith('en'));
+
+                if (davidVoice) {
+                    utterance.voice = davidVoice;
+                    console.log('[David] Selected voice:', davidVoice.name, '(local:', davidVoice.localService, ')');
+                } else {
+                    console.warn('[David] No suitable voice found');
+                }
 
                 utterance.onstart = () => {
                     console.log('[David] ✅ Speech started');
@@ -4658,11 +4680,11 @@
                     if (indicator) indicator.classList.remove('active');
                 };
                 utterance.onerror = (e) => {
-                    console.error('[David] ❌ Speech error:', e.error, '| localOnly:', useLocalOnly);
-                    if (!useLocalOnly) {
-                        // First attempt with Online voice failed → retry with local-only
-                        console.log('[David] Retrying with local-only voice...');
-                        setTimeout(() => attemptSpeak(true), 300);
+                    console.error('[David] ❌ Speech error:', e.error, '| attempt:', attemptNum);
+                    if (attemptNum < 3) {
+                        // Retry with fresh engine reset
+                        console.log('[David] Retrying (attempt ' + (attemptNum + 1) + ')...');
+                        setTimeout(() => attemptSpeak(attemptNum + 1), 500);
                     }
                 };
 
@@ -4683,14 +4705,18 @@
                 waitAndSpeak();
             }
 
-            // Wait for voices to load if needed — try Online/Neural first for natural sound
+            // Full engine reset before David speaks — clear any residual AI voice state
+            try { speechSynthesis.cancel(); } catch(e) {}
+            try { speechSynthesis.resume(); } catch(e) {}
+
+            // Wait for voices to load if needed
             const voices = speechSynthesis.getVoices();
             if (voices.length === 0) {
                 speechSynthesis.onvoiceschanged = () => {
-                    setTimeout(() => attemptSpeak(false), 300);
+                    setTimeout(() => attemptSpeak(1), 500);
                 };
             } else {
-                setTimeout(() => attemptSpeak(false), 300);
+                setTimeout(() => attemptSpeak(1), 500);
             }
         }
 
@@ -4743,41 +4769,6 @@
             // Closing — action-oriented
             greeting += ` Let's walk through next steps together.`;
             return greeting;
-        }
-
-        function setDavidVoice(utterance, voices, localOnly) {
-            let davidVoice;
-            if (localOnly) {
-                // Use LOCAL/OFFLINE voices only — immune to Neural TTS exhaustion
-                davidVoice =
-                    voices.find(v => v.name.includes('Microsoft David') && v.localService) ||
-                    voices.find(v => v.name.includes('Microsoft Mark') && v.localService) ||
-                    voices.find(v => v.name === 'Microsoft David - English (United States)') ||
-                    voices.find(v => v.name === 'Microsoft Mark - English (United States)') ||
-                    voices.find(v => v.name.includes('Microsoft David')) ||
-                    voices.find(v => v.name.includes('Microsoft Mark')) ||
-                    voices.find(v => v.lang === 'en-US' && v.localService && v.name.toLowerCase().includes('male')) ||
-                    voices.find(v => v.lang === 'en-US' && v.localService) ||
-                    voices.find(v => v.localService && v.lang.startsWith('en'));
-            } else {
-                // Try Neural/Online voices first, then local fallbacks
-                davidVoice =
-                    voices.find(v => v.name.includes('Christopher') && v.name.includes('Online')) ||
-                    voices.find(v => v.name.includes('Eric') && v.name.includes('Online')) ||
-                    voices.find(v => v.name.includes('Roger') && v.name.includes('Online')) ||
-                    voices.find(v => v.name.includes('Christopher')) ||
-                    voices.find(v => v.name.includes('Microsoft Mark')) ||
-                    voices.find(v => v.name.includes('Microsoft Guy')) ||
-                    voices.find(v => v.name.includes('Microsoft David')) ||
-                    voices.find(v => v.lang === 'en-US') ||
-                    voices[0];
-            }
-            if (davidVoice) {
-                utterance.voice = davidVoice;
-                console.log('[Voice] David →', davidVoice.name, '(local:', davidVoice.localService, ')');
-            } else {
-                console.warn('[Voice] No suitable voice found for David');
-            }
         }
 
         function toggleSpeaker() {

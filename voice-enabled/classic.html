@@ -4196,43 +4196,101 @@
         }
 
         function speakAsDavid(text) {
-            // Speak David's lines in a distinct male voice (different from AI Assistant's female voice)
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 0.95;
-            utterance.pitch = 1.0;
-            utterance.volume = 1.0;
+            // ── Aggressive engine reset ──
+            // After the AI voice conversation, Online/Neural voices can get
+            // "exhausted" and silently fail, causing fallback to robotic local
+            // SAPI5 voices.  A cancel → resume → pause → resume cycle followed
+            // by a cooldown reliably re-enables the Neural pipeline in Edge.
+            try { speechSynthesis.cancel(); } catch(e) {}
+            try { speechSynthesis.resume(); } catch(e) {}
+            setTimeout(() => {
+                try { speechSynthesis.pause(); speechSynthesis.resume(); } catch(e) {}
+            }, 100);
 
-            const voices = speechSynthesis.getVoices();
-            // Prefer Edge Neural voices for David → fallback to classic
-            const davidVoice =
-                voices.find(v => v.name.includes('Christopher') && v.name.includes('Online')) ||
-                voices.find(v => v.name.includes('Eric') && v.name.includes('Online')) ||
-                voices.find(v => v.name.includes('Roger') && v.name.includes('Online')) ||
-                voices.find(v => v.name.includes('Christopher')) ||
-                voices.find(v => v.name.includes('Microsoft Mark')) ||
-                voices.find(v => v.name.includes('Microsoft Guy')) ||
-                voices.find(v => v.name.includes('Google UK English Male')) ||
-                voices.find(v => v.lang === 'en-US' && v.name.includes('Male') && !v.name.includes('David')) ||
-                voices.find(v => v.name.includes('Microsoft David')) ||
-                voices.find(v => v.lang === 'en-US') ||
-                voices[0];
+            // 500 ms cooldown lets the engine fully recover
+            setTimeout(() => {
+                const maxRetries = 3;
+                let attempt = 0;
 
-            if (davidVoice) utterance.voice = davidVoice;
+                function trySpeak() {
+                    attempt++;
+                    console.log(`[David TTS] attempt ${attempt}/${maxRetries}`);
 
-            utterance.onstart = () => {
-                const avatar = document.getElementById('callAvatar');
-                const indicator = document.getElementById('speakingIndicator');
-                if (avatar) avatar.style.transform = 'scale(1.05)';
-                if (indicator) indicator.classList.add('active');
-            };
-            utterance.onend = utterance.onerror = () => {
-                const avatar = document.getElementById('callAvatar');
-                const indicator = document.getElementById('speakingIndicator');
-                if (avatar) avatar.style.transform = 'scale(1)';
-                if (indicator) indicator.classList.remove('active');
-            };
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate  = 0.95;
+                    utterance.pitch = 1.0;
+                    utterance.volume = 1.0;
 
-            try { speechSynthesis.speak(utterance); } catch (e) { console.error('David TTS error:', e); }
+                    // ── Voice priority ──
+                    // 1) Online (Natural) Neural voices  – best quality
+                    // 2) Online Neural voices             – good quality
+                    // 3) Any Christopher / Eric / Guy / Roger  – decent
+                    // 4) Local SAPI5 (Mark, David)         – last resort
+                    const voices = speechSynthesis.getVoices();
+                    const davidVoice =
+                        voices.find(v => v.name.includes('Christopher') && v.name.includes('Online (Natural)')) ||
+                        voices.find(v => v.name.includes('Eric')        && v.name.includes('Online (Natural)')) ||
+                        voices.find(v => v.name.includes('Guy')         && v.name.includes('Online (Natural)')) ||
+                        voices.find(v => v.name.includes('Roger')       && v.name.includes('Online (Natural)')) ||
+                        voices.find(v => v.name.includes('Christopher') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Eric')        && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Guy')         && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Roger')       && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Christopher')) ||
+                        voices.find(v => v.name.includes('Microsoft Guy')) ||
+                        voices.find(v => v.name.includes('Microsoft Mark')) ||
+                        voices.find(v => v.name.includes('Microsoft David')) ||
+                        voices.find(v => v.lang === 'en-US') ||
+                        voices[0];
+
+                    if (davidVoice) {
+                        utterance.voice = davidVoice;
+                        console.log(`[David TTS] using voice: ${davidVoice.name}`);
+                    }
+
+                    utterance.onstart = () => {
+                        const avatar = document.getElementById('callAvatar');
+                        const indicator = document.getElementById('speakingIndicator');
+                        if (avatar) avatar.style.transform = 'scale(1.05)';
+                        if (indicator) indicator.classList.add('active');
+                    };
+
+                    utterance.onend = () => {
+                        const avatar = document.getElementById('callAvatar');
+                        const indicator = document.getElementById('speakingIndicator');
+                        if (avatar) avatar.style.transform = 'scale(1)';
+                        if (indicator) indicator.classList.remove('active');
+                    };
+
+                    utterance.onerror = (e) => {
+                        console.warn(`[David TTS] error on attempt ${attempt}:`, e.error || e);
+                        const avatar = document.getElementById('callAvatar');
+                        const indicator = document.getElementById('speakingIndicator');
+                        if (avatar) avatar.style.transform = 'scale(1)';
+                        if (indicator) indicator.classList.remove('active');
+
+                        if (attempt < maxRetries) {
+                            const delay = attempt * 500; // 500, 1000, 1500 ms
+                            console.log(`[David TTS] retrying in ${delay}ms…`);
+                            // Reset engine again before retry
+                            try { speechSynthesis.cancel(); } catch(ex) {}
+                            try { speechSynthesis.resume(); } catch(ex) {}
+                            setTimeout(trySpeak, delay);
+                        } else {
+                            console.error('[David TTS] all retries exhausted');
+                        }
+                    };
+
+                    try { speechSynthesis.speak(utterance); } catch (ex) {
+                        console.error('[David TTS] speak() threw:', ex);
+                        if (attempt < maxRetries) {
+                            setTimeout(trySpeak, attempt * 500);
+                        }
+                    }
+                }
+
+                trySpeak();
+            }, 500);
         }
 
         function buildDavidGreeting() {
