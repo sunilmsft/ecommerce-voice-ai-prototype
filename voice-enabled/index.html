@@ -2363,6 +2363,8 @@
             100% { box-shadow: 0 2px 8px rgba(22, 163, 106, 0.1); }
         }
     </style>
+    <!-- Azure Speech SDK for David's Neural TTS (bypasses browser speechSynthesis exhaustion) -->
+    <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
 </head>
 <body>
     <!-- M365 Page Layout -->
@@ -2830,6 +2832,14 @@
         // - Content management system with regularly updated Microsoft 365 information
         // This prototype simulates those capabilities with pre-loaded knowledge base
         
+        // ── Azure Speech Services config for David's voice ──────────
+        // Set these to use Azure Neural TTS for David (bypasses browser TTS exhaustion).
+        // Get a free key at: https://portal.azure.com → Create "Speech" resource → Keys and Endpoint
+        // Or set via browser console: localStorage.setItem('azureSpeechKey', 'YOUR_KEY');
+        //                              localStorage.setItem('azureSpeechRegion', 'eastus');
+        const AZURE_SPEECH_KEY    = localStorage.getItem('azureSpeechKey')    || '';
+        const AZURE_SPEECH_REGION = localStorage.getItem('azureSpeechRegion') || 'eastus';
+
         let isHumanAgent = false;
         let conversation = [];
         let isMuted = false;
@@ -4624,35 +4634,81 @@
         }
 
         function speakAsDavid(text) {
-            // ── Strategy: try Neural once → fast local fallback ────────
-            // After the AI voice conversation, Edge's Neural TTS service is
-            // globally exhausted — ALL Online (Natural) voices return
-            // "synthesis-failed". Retries and iframes don't help because
-            // the exhaustion is at the OS/browser level.
-            //
-            // So: try Neural ONCE.  If it fails → immediately use local
-            // SAPI5 voice.  Robotic but reliable — David always speaks.
+            // ── Strategy: Azure Neural TTS → browser Neural → local SAPI5 ──
+            // After the AI voice conversation, the browser's Neural TTS pipeline
+            // is exhausted. Azure Speech Services (cloud TTS) is immune to this
+            // because it runs server-side. If no Azure key → try browser Neural
+            // once → fall back to local SAPI5.
             console.log('[David] Preparing to speak:', text.substring(0, 60) + '...');
 
-            // Clean slate
+            // Cancel any lingering browser speech
             try { speechSynthesis.cancel(); } catch(e) {}
             try { speechSynthesis.resume(); } catch(e) {}
 
-            // Short cooldown then attempt
-            setTimeout(() => {
-                const voices = speechSynthesis.getVoices();
-                if (voices.length === 0) {
-                    speechSynthesis.onvoiceschanged = () => davidTryNeural(text);
-                    return;
-                }
-                davidTryNeural(text);
-            }, 400);
+            if (AZURE_SPEECH_KEY && typeof SpeechSDK !== 'undefined') {
+                console.log('[David] Using Azure Speech Services (cloud Neural TTS)');
+                davidSpeakAzure(text);
+            } else {
+                if (!AZURE_SPEECH_KEY) console.log('[David] No Azure key — trying browser Neural');
+                if (typeof SpeechSDK === 'undefined') console.log('[David] Azure SDK not loaded — trying browser Neural');
+                // Short cooldown then attempt browser Neural
+                setTimeout(() => {
+                    const voices = speechSynthesis.getVoices();
+                    if (voices.length === 0) {
+                        speechSynthesis.onvoiceschanged = () => davidTryBrowserNeural(text);
+                        return;
+                    }
+                    davidTryBrowserNeural(text);
+                }, 400);
+            }
         }
 
-        function davidTryNeural(text) {
+        // ── Azure Speech Services TTS (cloud — immune to browser exhaustion) ──
+        function davidSpeakAzure(text) {
+            const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(AZURE_SPEECH_KEY, AZURE_SPEECH_REGION);
+            speechConfig.speechSynthesisVoiceName = 'en-US-AndrewMultilingualNeural';
+
+            // Use the default speaker output
+            const audioConfig = SpeechSDK.AudioConfig.fromDefaultSpeakerOutput();
+            const synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig);
+
+            // Use SSML for fine control over speaking style
+            const ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis"
+                xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="en-US">
+                <voice name="en-US-AndrewMultilingualNeural">
+                    <mstts:express-as style="friendly" styledegree="1.2">
+                        <prosody rate="-5%" pitch="+0%">
+                            ${text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+                        </prosody>
+                    </mstts:express-as>
+                </voice>
+            </speak>`;
+
+            davidAnimateStart();
+
+            synthesizer.speakSsmlAsync(ssml,
+                (result) => {
+                    if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
+                        console.log('[David] ✅ Azure Neural speech completed');
+                    } else {
+                        console.warn('[David] Azure TTS result:', result.reason, result.errorDetails);
+                    }
+                    davidAnimateStop();
+                    synthesizer.close();
+                },
+                (error) => {
+                    console.warn('[David] Azure TTS error:', error, '— falling back to local');
+                    davidAnimateStop();
+                    synthesizer.close();
+                    davidSpeakLocal(text);
+                }
+            );
+        }
+
+        // ── Browser Neural TTS (may be exhausted after AI conversation) ──
+        function davidTryBrowserNeural(text) {
             const voices = speechSynthesis.getVoices();
 
-            // Pick a Neural voice (Christopher preferred)
             const neuralVoice =
                 voices.find(v => v.name.includes('Christopher') && v.name.includes('Online') && v.name.includes('Natural')) ||
                 voices.find(v => v.name.includes('Eric')        && v.name.includes('Online') && v.name.includes('Natural')) ||
@@ -4661,44 +4717,40 @@
                 voices.find(v => v.name.includes('Eric')        && v.name.includes('Online'));
 
             if (!neuralVoice) {
-                console.log('[David] No Neural voice found — going straight to local');
+                console.log('[David] No browser Neural voice — going to local');
                 davidSpeakLocal(text);
                 return;
             }
 
-            console.log('[David] Trying Neural voice:', neuralVoice.name);
+            console.log('[David] Trying browser Neural:', neuralVoice.name);
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.voice  = neuralVoice;
             utterance.rate   = 0.95;
             utterance.pitch  = 1.0;
             utterance.volume = 1.0;
 
-            let started = false;
-
             utterance.onstart = () => {
-                started = true;
-                console.log('[David] ✅ Neural speech started');
+                console.log('[David] ✅ Browser Neural speech started');
                 davidAnimateStart();
             };
             utterance.onend = () => {
-                console.log('[David] Neural speech ended');
+                console.log('[David] Browser Neural speech ended');
                 davidAnimateStop();
             };
             utterance.onerror = (e) => {
-                console.warn('[David] Neural failed:', e.error, '— switching to local voice');
+                console.warn('[David] Browser Neural failed:', e.error, '— local fallback');
                 davidAnimateStop();
-                // Immediately fall back — no retry
                 davidSpeakLocal(text);
             };
 
             try {
                 speechSynthesis.speak(utterance);
             } catch(e) {
-                console.warn('[David] Neural speak() threw — local fallback');
                 davidSpeakLocal(text);
             }
         }
 
+        // ── Local SAPI5 fallback (robotic but always works) ──
         function davidSpeakLocal(text) {
             console.log('[David] Using local SAPI5 voice');
             try { speechSynthesis.cancel(); } catch(e) {}
