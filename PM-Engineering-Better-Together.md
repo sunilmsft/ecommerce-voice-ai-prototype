@@ -4,9 +4,9 @@
 
 With PMs now equipped with GitHub Copilot (GHCP) and VS Code, the traditional boundary between "PM defines" and "Engineering builds" is shifting. PMs can go further than specs and mockups — they can produce **functional artifacts** that engineering builds *from*, not *after*.
 
-This creates a real opportunity to ship faster, but only if we draw clear lines. Without them, we get the worst of both worlds: PMs doing engineering work poorly, and engineers re-doing PM work they didn't know existed.
+This creates a real opportunity to ship faster — especially when both sides have a shared understanding of where each role adds the most value. When PMs and Engineering are aligned on who does what, the overlap shrinks and the momentum compounds.
 
-This document proposes a **handshake model** that eliminates that overlap.
+This document proposes a **handshake model** that makes that collaboration intentional.
 
 ---
 
@@ -38,10 +38,10 @@ The goal is to move the handshake point **downstream** — closer to buildable �
 | Deliverable | What It Looks Like | Why It Matters |
 |-------------|-------------------|----------------|
 | **Functional Prototype** | Working HTML/JS prototype that demonstrates the experience end-to-end | Engineering sees the *actual* experience, not a description of one |
-| **Conversation/Flow Scripts** | Real scripted interactions with branching logic, edge cases, error states | Eliminates "what happens when…?" back-and-forth |
+| **Conversation/Flow Scripts** | Real scripted interactions with branching logic, edge cases, error states | Gives engineering a clear picture of every path upfront |
 | **Design Specs as Code** | CSS values, component structure, responsive behavior — in the prototype itself | Engineers extract values directly instead of translating a Figma file |
 | **User Flow Diagrams** | Mermaid or equivalent diagrams showing decision trees and state transitions | Engineers see the architecture before writing a line of code |
-| **Demo-Ready Scenario** | A prototype that can be shown to stakeholders *before* engineering starts | Validates direction early; kills bad ideas before they consume sprint cycles |
+| **Demo-Ready Scenario** | A prototype that can be shown to stakeholders *before* engineering starts | Validates direction early so engineering starts with confidence |
 
 ### The Handshake Moment
 
@@ -65,19 +65,17 @@ The handshake is not a meeting. It's a **pull request** or a **repo link** with 
 | **Testing & CI/CD** | Unit tests, integration tests, deployment pipelines |
 | **Tech Debt & Maintainability** | Code quality, documentation, monitoring |
 
-### What Engineering Should NOT Do
+### Where Each Role Adds the Most Value
 
-- ❌ Re-discover product requirements from scratch
-- ❌ Redesign the UX that was already validated in the prototype
-- ❌ Build a competing prototype to "explore the space"
-- ❌ Wait for a spec doc when a working prototype exists
+When both sides lean into their strengths, the work moves faster and the quality goes up.
 
-### What PMs Should NOT Do
-
-- ❌ Write production-quality code or attempt to deploy to production
-- ❌ Make architectural decisions (database choices, service boundaries, auth patterns)
-- ❌ Optimize for performance or scale in the prototype
-- ❌ Block engineering from improving the UX based on technical constraints
+| PM's Sweet Spot | Engineering's Sweet Spot |
+|----------------|------------------------|
+| Defining the customer experience and validating it in a prototype | Translating that experience into production-grade architecture |
+| Scripting conversation flows, edge cases, and branching logic | Building the NLU, APIs, and services that make it real |
+| Embedding design specs (CSS, layout, responsive behavior) in the prototype | Lifting those specs into the production component library |
+| Getting stakeholder sign-off before engineering ramps | Making architecture and infrastructure decisions |
+| Flagging open questions and known limitations | Solving for performance, scale, and security |
 
 ---
 
@@ -94,7 +92,7 @@ Here are concrete examples of what a PM prototype defines — and what engineeri
 
 **What PM delivers:** "The experience is two clicks to voice. Here's the working prototype — try it. The icon is always visible in the bottom-right. It works from any page state."
 
-**What engineering builds:** The production implementation of that same two-click path — real audio capture, real speech-to-text, real routing — but they're not debating *whether* it should be two clicks or where the icon goes. That's settled.
+**What engineering builds:** The production implementation of that same two-click path — real audio capture, real speech-to-text, real routing — with the experience already validated, so the team can focus entirely on making it production-ready.
 
 ### Example 2: Cross-Surface Consistency — "The experience should feel the same everywhere"
 
@@ -122,7 +120,7 @@ A customer who starts in **chat** and switches to **voice** should have the same
 
 **What PM delivers:** The validated conversation tree — every question, every branch, every response — as working code in the prototype. Not a flowchart. Not a table of intents. A playable conversation.
 
-**What engineering builds:** The NLU pipeline, intent classification, and dynamic response generation that makes this work with *real* customer input instead of scripted responses. But they're building toward a known-good experience, not inventing the conversation design from scratch.
+**What engineering builds:** The NLU pipeline, intent classification, and dynamic response generation that makes this work with *real* customer input instead of scripted responses. They're building toward a known-good experience — the conversation design is already there to build on.
 
 ### Example 4: Quoting Experience — "Generate a quote without friction"
 
@@ -148,7 +146,7 @@ These aren't edge cases — they're the *core* of what customers experience. And
 | "The voice agent should feel natural" | You can *listen* to the pacing of three discovery questions and judge whether it sounds like a conversation or an interrogation |
 | "Consistent across modalities" | You can *switch* from chat to voice to human specialist and verify the experience yourself |
 
-**The prototype makes the abstract concrete.** That's what eliminates the back-and-forth between PM and Engineering — and that's what ships faster.
+**The prototype makes the abstract concrete.** That's what keeps PM and Engineering aligned from the start — and that's what ships faster.
 
 ---
 
@@ -161,7 +159,7 @@ These aren't edge cases — they're the *core* of what customers experience. And
 
 The speed gain comes from three places:
 
-1. **Eliminating interpretation gaps** — Engineers see the experience, they don't read about it
+1. **Shared understanding from day one** — Engineers see the experience, they don't read about it
 2. **Front-loading validation** — Stakeholders react to something real before engineering starts
 3. **Reusable artifacts** — CSS, flow logic, and UI patterns transfer directly from prototype to production
 
@@ -183,24 +181,24 @@ For this to work at scale, every PM–Engineering handshake should include the s
 □ Open questions for engineering flagged explicitly
 ```
 
-If a PM can check these boxes, engineering has everything they need to start building — no ambiguity, no ramp-up time, no "let me set up a meeting to walk you through the vision."
+When these boxes are checked, the team has a shared starting point — engineering can ramp quickly, and both sides are working from the same source of truth.
 
 ---
 
-## What Leadership Should Reinforce
+## How Leadership Can Set This Up for Success
 
-1. **PMs should be measured on prototype quality, not spec length.** A 50-page PRD that nobody reads is less valuable than a working prototype that everyone can interact with.
+1. **Value prototype quality alongside spec quality.** A working prototype that everyone can interact with often communicates more than a lengthy document — and the two can complement each other.
 
-2. **Engineering should treat PM prototypes as the source of truth for *intent*.** Not for architecture, not for code quality — but for "what are we building and why."
+2. **Encourage engineering to build on the PM's prototype as the starting point for *intent*.** Not for architecture, not for code quality — but for "what are we building and why."
 
-3. **The handshake is a repo, not a meeting.** If it can't be cloned and run, it's not ready for the handshake.
+3. **Make the handshake a shared artifact.** A repo with a working demo gives both sides a common reference point — something you can point to, run, and iterate on together.
 
-4. **Invest in PM fluency with GHCP and VS Code.** The ROI is not "PMs who can code" — it's "PMs who can ship validated proof before engineering writes line one."
+4. **Invest in PM fluency with GHCP and VS Code.** The ROI is not "PMs who can code" — it's PMs who can express product vision in a form that engineering can build on immediately.
 
-5. **Protect the boundary.** PMs go further downstream, but they stop at the prototype. Engineers start from the prototype, but they don't re-litigate product decisions. The line is clear: **PMs own the *what and why*. Engineering owns the *how*.** GHCP just lets PMs express the *what* in a form that's closer to the *how*.
+5. **Celebrate the overlap, clarify the lanes.** PMs go further downstream with GHCP, and that's a good thing. Engineering builds on that foundation and takes it to production. Both sides benefit: **PMs own the *what and why*. Engineering owns the *how*.** The handshake is where those meet.
 
 ---
 
 ## One-Line Summary
 
-> Give engineering a working demo to build from — not a document to interpret. That's how you ship faster.
+> When PM and Engineering start from the same working demo, alignment is built in — and that's how you ship faster.
