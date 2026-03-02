@@ -81,6 +81,77 @@ The handoff is not a meeting. It's a **pull request** or a **repo link** with a 
 
 ---
 
+## What This Looks Like in Practice
+
+Here are concrete examples of what a PM prototype defines — and what engineering takes from there.
+
+### Example 1: Click-to-Value — "How many clicks to get help?"
+
+**PM defines in the prototype:**
+- Customer lands on the eCommerce page → clicks the voice icon → is speaking with the AI agent. **Two clicks.**
+- PM builds this in the prototype and validates: is two clicks the right number? Should the voice icon be persistent or contextual? What happens if the customer clicks it mid-checkout vs. from the homepage?
+- The prototype *answers* these questions because stakeholders can click through it themselves.
+
+**What PM hands off:** "The experience is two clicks to voice. Here's the working prototype — try it. The icon is always visible in the bottom-right. It works from any page state."
+
+**What engineering builds:** The production implementation of that same two-click path — real audio capture, real speech-to-text, real routing — but they're not debating *whether* it should be two clicks or where the icon goes. That's settled.
+
+### Example 2: Cross-Surface Consistency — "Handoff should feel the same everywhere"
+
+**The problem PMs solve in the prototype:**
+A customer who starts in **chat** and switches to **voice** should have the same handoff warmth as a customer who started in **voice** from the beginning. And when either of them gets transferred to a **human specialist**, that transition should feel seamless — not like starting over.
+
+**PM defines in the prototype:**
+- Chat → Voice: *"I can see you've been chatting about Microsoft 365 plans for your agency — let me pick up right where you left off."* Customer never repeats themselves.
+- Voice → Human specialist: *"I'm transferring you now. They'll have the full context of our conversation."* No hold music, no queue theater — just a warm introduction.
+- After-hours → Callback: *"Once you disconnect, I'll bring up the callback form so you can choose a time."* The form is pre-populated with everything from the conversation.
+
+**What PM hands off:** Three working flows that demonstrate the *exact words*, *exact transitions*, and *exact UI state changes* for every modality switch. Engineering doesn't have to guess what "seamless" means — they can see it, hear it, click through it.
+
+**What engineering builds:** The real-time context passing (conversation state, customer profile, quote data) that makes those transitions actually work at scale. The PM showed *what* seamless looks like; engineering makes it *real*.
+
+### Example 3: Interaction Depth — "The AI should ask follow-up questions, not just answer"
+
+**PM defines in the prototype:**
+- Instead of jumping straight to a plan recommendation, the AI asks three discovery questions:
+  1. *"Are your teams mostly in-office, fully remote, or hybrid?"*
+  2. *"Are devices mostly company-managed, or do people also use personal devices?"*
+  3. *"What decision timeline are you working toward?"*
+- Only after those three responses does the AI make a tailored recommendation.
+- PM scripts the actual dialogue, with different customer responses, and builds all of it into the prototype so stakeholders can hear the pacing and judge whether it feels natural or robotic.
+
+**What PM hands off:** The validated conversation tree — every question, every branch, every response — as working code in the prototype. Not a flowchart. Not a table of intents. A playable conversation.
+
+**What engineering builds:** The NLU pipeline, intent classification, and dynamic response generation that makes this work with *real* customer input instead of scripted responses. But they're building toward a known-good experience, not inventing the conversation design from scratch.
+
+### Example 4: Quoting Experience — "Generate a quote without friction"
+
+**PM defines in the prototype:**
+- Three quoting scenarios built and testable:
+  - **Happy path:** Customer shares email → quote generated → sent instantly → *"It's in your inbox, valid for 30 days."*
+  - **Email later:** Customer declines to share email → quote is staged → *"We'll send it along when you share your email on the callback form."*
+  - **No quote:** Customer skips quoting entirely → conversation continues without friction.
+- PM validates that in *every* scenario, the customer is never more than **one question away** from moving forward. No forms, no redirects, no "let me transfer you to someone who can do that."
+
+**What PM hands off:** Three working quoting flows with the exact UX for each. Engineering can see that the quote generation feels instant (no loading spinner, no wait state), that the email prompt is a single conversational question (not a form field), and that declining is genuinely friction-free.
+
+**What engineering builds:** The actual QuoteX API integration, email delivery pipeline, and quote persistence layer. But the *experience contract* is locked: one question to generate, instant confirmation, no dead ends.
+
+### Why Examples Matter
+
+These aren't edge cases — they're the *core* of what customers experience. And they're exactly the kind of details that get lost in a spec document:
+
+| In a Spec | In a Prototype |
+|-----------|---------------|
+| "The handoff should be seamless" | You can *hear* the AI say "They'll have full context" and watch the specialist appear with the conversation summary |
+| "The quoting flow should be simple" | You can *click through* three scenarios and count the interactions: one question, one confirmation, done |
+| "The voice agent should feel natural" | You can *listen* to the pacing of three discovery questions and judge whether it sounds like a conversation or an interrogation |
+| "Consistent across modalities" | You can *switch* from chat to voice to human handoff and verify the experience yourself |
+
+**The prototype makes the abstract concrete.** That's what eliminates the back-and-forth between PM and Engineering — and that's what ships faster.
+
+---
+
 ## Why This Ships Faster
 
 | Traditional Flow | Prototype-Forward Flow |
