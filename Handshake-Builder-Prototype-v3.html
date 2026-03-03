@@ -337,6 +337,71 @@
             </div>
             <div class="landing-subtitle">Your prototype-to-engineering handshake portfolio. Track what you've shared and what's in progress.</div>
 
+            <!-- PM KPI Definitions Toggle -->
+            <div style="margin:8px 0 16px;">
+                <button onclick="togglePmKpiDefs()" id="pmKpiDefsToggle" style="background:none;border:1px solid #e1e1e1;border-radius:8px;padding:7px 16px;font-size:13px;color:#0078d4;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:600;transition:all 0.2s;"
+                    onmouseover="this.style.background='#f0f6fc';this.style.borderColor='#0078d4';" onmouseout="if(!this.dataset.open){this.style.background='none';this.style.borderColor='#e1e1e1';}">
+                    <span style="font-size:14px;">ℹ️</span> How we measure
+                </button>
+            </div>
+            <div id="pmKpiDefsPanel" style="display:none;background:white;border:1px solid #e1e1e1;border-radius:14px;padding:24px 28px;margin-bottom:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                    <div style="font-size:16px;font-weight:700;color:#323130;">📏 Your pipeline &amp; what we're tracking</div>
+                    <button onclick="togglePmKpiDefs()" style="background:none;border:none;font-size:18px;color:#a0a0a0;cursor:pointer;padding:4px 8px;" title="Close">✕</button>
+                </div>
+                <!-- Same 5-stage pipeline as Leadership -->
+                <div style="display:flex;align-items:center;gap:0;margin-bottom:20px;background:#faf9f8;border-radius:10px;padding:16px 20px;overflow-x:auto;">
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">💡</div>
+                        <div style="font-size:12px;font-weight:700;color:#323130;">Kickoff</div>
+                        <div style="font-size:10px;color:#8a8886;">Idea starts</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">🛠️</div>
+                        <div style="font-size:12px;font-weight:700;color:#0078d4;">Prototype</div>
+                        <div style="font-size:10px;color:#8a8886;">Build & demo</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">✅</div>
+                        <div style="font-size:12px;font-weight:700;color:#107c10;">Validation</div>
+                        <div style="font-size:10px;color:#8a8886;">Stakeholder sign-off</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">🤝</div>
+                        <div style="font-size:12px;font-weight:700;color:#ff8c00;">Handshake</div>
+                        <div style="font-size:10px;color:#8a8886;">Eng handoff</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">🚀</div>
+                        <div style="font-size:12px;font-weight:700;color:#5b2d90;">Production</div>
+                        <div style="font-size:10px;color:#8a8886;">Live & shipped</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div style="background:#f0f6fc;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#0078d4;margin-bottom:4px;">Total Handshakes</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">All features you've created handshakes for — drafts, in development, and shipped. This is your full portfolio view. Click to see the breakdown by stage.</div>
+                    </div>
+                    <div style="background:#f0fdf4;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#107c10;margin-bottom:4px;">In Active Dev</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">Features where engineering has picked up your handshake and is actively building. This is a subset of your total. The higher this number vs. drafts, the better your conversion rate.</div>
+                    </div>
+                    <div style="background:#fff8f0;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#ff8c00;margin-bottom:4px;">Avg. Handshake → Dev</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">How many days from publishing your handshake to engineering starting work. Measures how quickly your prototypes convert to dev commitments. Lower = engineering is picking up your work faster.</div>
+                    </div>
+                    <div style="background:#f5f0ff;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#5b2d90;margin-bottom:4px;">Shipped 🎉</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">Features that completed the full journey: prototype → handshake → engineering → production. The ultimate measure of your PM impact — how many ideas became real products.</div>
+                    </div>
+                </div>
+                <div style="margin-top:14px;font-size:12px;color:#8a8886;line-height:1.6;"><strong>How it all connects:</strong> Total = Drafts + In Dev + Shipped. Each handshake flows through the pipeline above. Your velocity metric shows how fast engineering picks up your work. Track these to demonstrate PM impact and optimize your handshake quality.</div>
+            </div>
+
             <div class="stats-row" id="pmStats">
                 <div class="stat-card" onclick="toggleDrill('pm-total')" id="statCardTotal">
                     <div class="stat-value" style="color:#0078d4;" id="statTotalVal">5</div>
@@ -1706,6 +1771,22 @@ function toggleAreaCard(el) {
     if (expandIcon) expandIcon.textContent = wasExpanded ? '▶' : '▼';
     var tab = el.querySelector('.area-expand-tab');
     if (tab) tab.title = wasExpanded ? 'Click to expand' : 'Click to collapse';
+}
+
+function togglePmKpiDefs() {
+    var panel = document.getElementById('pmKpiDefsPanel');
+    var btn = document.getElementById('pmKpiDefsToggle');
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        btn.style.background = '#f0f6fc';
+        btn.style.borderColor = '#0078d4';
+        btn.dataset.open = '1';
+    } else {
+        panel.style.display = 'none';
+        btn.style.background = 'none';
+        btn.style.borderColor = '#e1e1e1';
+        btn.dataset.open = '';
+    }
 }
 
 function toggleKpiDefs() {
