@@ -778,7 +778,7 @@
                 <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div class="check-text">Conversation/flow scripts</div></div>
                 <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div class="check-text">Design specs or style guide</div></div>
             </div>
-            <div class="form-actions"><button class="btn-secondary" onclick="nextStep(2)">← Back</button><button class="btn-primary" onclick="nextStep(4)">Next: Publish →</button></div>
+            <div class="form-actions"><button class="btn-secondary" onclick="nextStep(2)">← Back</button><button class="btn-primary" onclick="nextStep(4)">Publish to ADO →</button></div>
         </div>
 
         <!-- STEP 4 -->
@@ -2270,7 +2270,8 @@ function publishToAdo() {
 }
 
 function openInAdo() {
-    var id = publishedWorkItemId || 13928100;
+    // Open the parent feature work item (real ADO item), not the simulated new ID
+    var id = selectedAdoItem ? selectedAdoItem.id : (publishedWorkItemId || 13928100);
     window.open(ADO_BASE + id, '_blank');
 }
 
