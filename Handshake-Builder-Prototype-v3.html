@@ -1084,8 +1084,8 @@ var mockAdoItems = [
 // Handshake data (for landing page) — uses real ADO work items from Project Vox
 var handshakeData = [
     // ── Sunil's handshakes (real features from ADO Scenario #13927662) ──
-    { name: 'Voice Agent Service × Voice Live API', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506378', adoState: 'closed', date: 'Feb 17, 2026', owner: 'Qiang Pei', ownerInitials: 'QP', parentId: '#13927662', milestone: 6, area: 'Digital Sales / Voice Agent', devStart: 'Feb 28, 2026', shipDate: 'Mar 1, 2026' },
-    { name: 'EOS Call Script & Workflow', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506380', adoState: 'new', date: 'Feb 28, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', devStart: 'Mar 2, 2026' },
+    { name: 'Voice Agent Service × Voice Live API', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506378', adoState: 'closed', date: 'Feb 17, 2026', owner: 'Qiang Pei', ownerInitials: 'QP', parentId: '#13927662', milestone: 6, area: 'Digital Sales / Voice Agent', devStart: 'Feb 21, 2026', shipDate: 'Mar 2, 2026' },
+    { name: 'EOS Call Script & Workflow', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506380', adoState: 'new', date: 'Feb 28, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', devStart: 'Mar 1, 2026' },
     { name: 'Consent Validation & Time Zone Queuing', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 6, adoId: '#15506373', adoState: 'new', date: 'Mar 1, 2026', owner: 'Phaneendra Jayanty', ownerInitials: 'PJ', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', devStart: 'Mar 3, 2026' },
     { name: 'Configurable Tools for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 4, adoId: '#15506381', adoState: 'new', date: 'Mar 2, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 2, area: 'Digital Sales / Voice Agent' },
     { name: 'Operational Dashboard for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 3, adoId: '#15506383', adoState: 'new', date: 'Mar 3, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 1, area: 'Digital Sales / Voice Agent' },
@@ -1286,21 +1286,21 @@ function populateDrill(id) {
 
         html += '<div style="background:linear-gradient(135deg,#1e2028 0%,#2a2d38 100%);border-radius:14px;padding:20px 24px;margin-bottom:20px;color:white;">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">';
-        html += '<div style="font-size:14px;font-weight:600;">📐 My E2E Pipeline Velocity</div>';
+        html += '<div style="font-size:14px;font-weight:600;">📐 My E2E: Handshake → Production</div>';
         html += '<div style="font-size:12px;color:#a0a0a0;">Based on ' + pmVelocity.length + ' features with dev data</div></div>';
         html += '<div style="display:flex;gap:4px;margin-bottom:10px;">';
         var pPct = totalE2E > 0 ? Math.round((avgPubToDev / (avgPubToDev + (shipCount > 0 ? avgDevToShip : avgPubToDev))) * 100) : 50;
         html += '<div style="flex:' + pPct + ';background:#0078d4;border-radius:10px 0 0 10px;padding:10px 16px;text-align:center;">';
         html += '<div style="font-size:18px;font-weight:700;">' + avgPubToDev + 'd</div>';
-        html += '<div style="font-size:10px;opacity:0.85;">Publish → Dev</div></div>';
+        html += '<div style="font-size:10px;opacity:0.85;">Handshake → Dev Start</div></div>';
         if (shipCount > 0) {
             html += '<div style="flex:' + (100 - pPct) + ';background:#107c10;border-radius:0 10px 10px 0;padding:10px 16px;text-align:center;">';
             html += '<div style="font-size:18px;font-weight:700;">' + avgDevToShip + 'd</div>';
-            html += '<div style="font-size:10px;opacity:0.85;">Dev → Shipped</div></div>';
+            html += '<div style="font-size:10px;opacity:0.85;">Dev → Production</div></div>';
         } else {
             html += '<div style="flex:' + (100 - pPct) + ';background:#3a3d48;border-radius:0 10px 10px 0;padding:10px 16px;text-align:center;">';
             html += '<div style="font-size:18px;font-weight:700;">—</div>';
-            html += '<div style="font-size:10px;opacity:0.85;">Dev → Ship (pending)</div></div>';
+            html += '<div style="font-size:10px;opacity:0.85;">Dev → Production (in progress)</div></div>';
         }
         html += '</div>';
         if (shipCount > 0) html += '<div style="font-size:11px;color:#a0a0a0;text-align:center;">Total E2E: <strong style="color:white;">' + totalE2E + ' days</strong> avg</div>';
