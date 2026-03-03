@@ -391,16 +391,19 @@
                         <div style="font-size:13px;color:#323130;line-height:1.6;">Features where engineering has picked up your handshake and is actively building. This is a subset of your total. The higher this number vs. drafts, the better your conversion rate.</div>
                     </div>
                     <div style="background:#fff8f0;border-radius:10px;padding:14px 16px;">
-                        <div style="font-weight:700;color:#ff8c00;margin-bottom:4px;">Avg. Handshake → Dev</div>
-                        <div style="font-size:13px;color:#323130;line-height:1.6;">How many days from publishing your handshake to engineering starting work. Measures how quickly your prototypes convert to dev commitments. Lower = engineering is picking up your work faster.</div>
+                        <div style="font-weight:700;color:#ff8c00;margin-bottom:4px;">Avg. Kickoff → Prototype</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">How many days from idea kickoff to having a working prototype ready. This is <em>your</em> speed metric — the faster you build a quality prototype, the faster you can get stakeholder sign-off and hand off to engineering.</div>
                     </div>
                     <div style="background:#f5f0ff;border-radius:10px;padding:14px 16px;">
                         <div style="font-weight:700;color:#5b2d90;margin-bottom:4px;">Shipped 🎉</div>
                         <div style="font-size:13px;color:#323130;line-height:1.6;">Features that completed the full journey: prototype → handshake → engineering → production. The ultimate measure of your PM impact — how many ideas became real products.</div>
                     </div>
                 </div>
-                <div style="margin-top:14px;font-size:12px;color:#8a8886;line-height:1.6;"><strong>How it all connects:</strong> Total = Drafts + In Dev + Shipped. Each handshake flows through the pipeline above. Your velocity metric shows how fast engineering picks up your work. Track these to demonstrate PM impact and optimize your handshake quality.</div>
+                <div style="margin-top:14px;font-size:12px;color:#8a8886;line-height:1.6;"><strong>How it all connects:</strong> Total = Drafts + In Dev + Shipped. Each handshake flows through the pipeline above. Your velocity metrics show how fast you move through each stage. Track these to demonstrate PM impact and optimize your handshake quality.</div>
             </div>
+
+            <!-- PM E2E Pipeline Banner (populated by renderPmStats) -->
+            <div id="pmE2eBanner"></div>
 
             <div class="stats-row" id="pmStats">
                 <div class="stat-card" onclick="toggleDrill('pm-total')" id="statCardTotal">
@@ -417,9 +420,9 @@
                 </div>
                 <div class="stat-card" onclick="toggleDrill('pm-velocity')" id="statCardVelocity">
                     <div class="stat-value" style="color:#ff8c00;" id="statVelocityVal">—</div>
-                    <div class="stat-label">Avg. Handshake → Dev</div>
+                    <div class="stat-label">Avg. Kickoff → Proto</div>
                     <div class="stat-sub" id="statVelocitySub">Loading...</div>
-                    <div class="stat-expand-hint">Click to see timeline →</div>
+                    <div class="stat-expand-hint">Click to see full pipeline →</div>
                 </div>
                 <div class="stat-card" onclick="toggleDrill('pm-shipped')" id="statCardShipped">
                     <div class="stat-value" style="color:#5b2d90;" id="statShippedVal">—</div>
@@ -1084,11 +1087,11 @@ var mockAdoItems = [
 // Handshake data (for landing page) — uses real ADO work items from Project Vox
 var handshakeData = [
     // ── Sunil's handshakes (real features from ADO Scenario #13927662) ──
-    { name: 'Voice Agent Service × Voice Live API', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506378', adoState: 'closed', date: 'Feb 17, 2026', owner: 'Qiang Pei', ownerInitials: 'QP', parentId: '#13927662', milestone: 6, area: 'Digital Sales / Voice Agent', devStart: 'Feb 21, 2026', shipDate: 'Mar 2, 2026' },
-    { name: 'EOS Call Script & Workflow', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506380', adoState: 'new', date: 'Feb 28, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', devStart: 'Mar 1, 2026' },
-    { name: 'Consent Validation & Time Zone Queuing', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 6, adoId: '#15506373', adoState: 'new', date: 'Mar 1, 2026', owner: 'Phaneendra Jayanty', ownerInitials: 'PJ', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', devStart: 'Mar 3, 2026' },
-    { name: 'Configurable Tools for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 4, adoId: '#15506381', adoState: 'new', date: 'Mar 2, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 2, area: 'Digital Sales / Voice Agent' },
-    { name: 'Operational Dashboard for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 3, adoId: '#15506383', adoState: 'new', date: 'Mar 3, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 1, area: 'Digital Sales / Voice Agent' },
+    { name: 'Voice Agent Service × Voice Live API', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506378', adoState: 'closed', date: 'Feb 17, 2026', owner: 'Qiang Pei', ownerInitials: 'QP', parentId: '#13927662', milestone: 6, area: 'Digital Sales / Voice Agent', kickoffDate: 'Jan 27, 2026', protoDate: 'Feb 5, 2026', devStart: 'Feb 21, 2026', shipDate: 'Mar 2, 2026' },
+    { name: 'EOS Call Script & Workflow', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506380', adoState: 'new', date: 'Feb 28, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 12, 2026', protoDate: 'Feb 19, 2026', devStart: 'Mar 1, 2026' },
+    { name: 'Consent Validation & Time Zone Queuing', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 6, adoId: '#15506373', adoState: 'new', date: 'Mar 1, 2026', owner: 'Phaneendra Jayanty', ownerInitials: 'PJ', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 17, 2026', protoDate: 'Feb 24, 2026', devStart: 'Mar 3, 2026' },
+    { name: 'Configurable Tools for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 4, adoId: '#15506381', adoState: 'new', date: 'Mar 2, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 2, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 24, 2026' },
+    { name: 'Operational Dashboard for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 3, adoId: '#15506383', adoState: 'new', date: 'Mar 3, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 1, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 28, 2026' },
     // ── Team handshakes (other features under the same Scenario) ──
     { name: 'CCAPI SDK Integration', pm: 'Team', pmInitials: 'T', pmColor: '#5b2d90', status: 'published', score: 7, adoId: '#15506379', adoState: 'new', date: 'Feb 15, 2026', owner: 'Sathish Lenin', ownerInitials: 'SL', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent' },
     { name: 'Live Transcripts & Call Recordings', pm: 'Team', pmInitials: 'T', pmColor: '#5b2d90', status: 'published', score: 7, adoId: '#15506382', adoState: 'new', date: 'Feb 20, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 3, area: 'Digital Sales / Voice Agent' },
@@ -1268,42 +1271,40 @@ function populateDrill(id) {
         html += '<div style="font-size:28px;font-weight:700;color:#107c10;">' + shipped.length + '</div>';
         html += '<div style="font-size:12px;font-weight:600;color:#107c10;">🎉 Shipped</div></div>';
         html += '</div>';
-        // Mini E2E Pipeline for PM's own features
-        var pmVelocity = [];
-        myItems.forEach(function(h) {
-            if (h.devStart) {
-                var pub = new Date(h.date); var dev = new Date(h.devStart);
-                var pubToDev = Math.round((dev - pub) / (1000*60*60*24));
-                var devToShip = h.shipDate ? Math.round((new Date(h.shipDate) - dev) / (1000*60*60*24)) : null;
-                pmVelocity.push({ name: h.name, pubToDev: pubToDev, devToShip: devToShip });
-            }
-        });
-        var avgPubToDev = 0, avgDevToShip = 0, shipCount = 0;
-        pmVelocity.forEach(function(v) { avgPubToDev += v.pubToDev; if (v.devToShip !== null) { avgDevToShip += v.devToShip; shipCount++; } });
-        if (pmVelocity.length > 0) avgPubToDev = Math.round(avgPubToDev / pmVelocity.length);
-        if (shipCount > 0) avgDevToShip = Math.round(avgDevToShip / shipCount);
-        var totalE2E = avgPubToDev + (shipCount > 0 ? avgDevToShip : 0);
+        // Mini E2E Pipeline for PM's own features — all 3 stages matching Leadership
+        var kpItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
+        var phItems = myItems.filter(function(h) { return h.protoDate && h.date && h.status === 'published'; });
+        var hpItems = myItems.filter(function(h) { return h.shipDate; });
+        var avgKP = 0, avgPH = 0, avgHP = 0;
+        if (kpItems.length > 0) { var s = 0; kpItems.forEach(function(h) { s += Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000); }); avgKP = Math.round(s / kpItems.length); }
+        if (phItems.length > 0) { var s = 0; phItems.forEach(function(h) { s += Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000); }); avgPH = Math.round(s / phItems.length); }
+        if (hpItems.length > 0) { var s = 0; hpItems.forEach(function(h) { s += Math.round((new Date(h.shipDate) - new Date(h.date)) / 86400000); }); avgHP = Math.round(s / hpItems.length); }
+        var dataCount = Math.max(kpItems.length, phItems.length, hpItems.length);
+        var totalE2E = avgKP + avgPH + (hpItems.length > 0 ? avgHP : 0);
 
         html += '<div style="background:linear-gradient(135deg,#1e2028 0%,#2a2d38 100%);border-radius:14px;padding:20px 24px;margin-bottom:20px;color:white;">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">';
-        html += '<div style="font-size:14px;font-weight:600;">📐 My E2E: Handshake → Production</div>';
-        html += '<div style="font-size:12px;color:#a0a0a0;">Based on ' + pmVelocity.length + ' features with dev data</div></div>';
-        html += '<div style="display:flex;gap:4px;margin-bottom:10px;">';
-        var pPct = totalE2E > 0 ? Math.round((avgPubToDev / (avgPubToDev + (shipCount > 0 ? avgDevToShip : avgPubToDev))) * 100) : 50;
-        html += '<div style="flex:' + pPct + ';background:#0078d4;border-radius:10px 0 0 10px;padding:10px 16px;text-align:center;">';
-        html += '<div style="font-size:18px;font-weight:700;">' + avgPubToDev + 'd</div>';
-        html += '<div style="font-size:10px;opacity:0.85;">Handshake → Dev Start</div></div>';
-        if (shipCount > 0) {
-            html += '<div style="flex:' + (100 - pPct) + ';background:#107c10;border-radius:0 10px 10px 0;padding:10px 16px;text-align:center;">';
-            html += '<div style="font-size:18px;font-weight:700;">' + avgDevToShip + 'd</div>';
-            html += '<div style="font-size:10px;opacity:0.85;">Dev → Production</div></div>';
+        html += '<div style="font-size:14px;font-weight:600;">📐 My E2E: Kickoff → Production</div>';
+        html += '<div style="font-size:12px;color:#a0a0a0;">Based on ' + dataCount + ' features with milestone data</div></div>';
+        html += '<div style="display:flex;gap:0;margin-bottom:10px;">';
+        var kpFlex = Math.max(avgKP, 2), phFlex = Math.max(avgPH, 2), hpFlex = hpItems.length > 0 ? Math.max(avgHP, 2) : 3;
+        html += '<div style="flex:' + kpFlex + ';background:#0078d4;border-radius:10px 0 0 10px;padding:10px 12px;text-align:center;border-right:2px solid #1e2028;">';
+        html += '<div style="font-size:18px;font-weight:700;">' + avgKP + 'd</div>';
+        html += '<div style="font-size:10px;opacity:0.85;">Kickoff → Proto</div></div>';
+        html += '<div style="flex:' + phFlex + ';background:#107c10;padding:10px 12px;text-align:center;border-right:2px solid #1e2028;">';
+        html += '<div style="font-size:18px;font-weight:700;">' + avgPH + 'd</div>';
+        html += '<div style="font-size:10px;opacity:0.85;">Proto → Handshake</div></div>';
+        if (hpItems.length > 0) {
+            html += '<div style="flex:' + hpFlex + ';background:#8661c5;border-radius:0 10px 10px 0;padding:10px 12px;text-align:center;">';
+            html += '<div style="font-size:18px;font-weight:700;">' + avgHP + 'd</div>';
+            html += '<div style="font-size:10px;opacity:0.85;">Handshake → Prod</div></div>';
         } else {
-            html += '<div style="flex:' + (100 - pPct) + ';background:#3a3d48;border-radius:0 10px 10px 0;padding:10px 16px;text-align:center;">';
+            html += '<div style="flex:' + hpFlex + ';background:#3a3d48;border-radius:0 10px 10px 0;padding:10px 12px;text-align:center;">';
             html += '<div style="font-size:18px;font-weight:700;">—</div>';
-            html += '<div style="font-size:10px;opacity:0.85;">Dev → Production (in progress)</div></div>';
+            html += '<div style="font-size:10px;opacity:0.65;">Handshake → Prod</div></div>';
         }
         html += '</div>';
-        if (shipCount > 0) html += '<div style="font-size:11px;color:#a0a0a0;text-align:center;">Total E2E: <strong style="color:white;">' + totalE2E + ' days</strong> avg</div>';
+        html += '<div style="font-size:11px;color:#a0a0a0;text-align:center;">Total E2E: <strong style="color:white;">' + totalE2E + ' days</strong> avg</div>';
         html += '</div>';
 
         html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Stage</th><th>Score</th><th>ADO Link</th><th>Date</th></tr></thead><tbody>';
@@ -1346,32 +1347,53 @@ function populateDrill(id) {
 
     if (id === 'pm-velocity') {
         var panel = document.getElementById('drill-pm-velocity');
-        var velocityItems = myItems.filter(function(h) { return h.devStart; });
-        var html = '<div class="drill-header"><div class="drill-title">⏱️ Handshake → Development Timeline</div><button class="drill-close" onclick="closeDrill(\'pm-velocity\')">✕</button></div>';
-        html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Published</th><th>Dev Started</th><th>ADO</th><th>Days</th></tr></thead><tbody>';
-        var totalDays = 0;
-        velocityItems.forEach(function(h) {
-            var pub = new Date(h.date);
-            var dev = new Date(h.devStart);
-            var days = Math.round((dev - pub) / (1000*60*60*24));
-            totalDays += days;
-            var dayColor = days <= 3 ? '#107c10' : days <= 7 ? '#ff8c00' : '#d13438';
+        var pipelineItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
+        var html = '<div class="drill-header"><div class="drill-title">⏱️ Full Pipeline Timeline</div><button class="drill-close" onclick="closeDrill(\'pm-velocity\')">✕</button></div>';
+        html += '<div style="margin-bottom:16px;padding:10px 14px;background:#f0f6fc;border-radius:8px;font-size:13px;color:#004e8c;">Tracking each feature through all pipeline stages: <strong>Kickoff → Prototype → Handshake → Production</strong></div>';
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th style="text-align:center;">K→P</th><th style="text-align:center;">P→H</th><th style="text-align:center;">H→Prod</th><th>ADO</th><th>Stage</th></tr></thead><tbody>';
+        var sumKP = 0, sumPH = 0, sumHP = 0, cntKP = 0, cntPH = 0, cntHP = 0;
+        pipelineItems.forEach(function(h) {
+            var kp = Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000);
+            var ph = h.status === 'published' ? Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000) : null;
+            var hp = h.shipDate ? Math.round((new Date(h.shipDate) - new Date(h.date)) / 86400000) : null;
+            sumKP += kp; cntKP++;
+            if (ph !== null) { sumPH += ph; cntPH++; }
+            if (hp !== null) { sumHP += hp; cntHP++; }
+            var kpColor = kp <= 7 ? '#107c10' : kp <= 14 ? '#ff8c00' : '#d13438';
+            var phColor = ph !== null ? (ph <= 7 ? '#107c10' : ph <= 14 ? '#ff8c00' : '#d13438') : '#a0a0a0';
+            var hpColor = hp !== null ? (hp <= 14 ? '#107c10' : hp <= 21 ? '#ff8c00' : '#d13438') : '#a0a0a0';
+            var stage, stageBg, stageC;
+            if (h.milestone === 6) { stage = 'Shipped'; stageBg = '#dff6dd'; stageC = '#107c10'; }
+            else if (h.milestone >= 4) { stage = 'In Dev'; stageBg = '#d0e8ff'; stageC = '#004e8c'; }
+            else { stage = 'Draft'; stageBg = '#fff4ce'; stageC = '#8a6914'; }
             html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
-            html += '<td>' + h.date + '</td><td>' + h.devStart + '</td>';
+            html += '<td style="text-align:center;"><span style="color:' + kpColor + ';font-weight:600;">' + kp + 'd</span></td>';
+            html += '<td style="text-align:center;"><span style="color:' + phColor + ';font-weight:600;">' + (ph !== null ? ph + 'd' : '—') + '</span></td>';
+            html += '<td style="text-align:center;"><span style="color:' + hpColor + ';font-weight:600;">' + (hp !== null ? hp + 'd' : '—') + '</span></td>';
             html += '<td>' + adoLink(h.adoId) + '</td>';
-            html += '<td><span style="color:' + dayColor + ';font-weight:600;">' + days + ' days</span></td></tr>';
+            html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:' + stageBg + ';color:' + stageC + ';">' + stage + '</span></td></tr>';
         });
-        myItems.filter(function(h) { return !h.devStart && h.status === 'draft'; }).forEach(function(h) {
+        // Show items still in kickoff (no protoDate)
+        myItems.filter(function(h) { return h.kickoffDate && !h.protoDate; }).forEach(function(h) {
+            var now = new Date('2026-03-03');
+            var daysIn = Math.round((now - new Date(h.kickoffDate)) / 86400000);
             html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
-            html += '<td style="color:#a0a0a0;">Draft</td><td>—</td>';
+            html += '<td style="text-align:center;"><span style="color:#ff8c00;font-weight:600;">' + daysIn + 'd…</span></td>';
+            html += '<td style="text-align:center;color:#a0a0a0;">—</td>';
+            html += '<td style="text-align:center;color:#a0a0a0;">—</td>';
             html += '<td>' + adoLink(h.adoId) + '</td>';
-            html += '<td style="color:#a0a0a0;">Not yet published</td></tr>';
+            html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#fff4ce;color:#8a6914;">In Progress</span></td></tr>';
         });
         html += '</tbody></table>';
-        if (velocityItems.length > 0) {
-            var avg = Math.round(totalDays / velocityItems.length);
-            html += '<div style="margin-top:12px;padding:10px 14px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#605e5c;">📊 Average across ' + velocityItems.length + ' features: <strong>' + avg + ' days</strong> from handshake publish to dev start</div>';
-        }
+        // Summary row
+        var avgKP = cntKP > 0 ? Math.round(sumKP / cntKP) : 0;
+        var avgPH = cntPH > 0 ? Math.round(sumPH / cntPH) : 0;
+        var avgHP = cntHP > 0 ? Math.round(sumHP / cntHP) : 0;
+        html += '<div style="margin-top:12px;padding:12px 14px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#605e5c;display:flex;gap:16px;flex-wrap:wrap;">';
+        html += '<div>📐 <strong>Avg K→P:</strong> <span style="color:#0078d4;font-weight:600;">' + avgKP + ' days</span></div>';
+        html += '<div>📐 <strong>Avg P→H:</strong> <span style="color:#107c10;font-weight:600;">' + avgPH + ' days</span></div>';
+        if (cntHP > 0) html += '<div>📐 <strong>Avg H→Prod:</strong> <span style="color:#8661c5;font-weight:600;">' + avgHP + ' days</span></div>';
+        html += '</div>';
         panel.innerHTML = html;
     }
 
@@ -1380,11 +1402,25 @@ function populateDrill(id) {
         var html = '<div class="drill-header"><div class="drill-title">🎉 Shipped to Production</div><button class="drill-close" onclick="closeDrill(\'pm-shipped\')">✕</button></div>';
         html += '<div style="margin-bottom:16px;padding:10px 14px;background:#dff6dd;border-radius:8px;font-size:13px;color:#107c10;"><strong>' + shipped.length + '</strong> of your <strong>' + total + '</strong> total handshakes ' + (shipped.length === 1 ? 'has' : 'have') + ' reached production.</div>';
         shipped.forEach(function(h) {
-            html += '<div style="display:flex;align-items:center;gap:14px;padding:12px;background:#f5fff5;border:1px solid #dff6dd;border-radius:8px;margin-bottom:8px;">';
-            html += '<div style="font-size:24px;">🚢</div>';
-            html += '<div><div style="font-weight:600;font-size:15px;">' + h.name + '</div>';
-            html += '<div style="font-size:13px;color:#605e5c;">Published ' + h.date + (h.devStart ? ' → Dev started ' + h.devStart : '') + (h.shipDate ? ' → Shipped ' + h.shipDate : '') + '</div></div>';
+            var kp = (h.kickoffDate && h.protoDate) ? Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000) : null;
+            var ph = (h.protoDate && h.date) ? Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000) : null;
+            var hp = (h.date && h.shipDate) ? Math.round((new Date(h.shipDate) - new Date(h.date)) / 86400000) : null;
+            var totalD = (kp || 0) + (ph || 0) + (hp || 0);
+            html += '<div style="background:#f5fff5;border:1px solid #dff6dd;border-radius:10px;margin-bottom:12px;overflow:hidden;">';
+            html += '<div style="padding:14px 16px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div style="font-size:22px;">🚢</div><div><div style="font-weight:600;font-size:15px;">' + h.name + '</div><div style="font-size:12px;color:#605e5c;">Total lifecycle: <strong>' + totalD + ' days</strong> · ' + adoLink(h.adoId) + '</div></div></div>';
+            // Timeline stages
+            html += '<div style="display:flex;gap:0;border-radius:8px;overflow:hidden;">';
+            if (kp !== null) html += '<div style="flex:' + Math.max(kp,2) + ';background:#d0e8ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#004e8c;">' + kp + 'd</div><div style="font-size:10px;color:#004e8c;">K→P</div></div>';
+            if (ph !== null) html += '<div style="flex:' + Math.max(ph,2) + ';background:#dff6dd;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#107c10;">' + ph + 'd</div><div style="font-size:10px;color:#107c10;">P→H</div></div>';
+            if (hp !== null) html += '<div style="flex:' + Math.max(hp,2) + ';background:#f0e6ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#5b2d90;">' + hp + 'd</div><div style="font-size:10px;color:#5b2d90;">H→Prod</div></div>';
             html += '</div>';
+            // Date timeline
+            html += '<div style="display:flex;justify-content:space-between;font-size:11px;color:#8a8886;margin-top:8px;padding:0 4px;">';
+            if (h.kickoffDate) html += '<span>💡 ' + h.kickoffDate.replace(', 2026','') + '</span>';
+            if (h.protoDate) html += '<span>🛠️ ' + h.protoDate.replace(', 2026','') + '</span>';
+            html += '<span>🤝 ' + h.date.replace(', 2026','') + '</span>';
+            if (h.shipDate) html += '<span>🚀 ' + h.shipDate.replace(', 2026','') + '</span>';
+            html += '</div></div></div>';
         });
         panel.innerHTML = html;
     }
@@ -1424,25 +1460,67 @@ function renderPmStats() {
     var drafts = myItems.filter(function(h) { return h.status === 'draft'; });
     var activeDev = myItems.filter(function(h) { return h.status === 'published' && h.milestone >= 4 && h.milestone <= 5; });
     var shipped = myItems.filter(function(h) { return h.milestone === 6; });
-    var velocityItems = myItems.filter(function(h) { return h.devStart; });
-    var avgDays = 0;
-    if (velocityItems.length > 0) {
-        var totalDays = 0;
-        velocityItems.forEach(function(h) {
-            var pub = new Date(h.date);
-            var dev = new Date(h.devStart);
-            totalDays += Math.round((dev - pub) / (1000*60*60*24));
-        });
-        avgDays = Math.round(totalDays / velocityItems.length);
+
+    // Compute averages for all 3 pipeline stages
+    var kpItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
+    var phItems = myItems.filter(function(h) { return h.protoDate && h.date && h.status === 'published'; });
+    var hpItems = myItems.filter(function(h) { return h.shipDate; });
+    var avgKP = 0, avgPH = 0, avgHP = 0;
+    if (kpItems.length > 0) {
+        var sum = 0; kpItems.forEach(function(h) { sum += Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000); });
+        avgKP = Math.round(sum / kpItems.length);
     }
+    if (phItems.length > 0) {
+        var sum = 0; phItems.forEach(function(h) { sum += Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000); });
+        avgPH = Math.round(sum / phItems.length);
+    }
+    if (hpItems.length > 0) {
+        var sum = 0; hpItems.forEach(function(h) { sum += Math.round((new Date(h.shipDate) - new Date(h.date)) / 86400000); });
+        avgHP = Math.round(sum / hpItems.length);
+    }
+    var totalE2E = avgKP + avgPH + (hpItems.length > 0 ? avgHP : 0);
+
+    // Stat boxes
     document.getElementById('statTotalVal').textContent = total;
     document.getElementById('statTotalSub').textContent = drafts.length + ' drafts · ' + activeDev.length + ' in dev · ' + shipped.length + ' shipped';
     document.getElementById('statActiveVal').textContent = activeDev.length;
     document.getElementById('statActiveSub').textContent = activeDev.length + ' of ' + total + ' total handshakes';
-    document.getElementById('statVelocityVal').textContent = avgDays + ' days';
-    document.getElementById('statVelocitySub').textContent = 'Across ' + velocityItems.length + ' features with dev start';
+    document.getElementById('statVelocityVal').textContent = avgKP + ' days';
+    document.getElementById('statVelocitySub').textContent = 'Across ' + kpItems.length + ' features with prototype';
     document.getElementById('statShippedVal').textContent = shipped.length;
     document.getElementById('statShippedSub').textContent = shipped.length + ' of ' + total + ' total handshakes';
+
+    // PM E2E Pipeline Banner (same style as Leadership)
+    var bHtml = '<div style="background:linear-gradient(135deg,#1e2028 0%,#2a2e3a 100%);border:none;border-radius:14px;padding:20px 28px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.15);">';
+    bHtml += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">';
+    bHtml += '<div style="font-size:14px;font-weight:700;color:#ffffff;">⏱️ My E2E: Kickoff → Production</div>';
+    bHtml += '<div style="display:flex;align-items:center;gap:8px;">';
+    bHtml += '<span style="font-size:11px;color:#9ca0ae;text-transform:uppercase;letter-spacing:0.5px;">My Avg</span>';
+    bHtml += '<span style="font-size:24px;font-weight:700;color:#ffffff;">' + totalE2E + ' days</span>';
+    bHtml += '</div></div>';
+    bHtml += '<div style="display:flex;align-items:center;gap:0;position:relative;">';
+    var kpFlex = Math.max(avgKP, 2), phFlex = Math.max(avgPH, 2), hpFlex = hpItems.length > 0 ? Math.max(avgHP, 2) : 4;
+    bHtml += '<div style="flex:' + kpFlex + ';text-align:center;background:#0078d4;border-radius:10px 0 0 10px;padding:12px 6px;border-right:2px solid #1e2028;">';
+    bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + avgKP + 'd</div>';
+    bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Kickoff → Prototype</div></div>';
+    bHtml += '<div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>';
+    bHtml += '<div style="flex:' + phFlex + ';text-align:center;background:#107c10;padding:12px 6px;border-right:2px solid #1e2028;">';
+    bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + avgPH + 'd</div>';
+    bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Proto → Handshake</div></div>';
+    bHtml += '<div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>';
+    if (hpItems.length > 0) {
+        bHtml += '<div style="flex:' + hpFlex + ';text-align:center;background:#8661c5;border-radius:0 10px 10px 0;padding:12px 6px;">';
+        bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + avgHP + 'd</div>';
+        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Handshake → Prod</div></div>';
+    } else {
+        bHtml += '<div style="flex:' + hpFlex + ';text-align:center;background:#3a3d48;border-radius:0 10px 10px 0;padding:12px 6px;">';
+        bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">—</div>';
+        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.65);font-weight:600;">Handshake → Prod</div></div>';
+    }
+    bHtml += '</div>';
+    bHtml += '<div style="text-align:center;margin-top:10px;font-size:12px;color:#9ca0ae;">📐 Based on ' + kpItems.length + ' features with milestone data · Stages proportionally sized</div>';
+    bHtml += '</div>';
+    document.getElementById('pmE2eBanner').innerHTML = bHtml;
 }
 
 function renderPmCards() {
