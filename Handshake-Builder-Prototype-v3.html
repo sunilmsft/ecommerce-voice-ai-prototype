@@ -641,7 +641,11 @@
             </div>
 
             <!-- Portfolio Overview (replaces Feature Area grouping) -->
-            <div class="section-label">By Portfolio Overview</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                <div class="section-label" style="margin-bottom:0;">By Portfolio Overview</div>
+                <button onclick="toggleDrill('lead-timeline')" style="padding:8px 18px;background:linear-gradient(135deg,#1e2028 0%,#2a2e3a 100%);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">⏱️ View Full Pipeline Timeline →</button>
+            </div>
+            <div class="drill-panel" id="drill-lead-timeline" style="margin-bottom:20px;"></div>
             <div id="areaGroupContainer"></div>
 
             <div class="section-label" style="margin-top:28px;">Needs Attention</div>
@@ -1390,7 +1394,8 @@ function toggleDrill(id) {
         closeAllDrills();
         panel.classList.add('active');
         activeDrillId = id;
-        populateDrill(id);
+        if (id === 'lead-timeline') { renderLeadershipTimeline(); }
+        else { populateDrill(id); }
         panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 }
@@ -2051,6 +2056,176 @@ function renderLeadershipView() {
         });
     }
     document.getElementById('needsAttentionContainer').innerHTML = attentionHtml;
+}
+
+// ══════════════════════════════════════════════════════
+// LEADERSHIP FULL PIPELINE TIMELINE
+// ══════════════════════════════════════════════════════
+var ltTimelineFilters = { portfolio: 'All', stage: 'All', status: 'All' };
+
+function renderLeadershipTimeline() {
+    var panel = document.getElementById('drill-lead-timeline');
+    if (!panel || panel.style.display === 'none') return;
+
+    // Flatten all projects with portfolio info + simulated cycle times
+    var portfolioCycle = {
+        'eCommerce Agents': { proto: 6, handshake: 4, prod: 10 },
+        'Marketing Planning & Execution': { proto: 9, handshake: 7, prod: 14 },
+        'Campaign Supply Chain': { proto: 10, handshake: 8, prod: 15 },
+        'Microsoft Demo Experiences': { proto: 5, handshake: 3, prod: 8 },
+        'Unified Commercial Marketing Profiles (UCMP)': { proto: 9, handshake: 7, prod: 13 },
+        'Connected Sales & Marketing Data': { proto: 7, handshake: 5, prod: 11 },
+        'Signal Flow Transformation': { proto: 11, handshake: 8, prod: 16 },
+        'Privacy': { proto: 8, handshake: 6, prod: 12 }
+    };
+
+    // Build flat project list with computed milestone stage + cycle data
+    var allProjects = [];
+    portfolioData.forEach(function(p) {
+        var cyc = portfolioCycle[p.name] || { proto: 8, handshake: 6, prod: 12 };
+        p.projects.forEach(function(pr, idx) {
+            // Map phase to milestone stage
+            var stage;
+            if (pr.phase === 'Production') stage = 'Shipped';
+            else if (pr.phase === 'Development' || pr.phase === 'UAT') stage = 'In Dev';
+            else stage = 'Draft';
+
+            // Simulated per-project cycle times with slight per-project variation
+            var seed = pr.name.length + idx;
+            var vary = function(base) { return Math.max(1, base + ((seed % 5) - 2)); };
+            var kp = null, ph = null, hp = null, e2e = null;
+
+            if (stage === 'Shipped') {
+                kp = vary(cyc.proto); ph = vary(cyc.handshake); hp = vary(cyc.prod);
+                e2e = kp + ph + hp;
+            } else if (stage === 'In Dev') {
+                kp = vary(cyc.proto); ph = vary(cyc.handshake);
+            } else if (pr.phase === 'Design') {
+                kp = vary(cyc.proto); // in prototype stage
+            }
+            // Proposal = fully Draft, no data yet
+
+            allProjects.push({
+                name: pr.name, portfolio: p.name, portfolioIcon: p.icon,
+                adoId: pr.adoId, owner: pr.owner, phase: pr.phase,
+                status: pr.status, statusDesc: pr.statusDesc,
+                stage: stage, kp: kp, ph: ph, hp: hp, e2e: e2e
+            });
+        });
+    });
+
+    // Apply filters
+    var filtered = allProjects.filter(function(pr) {
+        if (ltTimelineFilters.portfolio !== 'All' && pr.portfolio !== ltTimelineFilters.portfolio) return false;
+        if (ltTimelineFilters.stage !== 'All' && pr.stage !== ltTimelineFilters.stage) return false;
+        if (ltTimelineFilters.status !== 'All' && pr.status !== ltTimelineFilters.status) return false;
+        return true;
+    });
+
+    // Build HTML
+    var html = '<div class="drill-header"><div class="drill-title">⏱️ Full Pipeline Timeline — All Portfolios</div><button class="drill-close" onclick="closeDrill(\'lead-timeline\')">✕</button></div>';
+
+    // Filter bar
+    html += '<div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">';
+    html += '<div style="font-size:11px;color:#8a8886;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Filters:</div>';
+
+    // Portfolio filter
+    var portfolioNames = ['All'];
+    portfolioData.forEach(function(p) { portfolioNames.push(p.name); });
+    html += '<select onchange="ltTimelineFilters.portfolio=this.value;renderLeadershipTimeline();" style="padding:6px 10px;border:1px solid #e1e1e1;border-radius:6px;font-size:12px;background:white;cursor:pointer;">';
+    portfolioNames.forEach(function(pn) {
+        html += '<option value="' + pn + '"' + (ltTimelineFilters.portfolio === pn ? ' selected' : '') + '>' + (pn === 'All' ? '📂 All Portfolios' : pn) + '</option>';
+    });
+    html += '</select>';
+
+    // Stage filter chips
+    html += '<div style="display:flex;gap:4px;">';
+    var stages = ['All', 'Draft', 'In Dev', 'Shipped'];
+    var stageChipColors = { All: { bg: '#f5f5f5', color: '#323130', border: '#e1e1e1' }, Draft: { bg: '#fff4ce', color: '#8a6914', border: '#ffe0a0' }, 'In Dev': { bg: '#d0e8ff', color: '#004e8c', border: '#a0c8f0' }, Shipped: { bg: '#dff6dd', color: '#107c10', border: '#b8e6b0' } };
+    stages.forEach(function(s) {
+        var cc = stageChipColors[s];
+        var active = ltTimelineFilters.stage === s;
+        html += '<button onclick="ltTimelineFilters.stage=\'' + s + '\';renderLeadershipTimeline();" style="padding:4px 12px;border-radius:14px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid ' + (active ? cc.border : '#e1e1e1') + ';background:' + (active ? cc.bg : '#faf9f8') + ';color:' + (active ? cc.color : '#a0a0a0') + ';">' + s + '</button>';
+    });
+    html += '</div>';
+
+    // Status filter chips
+    html += '<div style="display:flex;gap:4px;">';
+    var statuses = ['All', 'On Track', 'At Risk'];
+    statuses.forEach(function(st) {
+        var active = ltTimelineFilters.status === st;
+        var stColor = st === 'On Track' ? '#107c10' : st === 'At Risk' ? '#ff8c00' : '#323130';
+        html += '<button onclick="ltTimelineFilters.status=\'' + st + '\';renderLeadershipTimeline();" style="padding:4px 12px;border-radius:14px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid ' + (active ? stColor : '#e1e1e1') + ';background:' + (active ? '#f5f5f5' : '#faf9f8') + ';color:' + (active ? stColor : '#a0a0a0') + ';">● ' + st + '</button>';
+    });
+    html += '</div>';
+
+    // Result count
+    html += '<div style="margin-left:auto;font-size:12px;color:#8a8886;">' + filtered.length + ' of ' + allProjects.length + ' projects</div>';
+    html += '</div>';
+
+    // Info banner
+    html += '<div style="margin-bottom:16px;padding:10px 14px;background:#f0f6fc;border-radius:8px;font-size:13px;color:#004e8c;">Tracking each project through all pipeline stages: <strong>Kickoff → Prototype → Handshake → Production</strong></div>';
+
+    // Table
+    html += '<div style="overflow-x:auto;"><table class="drill-table"><thead><tr><th>Project</th><th>Portfolio</th><th style="text-align:center;">Kickoff→Prototype</th><th style="text-align:center;">Prototype→Handshake</th><th style="text-align:center;">Handshake→Production</th><th style="text-align:center;">End to End</th><th>ADO</th><th>Status</th><th>Stage</th></tr></thead><tbody>';
+
+    // Cumulative stats
+    var sumKP = 0, cntKP = 0, sumPH = 0, cntPH = 0, sumHP = 0, cntHP = 0, sumE2E = 0, cntE2E = 0;
+
+    filtered.forEach(function(pr) {
+        if (pr.kp !== null) { sumKP += pr.kp; cntKP++; }
+        if (pr.ph !== null) { sumPH += pr.ph; cntPH++; }
+        if (pr.hp !== null) { sumHP += pr.hp; cntHP++; }
+        if (pr.e2e !== null) { sumE2E += pr.e2e; cntE2E++; }
+
+        var kpColor = pr.kp !== null ? (pr.kp <= 7 ? '#107c10' : pr.kp <= 14 ? '#ff8c00' : '#d13438') : '#a0a0a0';
+        var phColor = pr.ph !== null ? (pr.ph <= 7 ? '#107c10' : pr.ph <= 14 ? '#ff8c00' : '#d13438') : '#a0a0a0';
+        var hpColor = pr.hp !== null ? (pr.hp <= 14 ? '#107c10' : pr.hp <= 21 ? '#ff8c00' : '#d13438') : '#a0a0a0';
+        var e2eColor = pr.e2e !== null ? (pr.e2e <= 25 ? '#107c10' : pr.e2e <= 35 ? '#ff8c00' : '#d13438') : '#a0a0a0';
+
+        var stageMap = { Draft: { bg: '#fff4ce', color: '#8a6914' }, 'In Dev': { bg: '#d0e8ff', color: '#004e8c' }, Shipped: { bg: '#dff6dd', color: '#107c10' } };
+        var sM = stageMap[pr.stage];
+        var statusColor = pr.status === 'On Track' ? '#107c10' : pr.status === 'At Risk' ? '#ff8c00' : pr.status === 'Issue' ? '#d13438' : '#a0a0a0';
+
+        html += '<tr>';
+        html += '<td style="font-weight:600;max-width:200px;">' + pr.name + '</td>';
+        html += '<td style="font-size:12px;white-space:nowrap;">' + pr.portfolioIcon + ' ' + pr.portfolio.replace('Unified Commercial Marketing Profiles (UCMP)', 'UCMP').replace('Connected Sales & Marketing Data', 'Connected Data').replace('Signal Flow Transformation', 'Signal Flow').replace('Microsoft Demo Experiences', 'Demo Experiences').replace('Campaign Supply Chain', 'Campaign SC').replace('Marketing Planning & Execution', 'Marketing P&E') + '</td>';
+        html += '<td style="text-align:center;"><span style="color:' + kpColor + ';font-weight:600;">' + (pr.kp !== null ? pr.kp + 'd' : '—') + '</span></td>';
+        html += '<td style="text-align:center;"><span style="color:' + phColor + ';font-weight:600;">' + (pr.ph !== null ? pr.ph + 'd' : '—') + '</span></td>';
+        html += '<td style="text-align:center;"><span style="color:' + hpColor + ';font-weight:600;">' + (pr.hp !== null ? pr.hp + 'd' : '—') + '</span></td>';
+        html += '<td style="text-align:center;"><span style="color:' + e2eColor + ';font-weight:700;">' + (pr.e2e !== null ? pr.e2e + 'd' : '—') + '</span></td>';
+        html += '<td>' + (pr.adoId ? '<a href="https://dev.azure.com/MicrosoftIT/OneITVSO/_workitems/edit/' + pr.adoId + '" target="_blank" style="color:#0078d4;font-weight:600;text-decoration:none;">#' + pr.adoId + ' ↗</a>' : '<span style="color:#a0a0a0;">—</span>') + '</td>';
+        html += '<td><span style="color:' + statusColor + ';font-weight:600;font-size:12px;">● ' + pr.status + '</span></td>';
+        html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:' + sM.bg + ';color:' + sM.color + ';">' + pr.stage + '</span></td>';
+        html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+
+    // Summary row
+    html += '<div style="margin-top:12px;padding:12px 14px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#605e5c;display:flex;gap:16px;flex-wrap:wrap;">';
+    if (cntKP > 0) html += '<div>📐 <strong>Avg Kickoff→Prototype:</strong> <span style="color:#0078d4;font-weight:600;">' + Math.round(sumKP / cntKP) + ' days</span> <span style="color:#a0a0a0;">(' + cntKP + ' projects)</span></div>';
+    if (cntPH > 0) html += '<div>📐 <strong>Avg Prototype→Handshake:</strong> <span style="color:#107c10;font-weight:600;">' + Math.round(sumPH / cntPH) + ' days</span> <span style="color:#a0a0a0;">(' + cntPH + ' projects)</span></div>';
+    if (cntHP > 0) html += '<div>📐 <strong>Avg Handshake→Production:</strong> <span style="color:#8661c5;font-weight:600;">' + Math.round(sumHP / cntHP) + ' days</span> <span style="color:#a0a0a0;">(' + cntHP + ' projects)</span></div>';
+    if (cntE2E > 0) html += '<div>📐 <strong>Avg End to End:</strong> <span style="color:#e83e8c;font-weight:600;">' + Math.round(sumE2E / cntE2E) + ' days</span> <span style="color:#a0a0a0;">(' + cntE2E + ' shipped)</span></div>';
+    html += '</div>';
+
+    // Stage distribution mini bar
+    var draftCount = filtered.filter(function(pr) { return pr.stage === 'Draft'; }).length;
+    var devCount = filtered.filter(function(pr) { return pr.stage === 'In Dev'; }).length;
+    var shipCount = filtered.filter(function(pr) { return pr.stage === 'Shipped'; }).length;
+    var totalFiltered = filtered.length || 1;
+    html += '<div style="margin-top:10px;display:flex;height:8px;border-radius:4px;overflow:hidden;">';
+    if (draftCount > 0) html += '<div style="width:' + Math.round((draftCount / totalFiltered) * 100) + '%;background:#ffe0a0;" title="Draft: ' + draftCount + '"></div>';
+    if (devCount > 0) html += '<div style="width:' + Math.round((devCount / totalFiltered) * 100) + '%;background:#7bb8f0;" title="In Dev: ' + devCount + '"></div>';
+    if (shipCount > 0) html += '<div style="width:' + Math.round((shipCount / totalFiltered) * 100) + '%;background:#6dd58c;" title="Shipped: ' + shipCount + '"></div>';
+    html += '</div>';
+    html += '<div style="display:flex;gap:12px;margin-top:4px;font-size:11px;color:#8a8886;">';
+    if (draftCount > 0) html += '<span>✏️ Draft: ' + draftCount + '</span>';
+    if (devCount > 0) html += '<span>🚀 In Dev: ' + devCount + '</span>';
+    if (shipCount > 0) html += '<span>🎉 Shipped: ' + shipCount + '</span>';
+    html += '</div>';
+
+    panel.innerHTML = html;
 }
 
 function toggleAreaCard(el) {
