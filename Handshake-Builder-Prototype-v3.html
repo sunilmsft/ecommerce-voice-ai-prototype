@@ -1132,6 +1132,14 @@ var activeDrillId = null;
 // ══════════════════════════════════════════════════════
 // ROLE SWITCH
 // ══════════════════════════════════════════════════════
+var ADO_BASE = 'https://microsoftit.visualstudio.com/OneITVSO/_workitems/edit/';
+function adoLink(id, label) {
+    if (!id) return '<span style="color:#a0a0a0;">—</span>';
+    var numId = id.replace('#', '');
+    var text = label || id;
+    return '<a href="' + ADO_BASE + numId + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#0078d4;font-weight:600;text-decoration:none;cursor:pointer;" onmouseover="this.style.textDecoration=\'underline\'" onmouseout="this.style.textDecoration=\'none\'">' + text + ' ↗</a>';
+}
+
 function switchRole(role) {
     currentRole = role;
     document.getElementById('rolePm').classList.toggle('active', role === 'pm');
@@ -1195,6 +1203,44 @@ function populateDrill(id) {
         html += '<div style="font-size:28px;font-weight:700;color:#107c10;">' + shipped.length + '</div>';
         html += '<div style="font-size:12px;font-weight:600;color:#107c10;">🎉 Shipped</div></div>';
         html += '</div>';
+        // Mini E2E Pipeline for PM's own features
+        var pmVelocity = [];
+        myItems.forEach(function(h) {
+            if (h.devStart) {
+                var pub = new Date(h.date); var dev = new Date(h.devStart);
+                var pubToDev = Math.round((dev - pub) / (1000*60*60*24));
+                var devToShip = h.shipDate ? Math.round((new Date(h.shipDate) - dev) / (1000*60*60*24)) : null;
+                pmVelocity.push({ name: h.name, pubToDev: pubToDev, devToShip: devToShip });
+            }
+        });
+        var avgPubToDev = 0, avgDevToShip = 0, shipCount = 0;
+        pmVelocity.forEach(function(v) { avgPubToDev += v.pubToDev; if (v.devToShip !== null) { avgDevToShip += v.devToShip; shipCount++; } });
+        if (pmVelocity.length > 0) avgPubToDev = Math.round(avgPubToDev / pmVelocity.length);
+        if (shipCount > 0) avgDevToShip = Math.round(avgDevToShip / shipCount);
+        var totalE2E = avgPubToDev + (shipCount > 0 ? avgDevToShip : 0);
+
+        html += '<div style="background:linear-gradient(135deg,#1e2028 0%,#2a2d38 100%);border-radius:14px;padding:20px 24px;margin-bottom:20px;color:white;">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">';
+        html += '<div style="font-size:14px;font-weight:600;">📐 My E2E Pipeline Velocity</div>';
+        html += '<div style="font-size:12px;color:#a0a0a0;">Based on ' + pmVelocity.length + ' features with dev data</div></div>';
+        html += '<div style="display:flex;gap:4px;margin-bottom:10px;">';
+        var pPct = totalE2E > 0 ? Math.round((avgPubToDev / (avgPubToDev + (shipCount > 0 ? avgDevToShip : avgPubToDev))) * 100) : 50;
+        html += '<div style="flex:' + pPct + ';background:#0078d4;border-radius:10px 0 0 10px;padding:10px 16px;text-align:center;">';
+        html += '<div style="font-size:18px;font-weight:700;">' + avgPubToDev + 'd</div>';
+        html += '<div style="font-size:10px;opacity:0.85;">Publish → Dev</div></div>';
+        if (shipCount > 0) {
+            html += '<div style="flex:' + (100 - pPct) + ';background:#107c10;border-radius:0 10px 10px 0;padding:10px 16px;text-align:center;">';
+            html += '<div style="font-size:18px;font-weight:700;">' + avgDevToShip + 'd</div>';
+            html += '<div style="font-size:10px;opacity:0.85;">Dev → Shipped</div></div>';
+        } else {
+            html += '<div style="flex:' + (100 - pPct) + ';background:#3a3d48;border-radius:0 10px 10px 0;padding:10px 16px;text-align:center;">';
+            html += '<div style="font-size:18px;font-weight:700;">—</div>';
+            html += '<div style="font-size:10px;opacity:0.85;">Dev → Ship (pending)</div></div>';
+        }
+        html += '</div>';
+        if (shipCount > 0) html += '<div style="font-size:11px;color:#a0a0a0;text-align:center;">Total E2E: <strong style="color:white;">' + totalE2E + ' days</strong> avg</div>';
+        html += '</div>';
+
         html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Stage</th><th>Score</th><th>ADO Link</th><th>Date</th></tr></thead><tbody>';
         myItems.forEach(function(h) {
             var stage, stageColor, stageBg;
@@ -1202,11 +1248,10 @@ function populateDrill(id) {
             else if (h.milestone >= 4) { stage = 'In Dev'; stageColor = '#004e8c'; stageBg = '#d0e8ff'; }
             else { stage = 'Draft'; stageColor = '#8a6914'; stageBg = '#fff4ce'; }
             var scoreColor = h.score >= 6 ? '#107c10' : h.score >= 4 ? '#ff8c00' : '#d13438';
-            var adoHtml = h.adoId ? '<span style="color:#0078d4;font-weight:600;">' + h.adoId + '</span>' : '<span style="color:#a0a0a0;">—</span>';
             html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
             html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:' + stageBg + ';color:' + stageColor + ';">' + stage + '</span></td>';
             html += '<td style="color:' + scoreColor + ';font-weight:600;">' + h.score + '/7</td>';
-            html += '<td>' + adoHtml + '</td><td>' + h.date + '</td></tr>';
+            html += '<td>' + adoLink(h.adoId) + '</td><td>' + h.date + '</td></tr>';
         });
         html += '</tbody></table>';
         html += '<div style="margin-top:12px;padding:10px 14px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#605e5c;">💡 <strong>' + total + ' total</strong> = ' + drafts.length + ' drafts + ' + activeDev.length + ' in active dev + ' + shipped.length + ' shipped</div>';
@@ -1217,7 +1262,7 @@ function populateDrill(id) {
         var panel = document.getElementById('drill-pm-active');
         var html = '<div class="drill-header"><div class="drill-title">🚀 Features In Active Development</div><button class="drill-close" onclick="closeDrill(\'pm-active\')">✕</button></div>';
         html += '<div style="margin-bottom:16px;padding:10px 14px;background:#d0e8ff;border-radius:8px;font-size:13px;color:#004e8c;">These <strong>' + activeDev.length + '</strong> features (of your <strong>' + total + '</strong> total handshakes) are currently being built by engineering.</div>';
-        html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Engineering Owner</th><th>ADO State</th><th>Days in Dev</th></tr></thead><tbody>';
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Engineering Owner</th><th>ADO</th><th>Days in Dev</th></tr></thead><tbody>';
         activeDev.forEach(function(h) {
             var daysIn = '—';
             if (h.devStart) {
@@ -1227,7 +1272,7 @@ function populateDrill(id) {
             }
             html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
             html += '<td>' + (h.owner || '—') + '</td>';
-            html += '<td><span class="card-state-badge state-active">● Active</span></td>';
+            html += '<td>' + adoLink(h.adoId) + '</td>';
             html += '<td style="color:#107c10;font-weight:600;">' + daysIn + '</td></tr>';
         });
         html += '</tbody></table>';
@@ -1238,7 +1283,7 @@ function populateDrill(id) {
         var panel = document.getElementById('drill-pm-velocity');
         var velocityItems = myItems.filter(function(h) { return h.devStart; });
         var html = '<div class="drill-header"><div class="drill-title">⏱️ Handshake → Development Timeline</div><button class="drill-close" onclick="closeDrill(\'pm-velocity\')">✕</button></div>';
-        html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Handshake Published</th><th>Dev Started</th><th>Days to Dev</th></tr></thead><tbody>';
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Published</th><th>Dev Started</th><th>ADO</th><th>Days</th></tr></thead><tbody>';
         var totalDays = 0;
         velocityItems.forEach(function(h) {
             var pub = new Date(h.date);
@@ -1248,11 +1293,13 @@ function populateDrill(id) {
             var dayColor = days <= 3 ? '#107c10' : days <= 7 ? '#ff8c00' : '#d13438';
             html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
             html += '<td>' + h.date + '</td><td>' + h.devStart + '</td>';
+            html += '<td>' + adoLink(h.adoId) + '</td>';
             html += '<td><span style="color:' + dayColor + ';font-weight:600;">' + days + ' days</span></td></tr>';
         });
         myItems.filter(function(h) { return !h.devStart && h.status === 'draft'; }).forEach(function(h) {
             html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
             html += '<td style="color:#a0a0a0;">Draft</td><td>—</td>';
+            html += '<td>' + adoLink(h.adoId) + '</td>';
             html += '<td style="color:#a0a0a0;">Not yet published</td></tr>';
         });
         html += '</tbody></table>';
@@ -1291,7 +1338,7 @@ function renderCard(h, showArea) {
     var stateLabel = h.adoState ? h.adoState.charAt(0).toUpperCase() + h.adoState.slice(1) : '';
 
     var adoHtml = h.adoId
-        ? '<div class="card-ado-link"><span>🔗</span> ADO ' + h.adoId + ' · <span class="card-state-badge ' + (stateMap[h.adoState]||'') + '">● ' + stateLabel + '</span></div>'
+        ? '<div class="card-ado-link"><span>🔗</span> ADO ' + adoLink(h.adoId) + ' · <span class="card-state-badge ' + (stateMap[h.adoState]||'') + '">● ' + stateLabel + '</span></div>'
         : '<div class="card-ado-link" style="color:#a0a0a0;"><span>⬜</span> Not yet linked to ADO</div>';
 
     var ownerHtml = h.owner ? '<div class="card-owner"><div class="card-owner-dot">' + h.ownerInitials + '</div> Assigned: ' + h.owner + '</div>' : '';
@@ -1780,10 +1827,16 @@ function showBrief(idx) {
         submitBtn.style.display = 'none';
     }
 
-    // Update ADO source
+    // Update ADO source (clickable)
     if (h.adoId) {
-        document.getElementById('briefAdoId').textContent = h.adoId;
-        document.getElementById('briefParentRef').textContent = h.parentId || '';
+        var adoIdEl = document.getElementById('briefAdoId');
+        var parentEl = document.getElementById('briefParentRef');
+        var numId = h.adoId.replace('#', '');
+        adoIdEl.innerHTML = '<a href="' + ADO_BASE + numId + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;cursor:pointer;" onclick="event.stopPropagation()">' + h.adoId + ' ↗</a>';
+        if (h.parentId) {
+            var parentNum = h.parentId.replace('#', '');
+            parentEl.innerHTML = '<a href="' + ADO_BASE + parentNum + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;cursor:pointer;" onclick="event.stopPropagation()">' + h.parentId + ' ↗</a>';
+        } else { parentEl.textContent = ''; }
         document.getElementById('briefAdoSource').classList.add('visible');
     }
 
@@ -2059,12 +2112,7 @@ function publishToAdo() {
 
 function openInAdo() {
     var id = publishedWorkItemId || 13928100;
-    var url = 'https://microsoftit.visualstudio.com/OneITVSO/_workitems/edit/' + id;
-    var toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:white;padding:12px 24px;border-radius:8px;font-size:14px;z-index:1000;animation:fadeIn 0.3s ease;';
-    toast.innerHTML = '🔗 Would open: <strong>' + url + '</strong>';
-    document.body.appendChild(toast);
-    setTimeout(function() { toast.remove(); }, 3000);
+    window.open(ADO_BASE + id, '_blank');
 }
 
 // ══════════════════════════════════════════════════════
