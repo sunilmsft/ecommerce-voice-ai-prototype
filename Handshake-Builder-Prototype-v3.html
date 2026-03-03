@@ -338,67 +338,37 @@
             <div class="landing-subtitle">Your prototype-to-engineering handshake portfolio. Track what you've shared and what's in progress.</div>
 
             <div class="stats-row" id="pmStats">
-                <div class="stat-card" onclick="toggleDrill('pm-total')">
-                    <div class="stat-value" style="color:#0078d4;">5</div>
+                <div class="stat-card" onclick="toggleDrill('pm-total')" id="statCardTotal">
+                    <div class="stat-value" style="color:#0078d4;" id="statTotalVal">5</div>
                     <div class="stat-label">Total Handshakes</div>
-                    <div class="stat-sub">3 published · 2 drafts</div>
-                    <div class="stat-expand-hint">Click to see details →</div>
+                    <div class="stat-sub" id="statTotalSub">Loading...</div>
+                    <div class="stat-expand-hint">Click to see breakdown →</div>
                 </div>
-                <div class="stat-card" onclick="toggleDrill('pm-active')">
-                    <div class="stat-value" style="color:#107c10;">2</div>
+                <div class="stat-card" onclick="toggleDrill('pm-active')" id="statCardActive">
+                    <div class="stat-value" style="color:#107c10;" id="statActiveVal">—</div>
                     <div class="stat-label">In Active Dev</div>
-                    <div class="stat-sub">Engineering is building from your prototypes</div>
+                    <div class="stat-sub" id="statActiveSub">Loading...</div>
                     <div class="stat-expand-hint">Click to see details →</div>
                 </div>
-                <div class="stat-card" onclick="toggleDrill('pm-velocity')">
-                    <div class="stat-value" style="color:#ff8c00;">8 days</div>
+                <div class="stat-card" onclick="toggleDrill('pm-velocity')" id="statCardVelocity">
+                    <div class="stat-value" style="color:#ff8c00;" id="statVelocityVal">—</div>
                     <div class="stat-label">Avg. Handshake → Dev</div>
-                    <div class="stat-sub">Time from publish to engineering starting</div>
-                    <div class="stat-expand-hint">Click to see details →</div>
+                    <div class="stat-sub" id="statVelocitySub">Loading...</div>
+                    <div class="stat-expand-hint">Click to see timeline →</div>
                 </div>
-                <div class="stat-card" onclick="toggleDrill('pm-shipped')">
-                    <div class="stat-value" style="color:#5b2d90;">1</div>
+                <div class="stat-card" onclick="toggleDrill('pm-shipped')" id="statCardShipped">
+                    <div class="stat-value" style="color:#5b2d90;" id="statShippedVal">—</div>
                     <div class="stat-label">Shipped 🎉</div>
-                    <div class="stat-sub">Prototype → Production</div>
+                    <div class="stat-sub" id="statShippedSub">Loading...</div>
                     <div class="stat-expand-hint">Click to see details →</div>
                 </div>
             </div>
 
-            <!-- PM Drill-down Panels -->
-            <div class="drill-panel" id="drill-pm-total">
-                <div class="drill-header"><div class="drill-title">📊 All My Handshakes</div><button class="drill-close" onclick="closeDrill('pm-total')">✕</button></div>
-                <table class="drill-table">
-                    <thead><tr><th>Feature</th><th>Status</th><th>Score</th><th>ADO Link</th><th>Date</th></tr></thead>
-                    <tbody id="drill-pm-total-body"></tbody>
-                </table>
-            </div>
-            <div class="drill-panel" id="drill-pm-active">
-                <div class="drill-header"><div class="drill-title">🚀 Features In Active Development</div><button class="drill-close" onclick="closeDrill('pm-active')">✕</button></div>
-                <table class="drill-table">
-                    <thead><tr><th>Feature</th><th>Engineering Owner</th><th>ADO State</th><th>Days in Dev</th></tr></thead>
-                    <tbody id="drill-pm-active-body"></tbody>
-                </table>
-            </div>
-            <div class="drill-panel" id="drill-pm-velocity">
-                <div class="drill-header"><div class="drill-title">⏱️ Handshake → Development Timeline</div><button class="drill-close" onclick="closeDrill('pm-velocity')">✕</button></div>
-                <table class="drill-table">
-                    <thead><tr><th>Feature</th><th>Handshake Published</th><th>Dev Started</th><th>Days to Dev</th></tr></thead>
-                    <tbody>
-                        <tr><td style="font-weight:600;">eCommerce Voice AI Agent</td><td>Feb 28, 2026</td><td>Mar 3, 2026</td><td><span style="color:#107c10;font-weight:600;">3 days</span></td></tr>
-                        <tr><td style="font-weight:600;">Customer Health Scorecard</td><td>Feb 20, 2026</td><td>Mar 3, 2026</td><td><span style="color:#ff8c00;font-weight:600;">11 days</span></td></tr>
-                        <tr><td style="font-weight:600;">Smart Notification Digest</td><td>Mar 1, 2026</td><td>—</td><td style="color:#a0a0a0;">Awaiting review</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="drill-panel" id="drill-pm-shipped">
-                <div class="drill-header"><div class="drill-title">🎉 Shipped to Production</div><button class="drill-close" onclick="closeDrill('pm-shipped')">✕</button></div>
-                <div style="padding:8px 0;">
-                    <div style="display:flex;align-items:center;gap:14px;padding:12px;background:#f5fff5;border:1px solid #dff6dd;border-radius:8px;">
-                        <div style="font-size:24px;">🚢</div>
-                        <div><div style="font-weight:600;font-size:15px;">Customer Health Scorecard</div><div style="font-size:13px;color:#605e5c;">Shipped Feb 20 → In Dev Mar 3 → Production target: Sprint 24.3</div></div>
-                    </div>
-                </div>
-            </div>
+            <!-- PM Drill-down Panels (dynamically populated) -->
+            <div class="drill-panel" id="drill-pm-total"></div>
+            <div class="drill-panel" id="drill-pm-active"></div>
+            <div class="drill-panel" id="drill-pm-velocity"></div>
+            <div class="drill-panel" id="drill-pm-shipped"></div>
 
             <div class="section-label">Published</div>
             <div class="handshake-grid" id="pmPublishedGrid"></div>
@@ -1049,9 +1019,9 @@ var mockAdoItems = [
 // Handshake data (for landing page) — uses real ADO work items from Project Vox
 var handshakeData = [
     // ── Sunil's handshakes (real features from ADO Scenario #13927662) ──
-    { name: 'Voice Agent Service × Voice Live API', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506378', adoState: 'closed', date: 'Feb 17, 2026', owner: 'Qiang Pei', ownerInitials: 'QP', parentId: '#13927662', milestone: 6, area: 'Digital Sales / Voice Agent' },
-    { name: 'EOS Call Script & Workflow', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506380', adoState: 'new', date: 'Feb 28, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent' },
-    { name: 'Consent Validation & Time Zone Queuing', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 6, adoId: '#15506373', adoState: 'new', date: 'Mar 1, 2026', owner: 'Phaneendra Jayanty', ownerInitials: 'PJ', parentId: '#13927662', milestone: 3, area: 'Digital Sales / Voice Agent' },
+    { name: 'Voice Agent Service × Voice Live API', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506378', adoState: 'closed', date: 'Feb 17, 2026', owner: 'Qiang Pei', ownerInitials: 'QP', parentId: '#13927662', milestone: 6, area: 'Digital Sales / Voice Agent', devStart: 'Feb 28, 2026', shipDate: 'Mar 1, 2026' },
+    { name: 'EOS Call Script & Workflow', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506380', adoState: 'new', date: 'Feb 28, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', devStart: 'Mar 2, 2026' },
+    { name: 'Consent Validation & Time Zone Queuing', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 6, adoId: '#15506373', adoState: 'new', date: 'Mar 1, 2026', owner: 'Phaneendra Jayanty', ownerInitials: 'PJ', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', devStart: 'Mar 3, 2026' },
     { name: 'Configurable Tools for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 4, adoId: '#15506381', adoState: 'new', date: 'Mar 2, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 2, area: 'Digital Sales / Voice Agent' },
     { name: 'Operational Dashboard for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 3, adoId: '#15506383', adoState: 'new', date: 'Mar 3, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 1, area: 'Digital Sales / Voice Agent' },
     // ── Team handshakes (other features under the same Scenario) ──
@@ -1203,23 +1173,108 @@ function closeAllDrills() {
 }
 
 function populateDrill(id) {
+    var myItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal'; });
+    var drafts = myItems.filter(function(h) { return h.status === 'draft'; });
+    var activeDev = myItems.filter(function(h) { return h.status === 'published' && h.milestone >= 4 && h.milestone <= 5; });
+    var shipped = myItems.filter(function(h) { return h.milestone === 6; });
+    var total = myItems.length;
+
     if (id === 'pm-total') {
-        var myItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal'; });
-        var body = document.getElementById('drill-pm-total-body');
-        body.innerHTML = myItems.map(function(h) {
-            var statusHtml = h.status === 'published' ? '<span class="card-status status-published">Published</span>' : '<span class="card-status status-draft">Draft</span>';
+        var panel = document.getElementById('drill-pm-total');
+        var html = '<div class="drill-header"><div class="drill-title">📊 All My Handshakes — Breakdown</div><button class="drill-close" onclick="closeDrill(\'pm-total\')">✕</button></div>';
+        html += '<div style="display:flex;gap:8px;margin-bottom:20px;align-items:center;">';
+        html += '<div style="flex:1;text-align:center;padding:16px 10px;background:#fff4ce;border-radius:10px;border:1px solid #ffe0a0;">';
+        html += '<div style="font-size:28px;font-weight:700;color:#8a6914;">' + drafts.length + '</div>';
+        html += '<div style="font-size:12px;font-weight:600;color:#8a6914;">✏️ Drafts</div></div>';
+        html += '<div style="font-size:20px;color:#c0c0c0;">→</div>';
+        html += '<div style="flex:1;text-align:center;padding:16px 10px;background:#d0e8ff;border-radius:10px;border:1px solid #a0c8f0;">';
+        html += '<div style="font-size:28px;font-weight:700;color:#004e8c;">' + activeDev.length + '</div>';
+        html += '<div style="font-size:12px;font-weight:600;color:#004e8c;">🚀 In Dev</div></div>';
+        html += '<div style="font-size:20px;color:#c0c0c0;">→</div>';
+        html += '<div style="flex:1;text-align:center;padding:16px 10px;background:#dff6dd;border-radius:10px;border:1px solid #b8e6b0;">';
+        html += '<div style="font-size:28px;font-weight:700;color:#107c10;">' + shipped.length + '</div>';
+        html += '<div style="font-size:12px;font-weight:600;color:#107c10;">🎉 Shipped</div></div>';
+        html += '</div>';
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Stage</th><th>Score</th><th>ADO Link</th><th>Date</th></tr></thead><tbody>';
+        myItems.forEach(function(h) {
+            var stage, stageColor, stageBg;
+            if (h.milestone === 6) { stage = 'Shipped'; stageColor = '#107c10'; stageBg = '#dff6dd'; }
+            else if (h.milestone >= 4) { stage = 'In Dev'; stageColor = '#004e8c'; stageBg = '#d0e8ff'; }
+            else { stage = 'Draft'; stageColor = '#8a6914'; stageBg = '#fff4ce'; }
             var scoreColor = h.score >= 6 ? '#107c10' : h.score >= 4 ? '#ff8c00' : '#d13438';
             var adoHtml = h.adoId ? '<span style="color:#0078d4;font-weight:600;">' + h.adoId + '</span>' : '<span style="color:#a0a0a0;">—</span>';
-            return '<tr><td style="font-weight:600;">' + h.name + '</td><td>' + statusHtml + '</td><td style="color:' + scoreColor + ';font-weight:600;">' + h.score + '/7</td><td>' + adoHtml + '</td><td>' + h.date + '</td></tr>';
-        }).join('');
+            html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
+            html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:' + stageBg + ';color:' + stageColor + ';">' + stage + '</span></td>';
+            html += '<td style="color:' + scoreColor + ';font-weight:600;">' + h.score + '/7</td>';
+            html += '<td>' + adoHtml + '</td><td>' + h.date + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        html += '<div style="margin-top:12px;padding:10px 14px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#605e5c;">💡 <strong>' + total + ' total</strong> = ' + drafts.length + ' drafts + ' + activeDev.length + ' in active dev + ' + shipped.length + ' shipped</div>';
+        panel.innerHTML = html;
     }
+
     if (id === 'pm-active') {
-        var activeItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal' && h.milestone >= 4 && h.milestone <= 5; });
-        var body = document.getElementById('drill-pm-active-body');
-        body.innerHTML = activeItems.map(function(h) {
-            var daysIn = h.milestone === 5 ? '11 days' : '3 days';
-            return '<tr><td style="font-weight:600;">' + h.name + '</td><td>' + h.owner + '</td><td><span class="card-state-badge state-active">● Active</span></td><td style="color:#107c10;font-weight:600;">' + daysIn + '</td></tr>';
-        }).join('');
+        var panel = document.getElementById('drill-pm-active');
+        var html = '<div class="drill-header"><div class="drill-title">🚀 Features In Active Development</div><button class="drill-close" onclick="closeDrill(\'pm-active\')">✕</button></div>';
+        html += '<div style="margin-bottom:16px;padding:10px 14px;background:#d0e8ff;border-radius:8px;font-size:13px;color:#004e8c;">These <strong>' + activeDev.length + '</strong> features (of your <strong>' + total + '</strong> total handshakes) are currently being built by engineering.</div>';
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Engineering Owner</th><th>ADO State</th><th>Days in Dev</th></tr></thead><tbody>';
+        activeDev.forEach(function(h) {
+            var daysIn = '—';
+            if (h.devStart) {
+                var dev = new Date(h.devStart);
+                var now = new Date('2026-03-03');
+                daysIn = Math.max(1, Math.round((now - dev) / (1000*60*60*24))) + ' days';
+            }
+            html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
+            html += '<td>' + (h.owner || '—') + '</td>';
+            html += '<td><span class="card-state-badge state-active">● Active</span></td>';
+            html += '<td style="color:#107c10;font-weight:600;">' + daysIn + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        panel.innerHTML = html;
+    }
+
+    if (id === 'pm-velocity') {
+        var panel = document.getElementById('drill-pm-velocity');
+        var velocityItems = myItems.filter(function(h) { return h.devStart; });
+        var html = '<div class="drill-header"><div class="drill-title">⏱️ Handshake → Development Timeline</div><button class="drill-close" onclick="closeDrill(\'pm-velocity\')">✕</button></div>';
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Handshake Published</th><th>Dev Started</th><th>Days to Dev</th></tr></thead><tbody>';
+        var totalDays = 0;
+        velocityItems.forEach(function(h) {
+            var pub = new Date(h.date);
+            var dev = new Date(h.devStart);
+            var days = Math.round((dev - pub) / (1000*60*60*24));
+            totalDays += days;
+            var dayColor = days <= 3 ? '#107c10' : days <= 7 ? '#ff8c00' : '#d13438';
+            html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
+            html += '<td>' + h.date + '</td><td>' + h.devStart + '</td>';
+            html += '<td><span style="color:' + dayColor + ';font-weight:600;">' + days + ' days</span></td></tr>';
+        });
+        myItems.filter(function(h) { return !h.devStart && h.status === 'draft'; }).forEach(function(h) {
+            html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
+            html += '<td style="color:#a0a0a0;">Draft</td><td>—</td>';
+            html += '<td style="color:#a0a0a0;">Not yet published</td></tr>';
+        });
+        html += '</tbody></table>';
+        if (velocityItems.length > 0) {
+            var avg = Math.round(totalDays / velocityItems.length);
+            html += '<div style="margin-top:12px;padding:10px 14px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#605e5c;">📊 Average across ' + velocityItems.length + ' features: <strong>' + avg + ' days</strong> from handshake publish to dev start</div>';
+        }
+        panel.innerHTML = html;
+    }
+
+    if (id === 'pm-shipped') {
+        var panel = document.getElementById('drill-pm-shipped');
+        var html = '<div class="drill-header"><div class="drill-title">🎉 Shipped to Production</div><button class="drill-close" onclick="closeDrill(\'pm-shipped\')">✕</button></div>';
+        html += '<div style="margin-bottom:16px;padding:10px 14px;background:#dff6dd;border-radius:8px;font-size:13px;color:#107c10;"><strong>' + shipped.length + '</strong> of your <strong>' + total + '</strong> total handshakes ' + (shipped.length === 1 ? 'has' : 'have') + ' reached production.</div>';
+        shipped.forEach(function(h) {
+            html += '<div style="display:flex;align-items:center;gap:14px;padding:12px;background:#f5fff5;border:1px solid #dff6dd;border-radius:8px;margin-bottom:8px;">';
+            html += '<div style="font-size:24px;">🚢</div>';
+            html += '<div><div style="font-weight:600;font-size:15px;">' + h.name + '</div>';
+            html += '<div style="font-size:13px;color:#605e5c;">Published ' + h.date + (h.devStart ? ' → Dev started ' + h.devStart : '') + (h.shipDate ? ' → Shipped ' + h.shipDate : '') + '</div></div>';
+            html += '</div>';
+        });
+        panel.innerHTML = html;
     }
 }
 
@@ -1251,6 +1306,33 @@ function renderCard(h, showArea) {
         '</div>';
 }
 
+function renderPmStats() {
+    var myItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal'; });
+    var total = myItems.length;
+    var drafts = myItems.filter(function(h) { return h.status === 'draft'; });
+    var activeDev = myItems.filter(function(h) { return h.status === 'published' && h.milestone >= 4 && h.milestone <= 5; });
+    var shipped = myItems.filter(function(h) { return h.milestone === 6; });
+    var velocityItems = myItems.filter(function(h) { return h.devStart; });
+    var avgDays = 0;
+    if (velocityItems.length > 0) {
+        var totalDays = 0;
+        velocityItems.forEach(function(h) {
+            var pub = new Date(h.date);
+            var dev = new Date(h.devStart);
+            totalDays += Math.round((dev - pub) / (1000*60*60*24));
+        });
+        avgDays = Math.round(totalDays / velocityItems.length);
+    }
+    document.getElementById('statTotalVal').textContent = total;
+    document.getElementById('statTotalSub').textContent = drafts.length + ' drafts · ' + activeDev.length + ' in dev · ' + shipped.length + ' shipped';
+    document.getElementById('statActiveVal').textContent = activeDev.length;
+    document.getElementById('statActiveSub').textContent = activeDev.length + ' of ' + total + ' total handshakes';
+    document.getElementById('statVelocityVal').textContent = avgDays + ' days';
+    document.getElementById('statVelocitySub').textContent = 'Across ' + velocityItems.length + ' features with dev start';
+    document.getElementById('statShippedVal').textContent = shipped.length;
+    document.getElementById('statShippedSub').textContent = shipped.length + ' of ' + total + ' total handshakes';
+}
+
 function renderPmCards() {
     var myItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal'; });
     var published = myItems.filter(function(h) { return h.status === 'published'; });
@@ -1258,6 +1340,7 @@ function renderPmCards() {
     document.getElementById('pmPublishedGrid').innerHTML = published.map(function(h) { return renderCard(h, false); }).join('');
     document.getElementById('pmDraftGrid').innerHTML = drafts.map(function(h) { return renderCard(h, false); }).join('') +
         '<div class="handshake-card empty-card" onclick="currentHandshake=null;showBuilder()"><div class="plus-icon">+</div><div style="font-size:14px;">Create a new handshake</div></div>';
+    renderPmStats();
 }
 
 // ══════════════════════════════════════════════════════
