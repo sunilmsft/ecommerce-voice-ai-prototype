@@ -672,11 +672,27 @@
                 <div id="adoConnPanel" style="background:linear-gradient(135deg,#f3f2f1,#e8e6e4);border-radius:8px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                     <div style="flex:1;min-width:200px;">
                         <div style="font-size:13px;font-weight:600;color:#323130;">🔌 Connect to live ADO data <span style="font-weight:400;color:#605e5c;">(optional)</span></div>
-                        <div style="font-size:11px;color:#a19f9d;margin-top:2px;">Enter a PAT with <b>Work Items (Read)</b> scope. Stored in session only.</div>
+                        <div style="font-size:11px;color:#a19f9d;margin-top:2px;">Enter a PAT with <b>Work Items (Read)</b> scope. Stored in session only. <a href="javascript:void(0)" onclick="document.getElementById('patHelpPanel').style.display=document.getElementById('patHelpPanel').style.display==='none'?'block':'none'" style="color:#0078d4;text-decoration:underline;cursor:pointer;">How do I get a PAT?</a></div>
                     </div>
                     <input id="adoPatInput" type="password" placeholder="Paste your ADO PAT..." style="flex:1;min-width:180px;padding:6px 10px;border:1px solid #c8c6c4;border-radius:4px;font-size:13px;font-family:inherit;">
                     <button onclick="connectToAdo()" style="background:#0078d4;color:#fff;border:none;padding:6px 16px;border-radius:4px;font-size:13px;cursor:pointer;font-weight:600;">Connect</button>
                     <div id="adoConnStatus" style="width:100%;font-size:12px;color:#a0a0a0;margin-top:2px;"></div>
+                    <!-- Inline PAT help -->
+                    <div id="patHelpPanel" style="display:none;width:100%;background:#fff;border:1px solid #e1dfdd;border-radius:6px;padding:14px 16px;margin-top:4px;font-size:12.5px;line-height:1.7;color:#323130;">
+                        <div style="font-weight:600;font-size:13px;margin-bottom:6px;">📋 Create a Personal Access Token (PAT) — takes ~30 seconds</div>
+                        <ol style="margin:0 0 0 18px;padding:0;">
+                            <li>Open <a href="https://microsoftit.visualstudio.com/_usersSettings/tokens" target="_blank" style="color:#0078d4;font-weight:600;">MicrosoftIT → Personal Access Tokens</a></li>
+                            <li>Click <b>+ New Token</b></li>
+                            <li>Name it anything (e.g. <i>"Handshake Prototype"</i>)</li>
+                            <li>Set <b>Organization</b> = <code style="background:#f3f2f1;padding:1px 4px;border-radius:3px;">MicrosoftIT</code></li>
+                            <li>Set <b>Expiration</b> = 30 days (or custom)</li>
+                            <li>Under <b>Scopes</b>, select <b>Work Items → Read</b> only</li>
+                            <li>Click <b>Create</b> → copy the token → paste it above</li>
+                        </ol>
+                        <div style="margin-top:8px;padding:8px 10px;background:#fff4ce;border-radius:4px;font-size:11.5px;color:#6b5900;">
+                            ⚠️ <b>Security note:</b> Your PAT is only stored in this browser tab's session. It is never saved to disk, sent to any server other than <code style="background:#f3f2f1;padding:1px 4px;border-radius:3px;">dev.azure.com/MicrosoftIT</code>, or visible to other users. Closing the tab clears it.
+                        </div>
+                    </div>
                 </div>
 
                 <div class="picker-filter-row">
