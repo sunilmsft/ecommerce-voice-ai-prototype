@@ -663,9 +663,20 @@
                 <div class="picker-header">
                     <div class="picker-logo">ADO</div>
                     <div class="picker-header-text">
-                        <h3>Select Your Feature</h3>
-                        <p>Showing active features assigned to you from ADO. Select one to auto-fill the handshake.</p>
+                        <h3>Select Your Feature <span id="adoLiveLabel" style="display:none;font-size:12px;font-weight:500;background:#dff6dd;color:#107c10;padding:2px 10px;border-radius:12px;margin-left:8px;vertical-align:middle;"></span></h3>
+                        <p id="pickerSubtitle">Showing active features assigned to you from ADO. Select one to auto-fill the handshake.</p>
                     </div>
+                </div>
+
+                <!-- ADO Connection Panel -->
+                <div id="adoConnPanel" style="background:linear-gradient(135deg,#f3f2f1,#e8e6e4);border-radius:8px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:200px;">
+                        <div style="font-size:13px;font-weight:600;color:#323130;">🔌 Connect to live ADO data <span style="font-weight:400;color:#605e5c;">(optional)</span></div>
+                        <div style="font-size:11px;color:#a19f9d;margin-top:2px;">Enter a PAT with <b>Work Items (Read)</b> scope. Stored in session only.</div>
+                    </div>
+                    <input id="adoPatInput" type="password" placeholder="Paste your ADO PAT..." style="flex:1;min-width:180px;padding:6px 10px;border:1px solid #c8c6c4;border-radius:4px;font-size:13px;font-family:inherit;">
+                    <button onclick="connectToAdo()" style="background:#0078d4;color:#fff;border:none;padding:6px 16px;border-radius:4px;font-size:13px;cursor:pointer;font-weight:600;">Connect</button>
+                    <div id="adoConnStatus" style="width:100%;font-size:12px;color:#a0a0a0;margin-top:2px;"></div>
                 </div>
 
                 <div class="picker-filter-row">
@@ -1196,6 +1207,138 @@ var selectedOwner = '';
 var publishedWorkItemId = null;
 var pickerFilter = 'Active';
 var activeDrillId = null;
+
+// ── Live ADO Connection State ──
+var liveAdoItems = null;
+var adoConnected = false;
+var ADO_API = 'https://dev.azure.com/MicrosoftIT/OneITVSO/_apis';
+
+function getPickerItems() { return liveAdoItems || mockAdoItems; }
+
+function stripHtml(html) {
+    if (!html) return '';
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
+function parseAcceptanceCriteria(html) {
+    if (!html) return ['(none specified)'];
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    var lis = tmp.querySelectorAll('li');
+    if (lis.length > 0) {
+        return Array.from(lis).map(function(li) { return li.textContent.trim(); }).filter(Boolean);
+    }
+    var text = tmp.textContent || tmp.innerText || '';
+    var lines = text.split(/[\n\r]+/).map(function(l) { return l.trim(); }).filter(Boolean);
+    return lines.length > 0 ? lines : ['(none specified)'];
+}
+
+function connectToAdo() {
+    var patInput = document.getElementById('adoPatInput');
+    var pat = patInput ? patInput.value.trim() : '';
+    if (!pat) { showAdoStatus('Enter a PAT with Work Items (Read) scope', 'error'); return; }
+
+    showAdoStatus('Connecting to Azure DevOps...', 'loading');
+    var headers = { 'Content-Type': 'application/json', 'Authorization': 'Basic ' + btoa(':' + pat) };
+
+    // WIQL query for Features + Scenarios under Voice Agent area
+    var wiql = {
+        query: "SELECT [System.Id] FROM WorkItems WHERE [System.WorkItemType] IN ('Feature','Scenario') AND [System.AreaPath] UNDER 'OneITVSO\\\\BIC CXP\\\\Digital Sales\\\\Digital Sales Telephony\\\\Voice Agent' ORDER BY [System.ChangedDate] DESC"
+    };
+
+    fetch(ADO_API + '/wit/wiql?api-version=7.0', { method: 'POST', headers: headers, body: JSON.stringify(wiql) })
+    .then(function(res) {
+        if (!res.ok) throw new Error('Auth failed (' + res.status + ')');
+        return res.json();
+    })
+    .then(function(wiqlResult) {
+        if (!wiqlResult.workItems || wiqlResult.workItems.length === 0) {
+            showAdoStatus('Connected but no features found in Voice Agent area', 'warn');
+            return;
+        }
+        var ids = wiqlResult.workItems.slice(0, 30).map(function(wi) { return wi.id; });
+        var fields = 'System.Id,System.WorkItemType,System.Title,System.State,System.AssignedTo,System.IterationPath,System.AreaPath,System.Description,Microsoft.VSTS.Common.AcceptanceCriteria,System.Tags,System.CreatedDate,System.ChangedDate,Microsoft.VSTS.Common.Priority,Microsoft.VSTS.Scheduling.StoryPoints';
+        return fetch(ADO_API + '/wit/workitems?ids=' + ids.join(',') + '&fields=' + fields + '&api-version=7.0', { headers: headers });
+    })
+    .then(function(res) {
+        if (!res || !res.ok) throw new Error('Failed to fetch work item details');
+        return res.json();
+    })
+    .then(function(itemsResult) {
+        liveAdoItems = itemsResult.value.map(function(wi) {
+            var f = wi.fields;
+            var assigned = f['System.AssignedTo'];
+            var tagsRaw = f['System.Tags'] || '';
+            return {
+                id: f['System.Id'],
+                type: f['System.WorkItemType'],
+                title: f['System.Title'] || '(untitled)',
+                state: f['System.State'] || 'New',
+                assignedTo: assigned ? (assigned.displayName || assigned) : 'Unassigned',
+                iteration: f['System.IterationPath'] || 'OneITVSO',
+                areaPath: f['System.AreaPath'] || '',
+                description: stripHtml(f['System.Description']),
+                acceptanceCriteria: parseAcceptanceCriteria(f['Microsoft.VSTS.Common.AcceptanceCriteria']),
+                tags: tagsRaw ? tagsRaw.split(';').map(function(t) { return t.trim(); }).filter(Boolean) : [],
+                createdDate: (f['System.CreatedDate'] || '').substring(0, 10),
+                changedDate: (f['System.ChangedDate'] || '').substring(0, 10),
+                priority: f['Microsoft.VSTS.Common.Priority'] || 2,
+                storyPoints: f['Microsoft.VSTS.Scheduling.StoryPoints'] || null
+            };
+        });
+        adoConnected = true;
+        sessionStorage.setItem('adoPat', pat);
+        showAdoStatus('Connected — ' + liveAdoItems.length + ' work items loaded', 'success');
+        updatePickerConnectionUI();
+        renderPickerList();
+    })
+    .catch(function(err) {
+        console.error('ADO connection error:', err);
+        showAdoStatus('Could not connect: ' + err.message + '. Using demo data.', 'error');
+        liveAdoItems = null;
+        adoConnected = false;
+    });
+}
+
+function disconnectAdo() {
+    liveAdoItems = null;
+    adoConnected = false;
+    sessionStorage.removeItem('adoPat');
+    updatePickerConnectionUI();
+    renderPickerList();
+}
+
+function showAdoStatus(msg, type) {
+    var el = document.getElementById('adoConnStatus');
+    if (!el) return;
+    var colors = { loading: '#a0a0a0', success: '#107c10', error: '#d13438', warn: '#ca5010' };
+    var icons = { loading: '⏳', success: '🟢', error: '🔴', warn: '⚠️' };
+    el.innerHTML = (icons[type] || '') + ' ' + msg;
+    el.style.color = colors[type] || '#a0a0a0';
+}
+
+function updatePickerConnectionUI() {
+    var connPanel = document.getElementById('adoConnPanel');
+    var liveLabel = document.getElementById('adoLiveLabel');
+    if (adoConnected) {
+        if (connPanel) connPanel.style.display = 'none';
+        if (liveLabel) { liveLabel.style.display = 'inline-flex'; liveLabel.textContent = '🟢 Live — ' + liveAdoItems.length + ' items'; }
+    } else {
+        if (connPanel) connPanel.style.display = '';
+        if (liveLabel) liveLabel.style.display = 'none';
+    }
+}
+
+function tryAutoConnect() {
+    var savedPat = sessionStorage.getItem('adoPat');
+    if (savedPat) {
+        var patInput = document.getElementById('adoPatInput');
+        if (patInput) patInput.value = savedPat;
+        connectToAdo();
+    }
+}
 
 // ══════════════════════════════════════════════════════
 // ROLE SWITCH
@@ -1903,7 +2046,8 @@ function showBuilder() {
         document.getElementById('protoLink').value = '';
 
         // Find matching ADO item and link it
-        var matchedAdo = mockAdoItems.find(function(item) { return '#' + item.id === h.adoId; });
+        var allItems = getPickerItems().concat(mockAdoItems);
+        var matchedAdo = allItems.find(function(item) { return '#' + item.id === h.adoId; });
         if (matchedAdo) {
             selectedAdoItem = matchedAdo;
             adoLinked = true;
@@ -1934,6 +2078,8 @@ function showBuilder() {
         document.getElementById('filterActive').classList.add('active');
         document.getElementById('filterNew').classList.remove('active');
         document.getElementById('filterAll').classList.remove('active');
+        updatePickerConnectionUI();
+        tryAutoConnect();
         renderPickerList();
     }
 }
@@ -2022,7 +2168,15 @@ function filterPicker() { renderPickerList(); }
 
 function renderPickerList() {
     var query = (document.getElementById('pickerSearch').value || '').toLowerCase();
-    var items = mockAdoItems.filter(function(item) {
+    // Update subtitle to reflect data source
+    var subtitle = document.getElementById('pickerSubtitle');
+    if (subtitle) {
+        subtitle.innerHTML = adoConnected
+            ? '🟢 Showing <b>live</b> features from Azure DevOps. <a href="javascript:disconnectAdo()" style="color:#d13438;font-size:12px;">Disconnect</a>'
+            : 'Showing demo data. Connect above to load live ADO features.';
+    }
+    var source = getPickerItems();
+    var items = source.filter(function(item) {
         var matchState = pickerFilter === 'All' || item.state === pickerFilter;
         var matchQuery = !query || item.title.toLowerCase().indexOf(query) >= 0 ||
             item.id.toString().indexOf(query) >= 0 ||
@@ -2038,14 +2192,15 @@ function renderPickerList() {
     }
 
     container.innerHTML = items.map(function(item) {
-        var stateColor = item.state === 'Active' ? '#dff6dd' : '#e8e8e8';
-        var stateText = item.state === 'Active' ? '#107c10' : '#605e5c';
+        var stateColor = item.state === 'Active' ? '#dff6dd' : item.state === 'Closed' ? '#deecf9' : item.state === 'Resolved' ? '#e8daef' : '#e8e8e8';
+        var stateText = item.state === 'Active' ? '#107c10' : item.state === 'Closed' ? '#0078d4' : item.state === 'Resolved' ? '#5b2d90' : '#605e5c';
         var iterShort = item.iteration.split('\\').pop();
         var areaShort = item.areaPath.split('\\').slice(1).join(' / ');
+        var typeIcon = item.type === 'Scenario' ? 'S' : item.type === 'User Story' ? 'US' : 'F';
         var selectedClass = selectedAdoItem && selectedAdoItem.id === item.id ? ' selected' : '';
 
         return '<div class="picker-item' + selectedClass + '" onclick="selectPickerItem(' + item.id + ')">' +
-            '<div class="picker-item-icon">F</div>' +
+            '<div class="picker-item-icon">' + typeIcon + '</div>' +
             '<div class="picker-item-info">' +
                 '<div class="picker-item-title">' + item.title + '</div>' +
                 '<div class="picker-item-meta">' +
@@ -2064,7 +2219,7 @@ function renderPickerList() {
 }
 
 function selectPickerItem(id) {
-    selectedAdoItem = mockAdoItems.filter(function(item) { return item.id === id; })[0];
+    selectedAdoItem = getPickerItems().filter(function(item) { return item.id === id; })[0];
     renderPickerList();
     document.getElementById('fieldMapPanel').classList.add('visible');
 }
@@ -2075,10 +2230,10 @@ function pullFromUrl() {
     var match = url.match(/(\d{5,})/);
     if (match) {
         var id = parseInt(match[1]);
-        var item = mockAdoItems.filter(function(i) { return i.id === id; })[0];
+        var item = getPickerItems().filter(function(i) { return i.id === id; })[0];
         if (item) { selectedAdoItem = item; }
     }
-    if (!selectedAdoItem) selectedAdoItem = mockAdoItems[0];
+    if (!selectedAdoItem) selectedAdoItem = getPickerItems()[0];
     startPull();
 }
 
