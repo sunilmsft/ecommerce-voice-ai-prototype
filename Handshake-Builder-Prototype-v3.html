@@ -1522,8 +1522,8 @@ function populateDrill(id) {
         var pipelineItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
         var html = '<div class="drill-header"><div class="drill-title">⏱️ Full Pipeline Timeline</div><button class="drill-close" onclick="closeDrill(\'pm-velocity\')">✕</button></div>';
         html += '<div style="margin-bottom:16px;padding:10px 14px;background:#f0f6fc;border-radius:8px;font-size:13px;color:#004e8c;">Tracking each feature through all pipeline stages: <strong>Kickoff → Prototype → Handshake → Production</strong></div>';
-        html += '<table class="drill-table"><thead><tr><th>Feature</th><th style="text-align:center;">Kickoff→Prototype</th><th style="text-align:center;">Prototype→Handshake</th><th style="text-align:center;">Handshake→Production</th><th>ADO</th><th>Stage</th></tr></thead><tbody>';
-        var sumKP = 0, sumPH = 0, sumHP = 0, cntKP = 0, cntPH = 0, cntHP = 0;
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th style="text-align:center;">Kickoff→Prototype</th><th style="text-align:center;">Prototype→Handshake</th><th style="text-align:center;">Handshake→Production</th><th style="text-align:center;">End to End</th><th>ADO</th><th>Stage</th></tr></thead><tbody>';
+        var sumKP = 0, sumPH = 0, sumHP = 0, cntKP = 0, cntPH = 0, cntHP = 0, sumE2E = 0, cntE2E = 0;
         pipelineItems.forEach(function(h) {
             var kp = Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000);
             var ph = h.status === 'published' ? Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000) : null;
@@ -1531,6 +1531,8 @@ function populateDrill(id) {
             sumKP += kp; cntKP++;
             if (ph !== null) { sumPH += ph; cntPH++; }
             if (hp !== null) { sumHP += hp; cntHP++; }
+            var e2e = h.shipDate && h.kickoffDate ? Math.round((new Date(h.shipDate) - new Date(h.kickoffDate)) / 86400000) : null;
+            if (e2e !== null) { sumE2E += e2e; cntE2E++; }
             var kpColor = kp <= 7 ? '#107c10' : kp <= 14 ? '#ff8c00' : '#d13438';
             var phColor = ph !== null ? (ph <= 7 ? '#107c10' : ph <= 14 ? '#ff8c00' : '#d13438') : '#a0a0a0';
             var hpColor = hp !== null ? (hp <= 14 ? '#107c10' : hp <= 21 ? '#ff8c00' : '#d13438') : '#a0a0a0';
@@ -1542,6 +1544,8 @@ function populateDrill(id) {
             html += '<td style="text-align:center;"><span style="color:' + kpColor + ';font-weight:600;">' + kp + 'd</span></td>';
             html += '<td style="text-align:center;"><span style="color:' + phColor + ';font-weight:600;">' + (ph !== null ? ph + 'd' : '—') + '</span></td>';
             html += '<td style="text-align:center;"><span style="color:' + hpColor + ';font-weight:600;">' + (hp !== null ? hp + 'd' : '—') + '</span></td>';
+            var e2eColor = e2e !== null ? (e2e <= 30 ? '#107c10' : e2e <= 45 ? '#ff8c00' : '#d13438') : '#a0a0a0';
+            html += '<td style="text-align:center;"><span style="color:' + e2eColor + ';font-weight:700;">' + (e2e !== null ? e2e + 'd' : '—') + '</span></td>';
             html += '<td>' + adoLink(h.adoId) + '</td>';
             html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:' + stageBg + ';color:' + stageC + ';">' + stage + '</span></td></tr>';
         });
@@ -1553,8 +1557,9 @@ function populateDrill(id) {
             html += '<td style="text-align:center;"><span style="color:#ff8c00;font-weight:600;">' + daysIn + 'd…</span></td>';
             html += '<td style="text-align:center;color:#a0a0a0;">—</td>';
             html += '<td style="text-align:center;color:#a0a0a0;">—</td>';
+            html += '<td style="text-align:center;color:#a0a0a0;">—</td>';
             html += '<td>' + adoLink(h.adoId) + '</td>';
-            html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#fff4ce;color:#8a6914;">In Progress</span></td></tr>';
+            html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#fff4ce;color:#8a6914;">Draft</span></td></tr>';
         });
         html += '</tbody></table>';
         // Summary row
@@ -1565,6 +1570,7 @@ function populateDrill(id) {
         html += '<div>📐 <strong>Avg Kickoff→Prototype:</strong> <span style="color:#0078d4;font-weight:600;">' + avgKP + ' days</span></div>';
         html += '<div>📐 <strong>Avg Prototype→Handshake:</strong> <span style="color:#107c10;font-weight:600;">' + avgPH + ' days</span></div>';
         if (cntHP > 0) html += '<div>📐 <strong>Avg Handshake→Production:</strong> <span style="color:#8661c5;font-weight:600;">' + avgHP + ' days</span></div>';
+        if (cntE2E > 0) { var avgE2E = Math.round(sumE2E / cntE2E); html += '<div>📐 <strong>Avg End to End:</strong> <span style="color:#e83e8c;font-weight:600;">' + avgE2E + ' days</span></div>'; }
         html += '</div>';
         panel.innerHTML = html;
     }
@@ -1633,8 +1639,8 @@ function renderPmStats() {
     var activeDev = myItems.filter(function(h) { return h.milestone >= 4 && h.milestone <= 5; });
     var shipped = myItems.filter(function(h) { return h.milestone === 6; });
 
-    // Compute averages for all 3 pipeline stages
-    var kpItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
+    // Compute averages for all 3 pipeline stages (velocity stat uses in-dev only for consistency)
+    var kpItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate && h.milestone >= 4 && h.milestone <= 5; });
     var phItems = myItems.filter(function(h) { return h.protoDate && h.date && h.status === 'published'; });
     var hpItems = myItems.filter(function(h) { return h.shipDate; });
     var avgKP = 0, avgPH = 0, avgHP = 0;
@@ -1679,7 +1685,7 @@ function renderPmStats() {
     document.getElementById('statActiveVal').textContent = activeDev.length;
     document.getElementById('statActiveSub').textContent = activeDev.length + ' of ' + total + ' total handshakes';
     document.getElementById('statVelocityVal').textContent = avgKP + ' days';
-    document.getElementById('statVelocitySub').textContent = 'Across ' + kpItems.length + ' features with prototype';
+    document.getElementById('statVelocitySub').textContent = 'Across ' + kpItems.length + ' features in dev';
     document.getElementById('statShippedVal').textContent = shipped.length;
     document.getElementById('statShippedSub').textContent = shipped.length + ' of ' + total + ' total handshakes';
 
