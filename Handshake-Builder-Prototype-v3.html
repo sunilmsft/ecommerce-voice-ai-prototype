@@ -860,10 +860,10 @@
 <div class="view" id="view-success">
     <div class="success-view">
         <div class="success-icon">✓</div>
-        <div class="success-title">User Story Created in ADO</div>
-        <div class="success-subtitle">Your handshake brief has been published as a User Story and parented under the feature.<br>The assigned owner has been notified.</div>
+        <div class="success-title">Handshake Published</div>
+        <div class="success-subtitle">Your handshake brief has been created as a User Story and parented under the feature.<br>The assigned owner has been notified.</div>
         <div class="success-card">
-            <div class="success-work-item"><div class="success-wi-icon">📋</div><div><div class="success-wi-type">User Story</div><div class="success-wi-title" id="successWiTitle">Prototype Handshake: eCommerce Voice AI Agent</div><div class="success-wi-id" id="successWiId" onclick="openInAdo()">#12851 — Open in ADO →</div></div></div>
+            <div class="success-work-item"><div class="success-wi-icon">📋</div><div><div class="success-wi-type">User Story</div><div class="success-wi-title" id="successWiTitle">Prototype Handshake: eCommerce Voice AI Agent</div><div class="success-wi-id" id="successWiId" style="cursor:default;">#12851 <span style="font-size:11px;background:#fff4ce;color:#8a6914;padding:2px 8px;border-radius:10px;margin-left:6px;font-weight:600;">Simulated</span></div></div></div>
             <div class="success-details">
                 <div class="success-detail"><div class="success-detail-label">Parent Feature</div><div class="success-detail-value" id="successParent">#12847 · eCommerce Voice AI Agent</div></div>
                 <div class="success-detail"><div class="success-detail-label">Assigned To</div><div class="success-detail-value" id="successOwner">David Chen</div></div>
@@ -2255,8 +2255,27 @@ function publishToAdo() {
     var iterationText = iterChip ? iterChip.textContent : 'Backlog';
     var owner = selectedOwner || 'Unassigned';
 
+    // Add new handshake to data so it shows up on dashboard
+    var scoreEl = document.getElementById('readinessScore');
+    var score = scoreEl ? parseInt(scoreEl.textContent) || 0 : 0;
+    var today = new Date();
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var dateStr = months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
+    var ownerInitials = owner !== 'Unassigned' ? owner.split(' ').map(function(w){return w[0];}).join('') : null;
+    handshakeData.push({
+        name: featureName,
+        pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4',
+        status: 'published', score: score, adoId: '#' + publishedWorkItemId,
+        adoState: 'new', date: dateStr,
+        owner: owner !== 'Unassigned' ? owner : null,
+        ownerInitials: ownerInitials,
+        parentId: '#' + parentId, milestone: 3,
+        area: selectedAdoItem ? selectedAdoItem.areaPath.split('\\').pop() : 'Digital Sales / Voice Agent',
+        kickoffDate: dateStr
+    });
+
     document.getElementById('successWiTitle').textContent = 'Prototype Handshake: ' + featureName;
-    document.getElementById('successWiId').textContent = '#' + publishedWorkItemId + ' — Open in ADO →';
+    document.getElementById('successWiId').innerHTML = '#' + publishedWorkItemId + ' <span style="font-size:11px;background:#fff4ce;color:#8a6914;padding:2px 8px;border-radius:10px;margin-left:6px;font-weight:600;">Simulated</span>';
     document.getElementById('successParent').textContent = '#' + parentId + ' · ' + parentTitle;
     document.getElementById('successOwner').textContent = owner;
     document.getElementById('successIteration').textContent = iterationText;
