@@ -420,7 +420,7 @@
                 </div>
                 <div class="stat-card" onclick="toggleDrill('pm-velocity')" id="statCardVelocity">
                     <div class="stat-value" style="color:#ff8c00;" id="statVelocityVal">—</div>
-                    <div class="stat-label">Avg. Kickoff → Proto</div>
+                    <div class="stat-label">Avg. Kickoff → Prototype</div>
                     <div class="stat-sub" id="statVelocitySub">Loading...</div>
                     <div class="stat-expand-hint">Click to see full pipeline →</div>
                 </div>
@@ -510,7 +510,7 @@
                         <div style="font-size:13px;color:#323130;line-height:1.6;">Once engineering has the handshake brief, how long until the feature ships? This is the metric that proves the handshake process reduces eng ramp-up time.</div>
                     </div>
                     <div style="background:#f5f0ff;border-radius:10px;padding:14px 16px;">
-                        <div style="font-weight:700;color:#5b2d90;margin-bottom:4px;">Shipped to Prod</div>
+                        <div style="font-weight:700;color:#5b2d90;margin-bottom:4px;">Shipped to Production</div>
                         <div style="font-size:13px;color:#323130;line-height:1.6;">Count of projects that completed the full pipeline and are live in production. The ultimate outcome metric — are prototypes becoming real features?</div>
                     </div>
                 </div>
@@ -537,12 +537,12 @@
                     <div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>
                     <div style="flex:6;text-align:center;background:#107c10;padding:12px 6px;border-right:2px solid #1e2028;">
                         <div style="font-size:20px;font-weight:700;color:#ffffff;">6d</div>
-                        <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Proto → Handshake</div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Prototype → Handshake</div>
                     </div>
                     <div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>
                     <div style="flex:12;text-align:center;background:#8661c5;border-radius:0 10px 10px 0;padding:12px 6px;">
                         <div style="font-size:20px;font-weight:700;color:#ffffff;">12d</div>
-                        <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Handshake → Prod</div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Handshake → Production</div>
                     </div>
                 </div>
                 <div style="text-align:center;margin-top:10px;font-size:12px;color:#9ca0ae;">📐 Establishing baseline this quarter · Stages proportionally sized by duration</div>
@@ -569,7 +569,7 @@
                 </div>
                 <div class="stat-card" onclick="toggleDrill('lead-shipped')">
                     <div class="stat-value" style="color:#5b2d90;">3</div>
-                    <div class="stat-label">Shipped to Prod</div>
+                    <div class="stat-label">Shipped to Production</div>
                     <div class="stat-sub">Prototypes → real features</div>
                     <div class="stat-expand-hint">Click for details →</div>
                 </div>
@@ -1409,8 +1409,8 @@ function closeAllDrills() {
 
 function populateDrill(id) {
     var myItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal'; });
-    var drafts = myItems.filter(function(h) { return h.status === 'draft'; });
-    var activeDev = myItems.filter(function(h) { return h.status === 'published' && h.milestone >= 4 && h.milestone <= 5; });
+    var drafts = myItems.filter(function(h) { return h.milestone < 4; });
+    var activeDev = myItems.filter(function(h) { return h.milestone >= 4 && h.milestone <= 5; });
     var shipped = myItems.filter(function(h) { return h.milestone === 6; });
     var total = myItems.length;
 
@@ -1449,18 +1449,18 @@ function populateDrill(id) {
         var kpFlex = Math.max(avgKP, 2), phFlex = Math.max(avgPH, 2), hpFlex = hpItems.length > 0 ? Math.max(avgHP, 2) : 3;
         html += '<div style="flex:' + kpFlex + ';background:#0078d4;border-radius:10px 0 0 10px;padding:10px 12px;text-align:center;border-right:2px solid #1e2028;">';
         html += '<div style="font-size:18px;font-weight:700;">' + avgKP + 'd</div>';
-        html += '<div style="font-size:10px;opacity:0.85;">Kickoff → Proto</div></div>';
+        html += '<div style="font-size:10px;opacity:0.85;">Kickoff → Prototype</div></div>';
         html += '<div style="flex:' + phFlex + ';background:#107c10;padding:10px 12px;text-align:center;border-right:2px solid #1e2028;">';
         html += '<div style="font-size:18px;font-weight:700;">' + avgPH + 'd</div>';
-        html += '<div style="font-size:10px;opacity:0.85;">Proto → Handshake</div></div>';
+        html += '<div style="font-size:10px;opacity:0.85;">Prototype → Handshake</div></div>';
         if (hpItems.length > 0) {
             html += '<div style="flex:' + hpFlex + ';background:#8661c5;border-radius:0 10px 10px 0;padding:10px 12px;text-align:center;">';
             html += '<div style="font-size:18px;font-weight:700;">' + avgHP + 'd</div>';
-            html += '<div style="font-size:10px;opacity:0.85;">Handshake → Prod</div></div>';
+            html += '<div style="font-size:10px;opacity:0.85;">Handshake → Production</div></div>';
         } else {
             html += '<div style="flex:' + hpFlex + ';background:#3a3d48;border-radius:0 10px 10px 0;padding:10px 12px;text-align:center;">';
             html += '<div style="font-size:18px;font-weight:700;">—</div>';
-            html += '<div style="font-size:10px;opacity:0.65;">Handshake → Prod</div></div>';
+            html += '<div style="font-size:10px;opacity:0.65;">Handshake → Production</div></div>';
         }
         html += '</div>';
         html += '<div style="font-size:11px;color:#a0a0a0;text-align:center;">Total E2E: <strong style="color:white;">' + totalE2E + ' days</strong> avg</div>';
@@ -1509,7 +1509,7 @@ function populateDrill(id) {
         var pipelineItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
         var html = '<div class="drill-header"><div class="drill-title">⏱️ Full Pipeline Timeline</div><button class="drill-close" onclick="closeDrill(\'pm-velocity\')">✕</button></div>';
         html += '<div style="margin-bottom:16px;padding:10px 14px;background:#f0f6fc;border-radius:8px;font-size:13px;color:#004e8c;">Tracking each feature through all pipeline stages: <strong>Kickoff → Prototype → Handshake → Production</strong></div>';
-        html += '<table class="drill-table"><thead><tr><th>Feature</th><th style="text-align:center;">K→P</th><th style="text-align:center;">P→H</th><th style="text-align:center;">H→Prod</th><th>ADO</th><th>Stage</th></tr></thead><tbody>';
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th style="text-align:center;">Kickoff→Prototype</th><th style="text-align:center;">Prototype→Handshake</th><th style="text-align:center;">Handshake→Production</th><th>ADO</th><th>Stage</th></tr></thead><tbody>';
         var sumKP = 0, sumPH = 0, sumHP = 0, cntKP = 0, cntPH = 0, cntHP = 0;
         pipelineItems.forEach(function(h) {
             var kp = Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000);
@@ -1549,9 +1549,9 @@ function populateDrill(id) {
         var avgPH = cntPH > 0 ? Math.round(sumPH / cntPH) : 0;
         var avgHP = cntHP > 0 ? Math.round(sumHP / cntHP) : 0;
         html += '<div style="margin-top:12px;padding:12px 14px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#605e5c;display:flex;gap:16px;flex-wrap:wrap;">';
-        html += '<div>📐 <strong>Avg K→P:</strong> <span style="color:#0078d4;font-weight:600;">' + avgKP + ' days</span></div>';
-        html += '<div>📐 <strong>Avg P→H:</strong> <span style="color:#107c10;font-weight:600;">' + avgPH + ' days</span></div>';
-        if (cntHP > 0) html += '<div>📐 <strong>Avg H→Prod:</strong> <span style="color:#8661c5;font-weight:600;">' + avgHP + ' days</span></div>';
+        html += '<div>📐 <strong>Avg Kickoff→Prototype:</strong> <span style="color:#0078d4;font-weight:600;">' + avgKP + ' days</span></div>';
+        html += '<div>📐 <strong>Avg Prototype→Handshake:</strong> <span style="color:#107c10;font-weight:600;">' + avgPH + ' days</span></div>';
+        if (cntHP > 0) html += '<div>📐 <strong>Avg Handshake→Production:</strong> <span style="color:#8661c5;font-weight:600;">' + avgHP + ' days</span></div>';
         html += '</div>';
         panel.innerHTML = html;
     }
@@ -1569,9 +1569,9 @@ function populateDrill(id) {
             html += '<div style="padding:14px 16px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div style="font-size:22px;">🚢</div><div><div style="font-weight:600;font-size:15px;">' + h.name + '</div><div style="font-size:12px;color:#605e5c;">Total lifecycle: <strong>' + totalD + ' days</strong> · ' + adoLink(h.adoId) + '</div></div></div>';
             // Timeline stages
             html += '<div style="display:flex;gap:0;border-radius:8px;overflow:hidden;">';
-            if (kp !== null) html += '<div style="flex:' + Math.max(kp,2) + ';background:#d0e8ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#004e8c;">' + kp + 'd</div><div style="font-size:10px;color:#004e8c;">K→P</div></div>';
-            if (ph !== null) html += '<div style="flex:' + Math.max(ph,2) + ';background:#dff6dd;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#107c10;">' + ph + 'd</div><div style="font-size:10px;color:#107c10;">P→H</div></div>';
-            if (hp !== null) html += '<div style="flex:' + Math.max(hp,2) + ';background:#f0e6ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#5b2d90;">' + hp + 'd</div><div style="font-size:10px;color:#5b2d90;">H→Prod</div></div>';
+            if (kp !== null) html += '<div style="flex:' + Math.max(kp,2) + ';background:#d0e8ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#004e8c;">' + kp + 'd</div><div style="font-size:10px;color:#004e8c;">Kickoff→Prototype</div></div>';
+            if (ph !== null) html += '<div style="flex:' + Math.max(ph,2) + ';background:#dff6dd;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#107c10;">' + ph + 'd</div><div style="font-size:10px;color:#107c10;">Prototype→Handshake</div></div>';
+            if (hp !== null) html += '<div style="flex:' + Math.max(hp,2) + ';background:#f0e6ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#5b2d90;">' + hp + 'd</div><div style="font-size:10px;color:#5b2d90;">Handshake→Production</div></div>';
             html += '</div>';
             // Date timeline
             html += '<div style="display:flex;justify-content:space-between;font-size:11px;color:#8a8886;margin-top:8px;padding:0 4px;">';
@@ -1616,8 +1616,8 @@ function renderCard(h, showArea) {
 function renderPmStats() {
     var myItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal'; });
     var total = myItems.length;
-    var drafts = myItems.filter(function(h) { return h.status === 'draft'; });
-    var activeDev = myItems.filter(function(h) { return h.status === 'published' && h.milestone >= 4 && h.milestone <= 5; });
+    var drafts = myItems.filter(function(h) { return h.milestone < 4; });
+    var activeDev = myItems.filter(function(h) { return h.milestone >= 4 && h.milestone <= 5; });
     var shipped = myItems.filter(function(h) { return h.milestone === 6; });
 
     // Compute averages for all 3 pipeline stages
@@ -1665,16 +1665,16 @@ function renderPmStats() {
     bHtml += '<div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>';
     bHtml += '<div style="flex:' + phFlex + ';text-align:center;background:#107c10;padding:12px 6px;border-right:2px solid #1e2028;">';
     bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + avgPH + 'd</div>';
-    bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Proto → Handshake</div></div>';
+    bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Prototype → Handshake</div></div>';
     bHtml += '<div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>';
     if (hpItems.length > 0) {
         bHtml += '<div style="flex:' + hpFlex + ';text-align:center;background:#8661c5;border-radius:0 10px 10px 0;padding:12px 6px;">';
         bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + avgHP + 'd</div>';
-        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Handshake → Prod</div></div>';
+        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Handshake → Production</div></div>';
     } else {
         bHtml += '<div style="flex:' + hpFlex + ';text-align:center;background:#3a3d48;border-radius:0 10px 10px 0;padding:12px 6px;">';
         bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">—</div>';
-        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.65);font-weight:600;">Handshake → Prod</div></div>';
+        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.65);font-weight:600;">Handshake → Production</div></div>';
     }
     bHtml += '</div>';
     bHtml += '<div style="text-align:center;margin-top:10px;font-size:12px;color:#9ca0ae;">📐 Based on ' + kpItems.length + ' features with milestone data · Stages proportionally sized</div>';
@@ -1733,13 +1733,13 @@ function renderLeadershipView() {
         '</div>' +
         '<div class="stat-card" onclick="toggleDrill(\'lead-velocity\')">' +
             '<div class="stat-value" style="color:#ff8c00;">12 days</div>' +
-            '<div class="stat-label">Avg. Handshake → Prod</div>' +
+            '<div class="stat-label">Avg. Handshake → Production</div>' +
             '<div class="stat-sub">Eng pickup to production</div>' +
             '<div class="stat-expand-hint" style="color:#8a8886;">📐 Baseline · Target: 10d →</div>' +
         '</div>' +
         '<div class="stat-card" onclick="toggleDrill(\'lead-shipped\')">' +
             '<div class="stat-value" style="color:#5b2d90;">' + inProduction + '</div>' +
-            '<div class="stat-label">Shipped to Prod</div>' +
+            '<div class="stat-label">Shipped to Production</div>' +
             '<div class="stat-sub">Prototypes → live features</div>' +
             '<div class="stat-expand-hint">Click for details →</div>' +
         '</div>';
