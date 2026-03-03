@@ -1746,6 +1746,8 @@ function renderLeadershipView() {
     // ── Aggregate KPIs ──
     var totalProjects = 0, onTrack = 0, atRisk = 0, issues = 0, inProduction = 0;
     var phaseTotals = { Proposal: 0, Design: 0, Development: 0, UAT: 0, Production: 0 };
+    // Milestone-aligned counts (consistent with PM view)
+    var milestoneTotals = { Draft: 0, 'In Dev': 0, Shipped: 0 };
     portfolioData.forEach(function(p) {
         p.projects.forEach(function(pr) {
             totalProjects++;
@@ -1753,7 +1755,9 @@ function renderLeadershipView() {
             else if (pr.status === 'At Risk') atRisk++;
             else if (pr.status === 'Issue') issues++;
             if (phaseTotals.hasOwnProperty(pr.phase)) phaseTotals[pr.phase]++;
-            if (pr.phase === 'Production') inProduction++;
+            if (pr.phase === 'Production') { inProduction++; milestoneTotals['Shipped']++; }
+            else if (pr.phase === 'Development' || pr.phase === 'UAT') milestoneTotals['In Dev']++;
+            else milestoneTotals['Draft']++;
         });
     });
 
@@ -1802,14 +1806,18 @@ function renderLeadershipView() {
     '<div style="background:#fff8f0;border-radius:8px;padding:10px 14px;font-size:13px;color:#605e5c;margin-bottom:16px;">📐 <strong>Establishing baseline.</strong> This is a new process — we\'re measuring how quickly PMs go from idea to working prototype using GitHub Copilot + rapid prototyping. This baseline will be tracked quarter-over-quarter.</div>';
     // Phase distribution
     pipeHtml += '<div style="font-size:12px;font-weight:600;color:#323130;margin-bottom:6px;">Current Phase Distribution (' + totalProjects + ' projects)</div><div class="pipeline-bar">';
-    phaseOrder.forEach(function(ph) {
-        if (phaseTotals[ph] > 0) {
-            pipeHtml += '<div class="pipeline-segment" style="width:' + Math.round((phaseTotals[ph] / totalProjects) * 100) + '%;background:' + phaseColors[ph] + ';color:' + phaseTextColors[ph] + ';">' + phaseTotals[ph] + '</div>';
+    var msColors = { Draft: '#fff4ce', 'In Dev': '#d0e8ff', Shipped: '#dff6dd' };
+    var msTColors = { Draft: '#8a6914', 'In Dev': '#004e8c', Shipped: '#107c10' };
+    ['Draft', 'In Dev', 'Shipped'].forEach(function(ms) {
+        if (milestoneTotals[ms] > 0) {
+            pipeHtml += '<div class="pipeline-segment" style="width:' + Math.round((milestoneTotals[ms] / totalProjects) * 100) + '%;background:' + msColors[ms] + ';color:' + msTColors[ms] + ';">' + milestoneTotals[ms] + '</div>';
         }
     });
     pipeHtml += '</div><div class="pipeline-legend">';
-    phaseOrder.forEach(function(ph) {
-        if (phaseTotals[ph] > 0) pipeHtml += '<div class="pipeline-legend-item"><div class="pipeline-dot" style="background:' + phaseColors[ph] + ';border:1px solid ' + phaseTextColors[ph] + ';"></div> ' + ph + ' (' + phaseTotals[ph] + ')</div>';
+    var msLegendColors = { Draft: '#fff4ce', 'In Dev': '#d0e8ff', Shipped: '#dff6dd' };
+    var msLegendTextColors = { Draft: '#8a6914', 'In Dev': '#004e8c', Shipped: '#107c10' };
+    ['Draft', 'In Dev', 'Shipped'].forEach(function(ms) {
+        if (milestoneTotals[ms] > 0) pipeHtml += '<div class="pipeline-legend-item"><div class="pipeline-dot" style="background:' + msLegendColors[ms] + ';border:1px solid ' + msLegendTextColors[ms] + ';"></div> ' + ms + ' (' + milestoneTotals[ms] + ')</div>';
     });
     pipeHtml += '</div>';
     document.getElementById('drill-lead-pipeline').innerHTML = pipeHtml;
@@ -1900,9 +1908,12 @@ function renderLeadershipView() {
         var pAtRisk = projects.filter(function(pr) { return pr.status === 'At Risk'; }).length;
         var pIssue = projects.filter(function(pr) { return pr.status === 'Issue'; }).length;
         var pInProd = projects.filter(function(pr) { return pr.phase === 'Production'; }).length;
-        var pcounts = {};
-        phaseOrder.forEach(function(ph) { pcounts[ph] = 0; });
-        projects.forEach(function(pr) { if (pcounts.hasOwnProperty(pr.phase)) pcounts[pr.phase]++; });
+        var pcounts = { Draft: 0, 'In Dev': 0, Shipped: 0 };
+        projects.forEach(function(pr) {
+            if (pr.phase === 'Production') pcounts['Shipped']++;
+            else if (pr.phase === 'Development' || pr.phase === 'UAT') pcounts['In Dev']++;
+            else pcounts['Draft']++;
+        });
 
         var pStatus = pIssue > 0 ? 'Issue' : pAtRisk > 0 ? 'At Risk' : 'On Track';
         var total = projects.length;
@@ -1936,7 +1947,7 @@ function renderLeadershipView() {
             '</div>' +
             '<div style="background:#faf9f8;border-radius:8px;padding:10px 12px;text-align:center;">' +
                 '<div style="font-size:22px;font-weight:700;color:#5b2d90;">' + pInProd + '</div>' +
-                '<div style="font-size:10px;color:#605e5c;text-transform:uppercase;letter-spacing:0.3px;">In Prod</div>' +
+                '<div style="font-size:10px;color:#605e5c;text-transform:uppercase;letter-spacing:0.3px;">Shipped</div>' +
             '</div>' +
         '</div>';
 
@@ -1947,9 +1958,10 @@ function renderLeadershipView() {
         if (pIssue) barHtml += '<div style="width:' + ((pIssue/total)*100) + '%;background:#d13438;"></div>';
         barHtml += '</div>';
 
+        var msColorMap = { Draft: '#8a6914', 'In Dev': '#004e8c', Shipped: '#107c10' };
         var phHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">';
-        phaseOrder.forEach(function(ph) {
-            if (pcounts[ph] > 0) phHtml += '<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:#f5f5f5;color:' + phaseTextColors[ph] + ';font-weight:600;">' + ph + ': ' + pcounts[ph] + '</span>';
+        ['Draft', 'In Dev', 'Shipped'].forEach(function(ms) {
+            if (pcounts[ms] > 0) phHtml += '<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:#f5f5f5;color:' + msColorMap[ms] + ';font-weight:600;">' + ms + ': ' + pcounts[ms] + '</span>';
         });
         phHtml += '</div>';
 
