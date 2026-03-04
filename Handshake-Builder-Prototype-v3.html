@@ -1414,11 +1414,13 @@ function switchRole(role) {
                         '<div style="font-size:13px;color:#605e5c;margin-top:8px;line-height:1.5;">You have a handshake in progress. Going back will discard your changes.</div>' +
                     '</div>' +
                     '<div style="display:flex;gap:10px;justify-content:center;">' +
-                        '<button onclick="this.closest(\'div[style*=position\\\\:fixed]\').remove()" style="padding:10px 20px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;color:#323130;">Keep editing</button>' +
-                        '<button onclick="this.closest(\'div[style*=position\\\\:fixed]\').remove();showLanding();" style="padding:10px 20px;background:#d13438;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">Discard & go back</button>' +
+                        '<button id="keepEditingBtn" style="padding:10px 20px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;color:#323130;">Keep editing</button>' +
+                        '<button id="discardGoBackBtn" style="padding:10px 20px;background:#d13438;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">Discard & go back</button>' +
                     '</div>' +
                 '</div>';
             document.body.appendChild(overlay);
+            document.getElementById('keepEditingBtn').addEventListener('click', function() { overlay.remove(); });
+            document.getElementById('discardGoBackBtn').addEventListener('click', function() { overlay.remove(); showLanding(); });
             return;
         }
         // If in brief or success view, just go to landing
@@ -2953,11 +2955,12 @@ function submitToEngineering(featureName) {
                 ? '<div style="background:#f0f6fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#0078d4;display:flex;align-items:center;gap:6px;">📎 ' + getAttachedArtifactsSummary().length + ' artifact' + (getAttachedArtifactsSummary().length > 1 ? 's' : '') + ' will be attached to the ADO work item (' + getAttachedArtifactsSummary().map(function(a) { return a.name; }).join(', ') + ')</div>'
                 : '') +
             '<div style="display:flex;gap:10px;justify-content:flex-end;">' +
-                '<button onclick="this.closest(\'div[style*=position\\\\:fixed]\').remove()" style="padding:10px 20px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;color:#323130;">Cancel</button>' +
+                '<button id="submitCancelBtn" style="padding:10px 20px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;color:#323130;">Cancel</button>' +
                 '<button id="submitEngBtn" onclick="confirmSubmit(this,\'' + featureName.replace(/'/g, "\\'") + '\',\'' + adoId + '\')" style="padding:10px 20px;background:#107c10;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;">📤 Submit & Notify Eng</button>' +
             '</div>' +
         '</div>';
     document.body.appendChild(overlay);
+    document.getElementById('submitCancelBtn').addEventListener('click', function() { overlay.remove(); });
 }
 
 function buildHandshakeBriefHtml(featureName, h, adoItem) {
