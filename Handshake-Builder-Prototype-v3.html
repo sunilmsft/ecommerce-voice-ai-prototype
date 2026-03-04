@@ -657,7 +657,7 @@
                 <div id="adoConnPanel" style="background:linear-gradient(135deg,#f3f2f1,#e8e6e4);border-radius:8px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                     <div style="flex:1;min-width:200px;">
                         <div style="font-size:13px;font-weight:600;color:#323130;">🔌 Connect to live ADO data <span style="font-weight:400;color:#605e5c;">(optional)</span></div>
-                        <div style="font-size:11px;color:#a19f9d;margin-top:2px;">Enter a PAT with <b>Work Items (Read)</b> scope. Stored in session only. <a href="javascript:void(0)" onclick="document.getElementById('patHelpPanel').style.display=document.getElementById('patHelpPanel').style.display==='none'?'block':'none'" style="color:#0078d4;text-decoration:underline;cursor:pointer;">How do I get a PAT?</a></div>
+                        <div style="font-size:11px;color:#a19f9d;margin-top:2px;">Enter a PAT with <b>Work Items (Read & Write)</b> scope. Stored in session only. <a href="javascript:void(0)" onclick="document.getElementById('patHelpPanel').style.display=document.getElementById('patHelpPanel').style.display==='none'?'block':'none'" style="color:#0078d4;text-decoration:underline;cursor:pointer;">How do I get a PAT?</a></div>
                     </div>
                     <input id="adoPatInput" type="password" placeholder="Paste your ADO PAT..." style="flex:1;min-width:180px;padding:6px 10px;border:1px solid #c8c6c4;border-radius:4px;font-size:13px;font-family:inherit;">
                     <button onclick="connectToAdo()" style="background:#0078d4;color:#fff;border:none;padding:6px 16px;border-radius:4px;font-size:13px;cursor:pointer;font-weight:600;">Connect</button>
@@ -2686,51 +2686,179 @@ function openInAdo() {
 // SUBMIT TO ENGINEERING (from Draft)
 // ══════════════════════════════════════════════════════
 function submitToEngineering(featureName) {
-    var workItemId = 13950000 + Math.floor(Math.random() * 1000);
+    // Find the handshake item
+    var h = handshakeData.find(function(item) { return item.name === featureName; });
+    var adoId = h ? h.adoId.replace('#', '') : '';
+    var parentId = h ? (h.parentId || '').replace('#', '') : '';
+    var pat = sessionStorage.getItem('adoPat');
+
+    // Find matching mockAdoItem for rich data
+    var adoItem = mockAdoItems.find(function(m) { return String(m.id) === adoId; });
 
     // Show confirmation modal
     var overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s ease;';
     overlay.innerHTML =
-        '<div style="background:white;border-radius:16px;padding:32px 36px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
+        '<div style="background:white;border-radius:16px;padding:32px 36px;max-width:520px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
             '<div style="text-align:center;margin-bottom:20px;">' +
                 '<div style="font-size:40px;margin-bottom:8px;">📤</div>' +
                 '<div style="font-size:18px;font-weight:700;color:#323130;">Submit to Engineering?</div>' +
                 '<div style="font-size:14px;color:#605e5c;margin-top:8px;line-height:1.6;">This will create a <strong>User Story</strong> in ADO with the full handshake brief attached and notify the assigned engineering lead.</div>' +
             '</div>' +
-            '<div style="background:#f0fdf4;border-radius:10px;padding:14px 16px;margin-bottom:20px;">' +
+            '<div style="background:#f0fdf4;border-radius:10px;padding:14px 16px;margin-bottom:16px;">' +
                 '<div style="font-size:13px;color:#323130;"><strong>Feature:</strong> ' + featureName + '</div>' +
-                '<div style="font-size:13px;color:#323130;margin-top:4px;"><strong>ADO ID:</strong> #' + workItemId + '</div>' +
+                '<div style="font-size:13px;color:#323130;margin-top:4px;"><strong>Parent Feature ADO:</strong> #' + adoId + '</div>' +
+                (parentId ? '<div style="font-size:13px;color:#323130;margin-top:4px;"><strong>Parent Scenario:</strong> #' + parentId + '</div>' : '') +
                 '<div style="font-size:13px;color:#323130;margin-top:4px;"><strong>Status will change:</strong> Draft → <span style="color:#107c10;font-weight:600;">Submitted</span></div>' +
             '</div>' +
+            (pat ?
+                '<div style="background:#f0f6fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#004e8c;display:flex;align-items:center;gap:6px;">🔑 PAT detected — will create User Story in ADO via API</div>' :
+                '<div style="background:#fff4ce;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#8a6914;display:flex;align-items:center;gap:6px;">⚠️ No PAT configured — will open ADO to create User Story manually</div>'
+            ) +
             '<div style="display:flex;gap:10px;justify-content:flex-end;">' +
                 '<button onclick="this.closest(\'div[style*=position\\\\:fixed]\').remove()" style="padding:10px 20px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;color:#323130;">Cancel</button>' +
-                '<button onclick="confirmSubmit(this,\'' + featureName.replace(/'/g, "\\'") + '\',' + workItemId + ')" style="padding:10px 20px;background:#107c10;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;">📤 Submit & Notify Eng</button>' +
+                '<button id="submitEngBtn" onclick="confirmSubmit(this,\'' + featureName.replace(/'/g, "\\'") + '\',\'' + adoId + '\')" style="padding:10px 20px;background:#107c10;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;">📤 Submit & Notify Eng</button>' +
             '</div>' +
         '</div>';
     document.body.appendChild(overlay);
 }
 
-function confirmSubmit(btn, featureName, workItemId) {
-    // Remove modal
-    btn.closest('div[style*="position:fixed"]').remove();
-
-    // Update the draft item status in data
-    handshakeData.forEach(function(h) {
-        if (h.name === featureName && h.status === 'draft') {
-            h.status = 'published';
+function buildHandshakeBriefHtml(featureName, h, adoItem) {
+    var parts = [];
+    parts.push('<h2>🤝 PM–Engineering Handshake Brief</h2>');
+    parts.push('<p><strong>Feature:</strong> ' + featureName + '</p>');
+    if (h) {
+        parts.push('<p><strong>PM:</strong> ' + h.pm + ' · <strong>Area:</strong> ' + (h.area || 'N/A') + '</p>');
+        if (h.owner) parts.push('<p><strong>Eng Lead:</strong> ' + h.owner + '</p>');
+        if (h.kickoffDate) parts.push('<p><strong>Kickoff Date:</strong> ' + h.kickoffDate + '</p>');
+        if (h.protoDate) parts.push('<p><strong>Prototype Date:</strong> ' + h.protoDate + '</p>');
+    }
+    if (adoItem) {
+        parts.push('<h3>📋 Description</h3>');
+        parts.push('<p>' + adoItem.description + '</p>');
+        if (adoItem.acceptanceCriteria && adoItem.acceptanceCriteria.length > 0) {
+            parts.push('<h3>✅ Acceptance Criteria</h3><ul>');
+            adoItem.acceptanceCriteria.forEach(function(ac) { parts.push('<li>' + ac + '</li>'); });
+            parts.push('</ul>');
         }
-    });
+        if (adoItem.tags && adoItem.tags.length > 0) {
+            parts.push('<p><strong>Tags:</strong> ' + adoItem.tags.join(', ') + '</p>');
+        }
+    }
+    parts.push('<hr><p style="font-size:11px;color:#888;">Generated by Handshake Builder · ' + new Date().toLocaleDateString() + '</p>');
+    return parts.join('\n');
+}
 
-    // Re-render PM cards
-    renderPmCards();
+function confirmSubmit(btn, featureName, adoId) {
+    var pat = sessionStorage.getItem('adoPat');
+    var h = handshakeData.find(function(item) { return item.name === featureName; });
+    var adoItem = mockAdoItems.find(function(m) { return String(m.id) === adoId; });
+    var parentId = h ? (h.parentId || '').replace('#', '') : '';
+    var briefHtml = buildHandshakeBriefHtml(featureName, h, adoItem);
 
-    // Show success toast
-    var toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#107c10;color:white;padding:14px 28px;border-radius:10px;font-size:14px;z-index:1000;animation:fadeIn 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;';
-    toast.innerHTML = '<span style="font-size:20px;">✅</span><div><strong>' + featureName + '</strong> submitted to engineering!<br><span style="font-size:12px;opacity:0.85;">User Story #' + workItemId + ' created in ADO · Engineering lead notified</span></div>';
-    document.body.appendChild(toast);
-    setTimeout(function() { toast.remove(); }, 4000);
+    // Disable button and show spinner
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.6s linear infinite;"></span> Creating...';
+
+    if (pat) {
+        // ── Real ADO API call — create a User Story ──
+        var title = '[Handshake Brief] ' + featureName;
+        var body = [
+            { op: 'add', path: '/fields/System.Title', value: title },
+            { op: 'add', path: '/fields/System.Description', value: briefHtml },
+            { op: 'add', path: '/fields/System.WorkItemType', value: 'User Story' },
+            { op: 'add', path: '/fields/System.State', value: 'New' }
+        ];
+        // Add area path if we have it
+        if (adoItem && adoItem.areaPath) {
+            body.push({ op: 'add', path: '/fields/System.AreaPath', value: adoItem.areaPath });
+        }
+        // Add iteration if we have it
+        if (adoItem && adoItem.iteration) {
+            body.push({ op: 'add', path: '/fields/System.IterationPath', value: adoItem.iteration });
+        }
+        // Parent link to the feature
+        if (adoId) {
+            body.push({
+                op: 'add',
+                path: '/relations/-',
+                value: {
+                    rel: 'System.LinkTypes.Hierarchy-Reverse',
+                    url: 'https://dev.azure.com/MicrosoftIT/OneITVSO/_apis/wit/workItems/' + adoId,
+                    attributes: { comment: 'Handshake brief submitted by PM' }
+                }
+            });
+        }
+
+        fetch('https://dev.azure.com/MicrosoftIT/OneITVSO/_apis/wit/workitems/$User%20Story?api-version=7.1', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json-patch+json',
+                'Authorization': 'Basic ' + btoa(':' + pat)
+            },
+            body: JSON.stringify(body)
+        })
+        .then(function(resp) {
+            if (!resp.ok) return resp.text().then(function(t) { throw new Error(t); });
+            return resp.json();
+        })
+        .then(function(data) {
+            var newId = data.id;
+            // Remove modal
+            btn.closest('div[style*="position:fixed"]').remove();
+
+            // Update status
+            if (h && h.status === 'draft') { h.status = 'published'; }
+            renderPmCards();
+
+            // Success toast with real link
+            var toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#107c10;color:white;padding:14px 28px;border-radius:10px;font-size:14px;z-index:1000;animation:fadeIn 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;max-width:600px;';
+            toast.innerHTML = '<span style="font-size:20px;">✅</span><div><strong>' + featureName + '</strong> submitted to engineering!<br>' +
+                '<span style="font-size:12px;opacity:0.85;">User Story <a href="https://dev.azure.com/MicrosoftIT/OneITVSO/_workitems/edit/' + newId + '" target="_blank" style="color:#90EE90;text-decoration:underline;font-weight:600;">#' + newId + '</a> created in ADO · Parented under #' + adoId + '</span></div>';
+            document.body.appendChild(toast);
+            setTimeout(function() { toast.remove(); }, 6000);
+        })
+        .catch(function(err) {
+            console.error('ADO API error:', err);
+            // Remove modal
+            btn.closest('div[style*="position:fixed"]').remove();
+
+            // Fall back to manual URL
+            var fallbackUrl = 'https://dev.azure.com/MicrosoftIT/OneITVSO/_workitems/create/User%20Story?[System.Title]=' + encodeURIComponent('[Handshake Brief] ' + featureName);
+            window.open(fallbackUrl, '_blank');
+
+            // Still update local status
+            if (h && h.status === 'draft') { h.status = 'published'; }
+            renderPmCards();
+
+            var toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#ff8c00;color:white;padding:14px 28px;border-radius:10px;font-size:14px;z-index:1000;animation:fadeIn 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;max-width:600px;';
+            toast.innerHTML = '<span style="font-size:20px;">⚠️</span><div>API call failed — opened ADO in new tab for manual creation.<br><span style="font-size:12px;opacity:0.85;">Check your PAT has <strong>Work Items (Read & Write)</strong> scope. Error: ' + (err.message || err).substring(0, 100) + '</span></div>';
+            document.body.appendChild(toast);
+            setTimeout(function() { toast.remove(); }, 8000);
+        });
+    } else {
+        // ── No PAT — open ADO work item creation page pre-filled ──
+        var createUrl = 'https://dev.azure.com/MicrosoftIT/OneITVSO/_workitems/create/User%20Story?' +
+            '[System.Title]=' + encodeURIComponent('[Handshake Brief] ' + featureName) +
+            (adoId ? '&[System.Links.Hierarchy-Reverse]=' + adoId : '');
+        window.open(createUrl, '_blank');
+
+        // Remove modal
+        btn.closest('div[style*="position:fixed"]').remove();
+
+        // Update local status
+        if (h && h.status === 'draft') { h.status = 'published'; }
+        renderPmCards();
+
+        var toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0078d4;color:white;padding:14px 28px;border-radius:10px;font-size:14px;z-index:1000;animation:fadeIn 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;max-width:600px;';
+        toast.innerHTML = '<span style="font-size:20px;">🔗</span><div>ADO opened in new tab — complete the User Story creation there.<br>' +
+            '<span style="font-size:12px;opacity:0.85;">Tip: Add a PAT with <strong>Work Items (Read & Write)</strong> scope to submit directly from here.</span></div>';
+        document.body.appendChild(toast);
+        setTimeout(function() { toast.remove(); }, 6000);
+    }
 }
 
 // ══════════════════════════════════════════════════════
