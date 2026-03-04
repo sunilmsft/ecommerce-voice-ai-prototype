@@ -223,7 +223,15 @@
         .checklist-item:hover { border-color: #0078d4; } .checklist-item.checked { background: #f0f6fc; border-color: #c7e0f4; }
         .check-box { width: 20px; height: 20px; border: 2px solid #d0d0d0; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; color: transparent; transition: all 0.15s; }
         .checklist-item.checked .check-box { background: #0078d4; border-color: #0078d4; color: #ffffff; }
-        .check-text { font-size: 14px; }
+        .check-text { font-size: 14px; flex: 1; }
+
+        /* ── Artifact Upload ── */
+        .artifact-upload-btn { font-size: 11px; padding: 3px 10px; border-radius: 4px; border: 1px solid #c8c6c4; background: #faf9f8; color: #605e5c; cursor: pointer; font-family: inherit; transition: all 0.15s; flex-shrink: 0; }
+        .artifact-upload-btn:hover { border-color: #0078d4; color: #0078d4; background: #f0f6fc; }
+        .artifact-upload-btn.has-file { border-color: #107c10; color: #107c10; background: #dff6dd; }
+        .artifact-file-info { font-size: 11px; color: #107c10; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+        .artifact-file-remove { font-size: 10px; color: #d13438; cursor: pointer; border: none; background: none; font-family: inherit; padding: 0 2px; }
+        .artifact-file-remove:hover { text-decoration: underline; }
         .form-actions { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 24px; border-top: 1px solid #e8e8e8; }
 
         /* ── Completeness Ring ── */
@@ -798,10 +806,35 @@
             <div class="form-group"><label class="form-label">Design specs embedded?</label><div class="chip-container" id="specChips"><div class="chip" onclick="toggleChip(this)">Yes — CSS and layout in prototype</div><div class="chip" onclick="toggleChip(this)">Partially</div><div class="chip" onclick="toggleChip(this)">Separate Figma / design doc</div></div></div>
             <div class="form-group"><label class="form-label">Open Questions for Engineering</label><div class="form-hint">What do you need engineering's input on?</div><textarea class="form-input" id="openQuestions" placeholder="• Architecture for real-time context passing?&#10;• Existing speech SDK or custom integration?"></textarea></div>
             <div class="form-group"><label class="form-label">Supporting Artifacts</label>
-                <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div class="check-text">User flow diagrams</div></div>
-                <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div class="check-text">README with setup instructions</div></div>
-                <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div class="check-text">Conversation/flow scripts</div></div>
-                <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div class="check-text">Design specs or style guide</div></div>
+                <div class="form-hint">Check off what you have, then attach the file. Attachments will be linked to the ADO work item.</div>
+                <div class="checklist-item" onclick="toggleCheck(this)" data-artifact="userflow">
+                    <div class="check-box">✓</div>
+                    <div class="check-text">User flow diagrams</div>
+                    <button class="artifact-upload-btn" onclick="event.stopPropagation();triggerArtifactUpload('userflow')" id="uploadBtn-userflow">📎 Attach</button>
+                    <input type="file" id="artifactFile-userflow" style="display:none" accept=".pdf,.png,.jpg,.jpeg,.svg,.docx,.pptx,.vsdx,.md" onchange="handleArtifactFile(this,'userflow')">
+                    <span class="artifact-file-info" id="fileInfo-userflow" style="display:none"></span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)" data-artifact="readme">
+                    <div class="check-box">✓</div>
+                    <div class="check-text">README with setup instructions</div>
+                    <button class="artifact-upload-btn" onclick="event.stopPropagation();triggerArtifactUpload('readme')" id="uploadBtn-readme">📎 Attach</button>
+                    <input type="file" id="artifactFile-readme" style="display:none" accept=".md,.txt,.pdf,.docx,.html" onchange="handleArtifactFile(this,'readme')">
+                    <span class="artifact-file-info" id="fileInfo-readme" style="display:none"></span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)" data-artifact="scripts">
+                    <div class="check-box">✓</div>
+                    <div class="check-text">Conversation/flow scripts</div>
+                    <button class="artifact-upload-btn" onclick="event.stopPropagation();triggerArtifactUpload('scripts')" id="uploadBtn-scripts">📎 Attach</button>
+                    <input type="file" id="artifactFile-scripts" style="display:none" accept=".md,.txt,.pdf,.docx,.json,.yaml,.yml" onchange="handleArtifactFile(this,'scripts')">
+                    <span class="artifact-file-info" id="fileInfo-scripts" style="display:none"></span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)" data-artifact="design">
+                    <div class="check-box">✓</div>
+                    <div class="check-text">Design specs or style guide</div>
+                    <button class="artifact-upload-btn" onclick="event.stopPropagation();triggerArtifactUpload('design')" id="uploadBtn-design">📎 Attach</button>
+                    <input type="file" id="artifactFile-design" style="display:none" accept=".pdf,.png,.jpg,.jpeg,.svg,.figma,.sketch,.docx,.pptx" onchange="handleArtifactFile(this,'design')">
+                    <span class="artifact-file-info" id="fileInfo-design" style="display:none"></span>
+                </div>
             </div>
             <div class="form-actions"><button class="btn-secondary" onclick="nextStep(2)">← Back</button><button class="btn-primary" onclick="nextStep(4)">Next →</button></div>
         </div>
@@ -874,7 +907,7 @@
                 </div>
                 <div class="brief-section"><div class="brief-section-title">Where the Prototype Ends</div><ul class="brief-list" id="briefSimulated"><li><span class="icon">⚙️</span> Voice responses use Azure TTS (pre-rendered) — production needs real-time</li><li><span class="icon">⚙️</span> Quote pricing is hardcoded — production needs QuoteX API</li><li><span class="icon">⚙️</span> Customer data is sample — no real CRM connection</li></ul></div>
                 <div class="brief-section"><div class="brief-section-title">Open Questions for Engineering</div><div id="briefQuestions"><div class="brief-open-q">What's the right architecture for real-time context passing between chat and voice?</div><div class="brief-open-q">Can we use the existing speech SDK or do we need a custom integration?</div><div class="brief-open-q">What's the latency target for quote generation?</div></div></div>
-                <div class="brief-section"><div class="brief-section-title">Supporting Artifacts</div><div style="display:flex;flex-wrap:wrap;gap:6px;" id="briefArtifacts"><span class="brief-tag">✓ User Flow Diagrams</span><span class="brief-tag">✓ README</span><span class="brief-tag">✓ Conversation Scripts</span><span class="brief-tag">✓ Design Specs</span></div></div>
+                <div class="brief-section"><div class="brief-section-title">Supporting Artifacts</div><div style="display:flex;flex-wrap:wrap;gap:6px;" id="briefArtifacts"><span class="brief-tag">✓ User Flow Diagrams</span><span class="brief-tag">✓ README</span><span class="brief-tag">✓ Conversation Scripts</span><span class="brief-tag">✓ Design Specs</span></div><div id="briefAttachments" style="display:none;margin-top:10px;padding:10px 14px;background:#f0f6fc;border-radius:8px;border:1px solid #c7e0f4;"></div><div style="margin-top:8px;font-size:11px;color:#605e5c;display:flex;align-items:center;gap:4px;"><span>🔗</span> <em>Attached files will be uploaded as ADO work item attachments when submitted to Engineering</em></div></div>
             </div>
             <div class="brief-footer"><span>Generated by Mission: AI Possible · PM + Engineering: Better Together · Mar 3, 2026</span><div class="brief-score-badge"><div class="brief-score-dot" id="briefScoreDot" style="background:#0078d4;"></div> <span id="briefScoreText">7/7 Complete</span></div></div>
         </div>
@@ -2515,6 +2548,9 @@ function showBrief(idx) {
     document.getElementById('briefScoreDot').style.background = scoreColor;
     document.getElementById('briefScoreText').textContent = h.score + '/7 Complete';
 
+    // Show attached artifacts in brief view
+    updateBriefAttachments();
+
     showView('view-brief');
 }
 
@@ -2719,6 +2755,71 @@ function toggleChip(el) {
 
 function toggleCheck(el) { el.classList.toggle('checked'); }
 
+// ── Artifact File Upload ──
+var artifactFiles = {}; // { userflow: { name, size, file }, readme: {...}, ... }
+
+function triggerArtifactUpload(key) {
+    document.getElementById('artifactFile-' + key).click();
+}
+
+function handleArtifactFile(input, key) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    // Store the file reference
+    artifactFiles[key] = { name: file.name, size: file.size, file: file };
+    // Auto-check the parent checklist item
+    var parent = input.closest('.checklist-item');
+    if (parent && !parent.classList.contains('checked')) parent.classList.add('checked');
+    // Update UI
+    var btn = document.getElementById('uploadBtn-' + key);
+    btn.classList.add('has-file');
+    btn.textContent = '✅ Replace';
+    var info = document.getElementById('fileInfo-' + key);
+    var sizeKB = Math.round(file.size / 1024);
+    var sizeLabel = sizeKB > 1024 ? (Math.round(sizeKB / 1024 * 10) / 10) + ' MB' : sizeKB + ' KB';
+    info.innerHTML = '📄 ' + file.name + ' (' + sizeLabel + ') <button class="artifact-file-remove" onclick="event.stopPropagation();removeArtifactFile(\'' + key + '\')">✕ remove</button>';
+    info.style.display = 'inline-flex';
+}
+
+function removeArtifactFile(key) {
+    delete artifactFiles[key];
+    var inp = document.getElementById('artifactFile-' + key);
+    if (inp) inp.value = '';
+    var btn = document.getElementById('uploadBtn-' + key);
+    btn.classList.remove('has-file');
+    btn.textContent = '📎 Attach';
+    var info = document.getElementById('fileInfo-' + key);
+    info.style.display = 'none';
+    info.innerHTML = '';
+}
+
+function getAttachedArtifactsSummary() {
+    var labels = { userflow: 'User Flow Diagrams', readme: 'README', scripts: 'Conversation Scripts', design: 'Design Specs' };
+    var attached = [];
+    for (var key in artifactFiles) {
+        if (artifactFiles[key]) attached.push({ key: key, label: labels[key] || key, name: artifactFiles[key].name, size: artifactFiles[key].size });
+    }
+    return attached;
+}
+
+// Update brief view to show attached files
+function updateBriefAttachments() {
+    var el = document.getElementById('briefAttachments');
+    if (!el) return;
+    var attached = getAttachedArtifactsSummary();
+    if (attached.length === 0) { el.style.display = 'none'; return; }
+    var html = '<div style="font-size:12px;font-weight:600;color:#0078d4;margin-bottom:6px;">📎 ' + attached.length + ' file' + (attached.length > 1 ? 's' : '') + ' attached</div>';
+    attached.forEach(function(a) {
+        var sizeKB = Math.round(a.size / 1024);
+        var sizeLabel = sizeKB > 1024 ? (Math.round(sizeKB / 1024 * 10) / 10) + ' MB' : sizeKB + ' KB';
+        html += '<div style="font-size:12px;display:flex;align-items:center;gap:6px;padding:3px 0;">' +
+            '<span>📄</span> <strong>' + a.label + ':</strong> ' + a.name + ' <span style="color:#a0a0a0;">(' + sizeLabel + ')</span></div>';
+    });
+    html += '<div style="margin-top:6px;font-size:11px;color:#5b2d90;display:flex;align-items:center;gap:4px;"><span>⚡</span> These will be attached to the ADO User Story via the Attachments API on submit</div>';
+    el.innerHTML = html;
+    el.style.display = 'block';
+}
+
 function selectOwner(el, name) {
     var options = document.querySelectorAll('.owner-option');
     for (var i = 0; i < options.length; i++) options[i].classList.remove('selected');
@@ -2848,6 +2949,9 @@ function submitToEngineering(featureName) {
                 '<div style="font-size:13px;color:#323130;margin-top:4px;"><strong>Status will change:</strong> Draft → <span style="color:#107c10;font-weight:600;">Submitted</span></div>' +
             '</div>' +
             '<div style="background:#e8defb;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#5b2d90;display:flex;align-items:center;gap:6px;">🧪 Prototype mode — simulating ADO submission (no real work items created)</div>' +
+            (getAttachedArtifactsSummary().length > 0
+                ? '<div style="background:#f0f6fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#0078d4;display:flex;align-items:center;gap:6px;">📎 ' + getAttachedArtifactsSummary().length + ' artifact' + (getAttachedArtifactsSummary().length > 1 ? 's' : '') + ' will be attached to the ADO work item (' + getAttachedArtifactsSummary().map(function(a) { return a.name; }).join(', ') + ')</div>'
+                : '') +
             '<div style="display:flex;gap:10px;justify-content:flex-end;">' +
                 '<button onclick="this.closest(\'div[style*=position\\\\:fixed]\').remove()" style="padding:10px 20px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;color:#323130;">Cancel</button>' +
                 '<button id="submitEngBtn" onclick="confirmSubmit(this,\'' + featureName.replace(/'/g, "\\'") + '\',\'' + adoId + '\')" style="padding:10px 20px;background:#107c10;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;">📤 Submit & Notify Eng</button>' +
