@@ -2777,20 +2777,26 @@ function confirmSubmit(btn, featureName, adoId) {
     var h = handshakeData.find(function(item) { return item.name === featureName; });
     var simulatedId = 15500000 + Math.floor(Math.random() * 10000);
 
-    // Show spinner
+    // Show spinner briefly
     btn.disabled = true;
     btn.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.6s linear infinite;"></span> Submitting...';
 
-    // Simulate API delay
-    setTimeout(function() {
-        // Remove modal
-        btn.closest('div[style*="position:fixed"]').remove();
+    // Find the overlay (walk up to the fixed-position overlay)
+    var overlay = btn;
+    while (overlay && overlay !== document.body) {
+        if (overlay.style && overlay.style.position === 'fixed') break;
+        overlay = overlay.parentElement;
+    }
 
-        // Update the draft item status in data
+    setTimeout(function() {
+        // Remove modal overlay
+        if (overlay && overlay !== document.body) overlay.remove();
+
+        // Update status
         if (h && h.status === 'draft') { h.status = 'published'; }
         renderPmCards();
 
-        // Success toast (simulated)
+        // Success toast
         var toast = document.createElement('div');
         toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#107c10;color:white;padding:14px 28px;border-radius:10px;font-size:14px;z-index:1000;animation:fadeIn 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;max-width:600px;';
         toast.innerHTML = '<span style="font-size:20px;">✅</span><div><strong>' + featureName + '</strong> submitted to engineering!<br>' +
@@ -2798,7 +2804,7 @@ function confirmSubmit(btn, featureName, adoId) {
             '<span style="font-size:11px;opacity:0.7;font-style:italic;">🧪 Simulated — no real ADO work item was created</span></div>';
         document.body.appendChild(toast);
         setTimeout(function() { toast.remove(); }, 5000);
-    }, 1500);
+    }, 800);
 }
 
 // ══════════════════════════════════════════════════════
