@@ -101,6 +101,19 @@
         .empty-card:hover { border-color: #0078d4; color: #0078d4; }
         .empty-card .plus-icon { font-size: 32px; margin-bottom: 8px; }
 
+        /* ── Editable Milestone Dates on Cards ── */
+        .card-milestones { margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
+        .card-milestones-label { font-size: 10px; font-weight: 600; color: #a0a0a0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+        .card-ms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+        .card-ms-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #605e5c; }
+        .card-ms-icon { font-size: 10px; flex-shrink: 0; }
+        .card-ms-name { font-weight: 600; color: #8a8886; flex-shrink: 0; }
+        .card-ms-date { color: #323130; cursor: pointer; padding: 1px 4px; border-radius: 3px; border: 1px solid transparent; transition: all 0.15s; position: relative; }
+        .card-ms-date:hover { background: #f0f6fc; border-color: #c7e0f4; }
+        .card-ms-date.empty { color: #c8c6c4; font-style: italic; }
+        .card-ms-date input[type="date"] { position: absolute; opacity: 0; width: 0; height: 0; top: 0; left: 0; }
+        .card-ms-src { font-size: 8px; margin-left: 1px; }
+
         /* ══════════════════════════════════════ */
         /* LEADERSHIP — AREA GROUP CARDS         */
         /* ══════════════════════════════════════ */
@@ -1637,13 +1650,109 @@ function renderCard(h, showArea) {
     var ownerHtml = h.owner ? '<div class="card-owner"><div class="card-owner-dot">' + h.ownerInitials + '</div> Assigned: ' + h.owner + '</div>' : '';
     var areaHtml = showArea ? '<div style="font-size:11px;color:#605e5c;margin-top:4px;">📂 ' + h.area + '</div>' : '';
 
-    return '<div class="handshake-card" onclick="showBrief(' + handshakeData.indexOf(h) + ')">' +
+    var idx = handshakeData.indexOf(h);
+    var msHtml = renderMilestoneDates(h, idx);
+
+    return '<div class="handshake-card" onclick="showBrief(' + idx + ')">' +
         '<div class="card-header"><div class="card-feature-name">' + h.name + '</div><div class="card-status ' + statusClass + '">' + statusLabel + '</div></div>' +
         '<div class="card-meta">' + h.date + '</div>' +
         '<div class="card-score-row"><div class="card-score-bar"><div class="card-score-fill ' + scoreClass + '" style="width:' + pct + '%"></div></div><div class="card-score-label" style="color:' + scoreColor + ';">' + h.score + '/7</div></div>' +
-        adoHtml + ownerHtml + areaHtml +
+        adoHtml + ownerHtml + areaHtml + msHtml +
         (h.status === 'draft' ? '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0;"><button onclick="event.stopPropagation();submitToEngineering(\'' + h.name.replace(/'/g, "\\'") + '\')" style="width:100%;padding:8px 16px;background:#107c10;color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background 0.2s;" onmouseover="this.style.background=\'#0b6a0b\'" onmouseout="this.style.background=\'#107c10\'">📤 Submit to Engineering</button></div>' : '') +
         '</div>';
+}
+
+// ── Editable Milestone Dates (inline on cards) ──
+function renderMilestoneDates(h, idx) {
+    var milestones = [
+        { key: 'kickoffDate', label: 'Kickoff', icon: '🚀' },
+        { key: 'protoDate',   label: 'Prototype', icon: '🛠️' },
+        { key: 'date',        label: 'Handshake', icon: '🤝' },
+        { key: 'shipDate',    label: 'Production', icon: '🚢' }
+    ];
+    var items = '';
+    milestones.forEach(function(m) {
+        var raw = h[m.key] || '';
+        var display = raw ? formatMsDate(raw) : '+ set';
+        var emptyClass = raw ? '' : ' empty';
+        // Source indicator: if we had ADO-synced data we'd mark it ⚡, for now all are ✏️ manual
+        var src = h['_src_' + m.key] === 'ado' ? '<span class="card-ms-src" title="Synced from ADO">⚡</span>' : '';
+        items += '<div class="card-ms-item">' +
+            '<span class="card-ms-icon">' + m.icon + '</span>' +
+            '<span class="card-ms-name">' + m.label + ':</span>' +
+            '<span class="card-ms-date' + emptyClass + '" onclick="event.stopPropagation();openMsDatePicker(this,' + idx + ',\'' + m.key + '\')" title="Click to edit">' + display + src + '</span>' +
+            '</div>';
+    });
+    return '<div class="card-milestones">' +
+        '<div class="card-milestones-label">📅 Milestone Dates <span style="font-weight:400;color:#c8c6c4;">(click to edit)</span></div>' +
+        '<div class="card-ms-grid">' + items + '</div>' +
+        '</div>';
+}
+
+function formatMsDate(dateStr) {
+    try {
+        var d = new Date(dateStr);
+        if (isNaN(d)) return dateStr;
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return months[d.getMonth()] + ' ' + d.getDate();
+    } catch(e) { return dateStr; }
+}
+
+function openMsDatePicker(el, idx, key) {
+    // If there's already an input, don't double-add
+    if (el.querySelector('input')) return;
+    var h = handshakeData[idx];
+    var current = h[key] || '';
+    // Convert display date to YYYY-MM-DD for the input
+    var isoVal = '';
+    if (current) {
+        try {
+            var d = new Date(current);
+            if (!isNaN(d)) isoVal = d.toISOString().substring(0, 10);
+        } catch(e) {}
+    }
+    var inp = document.createElement('input');
+    inp.type = 'date';
+    inp.value = isoVal;
+    inp.style.cssText = 'position:absolute;opacity:0;width:0;height:0;top:0;left:0;';
+    el.style.position = 'relative';
+    el.appendChild(inp);
+    inp.focus();
+    inp.showPicker && inp.showPicker();
+
+    inp.addEventListener('change', function() {
+        var val = inp.value; // YYYY-MM-DD
+        if (val) {
+            // Store as readable format matching existing data
+            var parts = val.split('-');
+            var dt = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            var formatted = months[dt.getMonth()] + ' ' + dt.getDate() + ', ' + dt.getFullYear();
+            handshakeData[idx][key] = formatted;
+            handshakeData[idx]['_src_' + key] = 'manual';
+            // Auto-update milestone number based on filled dates
+            autoUpdateMilestone(idx);
+        }
+        inp.remove();
+        renderPmCards();
+        // Also refresh leadership if visible
+        if (document.getElementById('leadershipContent') && document.getElementById('leadershipContent').style.display !== 'none') {
+            renderLeadershipView();
+        }
+    });
+
+    inp.addEventListener('blur', function() {
+        setTimeout(function() { if (el.contains(inp)) inp.remove(); }, 200);
+    });
+}
+
+function autoUpdateMilestone(idx) {
+    var h = handshakeData[idx];
+    // Derive milestone from which dates are filled
+    if (h.shipDate) { h.milestone = 6; }
+    else if (h.devStart || (h.date && h.status === 'published')) { h.milestone = Math.max(h.milestone || 0, 4); }
+    else if (h.protoDate) { h.milestone = Math.max(h.milestone || 0, 3); }
+    else if (h.kickoffDate) { h.milestone = Math.max(h.milestone || 0, 2); }
 }
 
 function renderPmStats() {
