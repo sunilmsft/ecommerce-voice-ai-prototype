@@ -2151,8 +2151,8 @@ function renderLeadershipTimeline() {
 
     // Table
     html += '<div style="overflow-x:auto;"><table class="drill-table" style="table-layout:fixed;width:100%;">';
-    html += '<colgroup><col style="width:18%;"><col style="width:14%;"><col style="width:11%;"><col style="width:11%;"><col style="width:11%;"><col style="width:9%;"><col style="width:10%;"><col style="width:8%;"><col style="width:8%;"></colgroup>';
-    html += '<thead><tr><th>Project</th><th>Portfolio</th><th style="text-align:center;">Kickoff→Prototype</th><th style="text-align:center;">Prototype→Handshake</th><th style="text-align:center;">Handshake→Production</th><th style="text-align:center;">End to End</th><th>ADO</th><th>Status</th><th>Stage</th></tr></thead><tbody>';
+    html += '<colgroup><col style="width:20%;"><col style="width:15%;"><col style="width:8%;"><col style="width:8%;"><col style="width:8%;"><col style="width:7%;"><col style="width:12%;"><col style="width:11%;"><col style="width:11%;"></colgroup>';
+    html += '<thead><tr><th>Project</th><th>Portfolio</th><th style="text-align:center;white-space:nowrap;">K→P</th><th style="text-align:center;white-space:nowrap;">P→H</th><th style="text-align:center;white-space:nowrap;">H→Prod</th><th style="text-align:center;white-space:nowrap;">E2E</th><th>ADO</th><th>Status</th><th>Stage</th></tr></thead><tbody>';
 
     // Cumulative stats
     var sumKP = 0, cntKP = 0, sumPH = 0, cntPH = 0, sumHP = 0, cntHP = 0, sumE2E = 0, cntE2E = 0;
