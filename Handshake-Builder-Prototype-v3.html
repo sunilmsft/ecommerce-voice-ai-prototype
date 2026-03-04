@@ -1747,30 +1747,32 @@ function renderLeadershipView() {
         });
     });
 
-    // ── Dynamically update stat cards ──
+    // ── Dynamically update stat cards (non-duplicative — complementary to E2E banner) ──
+    var shippedPct = totalProjects > 0 ? Math.round((inProduction / totalProjects) * 100) : 0;
+    var needsAttention = atRisk + issues;
     document.getElementById('leaderStats').innerHTML =
         '<div class="stat-card" onclick="toggleDrill(\'lead-pipeline\')">' +
-            '<div class="stat-value" style="color:#0078d4;">8 days</div>' +
-            '<div class="stat-label">Avg. Kickoff → Prototype</div>' +
-            '<div class="stat-sub">Idea to working demo</div>' +
-            '<div class="stat-expand-hint" style="color:#8a8886;">📐 Baseline · Target: 7d →</div>' +
+            '<div class="stat-value" style="color:#0078d4;">' + totalProjects + '</div>' +
+            '<div class="stat-label">Total Projects</div>' +
+            '<div class="stat-sub">Across ' + portfolioData.length + ' portfolios</div>' +
+            '<div class="stat-expand-hint">View pipeline breakdown →</div>' +
         '</div>' +
         '<div class="stat-card" onclick="toggleDrill(\'lead-coverage\')">' +
-            '<div class="stat-value" style="color:#107c10;">6 days</div>' +
-            '<div class="stat-label">Avg. Prototype → Handshake</div>' +
-            '<div class="stat-sub">Validation + eng handoff</div>' +
-            '<div class="stat-expand-hint" style="color:#8a8886;">📐 Baseline · Target: 5d →</div>' +
+            '<div class="stat-value" style="font-size:22px;"><span style="color:#8a6914;">' + milestoneTotals['Draft'] + '</span> → <span style="color:#004e8c;">' + milestoneTotals['In Dev'] + '</span> → <span style="color:#107c10;">' + milestoneTotals['Shipped'] + '</span></div>' +
+            '<div class="stat-label">Draft → In Dev → Shipped</div>' +
+            '<div class="stat-sub">Milestone progression</div>' +
+            '<div class="stat-expand-hint">View stage details →</div>' +
         '</div>' +
         '<div class="stat-card" onclick="toggleDrill(\'lead-velocity\')">' +
-            '<div class="stat-value" style="color:#ff8c00;">12 days</div>' +
-            '<div class="stat-label">Avg. Handshake → Production</div>' +
-            '<div class="stat-sub">Eng pickup to production</div>' +
-            '<div class="stat-expand-hint" style="color:#8a8886;">📐 Baseline · Target: 10d →</div>' +
+            '<div class="stat-value" style="color:#107c10;">' + onTrack + '</div>' +
+            '<div class="stat-label">On Track</div>' +
+            '<div class="stat-sub">' + (needsAttention > 0 ? '⚠️ ' + needsAttention + ' need' + (needsAttention === 1 ? 's' : '') + ' attention' : '✅ No issues flagged') + '</div>' +
+            '<div class="stat-expand-hint">View health details →</div>' +
         '</div>' +
         '<div class="stat-card" onclick="toggleDrill(\'lead-shipped\')">' +
             '<div class="stat-value" style="color:#5b2d90;">' + inProduction + '</div>' +
             '<div class="stat-label">Shipped to Production</div>' +
-            '<div class="stat-sub">Prototypes → live features</div>' +
+            '<div class="stat-sub">' + shippedPct + '% of total pipeline</div>' +
             '<div class="stat-expand-hint">Click for details →</div>' +
         '</div>';
 
