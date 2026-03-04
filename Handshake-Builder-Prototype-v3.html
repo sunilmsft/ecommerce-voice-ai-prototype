@@ -2148,7 +2148,9 @@ function renderLeadershipTimeline() {
     html += '<div style="margin-bottom:16px;padding:10px 14px;background:#f0f6fc;border-radius:8px;font-size:13px;color:#004e8c;">Tracking each project through all pipeline stages: <strong>Kickoff → Prototype → Handshake → Production</strong></div>';
 
     // Table
-    html += '<div style="overflow-x:auto;"><table class="drill-table"><thead><tr><th>Project</th><th>Portfolio</th><th style="text-align:center;">Kickoff→Prototype</th><th style="text-align:center;">Prototype→Handshake</th><th style="text-align:center;">Handshake→Production</th><th style="text-align:center;">End to End</th><th>ADO</th><th>Status</th><th>Stage</th></tr></thead><tbody>';
+    html += '<div style="overflow-x:auto;"><table class="drill-table" style="table-layout:fixed;width:100%;">';
+    html += '<colgroup><col style="width:18%;"><col style="width:14%;"><col style="width:11%;"><col style="width:11%;"><col style="width:11%;"><col style="width:9%;"><col style="width:10%;"><col style="width:8%;"><col style="width:8%;"></colgroup>';
+    html += '<thead><tr><th>Project</th><th>Portfolio</th><th style="text-align:center;">Kickoff→Prototype</th><th style="text-align:center;">Prototype→Handshake</th><th style="text-align:center;">Handshake→Production</th><th style="text-align:center;">End to End</th><th>ADO</th><th>Status</th><th>Stage</th></tr></thead><tbody>';
 
     // Cumulative stats
     var sumKP = 0, cntKP = 0, sumPH = 0, cntPH = 0, sumHP = 0, cntHP = 0, sumE2E = 0, cntE2E = 0;
@@ -2169,8 +2171,8 @@ function renderLeadershipTimeline() {
         var statusColor = pr.status === 'On Track' ? '#107c10' : pr.status === 'At Risk' ? '#ff8c00' : pr.status === 'Issue' ? '#d13438' : '#a0a0a0';
 
         html += '<tr>';
-        html += '<td style="font-weight:600;max-width:200px;">' + pr.name + '</td>';
-        html += '<td style="font-size:12px;white-space:nowrap;">' + pr.portfolioIcon + ' ' + pr.portfolio.replace('Unified Commercial Marketing Profiles (UCMP)', 'UCMP').replace('Connected Sales & Marketing Data', 'Connected Data').replace('Signal Flow Transformation', 'Signal Flow').replace('Microsoft Demo Experiences', 'Demo Experiences').replace('Campaign Supply Chain', 'Campaign SC').replace('Marketing Planning & Execution', 'Marketing P&E') + '</td>';
+        html += '<td style="font-weight:600;overflow:hidden;text-overflow:ellipsis;">' + pr.name + '</td>';
+        html += '<td style="font-size:12px;overflow:hidden;text-overflow:ellipsis;">' + pr.portfolioIcon + ' ' + pr.portfolio.replace('Unified Commercial Marketing Profiles (UCMP)', 'UCMP').replace('Connected Sales & Marketing Data', 'Connected Data').replace('Signal Flow Transformation', 'Signal Flow').replace('Microsoft Demo Experiences', 'Demo Experiences').replace('Campaign Supply Chain', 'Campaign SC').replace('Marketing Planning & Execution', 'Marketing P&E') + '</td>';
         html += '<td style="text-align:center;"><span style="color:' + kpColor + ';font-weight:600;">' + (pr.kp !== null ? pr.kp + 'd' : '—') + '</span></td>';
         html += '<td style="text-align:center;"><span style="color:' + phColor + ';font-weight:600;">' + (pr.ph !== null ? pr.ph + 'd' : '—') + '</span></td>';
         html += '<td style="text-align:center;"><span style="color:' + hpColor + ';font-weight:600;">' + (pr.hp !== null ? pr.hp + 'd' : '—') + '</span></td>';
