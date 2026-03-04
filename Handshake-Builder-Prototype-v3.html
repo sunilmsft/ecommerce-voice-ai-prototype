@@ -1353,12 +1353,40 @@ function adoLink(id, label) {
 }
 
 function switchRole(role) {
+    // If clicking PM View while already in PM mode, navigate back to PM home
+    if (role === 'pm' && currentRole === 'pm') {
+        var builderActive = document.getElementById('view-builder').classList.contains('active');
+        if (builderActive) {
+            // User is in the builder — prompt to save
+            var overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s ease;';
+            overlay.innerHTML =
+                '<div style="background:white;border-radius:16px;padding:28px 32px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
+                    '<div style="text-align:center;margin-bottom:16px;">' +
+                        '<div style="font-size:36px;margin-bottom:8px;">📝</div>' +
+                        '<div style="font-size:17px;font-weight:700;color:#323130;">Unsaved changes</div>' +
+                        '<div style="font-size:13px;color:#605e5c;margin-top:8px;line-height:1.5;">You have a handshake in progress. Going back will discard your changes.</div>' +
+                    '</div>' +
+                    '<div style="display:flex;gap:10px;justify-content:center;">' +
+                        '<button onclick="this.closest(\'div[style*=position\\\\:fixed]\').remove()" style="padding:10px 20px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;color:#323130;">Keep editing</button>' +
+                        '<button onclick="this.closest(\'div[style*=position\\\\:fixed]\').remove();showLanding();" style="padding:10px 20px;background:#d13438;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">Discard & go back</button>' +
+                    '</div>' +
+                '</div>';
+            document.body.appendChild(overlay);
+            return;
+        }
+        // If in brief or success view, just go to landing
+        showLanding();
+        return;
+    }
+
     currentRole = role;
     document.getElementById('rolePm').classList.toggle('active', role === 'pm');
     document.getElementById('roleLeader').classList.toggle('active', role === 'leadership');
     document.getElementById('pmLanding').style.display = role === 'pm' ? '' : 'none';
     document.getElementById('leadershipLanding').style.display = role === 'leadership' ? '' : 'none';
     closeAllDrills();
+    if (role === 'pm') showLanding();
     if (role === 'leadership') renderLeadershipView();
 }
 
