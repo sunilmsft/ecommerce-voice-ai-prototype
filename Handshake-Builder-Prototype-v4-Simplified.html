@@ -1,0 +1,2501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission: AI Possible — PM + Engineering Handshake Builder (Simplified)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f5; color: #1a1a1a; min-height: 100vh; }
+
+        /* ── Top Nav ── */
+        .top-bar { background: #1e2028; border-bottom: none; padding: 10px 32px; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.25); }
+        .top-bar-left { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .top-bar-center { flex: 1; display: flex; align-items: center; justify-content: center; }
+        .logo { width: 38px; height: 38px; background: linear-gradient(135deg, #e8b730, #d4a834); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #1e2028; font-weight: 800; font-size: 17px; }
+        .app-name { font-size: 22px; font-weight: 700; color: #ffffff; letter-spacing: 0.5px; } .app-name span { font-weight: 700; color: #e8b730; } .app-name .app-sub { display: block; font-size: 12px; font-weight: 400; color: #9ca0ae; letter-spacing: 0.3px; margin-top: 2px; text-align: center; }
+        .top-bar-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .role-toggle { display: flex; background: #ffffff; border-radius: 6px; overflow: hidden; border: 1px solid #d2d2d2; }
+        .role-btn { padding: 6px 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: #605e5c; font-family: inherit; transition: all 0.2s; min-width: 120px; text-align: center; }
+        .role-btn.active { background: #0078d4; color: #ffffff; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #e8b730; color: #1e2028; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+        .sub-nav { background: #f5f5f5; border-bottom: 1px solid #e1e1e1; padding: 8px 32px; display: flex; justify-content: center; position: sticky; top: 58px; z-index: 99; }
+
+        /* ── Views ── */
+        .view { display: none; animation: fadeIn 0.3s ease; } .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ── Layout ── */
+        .landing { max-width: 1100px; margin: 0 auto; padding: 32px; }
+        .landing-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .landing-title { font-size: 28px; font-weight: 600; }
+        .landing-subtitle { font-size: 14px; color: #605e5c; margin-bottom: 24px; }
+
+        /* ── Buttons ── */
+        .btn-primary { background: #0078d4; color: #ffffff; border: none; padding: 10px 24px; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background 0.15s; font-family: inherit; }
+        .btn-primary:hover { background: #c09a2e; }
+        .btn-secondary { background: white; color: #1a1a1a; border: 1px solid #d0d0d0; padding: 8px 20px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+        .btn-secondary:hover { background: #f5f5f5; }
+        .btn-ghost { background: none; border: none; color: #0078d4; font-size: 14px; font-weight: 500; cursor: pointer; padding: 6px 12px; border-radius: 4px; font-family: inherit; }
+        .btn-ghost:hover { background: #f0f6fc; }
+
+        /* ══════════════════════════════════════ */
+        /* STAT CARDS — CLICKABLE / EXPANDABLE   */
+        /* ══════════════════════════════════════ */
+        .stats-row { display: flex; gap: 16px; margin-bottom: 24px; }
+        .stat-card { flex: 1; background: white; border: 1px solid #e1e1e1; border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.2s; position: relative; }
+        .stat-card:hover { border-color: #0078d4; box-shadow: 0 2px 12px rgba(0,120,212,0.12); }
+        .stat-card.expanded { border-color: #0078d4; box-shadow: 0 2px 12px rgba(0,120,212,0.15); }
+        .stat-value { font-size: 32px; font-weight: 700; line-height: 1; }
+        .stat-label { font-size: 13px; color: #605e5c; margin-top: 4px; }
+        .stat-sub { font-size: 11px; margin-top: 6px; color: #a0a0a0; }
+        .stat-expand-hint { font-size: 11px; color: #0078d4; margin-top: 8px; opacity: 0; transition: opacity 0.2s; }
+        .stat-card:hover .stat-expand-hint { opacity: 1; }
+
+        /* ── Drill-down Panel ── */
+        .drill-panel { display: none; background: white; border: 1px solid #e1e1e1; border-radius: 12px; padding: 24px; margin-bottom: 24px; animation: fadeIn 0.3s ease; }
+        .drill-panel.active { display: block; }
+        .drill-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .drill-title { font-size: 18px; font-weight: 600; }
+        .drill-close { background: none; border: none; font-size: 18px; color: #605e5c; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+        .drill-close:hover { background: #f0f0f0; }
+
+        .drill-table { width: 100%; border-collapse: collapse; }
+        .drill-table th { text-align: left; padding: 10px 12px; font-size: 12px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e1e1e1; background: #faf9f8; }
+        .drill-table td { padding: 12px; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+        .drill-table tr:last-child td { border-bottom: none; }
+        .drill-table tr:hover td { background: #faf9f8; }
+
+        /* ── Pipeline Bars ── */
+        .pipeline-bar { display: flex; height: 28px; border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
+        .pipeline-segment { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: white; transition: width 0.5s ease; min-width: 36px; }
+        .pipeline-legend { display: flex; gap: 20px; flex-wrap: wrap; font-size: 12px; color: #605e5c; }
+        .pipeline-legend-item { display: flex; align-items: center; gap: 6px; }
+        .pipeline-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        /* ══════════════════════════════════════ */
+        /* HANDSHAKE CARDS                       */
+        /* ══════════════════════════════════════ */
+        .section-label { font-size: 14px; font-weight: 600; color: #605e5c; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .handshake-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 32px; }
+        .handshake-card { background: white; border: 1px solid #e1e1e1; border-radius: 12px; padding: 22px; cursor: pointer; transition: all 0.2s; }
+        .handshake-card:hover { border-color: #0078d4; box-shadow: 0 2px 12px rgba(0,120,212,0.12); }
+        .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .card-feature-name { font-size: 16px; font-weight: 600; }
+        .card-status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .status-published { background: #d0e8ff; color: #004e8c; }
+        .status-draft { background: #fff4ce; color: #797673; }
+        .card-meta { font-size: 13px; color: #605e5c; margin-bottom: 12px; }
+        .card-score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .card-score-bar { flex: 1; height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+        .card-score-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+        .score-high { background: #107c10; } .score-med { background: #ff8c00; } .score-low { background: #d13438; }
+        .card-score-label { font-size: 13px; font-weight: 600; white-space: nowrap; }
+        .card-ado-link { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #0078d4; margin-top: 4px; }
+        .card-state-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+        .state-new { background: #e8e8e8; color: #605e5c; } .state-active { background: #dff6dd; color: #107c10; }
+        .state-review { background: #fff4ce; color: #8a6914; } .state-closed { background: #f0f0f0; color: #a0a0a0; }
+        .card-owner { font-size: 12px; color: #605e5c; display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+        .card-owner-dot { width: 20px; height: 20px; border-radius: 50%; background: #605e5c; color: white; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; }
+        .empty-card { border: 2px dashed #d0d0d0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 160px; color: #a0a0a0; }
+        .empty-card:hover { border-color: #0078d4; color: #0078d4; }
+        .empty-card .plus-icon { font-size: 32px; margin-bottom: 8px; }
+
+        /* ══════════════════════════════════════ */
+        /* LEADERSHIP — AREA GROUP CARDS         */
+        /* ══════════════════════════════════════ */
+        .area-card { background: white; border: 1px solid #e1e1e1; border-radius: 12px; margin-bottom: 14px; cursor: pointer; transition: all 0.3s ease; display: flex; overflow: hidden; }
+        .area-card:hover { border-color: #0078d4; box-shadow: 0 2px 12px rgba(0,120,212,0.12); }
+        .area-card:hover .area-expand-tab { background: #0078d4; color: #ffffff; }
+        .area-expand-tab { display: flex; align-items: center; justify-content: center; width: 36px; min-width: 36px; background: #f0f0f0; color: #a0a0a0; font-size: 18px; font-weight: 700; transition: all 0.3s ease; flex-shrink: 0; border-right: 1px solid #e8e8e8; }
+        .area-card.expanded .area-expand-tab { background: #0078d4; color: #ffffff; }
+        .area-card-body { flex: 1; padding: 22px; }
+        .area-card-header { display: flex; align-items: center; justify-content: space-between; }
+        .area-name { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .area-count { font-size: 13px; color: #605e5c; }
+        .area-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .area-details { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid #f0f0f0; }
+        .area-card.expanded .area-details { display: block; }
+        .area-card.expanded { background: #f0f6fc; border-color: #0078d4; box-shadow: 0 4px 16px rgba(0,120,212,0.15); }
+        .area-mini-card { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+        .area-mini-card:last-child { border-bottom: none; }
+        .area-mini-title { font-size: 14px; font-weight: 600; flex: 1; }
+        .area-mini-stage { font-size: 12px; color: #605e5c; }
+        .area-chevron { display: none; }
+
+        /* ══════════════════════════════════════ */
+        /* BUILDER                               */
+        /* ══════════════════════════════════════ */
+        .builder { max-width: 720px; margin: 0 auto; padding: 40px 32px; }
+        .builder-back { font-size: 13px; color: #605e5c; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 16px; border: none; background: none; font-family: inherit; }
+        .builder-back:hover { color: #0078d4; }
+        .builder-title { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+        .builder-subtitle { font-size: 14px; color: #605e5c; }
+
+        /* ── Feature Picker (replaces raw ADO search) ── */
+        .feature-picker { display: none; animation: fadeIn 0.3s ease; }
+        .feature-picker.active { display: block; }
+        .picker-card { background: white; border: 1px solid #e1e1e1; border-radius: 12px; padding: 28px; margin: 24px 0; }
+        .picker-header { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+        .picker-logo { width: 40px; height: 40px; background: linear-gradient(135deg, #0078d4, #005a9e); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+        .picker-header-text h3 { font-size: 18px; font-weight: 600; margin: 0; }
+        .picker-header-text p { font-size: 13px; color: #605e5c; margin: 2px 0 0 0; }
+        .picker-filter-row { display: flex; gap: 10px; margin: 20px 0 8px; }
+        .picker-search { flex: 1; padding: 10px 14px 10px 36px; border: 1px solid #d0d0d0; border-radius: 6px; font-size: 14px; font-family: inherit; background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0a0a0' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.156a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E") 12px center no-repeat; }
+        .picker-search:focus { outline: none; border-color: #0078d4; box-shadow: 0 0 0 1px #0078d4; }
+        .picker-filter-chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #e1e1e1; background: white; color: #605e5c; transition: all 0.15s; font-family: inherit; }
+        .picker-filter-chip.active { background: #0078d4; color: #ffffff; border-color: #0078d4; }
+
+        .picker-list { margin-top: 12px; max-height: 320px; overflow-y: auto; }
+        .picker-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #e8e8e8; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+        .picker-item:hover { border-color: #0078d4; background: #f0f6fc; }
+        .picker-item.selected { border-color: #0078d4; background: #f0f6fc; box-shadow: 0 0 0 1px #0078d4; }
+        .picker-item-icon { width: 36px; height: 36px; background: #e8defb; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: #5b2d90; font-weight: 700; }
+        .picker-item-info { flex: 1; }
+        .picker-item-title { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+        .picker-item-meta { font-size: 12px; color: #605e5c; display: flex; gap: 14px; flex-wrap: wrap; }
+        .picker-item-id { font-size: 13px; font-weight: 600; color: #0078d4; flex-shrink: 0; }
+        .picker-item-state { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+
+        .picker-or-row { display: flex; align-items: center; gap: 16px; margin: 16px 0; font-size: 13px; color: #a0a0a0; }
+        .picker-or-line { flex: 1; height: 1px; background: #e1e1e1; }
+        .picker-url-row { display: flex; gap: 10px; }
+        .picker-actions { display: flex; justify-content: flex-end; margin-top: 20px; gap: 12px; }
+        .picker-field-map { margin-top: 16px; padding: 16px; background: #faf9f8; border-radius: 8px; border: 1px solid #e8e8e8; display: none; }
+        .picker-field-map.visible { display: block; }
+        .field-map-title { font-size: 13px; font-weight: 600; color: #605e5c; margin-bottom: 10px; }
+        .field-map-row { display: flex; font-size: 13px; padding: 6px 0; border-bottom: 1px solid #f0f0f0; }
+        .field-map-row:last-child { border-bottom: none; }
+        .field-map-ado { flex: 1; color: #5b2d90; font-weight: 600; }
+        .field-map-arrow { color: #a0a0a0; margin: 0 12px; }
+        .field-map-hs { flex: 1; color: #0078d4; font-weight: 600; }
+
+        /* ── ADO Loading ── */
+        .ado-loading { display: none; text-align: center; padding: 40px 20px; }
+        .ado-loading.active { display: block; }
+        .ado-spinner { width: 36px; height: 36px; border: 3px solid #e1e1e1; border-top-color: #0078d4; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .ado-loading-text { font-size: 14px; color: #605e5c; }
+
+        /* ── ADO Badge ── */
+        .ado-badge { display: none; align-items: center; gap: 4px; font-size: 11px; color: #5b2d90; background: #f3eefb; padding: 2px 8px; border-radius: 10px; margin-left: 8px; font-weight: 600; }
+        .ado-badge.visible { display: inline-flex; }
+        .form-label-row { display: flex; align-items: center; }
+        .ado-filled-indicator { display: none; align-items: center; gap: 8px; background: #f3eefb; border: 1px solid #e0d4f5; border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; font-size: 13px; color: #5b2d90; }
+        .ado-filled-indicator.visible { display: flex; }
+        .ado-filled-indicator strong { color: #3b1f63; }
+
+        /* ── Step Progress ── */
+        .step-progress { display: flex; align-items: center; gap: 0; margin-bottom: 40px; }
+        .step-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; transition: all 0.3s; }
+        .step-dot.done { background: #107c10; color: white; } .step-dot.active { background: #0078d4; color: #ffffff; } .step-dot.upcoming { background: #f0f0f0; color: #a0a0a0; }
+        .step-line { flex: 1; height: 2px; background: #e1e1e1; margin: 0 8px; } .step-line.done { background: #107c10; }
+        .step-label { font-size: 11px; color: #605e5c; text-align: center; margin-top: 6px; white-space: nowrap; }
+        .step-group { display: flex; flex-direction: column; align-items: center; }
+
+        /* ── Form ── */
+        .form-section { display: none; animation: fadeIn 0.3s ease; } .form-section.active { display: block; }
+        .section-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .section-hint { font-size: 14px; color: #605e5c; margin-bottom: 24px; }
+        .form-group { margin-bottom: 24px; }
+        .form-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #323130; }
+        .form-hint { font-size: 12px; color: #a19f9d; margin-bottom: 8px; }
+        .form-input { width: 100%; padding: 10px 14px; border: 1px solid #d0d0d0; border-radius: 6px; font-size: 14px; font-family: inherit; transition: border-color 0.15s; background: white; }
+        .form-input:focus { outline: none; border-color: #0078d4; box-shadow: 0 0 0 1px #0078d4; }
+        textarea.form-input { resize: vertical; min-height: 80px; }
+        .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .chip { display: inline-flex; align-items: center; gap: 6px; background: #f0f6fc; border: 1px solid #c7e0f4; padding: 6px 14px; border-radius: 20px; font-size: 13px; color: #004e8c; cursor: pointer; transition: all 0.15s; }
+        .chip:hover { background: #deecf9; } .chip.selected { background: #0078d4; color: #ffffff; border-color: #0078d4; }
+        .checklist-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: white; border: 1px solid #e8e8e8; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+        .checklist-item:hover { border-color: #0078d4; } .checklist-item.checked { background: #f0f6fc; border-color: #c7e0f4; }
+        .check-box { width: 20px; height: 20px; border: 2px solid #d0d0d0; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; color: transparent; transition: all 0.15s; }
+        .checklist-item.checked .check-box { background: #0078d4; border-color: #0078d4; color: #ffffff; }
+        .check-text { font-size: 14px; }
+        .form-actions { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 24px; border-top: 1px solid #e8e8e8; }
+
+        /* ── Completeness Ring ── */
+        .completeness-card { background: white; border: 1px solid #e1e1e1; border-radius: 12px; padding: 24px; margin-bottom: 24px; display: flex; align-items: center; gap: 24px; }
+        .score-ring { width: 80px; height: 80px; position: relative; flex-shrink: 0; }
+        .score-ring svg { transform: rotate(-90deg); }
+        .score-ring-bg { fill: none; stroke: #f0f0f0; stroke-width: 6; }
+        .score-ring-fill { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+        .score-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 22px; font-weight: 700; }
+        .score-details h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .score-details p { font-size: 13px; color: #605e5c; line-height: 1.5; }
+
+        /* ── Publish Card ── */
+        .publish-card { background: white; border: 1px solid #e1e1e1; border-radius: 12px; padding: 28px; margin-bottom: 20px; }
+        .publish-card h3 { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+        .publish-card .pub-desc { font-size: 13px; color: #605e5c; margin-bottom: 20px; line-height: 1.5; }
+        .publish-parent-card { display: flex; align-items: center; gap: 14px; background: #faf9f8; border: 1px solid #e8e8e8; border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; }
+        .publish-parent-icon { width: 36px; height: 36px; background: #e8defb; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .publish-parent-info { flex: 1; }
+        .publish-parent-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #a0a0a0; margin-bottom: 2px; }
+        .publish-parent-name { font-size: 15px; font-weight: 600; }
+        .publish-parent-id { font-size: 13px; color: #0078d4; font-weight: 600; }
+        .owner-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .owner-option { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: white; border: 1px solid #e1e1e1; border-radius: 20px; cursor: pointer; transition: all 0.15s; font-size: 14px; }
+        .owner-option:hover { border-color: #0078d4; background: #f0f6fc; }
+        .owner-option.selected { border-color: #0078d4; background: #0078d4; color: #ffffff; }
+        .owner-avatar { width: 24px; height: 24px; border-radius: 50%; background: #605e5c; color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; }
+        .owner-option.selected .owner-avatar { background: rgba(255,255,255,0.3); }
+
+        /* ══════════════════════════════════════ */
+        /* VIEW 3: BRIEF                         */
+        /* ══════════════════════════════════════ */
+        .brief { max-width: 800px; margin: 0 auto; padding: 40px 32px; }
+        .brief-actions { display: flex; gap: 12px; margin-bottom: 24px; }
+        .brief-card { background: white; border: 1px solid #e1e1e1; border-radius: 12px; overflow: hidden; }
+        .brief-banner { background: linear-gradient(135deg, #1e2028, #2a2e3a); color: white; padding: 32px; }
+        .brief-feature-name { font-size: 28px; font-weight: 600; margin-bottom: 8px; }
+        .brief-meta-row { display: flex; gap: 24px; font-size: 14px; opacity: 0.85; flex-wrap: wrap; }
+        .brief-ado-source { display: none; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.8); margin-top: 8px; }
+        .brief-ado-source.visible { display: flex; }
+        .brief-ado-dot { width: 8px; height: 8px; background: #a78bfa; border-radius: 50%; }
+        .milestone-bar { padding: 24px 32px; background: #faf9f8; border-bottom: 1px solid #e8e8e8; }
+        .milestone-bar-label { font-size: 13px; font-weight: 600; color: #605e5c; margin-bottom: 12px; }
+        .milestone-tracker { display: flex; align-items: flex-start; }
+        .milestone-step { display: flex; flex-direction: column; align-items: center; }
+        .milestone-dot { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; z-index: 1; }
+        .milestone-dot.done { background: #107c10; } .milestone-dot.current { background: #0078d4; box-shadow: 0 0 0 3px rgba(0,120,212,0.3); } .milestone-dot.pending { background: #e1e1e1; color: #a0a0a0; }
+        .milestone-label { font-size: 10px; color: #605e5c; margin-top: 4px; white-space: nowrap; text-align: center; }
+        .milestone-label.active-label { color: #0078d4; font-weight: 600; }
+        .milestone-line { width: 48px; height: 2px; margin: 11px -4px 0; flex-shrink: 0; }
+        .milestone-line.done { background: #107c10; } .milestone-line.pending { background: #e1e1e1; }
+        .brief-body { padding: 32px; }
+        .brief-section { margin-bottom: 28px; }
+        .brief-section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #0078d4; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .brief-section-title::after { content: ''; flex: 1; height: 1px; background: #e8e8e8; }
+        .brief-text { font-size: 15px; line-height: 1.7; color: #323130; }
+        .brief-link { display: inline-flex; align-items: center; gap: 6px; color: #0078d4; text-decoration: none; font-weight: 500; }
+        .brief-link:hover { text-decoration: underline; }
+        .brief-list { list-style: none; padding: 0; }
+        .brief-list li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; display: flex; align-items: flex-start; gap: 10px; }
+        .brief-list li:last-child { border-bottom: none; }
+        .brief-list .icon { flex-shrink: 0; margin-top: 2px; }
+        .brief-tag { display: inline-block; background: #f0f6fc; color: #004e8c; padding: 4px 12px; border-radius: 14px; font-size: 13px; margin: 2px 4px 2px 0; }
+        .brief-open-q { background: #fff8e1; border-left: 3px solid #ff8c00; padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 8px; font-size: 14px; }
+        .brief-footer { background: #faf9f8; padding: 20px 32px; border-top: 1px solid #e8e8e8; display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: #605e5c; }
+        .brief-score-badge { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+        .brief-score-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        /* ══════════════════════════════════════ */
+        /* VIEW 4: SUCCESS                       */
+        /* ══════════════════════════════════════ */
+        .success-view { max-width: 680px; margin: 0 auto; padding: 60px 32px; text-align: center; }
+        .success-icon { width: 80px; height: 80px; background: linear-gradient(135deg, #0078d4, #005a9e); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: #ffffff; animation: scalePop 0.5s ease; }
+        @keyframes scalePop { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+        .success-title { font-size: 26px; font-weight: 600; margin-bottom: 8px; }
+        .success-subtitle { font-size: 15px; color: #605e5c; margin-bottom: 32px; line-height: 1.6; }
+        .success-card { background: white; border: 1px solid #e1e1e1; border-radius: 12px; padding: 28px; text-align: left; margin-bottom: 24px; }
+        .success-work-item { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+        .success-wi-icon { width: 44px; height: 44px; background: #f0f6fc; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+        .success-wi-type { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #0078d4; font-weight: 600; }
+        .success-wi-title { font-size: 18px; font-weight: 600; margin: 2px 0 4px; }
+        .success-wi-id { font-size: 14px; color: #0078d4; font-weight: 600; cursor: pointer; } .success-wi-id:hover { text-decoration: underline; }
+        .success-details { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 16px; border-top: 1px solid #f0f0f0; }
+        .success-detail { font-size: 13px; }
+        .success-detail-label { color: #a0a0a0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .success-detail-value { font-weight: 600; color: #323130; }
+        .success-notification { display: flex; align-items: center; gap: 10px; background: #f0f6fc; border: 1px solid #c7e0f4; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #004e8c; }
+        .success-actions { display: flex; gap: 12px; justify-content: center; margin-top: 32px; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) { .handshake-grid { grid-template-columns: 1fr; } .stats-row { flex-direction: column; } .success-details { grid-template-columns: 1fr; } }
+        @media print { .top-bar, .brief-actions, .builder-back, .milestone-bar { display: none; } .brief-card { box-shadow: none; border: none; } }
+    </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div class="top-bar-left"></div>
+    <div class="top-bar-center">
+        <div class="logo">AI</div>
+        <div class="app-name" style="margin-left:12px;">Mission: <span>AI Possible</span><span class="app-sub">AI-First SDLC Transformation · PM + Engineering: Better Together</span></div>
+    </div>
+    <div class="top-bar-right">
+        <div class="user-avatar">SV</div>
+    </div>
+</div>
+<div class="sub-nav">
+    <div class="role-toggle">
+        <button class="role-btn active" id="rolePm" onclick="switchRole('pm')">PM View</button>
+        <button class="role-btn" id="roleLeader" onclick="switchRole('leadership')">Leadership View</button>
+    </div>
+</div>
+
+<!-- ═══════ VIEW 1: LANDING ═══════ -->
+<div class="view active" id="view-landing">
+    <div class="landing">
+
+        <!-- PM VIEW -->
+        <div id="pmLanding">
+            <div class="landing-header">
+                <div class="landing-title">My Handshakes</div>
+                <button class="btn-primary" onclick="currentHandshake=null;showBuilder()"><span style="font-size:18px;">+</span> New Handshake</button>
+            </div>
+            <div class="landing-subtitle">Your prototype-to-engineering handshake portfolio. Track what you've shared and what's in progress.</div>
+
+            <!-- PM KPI Definitions Toggle -->
+            <div style="margin:8px 0 16px;">
+                <button onclick="togglePmKpiDefs()" id="pmKpiDefsToggle" style="background:none;border:1px solid #e1e1e1;border-radius:8px;padding:7px 16px;font-size:13px;color:#0078d4;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:600;transition:all 0.2s;"
+                    onmouseover="this.style.background='#f0f6fc';this.style.borderColor='#0078d4';" onmouseout="if(!this.dataset.open){this.style.background='none';this.style.borderColor='#e1e1e1';}">
+                    <span style="font-size:14px;">ℹ️</span> How we measure
+                </button>
+            </div>
+            <div id="pmKpiDefsPanel" style="display:none;background:white;border:1px solid #e1e1e1;border-radius:14px;padding:24px 28px;margin-bottom:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                    <div style="font-size:16px;font-weight:700;color:#323130;">📏 Your pipeline &amp; what we're tracking</div>
+                    <button onclick="togglePmKpiDefs()" style="background:none;border:none;font-size:18px;color:#a0a0a0;cursor:pointer;padding:4px 8px;" title="Close">✕</button>
+                </div>
+                <!-- Same 5-stage pipeline as Leadership -->
+                <div style="display:flex;align-items:center;gap:0;margin-bottom:20px;background:#faf9f8;border-radius:10px;padding:16px 20px;overflow-x:auto;">
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">💡</div>
+                        <div style="font-size:12px;font-weight:700;color:#323130;">Kickoff</div>
+                        <div style="font-size:10px;color:#8a8886;">Idea starts</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">🛠️</div>
+                        <div style="font-size:12px;font-weight:700;color:#0078d4;">Prototype</div>
+                        <div style="font-size:10px;color:#8a8886;">Build & demo</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">✅</div>
+                        <div style="font-size:12px;font-weight:700;color:#107c10;">Validation</div>
+                        <div style="font-size:10px;color:#8a8886;">Stakeholder sign-off</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">🤝</div>
+                        <div style="font-size:12px;font-weight:700;color:#ff8c00;">Handshake</div>
+                        <div style="font-size:10px;color:#8a8886;">Eng handoff</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">🚀</div>
+                        <div style="font-size:12px;font-weight:700;color:#5b2d90;">Production</div>
+                        <div style="font-size:10px;color:#8a8886;">Live & shipped</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div style="background:#f0f6fc;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#0078d4;margin-bottom:4px;">Total Handshakes</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">All features you've created handshakes for — drafts, in development, and shipped. This is your full portfolio view. Click to see the breakdown by stage.</div>
+                    </div>
+                    <div style="background:#f0fdf4;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#107c10;margin-bottom:4px;">In Active Dev</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">Features where engineering has picked up your handshake and is actively building. This is a subset of your total. The higher this number vs. drafts, the better your conversion rate.</div>
+                    </div>
+                    <div style="background:#fff8f0;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#ff8c00;margin-bottom:4px;">Avg. Kickoff → Prototype</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">How many days from idea kickoff to having a working prototype ready. This is <em>your</em> speed metric — the faster you build a quality prototype, the faster you can get stakeholder sign-off and hand off to engineering.</div>
+                    </div>
+                    <div style="background:#f5f0ff;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#5b2d90;margin-bottom:4px;">Shipped 🎉</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">Features that completed the full journey: prototype → handshake → engineering → production. The ultimate measure of your PM impact — how many ideas became real products.</div>
+                    </div>
+                </div>
+                <div style="margin-top:14px;font-size:12px;color:#8a8886;line-height:1.6;"><strong>How it all connects:</strong> Total = Drafts + In Dev + Shipped. Each handshake flows through the pipeline above. Your velocity metrics show how fast you move through each stage. Track these to demonstrate PM impact and optimize your handshake quality.</div>
+            </div>
+
+            <!-- PM E2E Pipeline Banner (populated by renderPmStats) -->
+            <div id="pmE2eBanner"></div>
+
+            <div class="stats-row" id="pmStats">
+                <div class="stat-card" onclick="toggleDrill('pm-total')" id="statCardTotal">
+                    <div class="stat-value" style="color:#0078d4;" id="statTotalVal">5</div>
+                    <div class="stat-label">Total Handshakes</div>
+                    <div class="stat-sub" id="statTotalSub">Loading...</div>
+                    <div class="stat-expand-hint">Click to see breakdown →</div>
+                </div>
+                <div class="stat-card" onclick="toggleDrill('pm-active')" id="statCardActive">
+                    <div class="stat-value" style="color:#107c10;" id="statActiveVal">—</div>
+                    <div class="stat-label">In Active Dev</div>
+                    <div class="stat-sub" id="statActiveSub">Loading...</div>
+                    <div class="stat-expand-hint">Click to see details →</div>
+                </div>
+                <div class="stat-card" onclick="toggleDrill('pm-velocity')" id="statCardVelocity">
+                    <div class="stat-value" style="color:#ff8c00;" id="statVelocityVal">—</div>
+                    <div class="stat-label">Avg. Kickoff → Proto</div>
+                    <div class="stat-sub" id="statVelocitySub">Loading...</div>
+                    <div class="stat-expand-hint">Click to see full pipeline →</div>
+                </div>
+                <div class="stat-card" onclick="toggleDrill('pm-shipped')" id="statCardShipped">
+                    <div class="stat-value" style="color:#5b2d90;" id="statShippedVal">—</div>
+                    <div class="stat-label">Shipped 🎉</div>
+                    <div class="stat-sub" id="statShippedSub">Loading...</div>
+                    <div class="stat-expand-hint">Click to see details →</div>
+                </div>
+            </div>
+
+            <!-- PM Drill-down Panels (dynamically populated) -->
+            <div class="drill-panel" id="drill-pm-total"></div>
+            <div class="drill-panel" id="drill-pm-active"></div>
+            <div class="drill-panel" id="drill-pm-velocity"></div>
+            <div class="drill-panel" id="drill-pm-shipped"></div>
+
+            <div class="section-label">Published</div>
+            <div class="handshake-grid" id="pmPublishedGrid"></div>
+            <div class="section-label">Drafts</div>
+            <div class="handshake-grid" id="pmDraftGrid"></div>
+        </div>
+
+        <!-- LEADERSHIP VIEW -->
+        <div id="leadershipLanding" style="display:none;">
+            <div class="landing-header">
+                <div class="landing-title">Portfolio Overview</div>
+                <div style="font-size:13px;color:#605e5c;">Last updated: Mar 3, 2026</div>
+            </div>
+            <div class="landing-subtitle">Are we shipping features faster? Track the pipeline from kickoff to production and measure what matters.</div>
+
+            <!-- KPI Definitions Toggle -->
+            <div style="margin:8px 0 16px;">
+                <button onclick="toggleKpiDefs()" id="kpiDefsToggle" style="background:none;border:1px solid #e1e1e1;border-radius:8px;padding:7px 16px;font-size:13px;color:#0078d4;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:600;transition:all 0.2s;"
+                    onmouseover="this.style.background='#f0f6fc';this.style.borderColor='#0078d4';" onmouseout="this.style.background='none';this.style.borderColor='#e1e1e1';">
+                    <span id="kpiDefsIcon" style="font-size:14px;">ℹ️</span> How we measure
+                </button>
+            </div>
+            <div id="kpiDefsPanel" style="display:none;background:white;border:1px solid #e1e1e1;border-radius:14px;padding:24px 28px;margin-bottom:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                    <div style="font-size:16px;font-weight:700;color:#323130;">📏 Our pipeline &amp; what we’re measuring</div>
+                    <button onclick="toggleKpiDefs()" style="background:none;border:none;font-size:18px;color:#a0a0a0;cursor:pointer;padding:4px 8px;" title="Close">✕</button>
+                </div>
+                <!-- Pipeline stages visual -->
+                <div style="display:flex;align-items:center;gap:0;margin-bottom:20px;background:#faf9f8;border-radius:10px;padding:16px 20px;overflow-x:auto;">
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">💡</div>
+                        <div style="font-size:12px;font-weight:700;color:#323130;">Kickoff</div>
+                        <div style="font-size:10px;color:#8a8886;">Idea starts</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">🛠️</div>
+                        <div style="font-size:12px;font-weight:700;color:#0078d4;">Prototype</div>
+                        <div style="font-size:10px;color:#8a8886;">Build & demo</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">✅</div>
+                        <div style="font-size:12px;font-weight:700;color:#107c10;">Validation</div>
+                        <div style="font-size:10px;color:#8a8886;">Stakeholder sign-off</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">🤝</div>
+                        <div style="font-size:12px;font-weight:700;color:#ff8c00;">Handshake</div>
+                        <div style="font-size:10px;color:#8a8886;">Eng handoff</div>
+                    </div>
+                    <div style="color:#c8c8c8;font-size:18px;">→</div>
+                    <div style="text-align:center;flex:1;">
+                        <div style="font-size:20px;">🚀</div>
+                        <div style="font-size:12px;font-weight:700;color:#5b2d90;">Production</div>
+                        <div style="font-size:10px;color:#8a8886;">Live & shipped</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div style="background:#f0f6fc;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#0078d4;margin-bottom:4px;">Avg. Kickoff → Prototype</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">How quickly are teams going from idea to a working prototype? Measures the speed of the PM rapid-prototyping process. Faster = better validation loops.</div>
+                    </div>
+                    <div style="background:#f0fdf4;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#107c10;margin-bottom:4px;">Avg. Prototype → Handshake</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">Time from prototype being ready, through stakeholder validation, to formal engineering handshake. Shows how quickly we convert demos into engineering commitments.</div>
+                    </div>
+                    <div style="background:#fff8f0;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#ff8c00;margin-bottom:4px;">Avg. Handshake → Production</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">Once engineering has the handshake brief, how long until the feature ships? This is the metric that proves the handshake process reduces eng ramp-up time.</div>
+                    </div>
+                    <div style="background:#f5f0ff;border-radius:10px;padding:14px 16px;">
+                        <div style="font-weight:700;color:#5b2d90;margin-bottom:4px;">Shipped to Prod</div>
+                        <div style="font-size:13px;color:#323130;line-height:1.6;">Count of projects that completed the full pipeline and are live in production. The ultimate outcome metric — are prototypes becoming real features?</div>
+                    </div>
+                </div>
+                <div style="margin-top:14px;font-size:12px;color:#8a8886;line-height:1.6;"><strong>The story:</strong> The handshake process gives engineering a head start — prototype, validated requirements, and clear acceptance criteria. We're establishing baselines this quarter. As we collect more data, these KPIs will show quarter-over-quarter whether the process is driving faster delivery.</div>
+            </div>
+
+            <!-- End-to-End Pipeline Banner -->
+            <div id="e2eBanner" style="background:linear-gradient(135deg,#1e2028 0%,#2a2e3a 100%);border:none;border-radius:14px;padding:20px 28px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.15);">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                    <div style="font-size:14px;font-weight:700;color:#ffffff;">⏱️ End-to-End: Kickoff → Production</div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:11px;color:#9ca0ae;text-transform:uppercase;letter-spacing:0.5px;">Baseline</span>
+                        <span id="e2eTotal" style="font-size:24px;font-weight:700;color:#ffffff;">26 days</span>
+                        <span style="font-size:11px;color:#9ca0ae;">·</span>
+                        <span style="font-size:11px;color:#9ca0ae;text-transform:uppercase;letter-spacing:0.5px;">Target</span>
+                        <span style="font-size:16px;font-weight:700;color:#6dd58c;">22 days</span>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:0;position:relative;">
+                    <div style="flex:8;text-align:center;background:#0078d4;border-radius:10px 0 0 10px;padding:12px 6px;border-right:2px solid #1e2028;">
+                        <div style="font-size:20px;font-weight:700;color:#ffffff;">8d</div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Kickoff → Prototype</div>
+                    </div>
+                    <div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>
+                    <div style="flex:6;text-align:center;background:#107c10;padding:12px 6px;border-right:2px solid #1e2028;">
+                        <div style="font-size:20px;font-weight:700;color:#ffffff;">6d</div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Proto → Handshake</div>
+                    </div>
+                    <div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>
+                    <div style="flex:12;text-align:center;background:#8661c5;border-radius:0 10px 10px 0;padding:12px 6px;">
+                        <div style="font-size:20px;font-weight:700;color:#ffffff;">12d</div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Handshake → Prod</div>
+                    </div>
+                </div>
+                <div style="text-align:center;margin-top:10px;font-size:12px;color:#9ca0ae;">📐 Establishing baseline this quarter · Stages proportionally sized by duration</div>
+            </div>
+
+            <div class="stats-row" id="leaderStats">
+                <div class="stat-card" onclick="toggleDrill('lead-pipeline')">
+                    <div class="stat-value" style="color:#0078d4;">12</div>
+                    <div class="stat-label">Total Handshakes</div>
+                    <div class="stat-sub">Across all PMs this quarter</div>
+                    <div class="stat-expand-hint">Click for pipeline view →</div>
+                </div>
+                <div class="stat-card" onclick="toggleDrill('lead-coverage')">
+                    <div class="stat-value" style="color:#107c10;">83%</div>
+                    <div class="stat-label">Feature Coverage</div>
+                    <div class="stat-sub">Active features with a handshake</div>
+                    <div class="stat-expand-hint">Click for gaps →</div>
+                </div>
+                <div class="stat-card" onclick="toggleDrill('lead-velocity')">
+                    <div class="stat-value" style="color:#ff8c00;">6 days</div>
+                    <div class="stat-label">Avg. Handshake → Dev</div>
+                    <div class="stat-sub">↓ 3 days vs last quarter</div>
+                    <div class="stat-expand-hint">Click for trend →</div>
+                </div>
+                <div class="stat-card" onclick="toggleDrill('lead-shipped')">
+                    <div class="stat-value" style="color:#5b2d90;">3</div>
+                    <div class="stat-label">Shipped to Prod</div>
+                    <div class="stat-sub">Prototypes → real features</div>
+                    <div class="stat-expand-hint">Click for details →</div>
+                </div>
+            </div>
+
+            <!-- Leadership Drill-downs -->
+            <div class="drill-panel" id="drill-lead-pipeline">
+                <div class="drill-header"><div class="drill-title">📊 Pipeline Distribution</div><button class="drill-close" onclick="closeDrill('lead-pipeline')">✕</button></div>
+                <div style="margin-bottom:16px;">
+                    <div class="pipeline-bar">
+                        <div class="pipeline-segment" style="width:17%;background:#e8e8e8;color:#605e5c;">2</div>
+                        <div class="pipeline-segment" style="width:17%;background:#fff4ce;color:#8a6914;">2</div>
+                        <div class="pipeline-segment" style="width:25%;background:#d0e8ff;color:#004e8c;">3</div>
+                        <div class="pipeline-segment" style="width:25%;background:#dff6dd;color:#107c10;">3</div>
+                        <div class="pipeline-segment" style="width:8%;background:#5b2d90;">1</div>
+                        <div class="pipeline-segment" style="width:8%;background:#107c10;">1</div>
+                    </div>
+                    <div class="pipeline-legend">
+                        <div class="pipeline-legend-item"><div class="pipeline-dot" style="background:#e8e8e8;"></div> Draft (2)</div>
+                        <div class="pipeline-legend-item"><div class="pipeline-dot" style="background:#fff4ce;"></div> Handshake Created (2)</div>
+                        <div class="pipeline-legend-item"><div class="pipeline-dot" style="background:#d0e8ff;"></div> Published to ADO (3)</div>
+                        <div class="pipeline-legend-item"><div class="pipeline-dot" style="background:#dff6dd;"></div> In Engineering Review (3)</div>
+                        <div class="pipeline-legend-item"><div class="pipeline-dot" style="background:#5b2d90;"></div> In Dev (1)</div>
+                        <div class="pipeline-legend-item"><div class="pipeline-dot" style="background:#107c10;"></div> Shipped (1)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="drill-panel" id="drill-lead-coverage">
+                <div class="drill-header"><div class="drill-title">📋 Feature Coverage Gaps</div><button class="drill-close" onclick="closeDrill('lead-coverage')">✕</button></div>
+                <table class="drill-table">
+                    <thead><tr><th>Feature Area</th><th>Active Features</th><th>With Handshake</th><th>Gap</th></tr></thead>
+                    <tbody>
+                        <tr><td style="font-weight:600;">Commerce / AI</td><td>3</td><td>3</td><td><span style="color:#107c10;font-weight:600;">✓ Covered</span></td></tr>
+                        <tr><td style="font-weight:600;">Platform / Copilot</td><td>4</td><td>3</td><td><span style="color:#ff8c00;font-weight:600;">1 missing</span></td></tr>
+                        <tr><td style="font-weight:600;">Platform / Notifications</td><td>2</td><td>2</td><td><span style="color:#107c10;font-weight:600;">✓ Covered</span></td></tr>
+                        <tr><td style="font-weight:600;">Platform / UX</td><td>3</td><td>2</td><td><span style="color:#ff8c00;font-weight:600;">1 missing</span></td></tr>
+                        <tr><td style="font-weight:600;">Commerce / Licensing</td><td>2</td><td>1</td><td><span style="color:#d13438;font-weight:600;">1 missing</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="drill-panel" id="drill-lead-velocity">
+                <div class="drill-header"><div class="drill-title">⏱️ Velocity Trend (Team Average)</div><button class="drill-close" onclick="closeDrill('lead-velocity')">✕</button></div>
+                <div style="display:flex;gap:24px;margin-bottom:8px;">
+                    <div style="flex:1;text-align:center;padding:16px;background:#faf9f8;border-radius:8px;">
+                        <div style="font-size:11px;color:#a0a0a0;text-transform:uppercase;letter-spacing:0.5px;">Q3 2025</div>
+                        <div style="font-size:28px;font-weight:700;color:#d13438;">14 days</div>
+                    </div>
+                    <div style="flex:1;text-align:center;padding:16px;background:#faf9f8;border-radius:8px;">
+                        <div style="font-size:11px;color:#a0a0a0;text-transform:uppercase;letter-spacing:0.5px;">Q4 2025</div>
+                        <div style="font-size:28px;font-weight:700;color:#ff8c00;">9 days</div>
+                    </div>
+                    <div style="flex:1;text-align:center;padding:16px;background:#f0f6fc;border-radius:8px;border:1px solid #c7e0f4;">
+                        <div style="font-size:11px;color:#0078d4;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">This Quarter</div>
+                        <div style="font-size:28px;font-weight:700;color:#107c10;">6 days</div>
+                    </div>
+                </div>
+                <div style="font-size:13px;color:#605e5c;text-align:center;margin-top:8px;">↓ 57% improvement since Q3 2025. Target: &lt; 5 days.</div>
+            </div>
+            <div class="drill-panel" id="drill-lead-shipped">
+                <div class="drill-header"><div class="drill-title">🚢 Shipped to Production</div><button class="drill-close" onclick="closeDrill('lead-shipped')">✕</button></div>
+                <table class="drill-table">
+                    <thead><tr><th>Feature</th><th>Area</th><th>Handshake → Shipped</th><th>Cycle Time</th></tr></thead>
+                    <tbody>
+                        <tr><td style="font-weight:600;">Customer Health Scorecard</td><td>Commerce / Analytics</td><td>Feb 20 → Mar 3</td><td><span style="color:#107c10;font-weight:600;">11 days</span></td></tr>
+                        <tr><td style="font-weight:600;">Workflow Automation Templates</td><td>Platform / Copilot</td><td>Jan 22 → Feb 15</td><td><span style="color:#107c10;font-weight:600;">24 days</span></td></tr>
+                        <tr><td style="font-weight:600;">Copilot Quick Actions</td><td>Platform / Copilot</td><td>Jan 5 → Feb 1</td><td><span style="color:#ff8c00;font-weight:600;">27 days</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Portfolio Overview (replaces Feature Area grouping) -->
+            <div class="section-label">By Portfolio Overview</div>
+            <div id="areaGroupContainer"></div>
+
+            <div class="section-label" style="margin-top:28px;">Needs Attention</div>
+            <div id="needsAttentionContainer"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ VIEW 2: BUILDER ═══════ -->
+<div class="view" id="view-builder">
+    <div class="builder">
+        <button class="builder-back" onclick="showLanding()">← Back to My Handshakes</button>
+        <div class="builder-title">New Handshake</div>
+        <div class="builder-subtitle">Select a feature and package your prototype in about 2 minutes.</div>
+
+        <!-- Feature Picker (replaces raw ADO search) -->
+        <div class="feature-picker active" id="featurePicker">
+            <div class="picker-card">
+                <div class="picker-header">
+                    <div class="picker-logo">ADO</div>
+                    <div class="picker-header-text">
+                        <h3>Select Your Feature <span id="adoLiveLabel" style="display:none;font-size:12px;font-weight:500;background:#dff6dd;color:#107c10;padding:2px 10px;border-radius:12px;margin-left:8px;vertical-align:middle;"></span></h3>
+                        <p id="pickerSubtitle">Showing active features assigned to you from ADO. Select one to auto-fill the handshake.</p>
+                    </div>
+                </div>
+
+                <!-- ADO Connection Panel -->
+                <div id="adoConnPanel" style="background:linear-gradient(135deg,#f3f2f1,#e8e6e4);border-radius:8px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:200px;">
+                        <div style="font-size:13px;font-weight:600;color:#323130;">🔌 Connect to live ADO data <span style="font-weight:400;color:#605e5c;">(optional)</span></div>
+                        <div style="font-size:11px;color:#a19f9d;margin-top:2px;">Enter a PAT with <b>Work Items (Read)</b> scope. Stored in session only.</div>
+                    </div>
+                    <input id="adoPatInput" type="password" placeholder="Paste your ADO PAT..." style="flex:1;min-width:180px;padding:6px 10px;border:1px solid #c8c6c4;border-radius:4px;font-size:13px;font-family:inherit;">
+                    <button onclick="connectToAdo()" style="background:#0078d4;color:#fff;border:none;padding:6px 16px;border-radius:4px;font-size:13px;cursor:pointer;font-weight:600;">Connect</button>
+                    <div id="adoConnStatus" style="width:100%;font-size:12px;color:#a0a0a0;margin-top:2px;"></div>
+                </div>
+
+                <div class="picker-filter-row">
+                    <input class="picker-search" type="text" id="pickerSearch" placeholder="Filter by name, ID, or keyword..." oninput="filterPicker()">
+                    <button class="picker-filter-chip active" id="filterActive" onclick="setPickerFilter('Active')">Active</button>
+                    <button class="picker-filter-chip" id="filterNew" onclick="setPickerFilter('New')">New</button>
+                    <button class="picker-filter-chip" id="filterAll" onclick="setPickerFilter('All')">All</button>
+                </div>
+
+                <div class="picker-list" id="pickerList"></div>
+
+                <!-- ADO Field Mapping (shown after selection) -->
+                <div class="picker-field-map" id="fieldMapPanel">
+                    <div class="field-map-title">ADO → Handshake Field Mapping</div>
+                    <div class="field-map-row"><div class="field-map-ado">System.Title</div><div class="field-map-arrow">→</div><div class="field-map-hs">Feature Name</div></div>
+                    <div class="field-map-row"><div class="field-map-ado">System.Description</div><div class="field-map-arrow">→</div><div class="field-map-hs">One-Line Summary</div></div>
+                    <div class="field-map-row"><div class="field-map-ado">Microsoft.VSTS.Common.AcceptanceCriteria</div><div class="field-map-arrow">—</div><div class="field-map-hs">Not mapped (scenarios in repo README)</div></div>
+                    <div class="field-map-row"><div class="field-map-ado">System.AssignedTo</div><div class="field-map-arrow">→</div><div class="field-map-hs">Owner (pre-select)</div></div>
+                    <div class="field-map-row"><div class="field-map-ado">System.IterationPath</div><div class="field-map-arrow">→</div><div class="field-map-hs">Target Iteration</div></div>
+                    <div class="field-map-row"><div class="field-map-ado">System.AreaPath</div><div class="field-map-arrow">→</div><div class="field-map-hs">Feature Area (metadata)</div></div>
+                    <div class="field-map-row"><div class="field-map-ado">System.Tags</div><div class="field-map-arrow">→</div><div class="field-map-hs">Tags (metadata)</div></div>
+                    <div class="field-map-row" style="color:#a0a0a0;font-style:italic;"><div class="field-map-ado">Repo Link</div><div class="field-map-arrow">—</div><div class="field-map-hs">Manual entry (not in ADO)</div></div>
+                    <div class="field-map-row" style="color:#a0a0a0;font-style:italic;"><div class="field-map-ado">What's been showcased</div><div class="field-map-arrow">—</div><div class="field-map-hs">Manual entry (PM knowledge)</div></div>
+                    <div class="field-map-row" style="color:#a0a0a0;font-style:italic;"><div class="field-map-ado">Open Questions</div><div class="field-map-arrow">—</div><div class="field-map-hs">Manual entry (PM knowledge)</div></div>
+                </div>
+
+                <div class="picker-or-row"><div class="picker-or-line"></div><span>or paste a work item URL</span><div class="picker-or-line"></div></div>
+                <div class="picker-url-row">
+                    <input class="form-input" type="url" id="pickerUrlInput" placeholder="https://microsoftit.visualstudio.com/OneITVSO/_workitems/edit/13927662" style="flex:1">
+                    <button class="btn-primary" onclick="pullFromUrl()" style="white-space:nowrap;">Pull from ADO</button>
+                </div>
+            </div>
+            <div class="picker-actions">
+                <button class="btn-ghost" onclick="skipPicker()">Skip — start from blank</button>
+            </div>
+        </div>
+
+        <!-- ADO Loading -->
+        <div class="ado-loading" id="adoLoading">
+            <div class="ado-spinner"></div>
+            <div class="ado-loading-text">Pulling work item details from Azure DevOps...</div>
+        </div>
+
+        <!-- Step Progress -->
+        <div class="step-progress" style="display:none;" id="stepProgress">
+            <div class="step-group"><div class="step-dot active" id="stepDot1">1</div><div class="step-label">Basics</div></div>
+            <div class="step-line" id="stepLine1"></div>
+            <div class="step-group"><div class="step-dot upcoming" id="stepDot2">2</div><div class="step-label">Context</div></div>
+            <div class="step-line" id="stepLine2"></div>
+            <div class="step-group"><div class="step-dot upcoming" id="stepDot3">3</div><div class="step-label">Publish</div></div>
+        </div>
+
+        <!-- STEP 1 -->
+        <div class="form-section" id="step1">
+            <div class="section-title">What are you handing over?</div>
+            <div class="section-hint">The basics — name it, link the repo (with a README), and confirm business approval.</div>
+            <div class="ado-filled-indicator" id="adoFilledBanner">
+                <span style="font-size:18px;">🔗</span>
+                <span>Fields marked <strong>ADO</strong> were auto-filled from work item <strong id="adoItemIdBanner"></strong>. You can edit any field.</span>
+            </div>
+            <div class="form-group">
+                <div class="form-label-row"><label class="form-label">Feature / Project Name</label><span class="ado-badge" id="badge-featureName">ADO</span></div>
+                <input class="form-input" type="text" id="featureName" placeholder="e.g., eCommerce Voice AI Agent">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Repo Link</label>
+                <div class="form-hint">GitHub repo URL — make sure the README covers what's been built, scenarios, and setup instructions</div>
+                <input class="form-input" type="url" id="protoLink" placeholder="https://github.com/your-org/your-repo">
+            </div>
+            <div class="form-group">
+                <div class="form-label-row"><label class="form-label">One-Line Summary</label><span class="ado-badge" id="badge-summary">ADO</span></div>
+                <div class="form-hint">What does this prototype demonstrate? One sentence.</div>
+                <input class="form-input" type="text" id="summary" placeholder="e.g., End-to-end voice AI agent for eCommerce...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Stakeholder Validation</label>
+                <div class="form-hint">Has a stakeholder seen and signed off?</div>
+                <div class="chip-container" id="stakeholderChips">
+                    <div class="chip" onclick="toggleChip(this)">Yes — demoed and approved</div>
+                    <div class="chip" onclick="toggleChip(this)">Yes — reviewed async</div>
+                    <div class="chip" onclick="toggleChip(this)">Demo scheduled</div>
+                    <div class="chip" onclick="toggleChip(this)">Not yet</div>
+                </div>
+            </div>
+            <div class="form-actions"><div></div><button class="btn-primary" onclick="nextStep(2)">Next: Context →</button></div>
+        </div>
+
+        <!-- STEP 2: CONTEXT -->
+        <div class="form-section" id="step2">
+            <div class="section-title">What context does engineering need?</div>
+            <div class="section-hint">Detailed scenarios, flows, and boundaries should live in your repo README. Use this to highlight the key things.</div>
+            <div class="form-group">
+                <label class="form-label">What's been showcased / demoed?</label>
+                <div class="form-hint">Summarize what stakeholders have seen — this helps engineering understand what's been validated.</div>
+                <textarea class="form-input" id="showcased" rows="4" placeholder="• Demoed end-to-end voice flow to Nicole and BIC CXP leadership&#10;• Showed chat → voice modality switch&#10;• Walked through quote generation happy path&#10;• After-hours callback flow reviewed by PM team"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Anything else engineering should know?</label>
+                <div class="form-hint">Context that isn't in the repo — gotchas, dependencies, things you've learned.</div>
+                <textarea class="form-input" id="engNotes" rows="4" placeholder="• Voice uses pre-recorded TTS — production needs real-time&#10;• Quote pricing is hardcoded — needs QuoteX API&#10;• Speech SDK integration TBD&#10;• Figma designs are in the shared drive"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Open Questions for Engineering</label>
+                <div class="form-hint">What do you need engineering's input on?</div>
+                <textarea class="form-input" id="openQuestions" rows="3" placeholder="• Architecture for real-time context passing?&#10;• Existing speech SDK or custom integration?&#10;• Latency target for quote generation?"></textarea>
+            </div>
+            <div class="form-actions"><button class="btn-secondary" onclick="nextStep(1)">← Back</button><button class="btn-primary" onclick="nextStep(3)">Publish to ADO →</button></div>
+        </div>
+
+        <!-- STEP 3: PUBLISH -->
+        <div class="form-section" id="step3">
+            <div class="section-title">Review & Publish to ADO</div>
+            <div class="section-hint">Creates a User Story in ADO parented under the feature. Engineering gets notified.</div>
+            <div class="completeness-card">
+                <div class="score-ring"><svg width="80" height="80" viewBox="0 0 80 80"><circle class="score-ring-bg" cx="40" cy="40" r="34"></circle><circle class="score-ring-fill" cx="40" cy="40" r="34" stroke="#0078d4" stroke-dasharray="213.6" stroke-dashoffset="213.6" id="scoreRing"></circle></svg><div class="score-ring-text" id="scoreText">0/5</div></div>
+                <div class="score-details"><h3>Handshake Completeness</h3><p id="scoreMessage">Fill in the fields above to see your score.</p></div>
+            </div>
+            <div id="reviewSummary"></div>
+            <div class="publish-card" style="margin-top:24px;">
+                <h3>📤 Publish to Azure DevOps</h3>
+                <div class="pub-desc">Creates a <strong>User Story</strong> with your handshake brief as the description, parented under the feature. The owner gets an ADO notification.</div>
+                <div class="publish-parent-card" id="publishParent"><div class="publish-parent-icon">📋</div><div class="publish-parent-info"><div class="publish-parent-label">Parent Feature</div><div class="publish-parent-name" id="publishParentName">Select from feature list</div></div><div class="publish-parent-id" id="publishParentId"></div></div>
+                <div class="form-group" style="margin-bottom:16px;"><label class="form-label">Assign Owner (Engineering Lead)</label><div class="form-hint">They'll get a notification when the User Story is created.</div><div class="owner-picker"><div class="owner-option" onclick="selectOwner(this,'Selva Sankaran')"><div class="owner-avatar">SS</div><span>Selva Sankaran</span></div><div class="owner-option" onclick="selectOwner(this,'Phaneendra Jayanty')"><div class="owner-avatar">PJ</div><span>Phaneendra Jayanty</span></div><div class="owner-option" onclick="selectOwner(this,'Qiang Pei')"><div class="owner-avatar">QP</div><span>Qiang Pei</span></div><div class="owner-option" onclick="selectOwner(this,'Sathish Lenin')"><div class="owner-avatar">SL</div><span>Sathish Lenin</span></div><div class="owner-option" onclick="selectOwner(this,'Rohit Mallya')"><div class="owner-avatar">RM</div><span>Rohit Mallya</span></div></div></div>
+                <div class="form-group" style="margin-bottom:0;"><label class="form-label">Target Iteration</label><div class="chip-container" id="iterChips"><div class="chip" onclick="toggleChip(this)">Sprint 24.3 (current)</div><div class="chip" onclick="toggleChip(this)">Sprint 24.4</div><div class="chip" onclick="toggleChip(this)">Sprint 24.5</div><div class="chip" onclick="toggleChip(this)">Backlog</div></div></div>
+            </div>
+            <div class="form-actions"><button class="btn-secondary" onclick="nextStep(2)">← Back</button><button class="btn-primary" onclick="publishToAdo()" style="background:#107c10;gap:8px;">📤 Create User Story in ADO</button></div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ VIEW 3: BRIEF ═══════ -->
+<div class="view" id="view-brief">
+    <div class="brief">
+        <div class="brief-actions">
+            <button class="btn-secondary" onclick="showLanding()">← My Handshakes</button>
+            <button class="btn-secondary" onclick="window.print()">🖨️ Print / PDF</button>
+            <button class="btn-secondary" onclick="openInAdo()">🔗 Open in ADO</button>
+            <button class="btn-primary" onclick="showBuilder()">✏️ Edit</button>
+            <button class="btn-primary" id="briefSubmitBtn" onclick="submitToEngineering('eCommerce Voice AI Agent')" style="background:#107c10;display:none;">📤 Submit to Engineering</button>
+        </div>
+        <div class="brief-card" id="briefOutput">
+            <div class="brief-banner">
+                <div class="brief-feature-name" id="briefName">eCommerce Voice AI Agent</div>
+                <div class="brief-meta-row">
+                    <span>📅 Handshake Date: <strong>Feb 28, 2026</strong></span>
+                    <span>👤 PM: <strong>Sunil Venugopal</strong></span>
+                    <span>✅ Stakeholder: <strong>Demoed & approved</strong></span>
+                </div>
+                <div class="brief-ado-source visible" id="briefAdoSource"><div class="brief-ado-dot"></div><span>ADO User Story <strong id="briefAdoId">#12851</strong> · Parented under <strong id="briefParentRef">#12847</strong></span></div>
+            </div>
+            <div class="milestone-bar">
+                <div class="milestone-bar-label">LIFECYCLE TRACKER</div>
+                <div class="milestone-tracker" id="milestoneTracker">
+                    <div class="milestone-step"><div class="milestone-dot done">✓</div><div class="milestone-label">Prototype<br>Built</div></div>
+                    <div class="milestone-line done"></div>
+                    <div class="milestone-step"><div class="milestone-dot done">✓</div><div class="milestone-label">Handshake<br>Created</div></div>
+                    <div class="milestone-line done"></div>
+                    <div class="milestone-step"><div class="milestone-dot done">✓</div><div class="milestone-label">Published<br>to ADO</div></div>
+                    <div class="milestone-line done"></div>
+                    <div class="milestone-step"><div class="milestone-dot current">4</div><div class="milestone-label active-label">Engineering<br>Review</div></div>
+                    <div class="milestone-line pending"></div>
+                    <div class="milestone-step"><div class="milestone-dot pending">5</div><div class="milestone-label">In Dev</div></div>
+                    <div class="milestone-line pending"></div>
+                    <div class="milestone-step"><div class="milestone-dot pending">6</div><div class="milestone-label">Shipped</div></div>
+                </div>
+            </div>
+            <div class="brief-body">
+                <div class="brief-section"><div class="brief-section-title">Summary</div><div class="brief-text" id="briefSummary">End-to-end voice AI agent prototype for eCommerce — covers chat, voice, modality switching, human specialist handshake, quoting, and after-hours callback flows.</div></div>
+                <div class="brief-section"><div class="brief-section-title">Repo</div><a class="brief-link" href="#" id="briefLink" target="_blank">🔗 Open Repo →</a></div>
+                <div class="brief-section">
+                    <div class="brief-section-title">What's Been Showcased / Demoed</div>
+                    <div class="brief-text" id="briefShowcased">Demoed end-to-end voice flow to Nicole and BIC CXP leadership. Showed chat → voice modality switch. Walked through quote generation happy path.</div>
+                </div>
+                <div class="brief-section">
+                    <div class="brief-section-title">Notes for Engineering</div>
+                    <div class="brief-text" id="briefEngNotes">Voice uses pre-recorded TTS — production needs real-time. Quote pricing is hardcoded — needs QuoteX API. Customer data is sample — no real CRM connection.</div>
+                </div>
+                <div class="brief-section"><div class="brief-section-title">Open Questions for Engineering</div><div id="briefQuestions"><div class="brief-open-q">What's the right architecture for real-time context passing between chat and voice?</div><div class="brief-open-q">Can we use the existing speech SDK or do we need a custom integration?</div><div class="brief-open-q">What's the latency target for quote generation?</div></div></div>
+            </div>
+            <div class="brief-footer"><span>Generated by Mission: AI Possible · PM + Engineering: Better Together · Mar 3, 2026</span><div class="brief-score-badge"><div class="brief-score-dot" id="briefScoreDot" style="background:#0078d4;"></div> <span id="briefScoreText">5/5 Complete</span></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ VIEW 4: SUCCESS ═══════ -->
+<div class="view" id="view-success">
+    <div class="success-view">
+        <div class="success-icon">✓</div>
+        <div class="success-title">Handshake Published</div>
+        <div class="success-subtitle">Your handshake brief has been created as a User Story and parented under the feature.<br>The assigned owner has been notified.</div>
+        <div class="success-card">
+            <div class="success-work-item"><div class="success-wi-icon">📋</div><div><div class="success-wi-type">User Story</div><div class="success-wi-title" id="successWiTitle">Prototype Handshake: eCommerce Voice AI Agent</div><div class="success-wi-id" id="successWiId" style="cursor:default;">#12851 <span style="font-size:11px;background:#fff4ce;color:#8a6914;padding:2px 8px;border-radius:10px;margin-left:6px;font-weight:600;">Simulated</span></div></div></div>
+            <div class="success-details">
+                <div class="success-detail"><div class="success-detail-label">Parent Feature</div><div class="success-detail-value" id="successParent">#12847 · eCommerce Voice AI Agent</div></div>
+                <div class="success-detail"><div class="success-detail-label">Assigned To</div><div class="success-detail-value" id="successOwner">David Chen</div></div>
+                <div class="success-detail"><div class="success-detail-label">Iteration</div><div class="success-detail-value" id="successIteration">Sprint 24.3</div></div>
+                <div class="success-detail"><div class="success-detail-label">State</div><div class="success-detail-value"><span class="card-state-badge state-new">● New</span></div></div>
+            </div>
+        </div>
+        <div class="success-notification" id="successNotification"><span style="font-size:18px;">🔔</span><span><strong id="successNotifyName">David Chen</strong> has been notified via ADO. They can see the full handshake brief in the User Story description.</span></div>
+        <div class="success-actions"><button class="btn-secondary" onclick="showBrief()">📄 View Handshake Brief</button><button class="btn-primary" onclick="showLanding()">← Back to My Handshakes</button></div>
+    </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// MOCK ADO DATA — models real ADO work item fields
+// ══════════════════════════════════════════════════════
+var mockAdoItems = [
+    // ── SCENARIO (parent-level) ──
+    {
+        id: 13927662, type: 'Scenario', title: 'Project Vox | Sales AI Agent | Voice Enablement Pilot | EOS Scenario',
+        state: 'Active', assignedTo: 'Sunil Venugopal', iteration: 'OneITVSO',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Limited customer pilot for an AI-driven outbound voice agent to notify existing SMB customers when their Microsoft Office product is approaching or has reached End of Support (EOS). Privacy-first, consent-gated, NA-only.',
+        acceptanceCriteria: [
+            'Consent & compliance gating — explicit consent validated with Telecom Legal',
+            'Controlled pilot — NA only, approved EOS scenarios, daily customer cap',
+            'Call flow & experience handling — voicemail, wrong-party, silence, hang-ups, AI objection',
+            'Intent capture & handoff — acknowledgement, callback, human follow-up, upgrade interest → VDS',
+            'Data handling & auditability — PII scrubbing, GDPR support, audit logs',
+            'Monitoring & readiness — war-room model, call completion rate, opt-out rate, disclosure completion'
+        ],
+        tags: ['AI', 'Voice', 'EOS', 'Pilot', 'Sales-Agent'],
+        createdDate: '2025-07-21', changedDate: '2026-01-13',
+        priority: 1, storyPoints: null
+    },
+    // ── CHILD FEATURES ──
+    {
+        id: 15506368, type: 'Feature', title: '[PM - Only] | Placeholder for PM Work Items',
+        state: 'New', assignedTo: 'Sunil Venugopal', iteration: 'OneITVSO\\2601\\2601-02',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Placeholder feature for PM-side work items related to the Voice Agent pilot.',
+        acceptanceCriteria: ['PM readiness items tracked here'],
+        tags: ['PM'],
+        createdDate: '2026-01-11', changedDate: '2026-01-12',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15506372, type: 'Feature', title: 'Offline process to load the file provided by business into data source',
+        state: 'New', assignedTo: 'Phaneendra Jayanty', iteration: 'OneITVSO\\2602\\2602-01',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Build an offline ETL process to ingest customer lists provided by the business team into the voice agent data source for outbound calling.',
+        acceptanceCriteria: [
+            'File format validated and ingested into data store',
+            'Error handling for malformed records',
+            'Audit trail for loaded batches'
+        ],
+        tags: ['Data', 'ETL', 'Voice-Agent'],
+        createdDate: '2026-01-11', changedDate: '2026-02-03',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15506373, type: 'Feature', title: 'Process to validate customer consent and time zone before putting job in queue',
+        state: 'New', assignedTo: 'Phaneendra Jayanty', iteration: 'OneITVSO\\2602\\2602-01',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Validate customer consent via CPM and determine time zone for compliant call scheduling before queuing for outreach.',
+        acceptanceCriteria: [
+            'Pick preferable time slots for each time zone',
+            'Integrate with CPM for Consent Check — phone consent',
+            'Block calls if consent missing or revoked'
+        ],
+        tags: ['Consent', 'Compliance', 'Voice-Agent'],
+        createdDate: '2026-01-11', changedDate: '2026-01-26',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15506378, type: 'Feature', title: 'Build the Voice Agent Service integration with Voice Live API',
+        state: 'Closed', assignedTo: 'Qiang Pei', iteration: 'OneITVSO\\2602\\2602-01',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Integrate the Voice Agent service with the Voice Live API for real-time outbound call initiation and management.',
+        acceptanceCriteria: [
+            'Voice Live API connection established',
+            'Outbound call initiation via API',
+            'Call state management and event handling'
+        ],
+        tags: ['Integration', 'Voice-Live-API', 'Voice-Agent'],
+        createdDate: '2026-01-11', changedDate: '2026-02-17',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15506379, type: 'Feature', title: 'Build the Voice Agent Service integration with CCAPI SDK',
+        state: 'New', assignedTo: 'Sathish Lenin', iteration: 'OneITVSO\\2602\\2602-01',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Integrate the Voice Agent service with CCAPI SDK for telephony control and call routing capabilities.',
+        acceptanceCriteria: [
+            'CCAPI SDK integrated into Voice Agent service',
+            'Call routing and control via CCAPI',
+            'Error handling for CCAPI failures'
+        ],
+        tags: ['Integration', 'CCAPI', 'Voice-Agent'],
+        createdDate: '2026-01-11', changedDate: '2026-01-26',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15506380, type: 'Feature', title: 'Build the script/workflow to support Office EOS use case',
+        state: 'New', assignedTo: 'Selva Sankaran', iteration: 'OneITVSO\\2602',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Create the conversational script and workflow logic for the Office End-of-Support outbound call scenario.',
+        acceptanceCriteria: [
+            'EOS awareness script covers all required disclosures',
+            'Branching logic for customer intent capture',
+            'Graceful handling of objections and opt-outs'
+        ],
+        tags: ['Script', 'EOS', 'Voice-Agent'],
+        createdDate: '2026-01-11', changedDate: '2026-01-12',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15506381, type: 'Feature', title: 'Build the configurable tools to support Voice agent',
+        state: 'New', assignedTo: 'Phaneendra Jayanty', iteration: 'OneITVSO\\2601\\2601-02',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Build tools for M365 questions, guardrails for non-MS products, DNC list management, partner callback scheduling, and retry/reschedule logic.',
+        acceptanceCriteria: [
+            'M365-related question handling',
+            'Guardrails for non-Microsoft product questions',
+            'Move customer to Do Not Call list if not interested',
+            'Schedule call with partner if interested',
+            'Reschedule if busy — get preferred time',
+            'Retry logic with threshold — fallback to email agent after N retries'
+        ],
+        tags: ['Tools', 'Config', 'Voice-Agent'],
+        createdDate: '2026-01-11', changedDate: '2026-01-12',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15506382, type: 'Feature', title: 'Leverage CCAPI to get live transcripts and call recordings',
+        state: 'New', assignedTo: 'Selva Sankaran', iteration: 'OneITVSO\\2602',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Use CCAPI integration to capture live transcripts and call recordings for compliance and quality monitoring.',
+        acceptanceCriteria: [
+            'Live transcript streaming via CCAPI',
+            'Call recordings captured and stored compliantly',
+            'Consent-gated recording — only when customer consents'
+        ],
+        tags: ['CCAPI', 'Transcripts', 'Recordings', 'Voice-Agent'],
+        createdDate: '2026-01-11', changedDate: '2026-01-12',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15506383, type: 'Feature', title: 'Build the operational dashboard for Voice Agent',
+        state: 'New', assignedTo: 'Selva Sankaran', iteration: 'OneITVSO\\2602',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Operational dashboard to view transcripts, listen to recordings, see AI summaries, and track call outcomes.',
+        acceptanceCriteria: [
+            'View transcripts from Agent and CCAPI',
+            'Listen to call recordings',
+            'AI-generated call summary',
+            'Call outcome and disposition tracking'
+        ],
+        tags: ['Dashboard', 'Operations', 'Voice-Agent'],
+        createdDate: '2026-01-11', changedDate: '2026-01-12',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15506384, type: 'Feature', title: 'Build the PPE and Prod Infrastructure for the Service',
+        state: 'New', assignedTo: 'Selva Sankaran', iteration: 'OneITVSO\\2602',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Provision and configure Pre-Production (PPE) and Production infrastructure for the Voice Agent service.',
+        acceptanceCriteria: [
+            'PPE environment provisioned and validated',
+            'Production environment provisioned with security controls',
+            'CI/CD pipelines for deployment'
+        ],
+        tags: ['Infrastructure', 'DevOps', 'Voice-Agent'],
+        createdDate: '2026-01-11', changedDate: '2026-01-12',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15506388, type: 'Feature', title: 'Setup Live site alerts, monitors and dashboard',
+        state: 'New', assignedTo: 'Selva Sankaran', iteration: 'OneITVSO\\2602',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Configure live site monitoring, alerting, and operational dashboards for the Voice Agent in production.',
+        acceptanceCriteria: [
+            'Health monitoring alerts configured',
+            'Live site dashboard with key metrics',
+            'Incident response runbook documented'
+        ],
+        tags: ['LiveSite', 'Monitoring', 'Voice-Agent'],
+        createdDate: '2026-01-11', changedDate: '2026-01-12',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15506395, type: 'Feature', title: 'Auto evaluation of Voice Agent',
+        state: 'New', assignedTo: 'Selva Sankaran', iteration: 'OneITVSO\\2602',
+        areaPath: 'OneITVSO\\BIC CXP\\Digital Sales\\Digital Sales Telephony\\Voice Agent',
+        description: 'Automated evaluation framework to assess Voice Agent quality, accuracy, and compliance across test scenarios.',
+        acceptanceCriteria: [
+            'Automated test suite for call flows',
+            'Quality scoring for agent responses',
+            'Compliance validation checks'
+        ],
+        tags: ['Testing', 'Evaluation', 'Voice-Agent'],
+        createdDate: '2026-01-11', changedDate: '2026-01-12',
+        priority: 2, storyPoints: null
+    },
+    {
+        id: 15460458, type: 'Feature', title: 'POC for Pilot: CCAPI integration in existing POC',
+        state: 'New', assignedTo: 'Rohit Ratnakar Mallya', iteration: 'OneITVSO\\2512\\2512-02',
+        areaPath: 'OneITVSO\\BIC CXP\\Marketing AI Solutions\\Marketing Sales Enablement',
+        description: 'Proof-of-concept for integrating CCAPI into the existing Voice Agent POC to validate telephony capabilities.',
+        acceptanceCriteria: [
+            'CCAPI integrated in POC environment',
+            'End-to-end outbound call test validated',
+            'Feasibility report documented'
+        ],
+        tags: ['POC', 'CCAPI', 'Integration'],
+        createdDate: '2025-12-24', changedDate: '2025-12-24',
+        priority: 2, storyPoints: null
+    }
+];
+
+// Handshake data (for landing page) — uses real ADO work items from Project Vox
+var handshakeData = [
+    // ── Sunil's handshakes (real features from ADO Scenario #13927662) ──
+    { name: 'Voice Agent Service × Voice Live API', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 5, adoId: '#15506378', adoState: 'closed', date: 'Feb 17, 2026', owner: 'Qiang Pei', ownerInitials: 'QP', parentId: '#13927662', milestone: 6, area: 'Digital Sales / Voice Agent', kickoffDate: 'Jan 27, 2026', protoDate: 'Feb 5, 2026', devStart: 'Feb 21, 2026', shipDate: 'Mar 2, 2026' },
+    { name: 'EOS Call Script & Workflow', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 5, adoId: '#15506380', adoState: 'new', date: 'Feb 28, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 12, 2026', protoDate: 'Feb 19, 2026', devStart: 'Mar 1, 2026' },
+    { name: 'Consent Validation & Time Zone Queuing', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 4, adoId: '#15506373', adoState: 'new', date: 'Mar 1, 2026', owner: 'Phaneendra Jayanty', ownerInitials: 'PJ', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 17, 2026', protoDate: 'Feb 24, 2026', devStart: 'Mar 3, 2026' },
+    { name: 'Configurable Tools for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 3, adoId: '#15506381', adoState: 'new', date: 'Mar 2, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 2, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 24, 2026' },
+    { name: 'Operational Dashboard for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 2, adoId: '#15506383', adoState: 'new', date: 'Mar 3, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 1, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 28, 2026' },
+    // ── Team handshakes (other features under the same Scenario) ──
+    { name: 'CCAPI SDK Integration', pm: 'Team', pmInitials: 'T', pmColor: '#5b2d90', status: 'published', score: 5, adoId: '#15506379', adoState: 'new', date: 'Feb 15, 2026', owner: 'Sathish Lenin', ownerInitials: 'SL', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent' },
+    { name: 'Live Transcripts & Call Recordings', pm: 'Team', pmInitials: 'T', pmColor: '#5b2d90', status: 'published', score: 5, adoId: '#15506382', adoState: 'new', date: 'Feb 20, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 3, area: 'Digital Sales / Voice Agent' },
+    { name: 'PPE & Prod Infrastructure', pm: 'Team', pmInitials: 'T', pmColor: '#107c10', status: 'published', score: 4, adoId: '#15506384', adoState: 'new', date: 'Feb 25, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 3, area: 'Digital Sales / Voice Agent' },
+    { name: 'Live Site Alerts & Monitoring', pm: 'Team', pmInitials: 'T', pmColor: '#107c10', status: 'draft', score: 4, adoId: '#15506388', adoState: 'new', date: 'Mar 1, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 2, area: 'Digital Sales / Voice Agent' },
+    { name: 'Auto Evaluation of Voice Agent', pm: 'Team', pmInitials: 'T', pmColor: '#d13438', status: 'draft', score: 2, adoId: '#15506395', adoState: 'new', date: 'Mar 2, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 1, area: 'Digital Sales / Voice Agent' },
+    { name: 'Business Data Ingestion Process', pm: 'Team', pmInitials: 'T', pmColor: '#d13438', status: 'published', score: 5, adoId: '#15506372', adoState: 'new', date: 'Jan 22, 2026', owner: 'Phaneendra Jayanty', ownerInitials: 'PJ', parentId: '#13927662', milestone: 3, area: 'Digital Sales / Voice Agent' },
+    { name: 'CCAPI POC Integration', pm: 'Team', pmInitials: 'T', pmColor: '#5b2d90', status: 'published', score: 5, adoId: '#15460458', adoState: 'new', date: 'Dec 24, 2025', owner: 'Rohit Mallya', ownerInitials: 'RM', parentId: '#13927662', milestone: 5, area: 'Marketing AI / Sales Enablement' }
+];
+
+// ══════════════════════════════════════════════════════
+// PORTFOLIO DATA — from ME Project Shiproom (Feb 5, 2026)
+// ══════════════════════════════════════════════════════
+var portfolioData = [
+    {
+        name: 'eCommerce Agents', icon: '🤖', iconBg: '#e8defb', slideOwner: 'Tyler Smith',
+        projects: [
+            { name: 'Web Agentic Agent (WAA)', adoId: '13921713', owner: 'Hunter / Selva', phase: 'Production', status: 'On Track', statusDesc: 'Deployed to production with ongoing tuning and optimization' },
+            { name: 'Email Agent', adoId: '13921721', owner: 'Hunter / Rupesh', phase: 'Development', status: 'On Track', statusDesc: 'UAT prep underway, E2E testing with commerce services' },
+            { name: 'Agent Common Memory & Personalization', adoId: '13921734', owner: 'Hunter / Selva', phase: 'Development', status: 'On Track', statusDesc: 'Design and schedule locked, tentative go live planned' },
+            { name: 'Expanding Customer Journey Agents Reach', adoId: '13921774', owner: 'Chris H', phase: 'Production', status: 'On Track', statusDesc: 'Planning, roadmap, and execution on track' },
+            { name: 'Commercial Licensing Skill', adoId: '13899402', owner: 'Hunter / Tim', phase: 'Production', status: 'At Risk', statusDesc: 'Deployed 5.2 — abnormal timeouts, rolled back. Testing underway.' }
+        ]
+    },
+    {
+        name: 'Marketing Planning & Execution', icon: '📋', iconBg: '#d0e8ff', slideOwner: 'Venecia Green',
+        projects: [
+            { name: 'Marketing Planning and Execution', adoId: '12841440', owner: 'Vinh / Patrick', phase: 'Production', status: 'On Track', statusDesc: 'R4 deployed to production, R5 UAT in progress targeting 2/17 deploy' },
+            { name: 'EMC Enhancements', adoId: '13807501', owner: 'Sanarya / Patrick', phase: 'Production', status: 'On Track', statusDesc: 'Delivered public sector automation, working on RTM migration + taxonomy updates' }
+        ]
+    },
+    {
+        name: 'Campaign Supply Chain', icon: '🔗', iconBg: '#fff4ce', slideOwner: 'Venecia Green',
+        projects: [
+            { name: 'Air Traffic Control', adoId: '13126247', owner: 'Samir / Li Wang', phase: 'Design', status: 'At Risk', statusDesc: 'Integration testing delayed — MOS team pauses, bugs need additional MPT eng time' },
+            { name: 'Pre Sales Email Activation', adoId: '13984837', owner: 'Samir / Prabhu', phase: 'Design', status: 'On Track', statusDesc: 'ME solution for CCS+ AEM-to-Marketo favored by E&E. Pilot scope estimated.' },
+            { name: 'Cascade Content Studio Platform', adoId: '14595141', owner: 'Madhuri / Vishnu', phase: 'UAT', status: 'On Track', statusDesc: 'Internal testing in progress, MVP launch planned mid-March' },
+            { name: 'Odyssey Deprecation', adoId: '15523968', owner: 'Brian / Vishal', phase: 'Development', status: 'On Track', statusDesc: 'On track for 3/31 deprecation. URL routing options being assessed.' },
+            { name: 'Briefing Agent', adoId: '13984833', owner: 'Vinh / Patrick', phase: 'Production', status: 'On Track', statusDesc: 'R1 released 12/18, R2 deployed to production 2/5/26' },
+            { name: 'RM Campaign Build Agent', adoId: '', owner: 'Samir / Shishir', phase: 'Production', status: 'On Track', statusDesc: 'Rolled out in production for CGE. FM & Store UAT in progress.' },
+            { name: 'GCPS Email Personalization', adoId: '14171318', owner: 'Samir / Prabhu', phase: 'Proposal', status: 'On Track', statusDesc: 'Discovery — considered as onboarding to Cascade Messages' },
+            { name: 'Centralized DAM', adoId: '15531877', owner: 'Brian / Vishal', phase: 'Proposal', status: 'On Track', statusDesc: 'Discovery — contributing to Juliette asset strategy document' }
+        ]
+    },
+    {
+        name: 'Microsoft Demo Experiences', icon: '🖥️', iconBg: '#dff6dd', slideOwner: 'Bryan Stone',
+        projects: [
+            { name: 'Secure & Healthy Demo Environment', adoId: '12638712', owner: 'Manisha P / Geoff', phase: 'Production', status: 'On Track', statusDesc: 'Multiple Q2 features delivered, enabling additional capabilities in Q3' },
+            { name: 'Digital Experiences Transformation', adoId: '13913021', owner: 'Manisha P / Geoff', phase: 'Proposal', status: 'On Track', statusDesc: 'Business requirements being written. Piloting AI-based tenant hydration.' }
+        ]
+    },
+    {
+        name: 'Unified Commercial Marketing Profiles (UCMP)', icon: '👥', iconBg: '#fce4ec', slideOwner: 'Bryan Stone',
+        projects: [
+            { name: 'Commercial Marketing Profiles', adoId: '13909488', owner: 'Dayton B / Praveen K', phase: 'Production', status: 'On Track', statusDesc: 'ZoomInfo integration discovery. Unified Targeting Tool in final testing.' },
+            { name: 'ST1 Trial Agentic Agent (CXA)', adoId: '13911257', owner: 'Upasna G / Praveen K', phase: 'Production', status: 'On Track', statusDesc: 'Deployed in production 1/26 with configurable segmentation' },
+            { name: 'Segmentation as a Service', adoId: '13508140', owner: 'Manisha P / Kavitha', phase: 'Production', status: 'On Track', statusDesc: 'UCMP Data agent launched. Segmentation agent v1 launching.' },
+            { name: 'Unified Activity Data for SPOG', adoId: '13615597', owner: 'Upasna G / Praveen K', phase: 'Production', status: 'On Track', statusDesc: 'Modernized marketing insights delivered via unified dashboard 10/14' },
+            { name: 'Enable Activity Store Migration', adoId: '13615537', owner: 'Upasna G / Praveen K', phase: 'Development', status: 'On Track', statusDesc: 'Dev completed, MSX testing done. Prod deployment date pending.' },
+            { name: 'Enable Unified Marketing Activities', adoId: '13495956', owner: 'Upasna G / Praveen K', phase: 'Development', status: 'At Risk', statusDesc: 'Marketo email activities delivery delayed — release date unknown' },
+            { name: 'Converge CCM Contact Database', adoId: '13908597', owner: 'Dayton B', phase: 'Proposal', status: 'On Track', statusDesc: 'Requirements and discovery phase. Functional spec in progress.' },
+            { name: 'CDES Job Role Normalization Agent', adoId: '14145282', owner: 'Scott D / Praveen', phase: 'Development', status: 'On Track', statusDesc: 'MVP 1 in production, working on MVP 2. Agent POCs in progress.' },
+            { name: 'SMB Account Mappings to CDQS', adoId: '14611985', owner: 'Scott / Praveen', phase: 'Development', status: 'On Track', statusDesc: '~4.5M of 9M domain-account mappings complete' },
+            { name: 'Azure Tenant Data for Account Enrichment', adoId: '14200306', owner: 'Scott D / Praveen', phase: 'Proposal', status: 'On Track', statusDesc: 'Investigating best data sources. BRD review complete, waiting capacity.' },
+            { name: 'FY26 Wave 3 Taxonomy Rollover', adoId: '15501057', owner: 'Scott D / Praveen', phase: 'Development', status: 'On Track', statusDesc: 'Planning — updating activity store configs for latest taxonomy' },
+            { name: 'Automate Account & Contact Acquisition for SMB', adoId: '14307823', owner: 'Ryan S', phase: 'Development', status: 'At Risk', statusDesc: 'Large delays on ZoomInfo contact handoff. Scoping ongoing for Feb MVP R2.' }
+        ]
+    },
+    {
+        name: 'Connected Sales & Marketing Data', icon: '📊', iconBg: '#e0f2f1', slideOwner: 'Bryan Stone',
+        projects: [
+            { name: 'Smart Campaign / OBO', adoId: '13888316', owner: 'Camila M / Shishir A', phase: 'Development', status: 'At Risk', statusDesc: 'Timeline won\'t allow release prior to Sydney AI tour. UAT split in 2 phases.' },
+            { name: 'Data Estate Transformation', adoId: '14089799', owner: 'Upasna G / Praveen K', phase: 'Production', status: 'On Track', statusDesc: 'Multiple new features delivered Nov/Dec. Continuing enablement in Q3.' },
+            { name: 'Unified Taxonomy Management', adoId: '13910753', owner: 'Upasna G / Praveen K', phase: 'Development', status: 'On Track', statusDesc: 'Wave 3 Fiscal Rollover Taxonomy in progress. Paid Media planned Q3-Q4.' }
+        ]
+    },
+    {
+        name: 'Signal Flow Transformation', icon: '📡', iconBg: '#fff3e0', slideOwner: 'Bryan Stone',
+        projects: [
+            { name: 'Lead Flow Transformation', adoId: '14647933', owner: 'Sripriya D', phase: 'Design', status: 'On Track', statusDesc: 'Converged routing for Priority Signals, Contact Me, agent-ready leads' },
+            { name: 'Lead Flow: Route TUM SMB Leads', adoId: '13473373', owner: 'Sripriya D', phase: 'Development', status: 'On Track', statusDesc: 'Routing engine leveraging Account tags from Sales Perf Management' }
+        ]
+    },
+    {
+        name: 'Privacy', icon: '🔒', iconBg: '#e8e8e8', slideOwner: 'Bryan Stone',
+        projects: [
+            { name: 'SMS Consent Management', adoId: '13909534', owner: 'Li Song / Rishu', phase: 'Development', status: 'On Track', statusDesc: 'CELA approved. Development started. Code completion targeting 3/15.' },
+            { name: 'Report Services: Topic Contact Permissions', adoId: '13909586', owner: 'Li Song / Rishu', phase: 'UAT', status: 'On Track', statusDesc: 'E2E integration tests in progress. Prod release targeting 2/15.' },
+            { name: 'CPM DRI On-Call Agent', adoId: '13984304', owner: 'Li Song / Rishu', phase: 'Production', status: 'On Track', statusDesc: 'DRI AI Agents managing environment config per IcM signals' }
+        ]
+    }
+];
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+var currentRole = 'pm';
+var currentStep = 1;
+var selectedAdoItem = null;
+var adoLinked = false;
+var selectedOwner = '';
+var publishedWorkItemId = null;
+var pickerFilter = 'Active';
+var activeDrillId = null;
+
+// ── Live ADO Connection State ──
+var liveAdoItems = null;
+var adoConnected = false;
+var ADO_API = 'https://dev.azure.com/MicrosoftIT/OneITVSO/_apis';
+
+function getPickerItems() { return liveAdoItems || mockAdoItems; }
+
+function stripHtml(html) {
+    if (!html) return '';
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
+function parseAcceptanceCriteria(html) {
+    if (!html) return ['(none specified)'];
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    var lis = tmp.querySelectorAll('li');
+    if (lis.length > 0) {
+        return Array.from(lis).map(function(li) { return li.textContent.trim(); }).filter(Boolean);
+    }
+    var text = tmp.textContent || tmp.innerText || '';
+    var lines = text.split(/[\n\r]+/).map(function(l) { return l.trim(); }).filter(Boolean);
+    return lines.length > 0 ? lines : ['(none specified)'];
+}
+
+function connectToAdo() {
+    var patInput = document.getElementById('adoPatInput');
+    var pat = patInput ? patInput.value.trim() : '';
+    if (!pat) { showAdoStatus('Enter a PAT with Work Items (Read) scope', 'error'); return; }
+
+    showAdoStatus('Connecting to Azure DevOps...', 'loading');
+    var headers = { 'Content-Type': 'application/json', 'Authorization': 'Basic ' + btoa(':' + pat) };
+
+    // WIQL query for Features + Scenarios under Voice Agent area
+    var wiql = {
+        query: "SELECT [System.Id] FROM WorkItems WHERE [System.WorkItemType] IN ('Feature','Scenario') AND [System.AreaPath] UNDER 'OneITVSO\\\\BIC CXP\\\\Digital Sales\\\\Digital Sales Telephony\\\\Voice Agent' ORDER BY [System.ChangedDate] DESC"
+    };
+
+    fetch(ADO_API + '/wit/wiql?api-version=7.0', { method: 'POST', headers: headers, body: JSON.stringify(wiql) })
+    .then(function(res) {
+        if (!res.ok) throw new Error('Auth failed (' + res.status + ')');
+        return res.json();
+    })
+    .then(function(wiqlResult) {
+        if (!wiqlResult.workItems || wiqlResult.workItems.length === 0) {
+            showAdoStatus('Connected but no features found in Voice Agent area', 'warn');
+            return;
+        }
+        var ids = wiqlResult.workItems.slice(0, 30).map(function(wi) { return wi.id; });
+        var fields = 'System.Id,System.WorkItemType,System.Title,System.State,System.AssignedTo,System.IterationPath,System.AreaPath,System.Description,Microsoft.VSTS.Common.AcceptanceCriteria,System.Tags,System.CreatedDate,System.ChangedDate,Microsoft.VSTS.Common.Priority,Microsoft.VSTS.Scheduling.StoryPoints';
+        return fetch(ADO_API + '/wit/workitems?ids=' + ids.join(',') + '&fields=' + fields + '&api-version=7.0', { headers: headers });
+    })
+    .then(function(res) {
+        if (!res || !res.ok) throw new Error('Failed to fetch work item details');
+        return res.json();
+    })
+    .then(function(itemsResult) {
+        liveAdoItems = itemsResult.value.map(function(wi) {
+            var f = wi.fields;
+            var assigned = f['System.AssignedTo'];
+            var tagsRaw = f['System.Tags'] || '';
+            return {
+                id: f['System.Id'],
+                type: f['System.WorkItemType'],
+                title: f['System.Title'] || '(untitled)',
+                state: f['System.State'] || 'New',
+                assignedTo: assigned ? (assigned.displayName || assigned) : 'Unassigned',
+                iteration: f['System.IterationPath'] || 'OneITVSO',
+                areaPath: f['System.AreaPath'] || '',
+                description: stripHtml(f['System.Description']),
+                acceptanceCriteria: parseAcceptanceCriteria(f['Microsoft.VSTS.Common.AcceptanceCriteria']),
+                tags: tagsRaw ? tagsRaw.split(';').map(function(t) { return t.trim(); }).filter(Boolean) : [],
+                createdDate: (f['System.CreatedDate'] || '').substring(0, 10),
+                changedDate: (f['System.ChangedDate'] || '').substring(0, 10),
+                priority: f['Microsoft.VSTS.Common.Priority'] || 2,
+                storyPoints: f['Microsoft.VSTS.Scheduling.StoryPoints'] || null
+            };
+        });
+        adoConnected = true;
+        sessionStorage.setItem('adoPat', pat);
+        showAdoStatus('Connected — ' + liveAdoItems.length + ' work items loaded', 'success');
+        updatePickerConnectionUI();
+        renderPickerList();
+    })
+    .catch(function(err) {
+        console.error('ADO connection error:', err);
+        showAdoStatus('Could not connect: ' + err.message + '. Using demo data.', 'error');
+        liveAdoItems = null;
+        adoConnected = false;
+    });
+}
+
+function disconnectAdo() {
+    liveAdoItems = null;
+    adoConnected = false;
+    sessionStorage.removeItem('adoPat');
+    updatePickerConnectionUI();
+    renderPickerList();
+}
+
+function showAdoStatus(msg, type) {
+    var el = document.getElementById('adoConnStatus');
+    if (!el) return;
+    var colors = { loading: '#a0a0a0', success: '#107c10', error: '#d13438', warn: '#ca5010' };
+    var icons = { loading: '⏳', success: '🟢', error: '🔴', warn: '⚠️' };
+    el.innerHTML = (icons[type] || '') + ' ' + msg;
+    el.style.color = colors[type] || '#a0a0a0';
+}
+
+function updatePickerConnectionUI() {
+    var connPanel = document.getElementById('adoConnPanel');
+    var liveLabel = document.getElementById('adoLiveLabel');
+    if (adoConnected) {
+        if (connPanel) connPanel.style.display = 'none';
+        if (liveLabel) { liveLabel.style.display = 'inline-flex'; liveLabel.textContent = '🟢 Live — ' + liveAdoItems.length + ' items'; }
+    } else {
+        if (connPanel) connPanel.style.display = '';
+        if (liveLabel) liveLabel.style.display = 'none';
+    }
+}
+
+function tryAutoConnect() {
+    var savedPat = sessionStorage.getItem('adoPat');
+    if (savedPat) {
+        var patInput = document.getElementById('adoPatInput');
+        if (patInput) patInput.value = savedPat;
+        connectToAdo();
+    }
+}
+
+// ══════════════════════════════════════════════════════
+// ROLE SWITCH
+// ══════════════════════════════════════════════════════
+var ADO_BASE = 'https://microsoftit.visualstudio.com/OneITVSO/_workitems/edit/';
+function adoLink(id, label) {
+    if (!id) return '<span style="color:#a0a0a0;">—</span>';
+    var numId = id.replace('#', '');
+    var text = label || id;
+    return '<a href="' + ADO_BASE + numId + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#0078d4;font-weight:600;text-decoration:none;cursor:pointer;" onmouseover="this.style.textDecoration=\'underline\'" onmouseout="this.style.textDecoration=\'none\'">' + text + ' ↗</a>';
+}
+
+function switchRole(role) {
+    currentRole = role;
+    document.getElementById('rolePm').classList.toggle('active', role === 'pm');
+    document.getElementById('roleLeader').classList.toggle('active', role === 'leadership');
+    document.getElementById('pmLanding').style.display = role === 'pm' ? '' : 'none';
+    document.getElementById('leadershipLanding').style.display = role === 'leadership' ? '' : 'none';
+    closeAllDrills();
+    if (role === 'leadership') renderLeadershipView();
+}
+
+// ══════════════════════════════════════════════════════
+// DRILL-DOWN PANELS
+// ══════════════════════════════════════════════════════
+function toggleDrill(id) {
+    var panel = document.getElementById('drill-' + id);
+    if (!panel) return;
+    if (panel.classList.contains('active')) {
+        panel.classList.remove('active');
+        activeDrillId = null;
+    } else {
+        closeAllDrills();
+        panel.classList.add('active');
+        activeDrillId = id;
+        populateDrill(id);
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+}
+
+function closeDrill(id) {
+    var panel = document.getElementById('drill-' + id);
+    if (panel) panel.classList.remove('active');
+    activeDrillId = null;
+}
+
+function closeAllDrills() {
+    var panels = document.querySelectorAll('.drill-panel');
+    for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+    activeDrillId = null;
+}
+
+function populateDrill(id) {
+    var myItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal'; });
+    var drafts = myItems.filter(function(h) { return h.status === 'draft'; });
+    var activeDev = myItems.filter(function(h) { return h.status === 'published' && h.milestone >= 4 && h.milestone <= 5; });
+    var shipped = myItems.filter(function(h) { return h.milestone === 6; });
+    var total = myItems.length;
+
+    if (id === 'pm-total') {
+        var panel = document.getElementById('drill-pm-total');
+        var html = '<div class="drill-header"><div class="drill-title">📊 All My Handshakes — Breakdown</div><button class="drill-close" onclick="closeDrill(\'pm-total\')">✕</button></div>';
+        html += '<div style="display:flex;gap:8px;margin-bottom:20px;align-items:center;">';
+        html += '<div style="flex:1;text-align:center;padding:16px 10px;background:#fff4ce;border-radius:10px;border:1px solid #ffe0a0;">';
+        html += '<div style="font-size:28px;font-weight:700;color:#8a6914;">' + drafts.length + '</div>';
+        html += '<div style="font-size:12px;font-weight:600;color:#8a6914;">✏️ Drafts</div></div>';
+        html += '<div style="font-size:20px;color:#c0c0c0;">→</div>';
+        html += '<div style="flex:1;text-align:center;padding:16px 10px;background:#d0e8ff;border-radius:10px;border:1px solid #a0c8f0;">';
+        html += '<div style="font-size:28px;font-weight:700;color:#004e8c;">' + activeDev.length + '</div>';
+        html += '<div style="font-size:12px;font-weight:600;color:#004e8c;">🚀 In Dev</div></div>';
+        html += '<div style="font-size:20px;color:#c0c0c0;">→</div>';
+        html += '<div style="flex:1;text-align:center;padding:16px 10px;background:#dff6dd;border-radius:10px;border:1px solid #b8e6b0;">';
+        html += '<div style="font-size:28px;font-weight:700;color:#107c10;">' + shipped.length + '</div>';
+        html += '<div style="font-size:12px;font-weight:600;color:#107c10;">🎉 Shipped</div></div>';
+        html += '</div>';
+        // Mini E2E Pipeline for PM's own features — all 3 stages matching Leadership
+        var kpItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
+        var phItems = myItems.filter(function(h) { return h.protoDate && h.date && h.status === 'published'; });
+        var hpItems = myItems.filter(function(h) { return h.shipDate; });
+        var avgKP = 0, avgPH = 0, avgHP = 0;
+        if (kpItems.length > 0) { var s = 0; kpItems.forEach(function(h) { s += Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000); }); avgKP = Math.round(s / kpItems.length); }
+        if (phItems.length > 0) { var s = 0; phItems.forEach(function(h) { s += Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000); }); avgPH = Math.round(s / phItems.length); }
+        if (hpItems.length > 0) { var s = 0; hpItems.forEach(function(h) { s += Math.round((new Date(h.shipDate) - new Date(h.date)) / 86400000); }); avgHP = Math.round(s / hpItems.length); }
+        var dataCount = Math.max(kpItems.length, phItems.length, hpItems.length);
+        var totalE2E = avgKP + avgPH + (hpItems.length > 0 ? avgHP : 0);
+
+        html += '<div style="background:linear-gradient(135deg,#1e2028 0%,#2a2d38 100%);border-radius:14px;padding:20px 24px;margin-bottom:20px;color:white;">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">';
+        html += '<div style="font-size:14px;font-weight:600;">📐 My E2E: Kickoff → Production</div>';
+        html += '<div style="font-size:12px;color:#a0a0a0;">Based on ' + dataCount + ' features with milestone data</div></div>';
+        html += '<div style="display:flex;gap:0;margin-bottom:10px;">';
+        var kpFlex = Math.max(avgKP, 2), phFlex = Math.max(avgPH, 2), hpFlex = hpItems.length > 0 ? Math.max(avgHP, 2) : 3;
+        html += '<div style="flex:' + kpFlex + ';background:#0078d4;border-radius:10px 0 0 10px;padding:10px 12px;text-align:center;border-right:2px solid #1e2028;">';
+        html += '<div style="font-size:18px;font-weight:700;">' + avgKP + 'd</div>';
+        html += '<div style="font-size:10px;opacity:0.85;">Kickoff → Proto</div></div>';
+        html += '<div style="flex:' + phFlex + ';background:#107c10;padding:10px 12px;text-align:center;border-right:2px solid #1e2028;">';
+        html += '<div style="font-size:18px;font-weight:700;">' + avgPH + 'd</div>';
+        html += '<div style="font-size:10px;opacity:0.85;">Proto → Handshake</div></div>';
+        if (hpItems.length > 0) {
+            html += '<div style="flex:' + hpFlex + ';background:#8661c5;border-radius:0 10px 10px 0;padding:10px 12px;text-align:center;">';
+            html += '<div style="font-size:18px;font-weight:700;">' + avgHP + 'd</div>';
+            html += '<div style="font-size:10px;opacity:0.85;">Handshake → Prod</div></div>';
+        } else {
+            html += '<div style="flex:' + hpFlex + ';background:#3a3d48;border-radius:0 10px 10px 0;padding:10px 12px;text-align:center;">';
+            html += '<div style="font-size:18px;font-weight:700;">—</div>';
+            html += '<div style="font-size:10px;opacity:0.65;">Handshake → Prod</div></div>';
+        }
+        html += '</div>';
+        html += '<div style="font-size:11px;color:#a0a0a0;text-align:center;">Total E2E: <strong style="color:white;">' + totalE2E + ' days</strong> avg</div>';
+        html += '</div>';
+
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Stage</th><th>Score</th><th>ADO Link</th><th>Date</th></tr></thead><tbody>';
+        myItems.forEach(function(h) {
+            var stage, stageColor, stageBg;
+            if (h.milestone === 6) { stage = 'Shipped'; stageColor = '#107c10'; stageBg = '#dff6dd'; }
+            else if (h.milestone >= 4) { stage = 'In Dev'; stageColor = '#004e8c'; stageBg = '#d0e8ff'; }
+            else { stage = 'Draft'; stageColor = '#8a6914'; stageBg = '#fff4ce'; }
+            var scoreColor = h.score >= 4 ? '#107c10' : h.score >= 3 ? '#ff8c00' : '#d13438';
+            html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
+            html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:' + stageBg + ';color:' + stageColor + ';">' + stage + '</span></td>';
+            html += '<td style="color:' + scoreColor + ';font-weight:600;">' + h.score + '/5</td>';
+            html += '<td>' + adoLink(h.adoId) + '</td><td>' + h.date + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        html += '<div style="margin-top:12px;padding:10px 14px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#605e5c;">💡 <strong>' + total + ' total</strong> = ' + drafts.length + ' drafts + ' + activeDev.length + ' in active dev + ' + shipped.length + ' shipped</div>';
+        panel.innerHTML = html;
+    }
+
+    if (id === 'pm-active') {
+        var panel = document.getElementById('drill-pm-active');
+        var html = '<div class="drill-header"><div class="drill-title">🚀 Features In Active Development</div><button class="drill-close" onclick="closeDrill(\'pm-active\')">✕</button></div>';
+        html += '<div style="margin-bottom:16px;padding:10px 14px;background:#d0e8ff;border-radius:8px;font-size:13px;color:#004e8c;">These <strong>' + activeDev.length + '</strong> features (of your <strong>' + total + '</strong> total handshakes) are currently being built by engineering.</div>';
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th>Engineering Owner</th><th>ADO</th><th>Days in Dev</th></tr></thead><tbody>';
+        activeDev.forEach(function(h) {
+            var daysIn = '—';
+            if (h.devStart) {
+                var dev = new Date(h.devStart);
+                var now = new Date('2026-03-03');
+                daysIn = Math.max(1, Math.round((now - dev) / (1000*60*60*24))) + ' days';
+            }
+            html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
+            html += '<td>' + (h.owner || '—') + '</td>';
+            html += '<td>' + adoLink(h.adoId) + '</td>';
+            html += '<td style="color:#107c10;font-weight:600;">' + daysIn + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        panel.innerHTML = html;
+    }
+
+    if (id === 'pm-velocity') {
+        var panel = document.getElementById('drill-pm-velocity');
+        var pipelineItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
+        var html = '<div class="drill-header"><div class="drill-title">⏱️ Full Pipeline Timeline</div><button class="drill-close" onclick="closeDrill(\'pm-velocity\')">✕</button></div>';
+        html += '<div style="margin-bottom:16px;padding:10px 14px;background:#f0f6fc;border-radius:8px;font-size:13px;color:#004e8c;">Tracking each feature through all pipeline stages: <strong>Kickoff → Prototype → Handshake → Production</strong></div>';
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th style="text-align:center;">K→P</th><th style="text-align:center;">P→H</th><th style="text-align:center;">H→Prod</th><th>ADO</th><th>Stage</th></tr></thead><tbody>';
+        var sumKP = 0, sumPH = 0, sumHP = 0, cntKP = 0, cntPH = 0, cntHP = 0;
+        pipelineItems.forEach(function(h) {
+            var kp = Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000);
+            var ph = h.status === 'published' ? Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000) : null;
+            var hp = h.shipDate ? Math.round((new Date(h.shipDate) - new Date(h.date)) / 86400000) : null;
+            sumKP += kp; cntKP++;
+            if (ph !== null) { sumPH += ph; cntPH++; }
+            if (hp !== null) { sumHP += hp; cntHP++; }
+            var kpColor = kp <= 7 ? '#107c10' : kp <= 14 ? '#ff8c00' : '#d13438';
+            var phColor = ph !== null ? (ph <= 7 ? '#107c10' : ph <= 14 ? '#ff8c00' : '#d13438') : '#a0a0a0';
+            var hpColor = hp !== null ? (hp <= 14 ? '#107c10' : hp <= 21 ? '#ff8c00' : '#d13438') : '#a0a0a0';
+            var stage, stageBg, stageC;
+            if (h.milestone === 6) { stage = 'Shipped'; stageBg = '#dff6dd'; stageC = '#107c10'; }
+            else if (h.milestone >= 4) { stage = 'In Dev'; stageBg = '#d0e8ff'; stageC = '#004e8c'; }
+            else { stage = 'Draft'; stageBg = '#fff4ce'; stageC = '#8a6914'; }
+            html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
+            html += '<td style="text-align:center;"><span style="color:' + kpColor + ';font-weight:600;">' + kp + 'd</span></td>';
+            html += '<td style="text-align:center;"><span style="color:' + phColor + ';font-weight:600;">' + (ph !== null ? ph + 'd' : '—') + '</span></td>';
+            html += '<td style="text-align:center;"><span style="color:' + hpColor + ';font-weight:600;">' + (hp !== null ? hp + 'd' : '—') + '</span></td>';
+            html += '<td>' + adoLink(h.adoId) + '</td>';
+            html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:' + stageBg + ';color:' + stageC + ';">' + stage + '</span></td></tr>';
+        });
+        // Show items still in kickoff (no protoDate)
+        myItems.filter(function(h) { return h.kickoffDate && !h.protoDate; }).forEach(function(h) {
+            var now = new Date('2026-03-03');
+            var daysIn = Math.round((now - new Date(h.kickoffDate)) / 86400000);
+            html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
+            html += '<td style="text-align:center;"><span style="color:#ff8c00;font-weight:600;">' + daysIn + 'd…</span></td>';
+            html += '<td style="text-align:center;color:#a0a0a0;">—</td>';
+            html += '<td style="text-align:center;color:#a0a0a0;">—</td>';
+            html += '<td>' + adoLink(h.adoId) + '</td>';
+            html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#fff4ce;color:#8a6914;">In Progress</span></td></tr>';
+        });
+        html += '</tbody></table>';
+        // Summary row
+        var avgKP = cntKP > 0 ? Math.round(sumKP / cntKP) : 0;
+        var avgPH = cntPH > 0 ? Math.round(sumPH / cntPH) : 0;
+        var avgHP = cntHP > 0 ? Math.round(sumHP / cntHP) : 0;
+        html += '<div style="margin-top:12px;padding:12px 14px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#605e5c;display:flex;gap:16px;flex-wrap:wrap;">';
+        html += '<div>📐 <strong>Avg K→P:</strong> <span style="color:#0078d4;font-weight:600;">' + avgKP + ' days</span></div>';
+        html += '<div>📐 <strong>Avg P→H:</strong> <span style="color:#107c10;font-weight:600;">' + avgPH + ' days</span></div>';
+        if (cntHP > 0) html += '<div>📐 <strong>Avg H→Prod:</strong> <span style="color:#8661c5;font-weight:600;">' + avgHP + ' days</span></div>';
+        html += '</div>';
+        panel.innerHTML = html;
+    }
+
+    if (id === 'pm-shipped') {
+        var panel = document.getElementById('drill-pm-shipped');
+        var html = '<div class="drill-header"><div class="drill-title">🎉 Shipped to Production</div><button class="drill-close" onclick="closeDrill(\'pm-shipped\')">✕</button></div>';
+        html += '<div style="margin-bottom:16px;padding:10px 14px;background:#dff6dd;border-radius:8px;font-size:13px;color:#107c10;"><strong>' + shipped.length + '</strong> of your <strong>' + total + '</strong> total handshakes ' + (shipped.length === 1 ? 'has' : 'have') + ' reached production.</div>';
+        shipped.forEach(function(h) {
+            var kp = (h.kickoffDate && h.protoDate) ? Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000) : null;
+            var ph = (h.protoDate && h.date) ? Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000) : null;
+            var hp = (h.date && h.shipDate) ? Math.round((new Date(h.shipDate) - new Date(h.date)) / 86400000) : null;
+            var totalD = (kp || 0) + (ph || 0) + (hp || 0);
+            html += '<div style="background:#f5fff5;border:1px solid #dff6dd;border-radius:10px;margin-bottom:12px;overflow:hidden;">';
+            html += '<div style="padding:14px 16px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div style="font-size:22px;">🚢</div><div><div style="font-weight:600;font-size:15px;">' + h.name + '</div><div style="font-size:12px;color:#605e5c;">Total lifecycle: <strong>' + totalD + ' days</strong> · ' + adoLink(h.adoId) + '</div></div></div>';
+            // Timeline stages
+            html += '<div style="display:flex;gap:0;border-radius:8px;overflow:hidden;">';
+            if (kp !== null) html += '<div style="flex:' + Math.max(kp,2) + ';background:#d0e8ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#004e8c;">' + kp + 'd</div><div style="font-size:10px;color:#004e8c;">K→P</div></div>';
+            if (ph !== null) html += '<div style="flex:' + Math.max(ph,2) + ';background:#dff6dd;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#107c10;">' + ph + 'd</div><div style="font-size:10px;color:#107c10;">P→H</div></div>';
+            if (hp !== null) html += '<div style="flex:' + Math.max(hp,2) + ';background:#f0e6ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#5b2d90;">' + hp + 'd</div><div style="font-size:10px;color:#5b2d90;">H→Prod</div></div>';
+            html += '</div>';
+            // Date timeline
+            html += '<div style="display:flex;justify-content:space-between;font-size:11px;color:#8a8886;margin-top:8px;padding:0 4px;">';
+            if (h.kickoffDate) html += '<span>💡 ' + h.kickoffDate.replace(', 2026','') + '</span>';
+            if (h.protoDate) html += '<span>🛠️ ' + h.protoDate.replace(', 2026','') + '</span>';
+            html += '<span>🤝 ' + h.date.replace(', 2026','') + '</span>';
+            if (h.shipDate) html += '<span>🚀 ' + h.shipDate.replace(', 2026','') + '</span>';
+            html += '</div></div></div>';
+        });
+        panel.innerHTML = html;
+    }
+}
+
+// ══════════════════════════════════════════════════════
+// LANDING PAGE RENDERING
+// ══════════════════════════════════════════════════════
+function renderCard(h, showArea) {
+    var statusClass = h.status === 'published' ? 'status-published' : 'status-draft';
+    var statusLabel = h.status === 'published' ? 'Published' : 'Draft';
+    var scoreColor = h.score >= 4 ? '#107c10' : h.score >= 3 ? '#ff8c00' : '#d13438';
+    var scoreClass = h.score >= 4 ? 'score-high' : h.score >= 3 ? 'score-med' : 'score-low';
+    var pct = Math.round((h.score / 5) * 100);
+    var stateMap = { active: 'state-active', review: 'state-review', 'new': 'state-new', closed: 'state-closed' };
+    var stateLabel = h.adoState ? h.adoState.charAt(0).toUpperCase() + h.adoState.slice(1) : '';
+
+    var adoHtml = h.adoId
+        ? '<div class="card-ado-link"><span>🔗</span> ADO ' + adoLink(h.adoId) + ' · <span class="card-state-badge ' + (stateMap[h.adoState]||'') + '">● ' + stateLabel + '</span></div>'
+        : '<div class="card-ado-link" style="color:#a0a0a0;"><span>⬜</span> Not yet linked to ADO</div>';
+
+    var ownerHtml = h.owner ? '<div class="card-owner"><div class="card-owner-dot">' + h.ownerInitials + '</div> Assigned: ' + h.owner + '</div>' : '';
+    var areaHtml = showArea ? '<div style="font-size:11px;color:#605e5c;margin-top:4px;">📂 ' + h.area + '</div>' : '';
+
+    return '<div class="handshake-card" onclick="showBrief(' + handshakeData.indexOf(h) + ')">' +
+        '<div class="card-header"><div class="card-feature-name">' + h.name + '</div><div class="card-status ' + statusClass + '">' + statusLabel + '</div></div>' +
+        '<div class="card-meta">' + h.date + '</div>' +
+        '<div class="card-score-row"><div class="card-score-bar"><div class="card-score-fill ' + scoreClass + '" style="width:' + pct + '%"></div></div><div class="card-score-label" style="color:' + scoreColor + ';">' + h.score + '/5</div></div>' +
+        adoHtml + ownerHtml + areaHtml +
+        (h.status === 'draft' ? '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0;"><button onclick="event.stopPropagation();submitToEngineering(\'' + h.name.replace(/'/g, "\\'") + '\')" style="width:100%;padding:8px 16px;background:#107c10;color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background 0.2s;" onmouseover="this.style.background=\'#0b6a0b\'" onmouseout="this.style.background=\'#107c10\'">📤 Submit to Engineering</button></div>' : '') +
+        '</div>';
+}
+
+function renderPmStats() {
+    var myItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal'; });
+    var total = myItems.length;
+    var drafts = myItems.filter(function(h) { return h.status === 'draft'; });
+    var activeDev = myItems.filter(function(h) { return h.status === 'published' && h.milestone >= 4 && h.milestone <= 5; });
+    var shipped = myItems.filter(function(h) { return h.milestone === 6; });
+
+    // Compute averages for all 3 pipeline stages
+    var kpItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
+    var phItems = myItems.filter(function(h) { return h.protoDate && h.date && h.status === 'published'; });
+    var hpItems = myItems.filter(function(h) { return h.shipDate; });
+    var avgKP = 0, avgPH = 0, avgHP = 0;
+    if (kpItems.length > 0) {
+        var sum = 0; kpItems.forEach(function(h) { sum += Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000); });
+        avgKP = Math.round(sum / kpItems.length);
+    }
+    if (phItems.length > 0) {
+        var sum = 0; phItems.forEach(function(h) { sum += Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000); });
+        avgPH = Math.round(sum / phItems.length);
+    }
+    if (hpItems.length > 0) {
+        var sum = 0; hpItems.forEach(function(h) { sum += Math.round((new Date(h.shipDate) - new Date(h.date)) / 86400000); });
+        avgHP = Math.round(sum / hpItems.length);
+    }
+    var totalE2E = avgKP + avgPH + (hpItems.length > 0 ? avgHP : 0);
+
+    // Stat boxes
+    document.getElementById('statTotalVal').textContent = total;
+    document.getElementById('statTotalSub').textContent = drafts.length + ' drafts · ' + activeDev.length + ' in dev · ' + shipped.length + ' shipped';
+    document.getElementById('statActiveVal').textContent = activeDev.length;
+    document.getElementById('statActiveSub').textContent = activeDev.length + ' of ' + total + ' total handshakes';
+    document.getElementById('statVelocityVal').textContent = avgKP + ' days';
+    document.getElementById('statVelocitySub').textContent = 'Across ' + kpItems.length + ' features with prototype';
+    document.getElementById('statShippedVal').textContent = shipped.length;
+    document.getElementById('statShippedSub').textContent = shipped.length + ' of ' + total + ' total handshakes';
+
+    // PM E2E Pipeline Banner (same style as Leadership)
+    var bHtml = '<div style="background:linear-gradient(135deg,#1e2028 0%,#2a2e3a 100%);border:none;border-radius:14px;padding:20px 28px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.15);">';
+    bHtml += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">';
+    bHtml += '<div style="font-size:14px;font-weight:700;color:#ffffff;">⏱️ My E2E: Kickoff → Production</div>';
+    bHtml += '<div style="display:flex;align-items:center;gap:8px;">';
+    bHtml += '<span style="font-size:11px;color:#9ca0ae;text-transform:uppercase;letter-spacing:0.5px;">My Avg</span>';
+    bHtml += '<span style="font-size:24px;font-weight:700;color:#ffffff;">' + totalE2E + ' days</span>';
+    bHtml += '</div></div>';
+    bHtml += '<div style="display:flex;align-items:center;gap:0;position:relative;">';
+    var kpFlex = Math.max(avgKP, 2), phFlex = Math.max(avgPH, 2), hpFlex = hpItems.length > 0 ? Math.max(avgHP, 2) : 4;
+    bHtml += '<div style="flex:' + kpFlex + ';text-align:center;background:#0078d4;border-radius:10px 0 0 10px;padding:12px 6px;border-right:2px solid #1e2028;">';
+    bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + avgKP + 'd</div>';
+    bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Kickoff → Prototype</div></div>';
+    bHtml += '<div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>';
+    bHtml += '<div style="flex:' + phFlex + ';text-align:center;background:#107c10;padding:12px 6px;border-right:2px solid #1e2028;">';
+    bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + avgPH + 'd</div>';
+    bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Proto → Handshake</div></div>';
+    bHtml += '<div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>';
+    if (hpItems.length > 0) {
+        bHtml += '<div style="flex:' + hpFlex + ';text-align:center;background:#8661c5;border-radius:0 10px 10px 0;padding:12px 6px;">';
+        bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + avgHP + 'd</div>';
+        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Handshake → Prod</div></div>';
+    } else {
+        bHtml += '<div style="flex:' + hpFlex + ';text-align:center;background:#3a3d48;border-radius:0 10px 10px 0;padding:12px 6px;">';
+        bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">—</div>';
+        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.65);font-weight:600;">Handshake → Prod</div></div>';
+    }
+    bHtml += '</div>';
+    bHtml += '<div style="text-align:center;margin-top:10px;font-size:12px;color:#9ca0ae;">📐 Based on ' + kpItems.length + ' features with milestone data · Stages proportionally sized</div>';
+    bHtml += '</div>';
+    document.getElementById('pmE2eBanner').innerHTML = bHtml;
+}
+
+function renderPmCards() {
+    var myItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal'; });
+    var published = myItems.filter(function(h) { return h.status === 'published'; });
+    var drafts = myItems.filter(function(h) { return h.status === 'draft'; });
+    document.getElementById('pmPublishedGrid').innerHTML = published.map(function(h) { return renderCard(h, false); }).join('');
+    document.getElementById('pmDraftGrid').innerHTML = drafts.map(function(h) { return renderCard(h, false); }).join('') +
+        '<div class="handshake-card empty-card" onclick="currentHandshake=null;showBuilder()"><div class="plus-icon">+</div><div style="font-size:14px;">Create a new handshake</div></div>';
+    renderPmStats();
+}
+
+// ══════════════════════════════════════════════════════
+// LEADERSHIP VIEW — BY PORTFOLIO OVERVIEW
+// ══════════════════════════════════════════════════════
+function renderLeadershipView() {
+    // ── Shared color maps ──
+    var statusColors = { 'On Track': '#107c10', 'At Risk': '#ff8c00', 'Issue': '#d13438', 'Not Started': '#a0a0a0' };
+    var statusBgs = { 'On Track': '#dff6dd', 'At Risk': '#fff4ce', 'Issue': '#fde7e9', 'Not Started': '#f0f0f0' };
+    var phaseColors = { Proposal: '#e8e8e8', Design: '#fff4ce', Development: '#d0e8ff', UAT: '#e8defb', Production: '#dff6dd' };
+    var phaseTextColors = { Proposal: '#605e5c', Design: '#8a6914', Development: '#004e8c', UAT: '#5b2d90', Production: '#107c10' };
+    var phaseOrder = ['Proposal', 'Design', 'Development', 'UAT', 'Production'];
+
+    // ── Aggregate KPIs ──
+    var totalProjects = 0, onTrack = 0, atRisk = 0, issues = 0, inProduction = 0;
+    var phaseTotals = { Proposal: 0, Design: 0, Development: 0, UAT: 0, Production: 0 };
+    portfolioData.forEach(function(p) {
+        p.projects.forEach(function(pr) {
+            totalProjects++;
+            if (pr.status === 'On Track') onTrack++;
+            else if (pr.status === 'At Risk') atRisk++;
+            else if (pr.status === 'Issue') issues++;
+            if (phaseTotals.hasOwnProperty(pr.phase)) phaseTotals[pr.phase]++;
+            if (pr.phase === 'Production') inProduction++;
+        });
+    });
+
+    // ── Dynamically update stat cards ──
+    document.getElementById('leaderStats').innerHTML =
+        '<div class="stat-card" onclick="toggleDrill(\'lead-pipeline\')">' +
+            '<div class="stat-value" style="color:#0078d4;">8 days</div>' +
+            '<div class="stat-label">Avg. Kickoff → Prototype</div>' +
+            '<div class="stat-sub">Idea to working demo</div>' +
+            '<div class="stat-expand-hint" style="color:#8a8886;">📐 Baseline · Target: 7d →</div>' +
+        '</div>' +
+        '<div class="stat-card" onclick="toggleDrill(\'lead-coverage\')">' +
+            '<div class="stat-value" style="color:#107c10;">6 days</div>' +
+            '<div class="stat-label">Avg. Prototype → Handshake</div>' +
+            '<div class="stat-sub">Validation + eng handoff</div>' +
+            '<div class="stat-expand-hint" style="color:#8a8886;">📐 Baseline · Target: 5d →</div>' +
+        '</div>' +
+        '<div class="stat-card" onclick="toggleDrill(\'lead-velocity\')">' +
+            '<div class="stat-value" style="color:#ff8c00;">12 days</div>' +
+            '<div class="stat-label">Avg. Handshake → Prod</div>' +
+            '<div class="stat-sub">Eng pickup to production</div>' +
+            '<div class="stat-expand-hint" style="color:#8a8886;">📐 Baseline · Target: 10d →</div>' +
+        '</div>' +
+        '<div class="stat-card" onclick="toggleDrill(\'lead-shipped\')">' +
+            '<div class="stat-value" style="color:#5b2d90;">' + inProduction + '</div>' +
+            '<div class="stat-label">Shipped to Prod</div>' +
+            '<div class="stat-sub">Prototypes → live features</div>' +
+            '<div class="stat-expand-hint">Click for details →</div>' +
+        '</div>';
+
+    // ── Update drill panels ──
+    // ── Drill: Kickoff → Prototype breakdown ──
+    var pipeHtml = '<div class="drill-header"><div class="drill-title">🛠️ Kickoff → Prototype</div><button class="drill-close" onclick="closeDrill(\'lead-pipeline\')">✕</button></div>';
+    pipeHtml += '<div style="display:flex;gap:16px;margin-bottom:16px;">' +
+        '<div style="flex:1;text-align:center;padding:20px;background:#f0f6fc;border-radius:12px;border:1px solid #c7e0f4;">' +
+            '<div style="font-size:11px;color:#0078d4;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Current Avg.</div>' +
+            '<div style="font-size:36px;font-weight:700;color:#0078d4;">8 days</div>' +
+            '<div style="font-size:11px;color:#605e5c;margin-top:4px;">Based on ' + totalProjects + ' projects this quarter</div>' +
+        '</div>' +
+        '<div style="flex:1;text-align:center;padding:20px;background:#faf9f8;border-radius:12px;border:1px dashed #e1e1e1;">' +
+            '<div style="font-size:11px;color:#8a8886;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Target</div>' +
+            '<div style="font-size:36px;font-weight:700;color:#107c10;">7 days</div>' +
+            '<div style="font-size:11px;color:#605e5c;margin-top:4px;">Goal by end of Q2 FY26</div>' +
+        '</div>' +
+    '</div>' +
+    '<div style="background:#fff8f0;border-radius:8px;padding:10px 14px;font-size:13px;color:#605e5c;margin-bottom:16px;">📐 <strong>Establishing baseline.</strong> This is a new process — we\'re measuring how quickly PMs go from idea to working prototype using GitHub Copilot + rapid prototyping. This baseline will be tracked quarter-over-quarter.</div>';
+    // Phase distribution
+    pipeHtml += '<div style="font-size:12px;font-weight:600;color:#323130;margin-bottom:6px;">Current Phase Distribution (' + totalProjects + ' projects)</div><div class="pipeline-bar">';
+    phaseOrder.forEach(function(ph) {
+        if (phaseTotals[ph] > 0) {
+            pipeHtml += '<div class="pipeline-segment" style="width:' + Math.round((phaseTotals[ph] / totalProjects) * 100) + '%;background:' + phaseColors[ph] + ';color:' + phaseTextColors[ph] + ';">' + phaseTotals[ph] + '</div>';
+        }
+    });
+    pipeHtml += '</div><div class="pipeline-legend">';
+    phaseOrder.forEach(function(ph) {
+        if (phaseTotals[ph] > 0) pipeHtml += '<div class="pipeline-legend-item"><div class="pipeline-dot" style="background:' + phaseColors[ph] + ';border:1px solid ' + phaseTextColors[ph] + ';"></div> ' + ph + ' (' + phaseTotals[ph] + ')</div>';
+    });
+    pipeHtml += '</div>';
+    document.getElementById('drill-lead-pipeline').innerHTML = pipeHtml;
+
+    // ── Drill: Prototype → Handshake breakdown ──
+    var covHtml = '<div class="drill-header"><div class="drill-title">🤝 Prototype → Handshake</div><button class="drill-close" onclick="closeDrill(\'lead-coverage\')">✕</button></div>';
+    covHtml += '<div style="display:flex;gap:16px;margin-bottom:16px;">' +
+        '<div style="flex:1;text-align:center;padding:20px;background:#f0fdf4;border-radius:12px;border:1px solid #c8e6c9;">' +
+            '<div style="font-size:11px;color:#107c10;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Current Avg.</div>' +
+            '<div style="font-size:36px;font-weight:700;color:#107c10;">6 days</div>' +
+            '<div style="font-size:11px;color:#605e5c;margin-top:4px;">Based on ' + totalProjects + ' projects this quarter</div>' +
+        '</div>' +
+        '<div style="flex:1;text-align:center;padding:20px;background:#faf9f8;border-radius:12px;border:1px dashed #e1e1e1;">' +
+            '<div style="font-size:11px;color:#8a8886;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Target</div>' +
+            '<div style="font-size:36px;font-weight:700;color:#107c10;">5 days</div>' +
+            '<div style="font-size:11px;color:#605e5c;margin-top:4px;">Goal by end of Q2 FY26</div>' +
+        '</div>' +
+    '</div>' +
+    '<div style="background:#fff8f0;border-radius:8px;padding:10px 14px;font-size:13px;color:#605e5c;margin-bottom:16px;">📐 <strong>Establishing baseline.</strong> Measures the time from prototype demo through stakeholder validation to formal engineering handshake. The structured handshake brief is designed to compress this stage significantly.</div>';
+    // Portfolio health
+    covHtml += '<div style="font-size:12px;font-weight:600;color:#323130;margin-bottom:6px;">Portfolio Health at a Glance</div>' +
+        '<table class="drill-table"><thead><tr><th>Portfolio</th><th>Projects</th><th>On Track</th><th>Needs Attention</th></tr></thead><tbody>';
+    portfolioData.forEach(function(p) {
+        var pOT = p.projects.filter(function(pr) { return pr.status === 'On Track'; }).length;
+        var pAR = p.projects.filter(function(pr) { return pr.status === 'At Risk' || pr.status === 'Issue'; }).length;
+        covHtml += '<tr><td style="font-weight:600;">' + p.icon + ' ' + p.name + '</td><td>' + p.projects.length + '</td><td style="color:#107c10;font-weight:600;">' + pOT + '</td><td style="color:' + (pAR > 0 ? '#ff8c00' : '#a0a0a0') + ';font-weight:600;">' + (pAR > 0 ? '⚠ ' + pAR : '✓') + '</td></tr>';
+    });
+    covHtml += '</tbody></table>';
+    document.getElementById('drill-lead-coverage').innerHTML = covHtml;
+
+    // ── Drill: Handshake → Production breakdown ──
+    var velHtml = '<div class="drill-header"><div class="drill-title">🚀 Handshake → Production</div><button class="drill-close" onclick="closeDrill(\'lead-velocity\')">✕</button></div>';
+    velHtml += '<div style="display:flex;gap:16px;margin-bottom:16px;">' +
+        '<div style="flex:1;text-align:center;padding:20px;background:#fff8f0;border-radius:12px;border:1px solid #ffe0b2;">' +
+            '<div style="font-size:11px;color:#ff8c00;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Current Avg.</div>' +
+            '<div style="font-size:36px;font-weight:700;color:#ff8c00;">12 days</div>' +
+            '<div style="font-size:11px;color:#605e5c;margin-top:4px;">Based on ' + inProduction + ' shipped projects</div>' +
+        '</div>' +
+        '<div style="flex:1;text-align:center;padding:20px;background:#faf9f8;border-radius:12px;border:1px dashed #e1e1e1;">' +
+            '<div style="font-size:11px;color:#8a8886;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Target</div>' +
+            '<div style="font-size:36px;font-weight:700;color:#107c10;">10 days</div>' +
+            '<div style="font-size:11px;color:#605e5c;margin-top:4px;">Goal by end of Q2 FY26</div>' +
+        '</div>' +
+    '</div>' +
+    '<div style="background:#fff8f0;border-radius:8px;padding:10px 14px;font-size:13px;color:#605e5c;margin-bottom:16px;">📐 <strong>Establishing baseline.</strong> This is the key metric — does the handshake brief (with prototype, acceptance criteria, and validated requirements) help engineering ship faster? We\'re tracking this to prove the process works.</div>';
+    // At-risk projects
+    var riskItems = [];
+    portfolioData.forEach(function(p) { p.projects.forEach(function(pr) { if (pr.status === 'At Risk' || pr.status === 'Issue') riskItems.push({ pr: pr, pf: p.name, ic: p.icon }); }); });
+    if (riskItems.length > 0) {
+        velHtml += '<div style="font-size:12px;font-weight:600;color:#323130;margin-bottom:6px;">Projects Needing Attention (' + riskItems.length + ')</div>' +
+            '<table class="drill-table"><thead><tr><th>Project</th><th>Portfolio</th><th>Phase</th><th>Status</th><th>Details</th></tr></thead><tbody>';
+        riskItems.forEach(function(r) { velHtml += '<tr><td style="font-weight:600;">' + r.pr.name + '</td><td>' + r.ic + ' ' + r.pf + '</td><td>' + r.pr.phase + '</td><td style="color:' + (r.pr.status === 'Issue' ? '#d13438' : '#ff8c00') + ';font-weight:600;">● ' + r.pr.status + '</td><td style="font-size:12px;">' + r.pr.statusDesc + '</td></tr>'; });
+        velHtml += '</tbody></table>';
+    }
+    document.getElementById('drill-lead-velocity').innerHTML = velHtml;
+
+    // ── Drill: Shipped to Production ──
+    var shipHtml = '<div class="drill-header"><div class="drill-title">🏆 Shipped to Production</div><button class="drill-close" onclick="closeDrill(\'lead-shipped\')">✕</button></div>';
+    // End-to-end summary
+    shipHtml += '<div style="display:flex;gap:16px;margin-bottom:16px;">' +
+        '<div style="flex:1;text-align:center;padding:20px;background:#f0fdf4;border-radius:12px;border:1px solid #c8e6c9;">' +
+            '<div style="font-size:11px;color:#605e5c;text-transform:uppercase;letter-spacing:0.5px;">End-to-End: Kickoff → Production</div>' +
+            '<div style="font-size:36px;font-weight:700;color:#107c10;">26 days</div>' +
+            '<div style="font-size:11px;color:#605e5c;margin-top:4px;">Current baseline average</div>' +
+        '</div>' +
+        '<div style="flex:1;text-align:center;padding:20px;background:#faf9f8;border-radius:12px;border:1px dashed #e1e1e1;">' +
+            '<div style="font-size:11px;color:#8a8886;text-transform:uppercase;letter-spacing:0.5px;">End-to-End Target</div>' +
+            '<div style="font-size:36px;font-weight:700;color:#107c10;">22 days</div>' +
+            '<div style="font-size:11px;color:#605e5c;margin-top:4px;">Goal by end of Q2 FY26</div>' +
+        '</div>' +
+    '</div>' +
+    '<div style="background:#fff8f0;border-radius:8px;padding:10px 14px;font-size:13px;color:#605e5c;margin-bottom:16px;">📐 <strong>Full pipeline baseline.</strong> 26 days from idea to production. As we collect more data each quarter, this will show whether the new handshake process is driving faster feature delivery across ME.</div>';
+    shipHtml += '<div style="font-size:12px;font-weight:600;color:#323130;margin-bottom:6px;">Production Projects (' + inProduction + ')</div>' +
+        '<table class="drill-table"><thead><tr><th>Project</th><th>Portfolio</th><th>ADO</th><th>Owner</th><th>Status</th></tr></thead><tbody>';
+    portfolioData.forEach(function(p) { p.projects.forEach(function(pr) {
+        if (pr.phase === 'Production') {
+            shipHtml += '<tr><td style="font-weight:600;">' + pr.name + '</td><td>' + p.icon + ' ' + p.name + '</td><td style="color:#0078d4;font-weight:600;">' + (pr.adoId ? '#' + pr.adoId : '—') + '</td><td>' + pr.owner + '</td><td style="color:' + (statusColors[pr.status] || '#605e5c') + ';font-weight:600;">● ' + pr.status + '</td></tr>';
+        }
+    }); });
+    shipHtml += '</tbody></table>';
+    document.getElementById('drill-lead-shipped').innerHTML = shipHtml;
+
+    // ── Render Portfolio Cards ──
+    var html = '';
+    portfolioData.forEach(function(p) {
+        var projects = p.projects;
+        var pOnTrack = projects.filter(function(pr) { return pr.status === 'On Track'; }).length;
+        var pAtRisk = projects.filter(function(pr) { return pr.status === 'At Risk'; }).length;
+        var pIssue = projects.filter(function(pr) { return pr.status === 'Issue'; }).length;
+        var pInProd = projects.filter(function(pr) { return pr.phase === 'Production'; }).length;
+        var pcounts = {};
+        phaseOrder.forEach(function(ph) { pcounts[ph] = 0; });
+        projects.forEach(function(pr) { if (pcounts.hasOwnProperty(pr.phase)) pcounts[pr.phase]++; });
+
+        var pStatus = pIssue > 0 ? 'Issue' : pAtRisk > 0 ? 'At Risk' : 'On Track';
+        var total = projects.length;
+        var onTrackPct = Math.round((pOnTrack / total) * 100);
+
+        // ── Portfolio KPI mini-stat row (velocity-focused) ──
+        // Simulated per-portfolio avg cycle times (days) — varies by portfolio maturity
+        var portfolioCycle = {
+            'eCommerce Agents': { proto: 6, handshake: 4, prod: 10 },
+            'Marketing Planning & Execution': { proto: 9, handshake: 7, prod: 14 },
+            'Campaign Supply Chain': { proto: 10, handshake: 8, prod: 15 },
+            'Microsoft Demo Experiences': { proto: 5, handshake: 3, prod: 8 },
+            'UCMP': { proto: 9, handshake: 7, prod: 13 },
+            'Connected Sales & Marketing Data': { proto: 7, handshake: 5, prod: 11 },
+            'Signal Flow Transformation': { proto: 11, handshake: 8, prod: 16 },
+            'Privacy': { proto: 8, handshake: 6, prod: 12 }
+        };
+        var cyc = portfolioCycle[p.name] || { proto: 8, handshake: 6, prod: 12 };
+        var kpiHtml = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:14px 0 6px;">' +
+            '<div style="background:#faf9f8;border-radius:8px;padding:10px 12px;text-align:center;">' +
+                '<div style="font-size:22px;font-weight:700;color:#0078d4;">' + total + '</div>' +
+                '<div style="font-size:10px;color:#605e5c;text-transform:uppercase;letter-spacing:0.3px;">Projects</div>' +
+            '</div>' +
+            '<div style="background:#faf9f8;border-radius:8px;padding:10px 12px;text-align:center;">' +
+                '<div style="font-size:22px;font-weight:700;color:#107c10;">' + cyc.proto + 'd</div>' +
+                '<div style="font-size:10px;color:#605e5c;text-transform:uppercase;letter-spacing:0.3px;">→ Prototype</div>' +
+            '</div>' +
+            '<div style="background:#faf9f8;border-radius:8px;padding:10px 12px;text-align:center;">' +
+                '<div style="font-size:22px;font-weight:700;color:#ff8c00;">' + cyc.handshake + 'd</div>' +
+                '<div style="font-size:10px;color:#605e5c;text-transform:uppercase;letter-spacing:0.3px;">→ Handshake</div>' +
+            '</div>' +
+            '<div style="background:#faf9f8;border-radius:8px;padding:10px 12px;text-align:center;">' +
+                '<div style="font-size:22px;font-weight:700;color:#5b2d90;">' + pInProd + '</div>' +
+                '<div style="font-size:10px;color:#605e5c;text-transform:uppercase;letter-spacing:0.3px;">In Prod</div>' +
+            '</div>' +
+        '</div>';
+
+        // Status health bar
+        var barHtml = '<div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin:4px 0 4px;">';
+        if (pOnTrack) barHtml += '<div style="width:' + ((pOnTrack/total)*100) + '%;background:#107c10;"></div>';
+        if (pAtRisk) barHtml += '<div style="width:' + ((pAtRisk/total)*100) + '%;background:#ff8c00;"></div>';
+        if (pIssue) barHtml += '<div style="width:' + ((pIssue/total)*100) + '%;background:#d13438;"></div>';
+        barHtml += '</div>';
+
+        var phHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">';
+        phaseOrder.forEach(function(ph) {
+            if (pcounts[ph] > 0) phHtml += '<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:#f5f5f5;color:' + phaseTextColors[ph] + ';font-weight:600;">' + ph + ': ' + pcounts[ph] + '</span>';
+        });
+        phHtml += '</div>';
+
+        html += '<div class="area-card" onclick="toggleAreaCard(this)">' +
+            '<div class="area-expand-tab" title="Click to expand"><span class="expand-icon">▶</span></div>' +
+            '<div class="area-card-body">' +
+            '<div class="area-card-header">' +
+                '<div class="area-name"><div class="area-icon" style="background:' + p.iconBg + ';">' + p.icon + '</div> ' + p.name + '</div>' +
+                '<div style="display:flex;align-items:center;gap:12px;">' +
+                    '<span style="font-size:11px;padding:2px 10px;border-radius:10px;background:' + statusBgs[pStatus] + ';color:' + statusColors[pStatus] + ';font-weight:600;">● ' + pStatus + '</span>' +
+                    '<div class="area-count">' + total + ' project' + (total > 1 ? 's' : '') + '</div>' +
+                '</div>' +
+            '</div>' +
+            kpiHtml +
+            barHtml +
+            phHtml +
+            '<div class="area-details">';
+
+        // ── Project rows with rollup metrics ──
+        projects.forEach(function(pr) {
+            var sC = statusColors[pr.status] || '#605e5c';
+            var sB = statusBgs[pr.status] || '#f0f0f0';
+            var pC = phaseTextColors[pr.phase] || '#605e5c';
+            var pB = phaseColors[pr.phase] || '#f0f0f0';
+
+            // Phase progress indicator (which step out of 5)
+            var phIdx = phaseOrder.indexOf(pr.phase);
+            var phaseProg = '';
+            for (var pi = 0; pi < phaseOrder.length; pi++) {
+                var dotColor = pi <= phIdx ? (pi === phIdx ? pC : '#107c10') : '#e1e1e1';
+                var dotBg = pi <= phIdx ? (pi === phIdx ? pB : '#dff6dd') : '#f5f5f5';
+                phaseProg += '<div style="width:14px;height:14px;border-radius:50%;background:' + dotBg + ';border:2px solid ' + dotColor + ';display:inline-block;margin-right:2px;" title="' + phaseOrder[pi] + '"></div>';
+            }
+
+            html += '<div style="background:white;border:1px solid #e1e1e1;border-radius:10px;padding:0;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow=\'0 3px 12px rgba(0,0,0,0.08)\'" onmouseout="this.style.boxShadow=\'0 1px 4px rgba(0,0,0,0.04)\'">' +
+                '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;border-bottom:1px solid #f0f0f0;">' +
+                    '<div style="font-size:15px;font-weight:700;color:#1a1a1a;">' + pr.name + (pr.adoId ? ' <span style="font-size:11px;color:#0078d4;font-weight:600;cursor:pointer;">#' + pr.adoId + '</span>' : '') + '</div>' +
+                    '<span style="font-size:11px;padding:3px 10px;border-radius:10px;background:' + sB + ';color:' + sC + ';font-weight:600;">● ' + pr.status + '</span>' +
+                '</div>' +
+                '<div style="padding:12px 18px 14px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;">' +
+                    '<div style="display:flex;align-items:center;gap:6px;">' +
+                        '<span style="font-size:10px;color:#a0a0a0;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Phase</span>' +
+                        '<span style="font-size:12px;padding:3px 10px;border-radius:10px;background:' + pB + ';color:' + pC + ';font-weight:600;">' + pr.phase + '</span>' +
+                    '</div>' +
+                    '<div style="width:1px;height:20px;background:#e8e8e8;"></div>' +
+                    '<div style="display:flex;align-items:center;gap:6px;">' +
+                        '<span style="font-size:10px;color:#a0a0a0;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Owner</span>' +
+                        '<span style="font-size:13px;font-weight:600;color:#323130;">' + pr.owner + '</span>' +
+                    '</div>' +
+                    '<div style="width:1px;height:20px;background:#e8e8e8;"></div>' +
+                    '<div style="display:flex;align-items:center;gap:6px;">' +
+                        '<span style="font-size:10px;color:#a0a0a0;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Progress</span>' +
+                        phaseProg +
+                    '</div>' +
+                    '<div style="flex:1;"></div>' +
+                    '<div style="font-size:12px;color:#8a8886;line-height:1.5;max-width:340px;text-align:right;font-style:italic;">' + pr.statusDesc + '</div>' +
+                '</div>' +
+            '</div>';
+        });
+
+        html += '<div style="text-align:right;margin-top:8px;font-size:11px;color:#a0a0a0;">Slide owner: ' + p.slideOwner + '</div>' +
+            '</div>'; // close area-card-body
+        html += '</div></div>';
+    });
+
+    document.getElementById('areaGroupContainer').innerHTML = html;
+
+    // ── Needs Attention ──
+    var attentionItems = [];
+    portfolioData.forEach(function(p) {
+        p.projects.forEach(function(pr) {
+            if (pr.status === 'At Risk' || pr.status === 'Issue') attentionItems.push({ pr: pr, pf: p.name, ic: p.icon });
+        });
+    });
+    var attentionHtml = '';
+    if (attentionItems.length === 0) {
+        attentionHtml = '<div style="background:white;border:1px solid #e1e1e1;border-radius:12px;padding:24px;text-align:center;color:#107c10;font-size:14px;">✓ All projects on track — no items need attention.</div>';
+    } else {
+        attentionItems.forEach(function(item) {
+            var ic = item.pr.status === 'Issue' ? '🔴' : '🟡';
+            attentionHtml += '<div style="background:white;border:1px solid #e1e1e1;border-radius:12px;padding:16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;">' +
+                '<div style="font-size:20px;">' + ic + '</div>' +
+                '<div style="flex:1;"><div style="font-weight:600;font-size:14px;">' + item.pr.name + (item.pr.adoId ? ' <span style="color:#0078d4;font-size:12px;">#' + item.pr.adoId + '</span>' : '') + '</div>' +
+                '<div style="font-size:12px;color:#605e5c;margin-top:2px;">' + item.pr.statusDesc + '</div></div>' +
+                '<div style="font-size:12px;color:#605e5c;white-space:nowrap;">' + item.ic + ' ' + item.pf + '</div>' +
+            '</div>';
+        });
+    }
+    document.getElementById('needsAttentionContainer').innerHTML = attentionHtml;
+}
+
+function toggleAreaCard(el) {
+    var wasExpanded = el.classList.contains('expanded');
+    el.classList.toggle('expanded');
+    var expandIcon = el.querySelector('.expand-icon');
+    if (expandIcon) expandIcon.textContent = wasExpanded ? '▶' : '▼';
+    var tab = el.querySelector('.area-expand-tab');
+    if (tab) tab.title = wasExpanded ? 'Click to expand' : 'Click to collapse';
+}
+
+function togglePmKpiDefs() {
+    var panel = document.getElementById('pmKpiDefsPanel');
+    var btn = document.getElementById('pmKpiDefsToggle');
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        btn.style.background = '#f0f6fc';
+        btn.style.borderColor = '#0078d4';
+        btn.dataset.open = '1';
+    } else {
+        panel.style.display = 'none';
+        btn.style.background = 'none';
+        btn.style.borderColor = '#e1e1e1';
+        btn.dataset.open = '';
+    }
+}
+
+function toggleKpiDefs() {
+    var panel = document.getElementById('kpiDefsPanel');
+    var btn = document.getElementById('kpiDefsToggle');
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        btn.style.background = '#f0f6fc';
+        btn.style.borderColor = '#0078d4';
+    } else {
+        panel.style.display = 'none';
+        btn.style.background = 'none';
+        btn.style.borderColor = '#e1e1e1';
+    }
+}
+
+// ══════════════════════════════════════════════════════
+// VIEW NAVIGATION
+// ══════════════════════════════════════════════════════
+function showView(id) {
+    document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+}
+
+function showLanding() { renderPmCards(); showView('view-landing'); }
+
+function showBuilder() {
+    showView('view-builder');
+
+    // If editing an existing handshake, pre-fill the form
+    if (currentHandshake) {
+        var h = currentHandshake;
+        document.getElementById('featureName').value = h.name || '';
+        document.getElementById('summary').value = h.name ? 'Handshake brief for ' + h.name : '';
+        document.getElementById('protoLink').value = '';
+
+        // Find matching ADO item and link it
+        var allItems = getPickerItems().concat(mockAdoItems);
+        var matchedAdo = allItems.find(function(item) { return '#' + item.id === h.adoId; });
+        if (matchedAdo) {
+            selectedAdoItem = matchedAdo;
+            adoLinked = true;
+            document.getElementById('adoItemIdBanner').textContent = '#' + matchedAdo.id;
+            document.getElementById('adoFilledBanner').classList.add('active');
+            document.getElementById('publishParentName').textContent = matchedAdo.title;
+            document.getElementById('publishParentId').textContent = '#' + matchedAdo.id;
+        }
+
+        // Go directly to step 1 (form) instead of picker
+        document.getElementById('featurePicker').classList.remove('active');
+        document.getElementById('stepProgress').style.display = 'flex';
+        document.getElementById('step1').classList.add('active');
+        currentStep = 1;
+        updateSteps();
+    } else {
+        // New handshake — show picker
+        document.getElementById('featurePicker').classList.add('active');
+        document.getElementById('stepProgress').style.display = 'none';
+        document.getElementById('adoLoading').classList.remove('active');
+        document.querySelectorAll('.form-section').forEach(function(s) { s.classList.remove('active'); });
+        document.getElementById('pickerSearch').value = '';
+        document.getElementById('pickerUrlInput').value = '';
+        selectedAdoItem = null;
+        adoLinked = false;
+        currentStep = 1;
+        pickerFilter = 'Active';
+        document.getElementById('filterActive').classList.add('active');
+        document.getElementById('filterNew').classList.remove('active');
+        document.getElementById('filterAll').classList.remove('active');
+        updatePickerConnectionUI();
+        tryAutoConnect();
+        renderPickerList();
+    }
+}
+
+var currentHandshake = null; // track which handshake is being viewed/edited
+
+function showBrief(idx) {
+    if (typeof idx === 'number' && handshakeData[idx]) {
+        currentHandshake = handshakeData[idx];
+    }
+    var h = currentHandshake;
+    if (!h) { showView('view-brief'); return; }
+
+    // Update brief header
+    document.getElementById('briefName').textContent = h.name;
+
+    // Update lifecycle tracker based on status/milestone
+    var tracker = document.getElementById('milestoneTracker');
+    var milestoneStep = h.status === 'draft' ? 2 : (h.milestone || 4); // draft = step 2 (Handshake Created)
+    var steps = [
+        { label: 'Prototype<br>Built' },
+        { label: 'Handshake<br>Created' },
+        { label: 'Submitted<br>to Eng' },
+        { label: 'Engineering<br>Review' },
+        { label: 'In Dev' },
+        { label: 'Shipped' }
+    ];
+    var trackerHtml = '';
+    steps.forEach(function(s, i) {
+        var stepNum = i + 1;
+        var dotClass, dotContent, labelClass;
+        if (stepNum < milestoneStep) {
+            dotClass = 'done'; dotContent = '✓'; labelClass = '';
+        } else if (stepNum === milestoneStep) {
+            dotClass = 'current'; dotContent = stepNum; labelClass = ' active-label';
+        } else {
+            dotClass = 'pending'; dotContent = stepNum; labelClass = '';
+        }
+        if (i > 0) trackerHtml += '<div class="milestone-line ' + (stepNum <= milestoneStep ? 'done' : 'pending') + '"></div>';
+        trackerHtml += '<div class="milestone-step"><div class="milestone-dot ' + dotClass + '">' + dotContent + '</div><div class="milestone-label' + labelClass + '">' + s.label + '</div></div>';
+    });
+    tracker.innerHTML = trackerHtml;
+
+    // Show/hide Submit to Engineering button
+    var submitBtn = document.getElementById('briefSubmitBtn');
+    if (h.status === 'draft') {
+        submitBtn.style.display = 'inline-flex';
+        submitBtn.setAttribute('onclick', "submitToEngineering('" + h.name.replace(/'/g, "\\'") + "')");
+    } else {
+        submitBtn.style.display = 'none';
+    }
+
+    // Update ADO source (clickable)
+    if (h.adoId) {
+        var adoIdEl = document.getElementById('briefAdoId');
+        var parentEl = document.getElementById('briefParentRef');
+        var numId = h.adoId.replace('#', '');
+        adoIdEl.innerHTML = '<a href="' + ADO_BASE + numId + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;cursor:pointer;" onclick="event.stopPropagation()">' + h.adoId + ' ↗</a>';
+        if (h.parentId) {
+            var parentNum = h.parentId.replace('#', '');
+            parentEl.innerHTML = '<a href="' + ADO_BASE + parentNum + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;cursor:pointer;" onclick="event.stopPropagation()">' + h.parentId + ' ↗</a>';
+        } else { parentEl.textContent = ''; }
+        document.getElementById('briefAdoSource').classList.add('visible');
+    }
+
+    // Update brief footer score to match actual data
+    var scoreColor = h.score >= 4 ? '#107c10' : h.score >= 3 ? '#ff8c00' : '#d13438';
+    document.getElementById('briefScoreDot').style.background = scoreColor;
+    document.getElementById('briefScoreText').textContent = h.score + '/5 Complete';
+
+    showView('view-brief');
+}
+
+// ══════════════════════════════════════════════════════
+// FEATURE PICKER (replaces raw ADO search)
+// ══════════════════════════════════════════════════════
+function setPickerFilter(state) {
+    pickerFilter = state;
+    document.getElementById('filterActive').classList.toggle('active', state === 'Active');
+    document.getElementById('filterNew').classList.toggle('active', state === 'New');
+    document.getElementById('filterAll').classList.toggle('active', state === 'All');
+    renderPickerList();
+}
+
+function filterPicker() { renderPickerList(); }
+
+function renderPickerList() {
+    var query = (document.getElementById('pickerSearch').value || '').toLowerCase();
+    // Update subtitle to reflect data source
+    var subtitle = document.getElementById('pickerSubtitle');
+    if (subtitle) {
+        subtitle.innerHTML = adoConnected
+            ? '🟢 Showing <b>live</b> features from Azure DevOps. <a href="javascript:disconnectAdo()" style="color:#d13438;font-size:12px;">Disconnect</a>'
+            : 'Showing demo data. Connect above to load live ADO features.';
+    }
+    var source = getPickerItems();
+    var items = source.filter(function(item) {
+        var matchState = pickerFilter === 'All' || item.state === pickerFilter;
+        var matchQuery = !query || item.title.toLowerCase().indexOf(query) >= 0 ||
+            item.id.toString().indexOf(query) >= 0 ||
+            item.description.toLowerCase().indexOf(query) >= 0 ||
+            item.tags.some(function(t) { return t.toLowerCase().indexOf(query) >= 0; });
+        return matchState && matchQuery;
+    });
+
+    var container = document.getElementById('pickerList');
+    if (items.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:24px;color:#a0a0a0;font-size:14px;">No matching features found. Try a different filter.</div>';
+        return;
+    }
+
+    container.innerHTML = items.map(function(item) {
+        var stateColor = item.state === 'Active' ? '#dff6dd' : '#e8e8e8';
+        var stateText = item.state === 'Active' ? '#107c10' : '#605e5c';
+        var iterShort = item.iteration.split('\\').pop();
+        var areaShort = item.areaPath.split('\\').slice(1).join(' / ');
+        var selectedClass = selectedAdoItem && selectedAdoItem.id === item.id ? ' selected' : '';
+
+        return '<div class="picker-item' + selectedClass + '" onclick="selectPickerItem(' + item.id + ')">' +
+            '<div class="picker-item-icon">F</div>' +
+            '<div class="picker-item-info">' +
+                '<div class="picker-item-title">' + item.title + '</div>' +
+                '<div class="picker-item-meta">' +
+                    '<span>👤 ' + item.assignedTo + '</span>' +
+                    '<span>🏃 ' + iterShort + '</span>' +
+                    '<span>📂 ' + areaShort + '</span>' +
+                    '<span>P' + item.priority + ' · ' + item.storyPoints + ' pts</span>' +
+                '</div>' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">' +
+                '<div class="picker-item-id">#' + item.id + '</div>' +
+                '<div class="picker-item-state" style="background:' + stateColor + ';color:' + stateText + ';">● ' + item.state + '</div>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+
+function selectPickerItem(id) {
+    selectedAdoItem = getPickerItems().filter(function(item) { return item.id === id; })[0];
+    renderPickerList();
+    document.getElementById('fieldMapPanel').classList.add('visible');
+}
+
+function pullFromUrl() {
+    var url = document.getElementById('pickerUrlInput').value.trim();
+    if (!url) return;
+    var match = url.match(/(\d{5,})/);
+    if (match) {
+        var id = parseInt(match[1]);
+        var item = getPickerItems().filter(function(i) { return i.id === id; })[0];
+        if (item) { selectedAdoItem = item; }
+    }
+    if (!selectedAdoItem) selectedAdoItem = getPickerItems()[0];
+    startPull();
+}
+
+function startPull() {
+    if (!selectedAdoItem) return;
+    document.getElementById('featurePicker').classList.remove('active');
+    document.getElementById('adoLoading').classList.add('active');
+    var item = selectedAdoItem;
+    setTimeout(function() {
+        document.getElementById('adoLoading').classList.remove('active');
+        autoFillFromAdo(item);
+    }, 1200);
+}
+
+function skipPicker() {
+    adoLinked = false;
+    selectedAdoItem = null;
+    document.getElementById('featurePicker').classList.remove('active');
+    document.getElementById('stepProgress').style.display = 'flex';
+    document.getElementById('adoFilledBanner').classList.remove('visible');
+    var badges = document.querySelectorAll('.ado-badge');
+    for (var i = 0; i < badges.length; i++) badges[i].classList.remove('visible');
+    currentStep = 1;
+    updateSteps();
+}
+
+function autoFillFromAdo(item) {
+    adoLinked = true;
+    document.getElementById('featureName').value = item.title;
+    document.getElementById('summary').value = item.description;
+
+    var badgeIds = ['badge-featureName', 'badge-summary'];
+    for (var i = 0; i < badgeIds.length; i++) {
+        var badge = document.getElementById(badgeIds[i]);
+        if (badge) badge.classList.add('visible');
+    }
+
+    document.getElementById('adoFilledBanner').classList.add('visible');
+    document.getElementById('adoItemIdBanner').textContent = '#' + item.id;
+    document.getElementById('briefAdoId').textContent = '#' + item.id;
+    document.getElementById('briefParentRef').textContent = '#' + item.id;
+    document.getElementById('briefAdoSource').classList.add('visible');
+    document.getElementById('publishParentName').textContent = item.title;
+    document.getElementById('publishParentId').textContent = '#' + item.id;
+
+    // Pre-select owner from ADO assigned
+    var ownerOptions = document.querySelectorAll('.owner-option');
+    for (var j = 0; j < ownerOptions.length; j++) {
+        if (ownerOptions[j].textContent.trim() === item.assignedTo) {
+            selectOwner(ownerOptions[j], item.assignedTo);
+        }
+    }
+
+    document.getElementById('featurePicker').classList.remove('active');
+    document.getElementById('stepProgress').style.display = 'flex';
+    currentStep = 1;
+    updateSteps();
+}
+
+// Clicking a selected picker item starts the pull
+document.addEventListener('dblclick', function(e) {
+    var item = e.target.closest('.picker-item.selected');
+    if (item) startPull();
+});
+
+// Also add a pull button when item is selected — handled via renderPickerList adding selected state
+// We'll add a one-click "Continue with this feature" flow
+// When an item is selected once, show pull button
+(function() {
+    var origRender = renderPickerList;
+    renderPickerList = function() {
+        origRender();
+        // Add continue button if item selected
+        var container = document.getElementById('pickerList');
+        if (selectedAdoItem) {
+            container.innerHTML += '<div style="text-align:right;margin-top:12px;"><button class="btn-primary" onclick="startPull()" style="gap:8px;">⚡ Continue with #' + selectedAdoItem.id + '</button></div>';
+        }
+    };
+})();
+
+// ══════════════════════════════════════════════════════
+// STEP NAVIGATION
+// ══════════════════════════════════════════════════════
+function nextStep(n) {
+    currentStep = n;
+    updateSteps();
+    if (n === 3) calculateScore();
+}
+
+function updateSteps() {
+    for (var i = 1; i <= 3; i++) {
+        var sec = document.getElementById('step' + i);
+        if (i === currentStep) sec.classList.add('active'); else sec.classList.remove('active');
+        var dot = document.getElementById('stepDot' + i);
+        dot.className = 'step-dot';
+        if (i < currentStep) dot.classList.add('done');
+        else if (i === currentStep) dot.classList.add('active');
+        else dot.classList.add('upcoming');
+        if (i < 3) {
+            var line = document.getElementById('stepLine' + i);
+            line.className = 'step-line';
+            if (i < currentStep) line.classList.add('done');
+        }
+    }
+    window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════════════════════
+// FORM HELPERS
+// ══════════════════════════════════════════════════════
+function toggleChip(el) {
+    var siblings = el.parentElement.querySelectorAll('.chip');
+    for (var i = 0; i < siblings.length; i++) siblings[i].classList.remove('selected');
+    el.classList.add('selected');
+}
+
+function toggleCheck(el) { el.classList.toggle('checked'); }
+
+function selectOwner(el, name) {
+    var options = document.querySelectorAll('.owner-option');
+    for (var i = 0; i < options.length; i++) options[i].classList.remove('selected');
+    el.classList.add('selected');
+    selectedOwner = name;
+}
+
+// ══════════════════════════════════════════════════════
+// SCORE CALCULATION
+// ══════════════════════════════════════════════════════
+function calculateScore() {
+    var score = 0;
+    var items = [];
+    var adoTag = adoLinked ? ' <span style="color:#5b2d90;font-size:11px;">(from ADO)</span>' : '';
+
+    if (document.getElementById('featureName').value.trim()) { score++; items.push('✅ Feature name' + adoTag); } else { items.push('⬜ Feature name'); }
+    if (document.getElementById('protoLink').value.trim()) { score++; items.push('✅ Repo link'); } else { items.push('⬜ Repo link'); }
+    if (document.getElementById('summary').value.trim()) { score++; items.push('✅ Summary' + adoTag); } else { items.push('⬜ Summary'); }
+    if (document.querySelector('#stakeholderChips .chip.selected')) { score++; items.push('✅ Business validation'); } else { items.push('⬜ Business validation'); }
+    if (document.getElementById('showcased').value.trim()) { score++; items.push('✅ What\'s been showcased'); } else { items.push('⬜ What\'s been showcased'); }
+
+    var circumference = 213.6;
+    var offset = circumference - (score / 5) * circumference;
+    var ring = document.getElementById('scoreRing');
+    ring.style.strokeDashoffset = offset;
+    var color = score >= 4 ? '#107c10' : score >= 3 ? '#ff8c00' : '#d13438';
+    ring.style.stroke = color;
+    document.getElementById('scoreText').textContent = score + '/5';
+    document.getElementById('scoreText').style.color = color;
+
+    var messages = {
+        5: 'Ready to ship! This handshake has everything engineering needs.',
+        4: 'Almost there — one more field and this is complete.',
+        3: 'Good progress — fill in the remaining items.',
+        2: 'Getting started — keep going to build a complete picture.',
+        1: 'Just the basics — fill in more to create a useful handshake.',
+        0: 'Empty — go back and fill in the form fields.'
+    };
+    document.getElementById('scoreMessage').textContent = messages[score];
+
+    var adoLine = adoLinked && selectedAdoItem ? '<div style="font-size:13px;color:#5b2d90;padding:6px 0;margin-bottom:4px;">🔗 Linked to ADO #' + selectedAdoItem.id + ' — 2 fields auto-filled</div>' : '';
+    document.getElementById('reviewSummary').innerHTML = '<div style="margin-top:16px;">' + adoLine +
+        items.map(function(i) { return '<div style="font-size:14px;padding:4px 0;">' + i + '</div>'; }).join('') + '</div>';
+}
+
+// ══════════════════════════════════════════════════════
+// PUBLISH TO ADO
+// ══════════════════════════════════════════════════════
+function publishToAdo() {
+    publishedWorkItemId = 13950000 + Math.floor(Math.random() * 1000);
+    var featureName = document.getElementById('featureName').value.trim() || 'Untitled Feature';
+    var parentId = selectedAdoItem ? selectedAdoItem.id : '—';
+    var parentTitle = selectedAdoItem ? selectedAdoItem.title : featureName;
+    var iterChip = document.querySelector('#iterChips .chip.selected');
+    var iterationText = iterChip ? iterChip.textContent : 'Backlog';
+    var owner = selectedOwner || 'Unassigned';
+
+    // Add new handshake to data so it shows up on dashboard
+    var scoreEl = document.getElementById('readinessScore');
+    var score = scoreEl ? parseInt(scoreEl.textContent) || 0 : 0;
+    var today = new Date();
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var dateStr = months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
+    var ownerInitials = owner !== 'Unassigned' ? owner.split(' ').map(function(w){return w[0];}).join('') : null;
+    handshakeData.push({
+        name: featureName,
+        pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4',
+        status: 'published', score: score, adoId: '#' + publishedWorkItemId,
+        adoState: 'new', date: dateStr,
+        owner: owner !== 'Unassigned' ? owner : null,
+        ownerInitials: ownerInitials,
+        parentId: '#' + parentId, milestone: 3,
+        area: selectedAdoItem ? selectedAdoItem.areaPath.split('\\').pop() : 'Digital Sales / Voice Agent',
+        kickoffDate: dateStr
+    });
+
+    document.getElementById('successWiTitle').textContent = 'Prototype Handshake: ' + featureName;
+    document.getElementById('successWiId').innerHTML = '#' + publishedWorkItemId + ' <span style="font-size:11px;background:#fff4ce;color:#8a6914;padding:2px 8px;border-radius:10px;margin-left:6px;font-weight:600;">Simulated</span>';
+    document.getElementById('successParent').textContent = '#' + parentId + ' · ' + parentTitle;
+    document.getElementById('successOwner').textContent = owner;
+    document.getElementById('successIteration').textContent = iterationText;
+    document.getElementById('successNotifyName').textContent = owner;
+
+    document.getElementById('briefAdoId').textContent = '#' + publishedWorkItemId;
+    document.getElementById('briefParentRef').textContent = '#' + parentId;
+    document.getElementById('briefAdoSource').classList.add('visible');
+
+    showView('view-success');
+}
+
+function openInAdo() {
+    // Open the parent feature work item (real ADO item), not the simulated new ID
+    var id = selectedAdoItem ? selectedAdoItem.id : (publishedWorkItemId || 13928100);
+    window.open(ADO_BASE + id, '_blank');
+}
+
+// ══════════════════════════════════════════════════════
+// SUBMIT TO ENGINEERING (from Draft)
+// ══════════════════════════════════════════════════════
+function submitToEngineering(featureName) {
+    var workItemId = 13950000 + Math.floor(Math.random() * 1000);
+
+    // Show confirmation modal
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s ease;';
+    overlay.innerHTML =
+        '<div style="background:white;border-radius:16px;padding:32px 36px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
+            '<div style="text-align:center;margin-bottom:20px;">' +
+                '<div style="font-size:40px;margin-bottom:8px;">📤</div>' +
+                '<div style="font-size:18px;font-weight:700;color:#323130;">Submit to Engineering?</div>' +
+                '<div style="font-size:14px;color:#605e5c;margin-top:8px;line-height:1.6;">This will create a <strong>User Story</strong> in ADO with the full handshake brief attached and notify the assigned engineering lead.</div>' +
+            '</div>' +
+            '<div style="background:#f0fdf4;border-radius:10px;padding:14px 16px;margin-bottom:20px;">' +
+                '<div style="font-size:13px;color:#323130;"><strong>Feature:</strong> ' + featureName + '</div>' +
+                '<div style="font-size:13px;color:#323130;margin-top:4px;"><strong>ADO ID:</strong> #' + workItemId + '</div>' +
+                '<div style="font-size:13px;color:#323130;margin-top:4px;"><strong>Status will change:</strong> Draft → <span style="color:#107c10;font-weight:600;">Submitted</span></div>' +
+            '</div>' +
+            '<div style="display:flex;gap:10px;justify-content:flex-end;">' +
+                '<button onclick="this.closest(\'div[style*=position\\\\:fixed]\').remove()" style="padding:10px 20px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;color:#323130;">Cancel</button>' +
+                '<button onclick="confirmSubmit(this,\'' + featureName.replace(/'/g, "\\'") + '\',' + workItemId + ')" style="padding:10px 20px;background:#107c10;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;">📤 Submit & Notify Eng</button>' +
+            '</div>' +
+        '</div>';
+    document.body.appendChild(overlay);
+}
+
+function confirmSubmit(btn, featureName, workItemId) {
+    // Remove modal
+    btn.closest('div[style*="position:fixed"]').remove();
+
+    // Update the draft item status in data
+    handshakeData.forEach(function(h) {
+        if (h.name === featureName && h.status === 'draft') {
+            h.status = 'published';
+        }
+    });
+
+    // Re-render PM cards
+    renderPmCards();
+
+    // Show success toast
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#107c10;color:white;padding:14px 28px;border-radius:10px;font-size:14px;z-index:1000;animation:fadeIn 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;';
+    toast.innerHTML = '<span style="font-size:20px;">✅</span><div><strong>' + featureName + '</strong> submitted to engineering!<br><span style="font-size:12px;opacity:0.85;">User Story #' + workItemId + ' created in ADO · Engineering lead notified</span></div>';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 4000);
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+renderPmCards();
+</script>
+</body>
+</html>
