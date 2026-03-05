@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mission: AI Possible — PM + Engineering: Better Together</title>
+    <title>Mission: AI Possible — PM + Engineering Handshake Builder (Simplified)</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f5; color: #1a1a1a; min-height: 100vh; }
@@ -100,19 +100,6 @@
         .empty-card { border: 2px dashed #d0d0d0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 160px; color: #a0a0a0; }
         .empty-card:hover { border-color: #0078d4; color: #0078d4; }
         .empty-card .plus-icon { font-size: 32px; margin-bottom: 8px; }
-
-        /* ── Editable Milestone Dates on Cards ── */
-        .card-milestones { margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
-        .card-milestones-label { font-size: 10px; font-weight: 600; color: #a0a0a0; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
-        .card-ms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
-        .card-ms-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #605e5c; }
-        .card-ms-icon { font-size: 10px; flex-shrink: 0; }
-        .card-ms-name { font-weight: 600; color: #8a8886; flex-shrink: 0; }
-        .card-ms-date { color: #323130; cursor: pointer; padding: 1px 4px; border-radius: 3px; border: 1px solid transparent; transition: all 0.15s; position: relative; }
-        .card-ms-date:hover { background: #f0f6fc; border-color: #c7e0f4; }
-        .card-ms-date.empty { color: #c8c6c4; font-style: italic; }
-        .card-ms-date input[type="date"] { position: absolute; opacity: 0; width: 0; height: 0; top: 0; left: 0; }
-        .card-ms-src { font-size: 8px; margin-left: 1px; }
 
         /* ══════════════════════════════════════ */
         /* LEADERSHIP — AREA GROUP CARDS         */
@@ -223,15 +210,7 @@
         .checklist-item:hover { border-color: #0078d4; } .checklist-item.checked { background: #f0f6fc; border-color: #c7e0f4; }
         .check-box { width: 20px; height: 20px; border: 2px solid #d0d0d0; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; color: transparent; transition: all 0.15s; }
         .checklist-item.checked .check-box { background: #0078d4; border-color: #0078d4; color: #ffffff; }
-        .check-text { font-size: 14px; flex: 1; }
-
-        /* ── Artifact Upload ── */
-        .artifact-upload-btn { font-size: 11px; padding: 3px 10px; border-radius: 4px; border: 1px solid #c8c6c4; background: #faf9f8; color: #605e5c; cursor: pointer; font-family: inherit; transition: all 0.15s; flex-shrink: 0; }
-        .artifact-upload-btn:hover { border-color: #0078d4; color: #0078d4; background: #f0f6fc; }
-        .artifact-upload-btn.has-file { border-color: #107c10; color: #107c10; background: #dff6dd; }
-        .artifact-file-info { font-size: 11px; color: #107c10; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-        .artifact-file-remove { font-size: 10px; color: #d13438; cursor: pointer; border: none; background: none; font-family: inherit; padding: 0 2px; }
-        .artifact-file-remove:hover { text-decoration: underline; }
+        .check-text { font-size: 14px; }
         .form-actions { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 24px; border-top: 1px solid #e8e8e8; }
 
         /* ── Completeness Ring ── */
@@ -441,7 +420,7 @@
                 </div>
                 <div class="stat-card" onclick="toggleDrill('pm-velocity')" id="statCardVelocity">
                     <div class="stat-value" style="color:#ff8c00;" id="statVelocityVal">—</div>
-                    <div class="stat-label">Avg. Kickoff → Prototype</div>
+                    <div class="stat-label">Avg. Kickoff → Proto</div>
                     <div class="stat-sub" id="statVelocitySub">Loading...</div>
                     <div class="stat-expand-hint">Click to see full pipeline →</div>
                 </div>
@@ -531,7 +510,7 @@
                         <div style="font-size:13px;color:#323130;line-height:1.6;">Once engineering has the handshake brief, how long until the feature ships? This is the metric that proves the handshake process reduces eng ramp-up time.</div>
                     </div>
                     <div style="background:#f5f0ff;border-radius:10px;padding:14px 16px;">
-                        <div style="font-weight:700;color:#5b2d90;margin-bottom:4px;">Shipped to Production</div>
+                        <div style="font-weight:700;color:#5b2d90;margin-bottom:4px;">Shipped to Prod</div>
                         <div style="font-size:13px;color:#323130;line-height:1.6;">Count of projects that completed the full pipeline and are live in production. The ultimate outcome metric — are prototypes becoming real features?</div>
                     </div>
                 </div>
@@ -558,12 +537,12 @@
                     <div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>
                     <div style="flex:6;text-align:center;background:#107c10;padding:12px 6px;border-right:2px solid #1e2028;">
                         <div style="font-size:20px;font-weight:700;color:#ffffff;">6d</div>
-                        <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Prototype → Handshake</div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Proto → Handshake</div>
                     </div>
                     <div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>
                     <div style="flex:12;text-align:center;background:#8661c5;border-radius:0 10px 10px 0;padding:12px 6px;">
                         <div style="font-size:20px;font-weight:700;color:#ffffff;">12d</div>
-                        <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Handshake → Production</div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Handshake → Prod</div>
                     </div>
                 </div>
                 <div style="text-align:center;margin-top:10px;font-size:12px;color:#9ca0ae;">📐 Establishing baseline this quarter · Stages proportionally sized by duration</div>
@@ -571,9 +550,28 @@
 
             <div class="stats-row" id="leaderStats">
                 <div class="stat-card" onclick="toggleDrill('lead-pipeline')">
-                    <div class="stat-value" style="color:#0078d4;">—</div>
-                    <div class="stat-label">Total Projects</div>
-                    <div class="stat-sub">Loading...</div>
+                    <div class="stat-value" style="color:#0078d4;">12</div>
+                    <div class="stat-label">Total Handshakes</div>
+                    <div class="stat-sub">Across all PMs this quarter</div>
+                    <div class="stat-expand-hint">Click for pipeline view →</div>
+                </div>
+                <div class="stat-card" onclick="toggleDrill('lead-coverage')">
+                    <div class="stat-value" style="color:#107c10;">83%</div>
+                    <div class="stat-label">Feature Coverage</div>
+                    <div class="stat-sub">Active features with a handshake</div>
+                    <div class="stat-expand-hint">Click for gaps →</div>
+                </div>
+                <div class="stat-card" onclick="toggleDrill('lead-velocity')">
+                    <div class="stat-value" style="color:#ff8c00;">6 days</div>
+                    <div class="stat-label">Avg. Handshake → Dev</div>
+                    <div class="stat-sub">↓ 3 days vs last quarter</div>
+                    <div class="stat-expand-hint">Click for trend →</div>
+                </div>
+                <div class="stat-card" onclick="toggleDrill('lead-shipped')">
+                    <div class="stat-value" style="color:#5b2d90;">3</div>
+                    <div class="stat-label">Shipped to Prod</div>
+                    <div class="stat-sub">Prototypes → real features</div>
+                    <div class="stat-expand-hint">Click for details →</div>
                 </div>
             </div>
 
@@ -643,11 +641,7 @@
             </div>
 
             <!-- Portfolio Overview (replaces Feature Area grouping) -->
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                <div class="section-label" style="margin-bottom:0;">By Portfolio Overview</div>
-                <button onclick="toggleDrill('lead-timeline')" style="padding:8px 18px;background:linear-gradient(135deg,#1e2028 0%,#2a2e3a 100%);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">⏱️ View Full Pipeline Timeline →</button>
-            </div>
-            <div class="drill-panel" id="drill-lead-timeline" style="margin-bottom:20px;"></div>
+            <div class="section-label">By Portfolio Overview</div>
             <div id="areaGroupContainer"></div>
 
             <div class="section-label" style="margin-top:28px;">Needs Attention</div>
@@ -678,27 +672,11 @@
                 <div id="adoConnPanel" style="background:linear-gradient(135deg,#f3f2f1,#e8e6e4);border-radius:8px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                     <div style="flex:1;min-width:200px;">
                         <div style="font-size:13px;font-weight:600;color:#323130;">🔌 Connect to live ADO data <span style="font-weight:400;color:#605e5c;">(optional)</span></div>
-                        <div style="font-size:11px;color:#a19f9d;margin-top:2px;">Enter a PAT with <b>Work Items (Read)</b> scope. Stored in session only. <a href="javascript:void(0)" onclick="document.getElementById('patHelpPanel').style.display=document.getElementById('patHelpPanel').style.display==='none'?'block':'none'" style="color:#0078d4;text-decoration:underline;cursor:pointer;">How do I get a PAT?</a></div>
+                        <div style="font-size:11px;color:#a19f9d;margin-top:2px;">Enter a PAT with <b>Work Items (Read)</b> scope. Stored in session only.</div>
                     </div>
                     <input id="adoPatInput" type="password" placeholder="Paste your ADO PAT..." style="flex:1;min-width:180px;padding:6px 10px;border:1px solid #c8c6c4;border-radius:4px;font-size:13px;font-family:inherit;">
                     <button onclick="connectToAdo()" style="background:#0078d4;color:#fff;border:none;padding:6px 16px;border-radius:4px;font-size:13px;cursor:pointer;font-weight:600;">Connect</button>
                     <div id="adoConnStatus" style="width:100%;font-size:12px;color:#a0a0a0;margin-top:2px;"></div>
-                    <!-- Inline PAT help -->
-                    <div id="patHelpPanel" style="display:none;width:100%;background:#fff;border:1px solid #e1dfdd;border-radius:6px;padding:14px 16px;margin-top:4px;font-size:12.5px;line-height:1.7;color:#323130;">
-                        <div style="font-weight:600;font-size:13px;margin-bottom:6px;">📋 Create a Personal Access Token (PAT) — takes ~30 seconds</div>
-                        <ol style="margin:0 0 0 18px;padding:0;">
-                            <li>Open <a href="https://microsoftit.visualstudio.com/_usersSettings/tokens" target="_blank" style="color:#0078d4;font-weight:600;">MicrosoftIT → Personal Access Tokens</a></li>
-                            <li>Click <b>+ New Token</b></li>
-                            <li>Name it anything (e.g. <i>"Handshake Prototype"</i>)</li>
-                            <li>Set <b>Organization</b> = <code style="background:#f3f2f1;padding:1px 4px;border-radius:3px;">MicrosoftIT</code></li>
-                            <li>Set <b>Expiration</b> = 30 days (or custom)</li>
-                            <li>Under <b>Scopes</b>, select <b>Work Items → Read</b> only</li>
-                            <li>Click <b>Create</b> → copy the token → paste it above</li>
-                        </ol>
-                        <div style="margin-top:8px;padding:8px 10px;background:#fff4ce;border-radius:4px;font-size:11.5px;color:#6b5900;">
-                            ⚠️ <b>Security note:</b> Your PAT is only stored in this browser tab's session. It is never saved to disk, sent to any server other than <code style="background:#f3f2f1;padding:1px 4px;border-radius:3px;">dev.azure.com/MicrosoftIT</code>, or visible to other users. Closing the tab clears it.
-                        </div>
-                    </div>
                 </div>
 
                 <div class="picker-filter-row">
@@ -715,13 +693,13 @@
                     <div class="field-map-title">ADO → Handshake Field Mapping</div>
                     <div class="field-map-row"><div class="field-map-ado">System.Title</div><div class="field-map-arrow">→</div><div class="field-map-hs">Feature Name</div></div>
                     <div class="field-map-row"><div class="field-map-ado">System.Description</div><div class="field-map-arrow">→</div><div class="field-map-hs">One-Line Summary</div></div>
-                    <div class="field-map-row"><div class="field-map-ado">Microsoft.VSTS.Common.AcceptanceCriteria</div><div class="field-map-arrow">→</div><div class="field-map-hs">Primary Flow + Scenarios</div></div>
+                    <div class="field-map-row"><div class="field-map-ado">Microsoft.VSTS.Common.AcceptanceCriteria</div><div class="field-map-arrow">—</div><div class="field-map-hs">Not mapped (scenarios in repo README)</div></div>
                     <div class="field-map-row"><div class="field-map-ado">System.AssignedTo</div><div class="field-map-arrow">→</div><div class="field-map-hs">Owner (pre-select)</div></div>
                     <div class="field-map-row"><div class="field-map-ado">System.IterationPath</div><div class="field-map-arrow">→</div><div class="field-map-hs">Target Iteration</div></div>
                     <div class="field-map-row"><div class="field-map-ado">System.AreaPath</div><div class="field-map-arrow">→</div><div class="field-map-hs">Feature Area (metadata)</div></div>
                     <div class="field-map-row"><div class="field-map-ado">System.Tags</div><div class="field-map-arrow">→</div><div class="field-map-hs">Tags (metadata)</div></div>
-                    <div class="field-map-row" style="color:#a0a0a0;font-style:italic;"><div class="field-map-ado">Prototype Link</div><div class="field-map-arrow">—</div><div class="field-map-hs">Manual entry (not in ADO)</div></div>
-                    <div class="field-map-row" style="color:#a0a0a0;font-style:italic;"><div class="field-map-ado">Boundaries / Simulated</div><div class="field-map-arrow">—</div><div class="field-map-hs">Manual entry (PM knowledge)</div></div>
+                    <div class="field-map-row" style="color:#a0a0a0;font-style:italic;"><div class="field-map-ado">Repo Link</div><div class="field-map-arrow">—</div><div class="field-map-hs">Manual entry (not in ADO)</div></div>
+                    <div class="field-map-row" style="color:#a0a0a0;font-style:italic;"><div class="field-map-ado">What's been showcased</div><div class="field-map-arrow">—</div><div class="field-map-hs">Manual entry (PM knowledge)</div></div>
                     <div class="field-map-row" style="color:#a0a0a0;font-style:italic;"><div class="field-map-ado">Open Questions</div><div class="field-map-arrow">—</div><div class="field-map-hs">Manual entry (PM knowledge)</div></div>
                 </div>
 
@@ -746,17 +724,15 @@
         <div class="step-progress" style="display:none;" id="stepProgress">
             <div class="step-group"><div class="step-dot active" id="stepDot1">1</div><div class="step-label">Basics</div></div>
             <div class="step-line" id="stepLine1"></div>
-            <div class="step-group"><div class="step-dot upcoming" id="stepDot2">2</div><div class="step-label">Scenarios</div></div>
+            <div class="step-group"><div class="step-dot upcoming" id="stepDot2">2</div><div class="step-label">Context</div></div>
             <div class="step-line" id="stepLine2"></div>
-            <div class="step-group"><div class="step-dot upcoming" id="stepDot3">3</div><div class="step-label">Boundaries</div></div>
-            <div class="step-line" id="stepLine3"></div>
-            <div class="step-group"><div class="step-dot upcoming" id="stepDot4">4</div><div class="step-label">Publish</div></div>
+            <div class="step-group"><div class="step-dot upcoming" id="stepDot3">3</div><div class="step-label">Publish</div></div>
         </div>
 
         <!-- STEP 1 -->
         <div class="form-section" id="step1">
             <div class="section-title">What are you handing over?</div>
-            <div class="section-hint">The basics — name it, link it, give engineering enough context.</div>
+            <div class="section-hint">The basics — name it, link the repo (with a README), and confirm business approval.</div>
             <div class="ado-filled-indicator" id="adoFilledBanner">
                 <span style="font-size:18px;">🔗</span>
                 <span>Fields marked <strong>ADO</strong> were auto-filled from work item <strong id="adoItemIdBanner"></strong>. You can edit any field.</span>
@@ -766,9 +742,9 @@
                 <input class="form-input" type="text" id="featureName" placeholder="e.g., eCommerce Voice AI Agent">
             </div>
             <div class="form-group">
-                <label class="form-label">Prototype Link</label>
-                <div class="form-hint">Repo URL, GitHub Pages link, or shared file — always manual</div>
-                <input class="form-input" type="url" id="protoLink" placeholder="https://github.com/...">
+                <label class="form-label">Repo Link</label>
+                <div class="form-hint">GitHub repo URL — make sure the README covers what's been built, scenarios, and setup instructions</div>
+                <input class="form-input" type="url" id="protoLink" placeholder="https://github.com/your-org/your-repo">
             </div>
             <div class="form-group">
                 <div class="form-label-row"><label class="form-label">One-Line Summary</label><span class="ado-badge" id="badge-summary">ADO</span></div>
@@ -785,66 +761,37 @@
                     <div class="chip" onclick="toggleChip(this)">Not yet</div>
                 </div>
             </div>
-            <div class="form-actions"><div></div><button class="btn-primary" onclick="nextStep(2)">Next: Scenarios →</button></div>
+            <div class="form-actions"><div></div><button class="btn-primary" onclick="nextStep(2)">Next: Context →</button></div>
         </div>
 
-        <!-- STEP 2 -->
+        <!-- STEP 2: CONTEXT -->
         <div class="form-section" id="step2">
-            <div class="section-title">What scenarios does it cover?</div>
-            <div class="section-hint">Help engineering understand which paths they can click through.</div>
-            <div class="form-group"><div class="form-label-row"><label class="form-label">Primary Flow</label><span class="ado-badge" id="badge-primaryFlow">ADO</span></div><textarea class="form-input" id="primaryFlow" placeholder="e.g., Customer lands → clicks voice → asks about M365 → recommends → generates quote"></textarea></div>
-            <div class="form-group"><div class="form-label-row"><label class="form-label">Additional Scenarios</label><span class="ado-badge" id="badge-additionalScenarios">ADO</span></div><textarea class="form-input" id="additionalScenarios" placeholder="• Chat → Voice modality switch&#10;• After-hours callback&#10;• Warm handshake to specialist"></textarea></div>
-            <div class="form-group"><label class="form-label">What's NOT in the prototype?</label><textarea class="form-input" id="notCovered" placeholder="• Multi-language support&#10;• Mobile layouts&#10;• Authenticated experience"></textarea></div>
-            <div class="form-actions"><button class="btn-secondary" onclick="nextStep(1)">← Back</button><button class="btn-primary" onclick="nextStep(3)">Next: Boundaries →</button></div>
-        </div>
-
-        <!-- STEP 3 -->
-        <div class="form-section" id="step3">
-            <div class="section-title">Where does the prototype end?</div>
-            <div class="section-hint">What's simulated vs. real? What do you need engineering's input on?</div>
-            <div class="form-group"><label class="form-label">What's simulated?</label><div class="form-hint">Things that look real but are scripted</div><textarea class="form-input" id="simulated" placeholder="• Voice uses pre-recorded TTS&#10;• Quote pricing hardcoded&#10;• Customer data is sample data"></textarea></div>
-            <div class="form-group"><label class="form-label">Design specs embedded?</label><div class="chip-container" id="specChips"><div class="chip" onclick="toggleChip(this)">Yes — CSS and layout in prototype</div><div class="chip" onclick="toggleChip(this)">Partially</div><div class="chip" onclick="toggleChip(this)">Separate Figma / design doc</div></div></div>
-            <div class="form-group"><label class="form-label">Open Questions for Engineering</label><div class="form-hint">What do you need engineering's input on?</div><textarea class="form-input" id="openQuestions" placeholder="• Architecture for real-time context passing?&#10;• Existing speech SDK or custom integration?"></textarea></div>
-            <div class="form-group"><label class="form-label">Supporting Artifacts</label>
-                <div class="form-hint">Check off what you have, then attach the file. Attachments will be linked to the ADO work item.</div>
-                <div class="checklist-item" onclick="toggleCheck(this)" data-artifact="userflow">
-                    <div class="check-box">✓</div>
-                    <div class="check-text">User flow diagrams</div>
-                    <button class="artifact-upload-btn" onclick="event.stopPropagation();triggerArtifactUpload('userflow')" id="uploadBtn-userflow">📎 Attach</button>
-                    <input type="file" id="artifactFile-userflow" style="display:none" accept=".pdf,.png,.jpg,.jpeg,.svg,.docx,.pptx,.vsdx,.md" onchange="handleArtifactFile(this,'userflow')">
-                    <span class="artifact-file-info" id="fileInfo-userflow" style="display:none"></span>
-                </div>
-                <div class="checklist-item" onclick="toggleCheck(this)" data-artifact="readme">
-                    <div class="check-box">✓</div>
-                    <div class="check-text">README with setup instructions</div>
-                    <button class="artifact-upload-btn" onclick="event.stopPropagation();triggerArtifactUpload('readme')" id="uploadBtn-readme">📎 Attach</button>
-                    <input type="file" id="artifactFile-readme" style="display:none" accept=".md,.txt,.pdf,.docx,.html" onchange="handleArtifactFile(this,'readme')">
-                    <span class="artifact-file-info" id="fileInfo-readme" style="display:none"></span>
-                </div>
-                <div class="checklist-item" onclick="toggleCheck(this)" data-artifact="scripts">
-                    <div class="check-box">✓</div>
-                    <div class="check-text">Conversation/flow scripts</div>
-                    <button class="artifact-upload-btn" onclick="event.stopPropagation();triggerArtifactUpload('scripts')" id="uploadBtn-scripts">📎 Attach</button>
-                    <input type="file" id="artifactFile-scripts" style="display:none" accept=".md,.txt,.pdf,.docx,.json,.yaml,.yml" onchange="handleArtifactFile(this,'scripts')">
-                    <span class="artifact-file-info" id="fileInfo-scripts" style="display:none"></span>
-                </div>
-                <div class="checklist-item" onclick="toggleCheck(this)" data-artifact="design">
-                    <div class="check-box">✓</div>
-                    <div class="check-text">Design specs or style guide</div>
-                    <button class="artifact-upload-btn" onclick="event.stopPropagation();triggerArtifactUpload('design')" id="uploadBtn-design">📎 Attach</button>
-                    <input type="file" id="artifactFile-design" style="display:none" accept=".pdf,.png,.jpg,.jpeg,.svg,.figma,.sketch,.docx,.pptx" onchange="handleArtifactFile(this,'design')">
-                    <span class="artifact-file-info" id="fileInfo-design" style="display:none"></span>
-                </div>
+            <div class="section-title">What context does engineering need?</div>
+            <div class="section-hint">Detailed scenarios, flows, and boundaries should live in your repo README. Use this to highlight the key things.</div>
+            <div class="form-group">
+                <label class="form-label">What's been showcased / demoed?</label>
+                <div class="form-hint">Summarize what stakeholders have seen — this helps engineering understand what's been validated.</div>
+                <textarea class="form-input" id="showcased" rows="4" placeholder="• Demoed end-to-end voice flow to Nicole and BIC CXP leadership&#10;• Showed chat → voice modality switch&#10;• Walked through quote generation happy path&#10;• After-hours callback flow reviewed by PM team"></textarea>
             </div>
-            <div class="form-actions"><button class="btn-secondary" onclick="nextStep(2)">← Back</button><button class="btn-primary" onclick="nextStep(4)">Next →</button></div>
+            <div class="form-group">
+                <label class="form-label">Anything else engineering should know?</label>
+                <div class="form-hint">Context that isn't in the repo — gotchas, dependencies, things you've learned.</div>
+                <textarea class="form-input" id="engNotes" rows="4" placeholder="• Voice uses pre-recorded TTS — production needs real-time&#10;• Quote pricing is hardcoded — needs QuoteX API&#10;• Speech SDK integration TBD&#10;• Figma designs are in the shared drive"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Open Questions for Engineering</label>
+                <div class="form-hint">What do you need engineering's input on?</div>
+                <textarea class="form-input" id="openQuestions" rows="3" placeholder="• Architecture for real-time context passing?&#10;• Existing speech SDK or custom integration?&#10;• Latency target for quote generation?"></textarea>
+            </div>
+            <div class="form-actions"><button class="btn-secondary" onclick="nextStep(1)">← Back</button><button class="btn-primary" onclick="nextStep(3)">Publish to ADO →</button></div>
         </div>
 
-        <!-- STEP 4 -->
-        <div class="form-section" id="step4">
+        <!-- STEP 3: PUBLISH -->
+        <div class="form-section" id="step3">
             <div class="section-title">Review & Publish to ADO</div>
             <div class="section-hint">Creates a User Story in ADO parented under the feature. Engineering gets notified.</div>
             <div class="completeness-card">
-                <div class="score-ring"><svg width="80" height="80" viewBox="0 0 80 80"><circle class="score-ring-bg" cx="40" cy="40" r="34"></circle><circle class="score-ring-fill" cx="40" cy="40" r="34" stroke="#0078d4" stroke-dasharray="213.6" stroke-dashoffset="213.6" id="scoreRing"></circle></svg><div class="score-ring-text" id="scoreText">0/7</div></div>
+                <div class="score-ring"><svg width="80" height="80" viewBox="0 0 80 80"><circle class="score-ring-bg" cx="40" cy="40" r="34"></circle><circle class="score-ring-fill" cx="40" cy="40" r="34" stroke="#0078d4" stroke-dasharray="213.6" stroke-dashoffset="213.6" id="scoreRing"></circle></svg><div class="score-ring-text" id="scoreText">0/5</div></div>
                 <div class="score-details"><h3>Handshake Completeness</h3><p id="scoreMessage">Fill in the fields above to see your score.</p></div>
             </div>
             <div id="reviewSummary"></div>
@@ -855,7 +802,7 @@
                 <div class="form-group" style="margin-bottom:16px;"><label class="form-label">Assign Owner (Engineering Lead)</label><div class="form-hint">They'll get a notification when the User Story is created.</div><div class="owner-picker"><div class="owner-option" onclick="selectOwner(this,'Selva Sankaran')"><div class="owner-avatar">SS</div><span>Selva Sankaran</span></div><div class="owner-option" onclick="selectOwner(this,'Phaneendra Jayanty')"><div class="owner-avatar">PJ</div><span>Phaneendra Jayanty</span></div><div class="owner-option" onclick="selectOwner(this,'Qiang Pei')"><div class="owner-avatar">QP</div><span>Qiang Pei</span></div><div class="owner-option" onclick="selectOwner(this,'Sathish Lenin')"><div class="owner-avatar">SL</div><span>Sathish Lenin</span></div><div class="owner-option" onclick="selectOwner(this,'Rohit Mallya')"><div class="owner-avatar">RM</div><span>Rohit Mallya</span></div></div></div>
                 <div class="form-group" style="margin-bottom:0;"><label class="form-label">Target Iteration</label><div class="chip-container" id="iterChips"><div class="chip" onclick="toggleChip(this)">Sprint 24.3 (current)</div><div class="chip" onclick="toggleChip(this)">Sprint 24.4</div><div class="chip" onclick="toggleChip(this)">Sprint 24.5</div><div class="chip" onclick="toggleChip(this)">Backlog</div></div></div>
             </div>
-            <div class="form-actions"><button class="btn-secondary" onclick="nextStep(3)">← Back</button><button class="btn-primary" onclick="publishToAdo()" style="background:#107c10;gap:8px;">📤 Create User Story in ADO</button></div>
+            <div class="form-actions"><button class="btn-secondary" onclick="nextStep(2)">← Back</button><button class="btn-primary" onclick="publishToAdo()" style="background:#107c10;gap:8px;">📤 Create User Story in ADO</button></div>
         </div>
     </div>
 </div>
@@ -898,18 +845,18 @@
             </div>
             <div class="brief-body">
                 <div class="brief-section"><div class="brief-section-title">Summary</div><div class="brief-text" id="briefSummary">End-to-end voice AI agent prototype for eCommerce — covers chat, voice, modality switching, human specialist handshake, quoting, and after-hours callback flows.</div></div>
-                <div class="brief-section"><div class="brief-section-title">Prototype</div><a class="brief-link" href="#" id="briefLink" target="_blank">🔗 Open Prototype →</a></div>
+                <div class="brief-section"><div class="brief-section-title">Repo</div><a class="brief-link" href="#" id="briefLink" target="_blank">🔗 Open Repo →</a></div>
                 <div class="brief-section">
-                    <div class="brief-section-title">Scenarios Covered</div>
-                    <div style="margin-bottom:12px;"><div style="font-size:13px;font-weight:600;color:#107c10;margin-bottom:8px;">✅ PRIMARY FLOW</div><div class="brief-text" id="briefPrimary">Customer lands on page → clicks voice icon → asks about M365 → AI recommends plan → generates quote → sends to email</div></div>
-                    <div style="margin-bottom:12px;"><div style="font-size:13px;font-weight:600;color:#0078d4;margin-bottom:8px;">📋 ADDITIONAL SCENARIOS</div><ul class="brief-list" id="briefScenarios"><li><span class="icon">→</span> Chat → Voice modality switch with context carry-over</li><li><span class="icon">→</span> After-hours flow with callback scheduling</li><li><span class="icon">→</span> Voice → Human specialist warm handshake</li><li><span class="icon">→</span> Quote generation: happy path, email-later, skip</li></ul></div>
-                    <div><div style="font-size:13px;font-weight:600;color:#605e5c;margin-bottom:8px;">⬜ NOT IN PROTOTYPE</div><ul class="brief-list" id="briefNotCovered" style="color:#605e5c;"><li><span class="icon">—</span> Multi-language support</li><li><span class="icon">—</span> Mobile-specific layouts</li><li><span class="icon">—</span> Authenticated experience</li></ul></div>
+                    <div class="brief-section-title">What's Been Showcased / Demoed</div>
+                    <div class="brief-text" id="briefShowcased">Demoed end-to-end voice flow to Nicole and BIC CXP leadership. Showed chat → voice modality switch. Walked through quote generation happy path.</div>
                 </div>
-                <div class="brief-section"><div class="brief-section-title">Where the Prototype Ends</div><ul class="brief-list" id="briefSimulated"><li><span class="icon">⚙️</span> Voice responses use Azure TTS (pre-rendered) — production needs real-time</li><li><span class="icon">⚙️</span> Quote pricing is hardcoded — production needs QuoteX API</li><li><span class="icon">⚙️</span> Customer data is sample — no real CRM connection</li></ul></div>
+                <div class="brief-section">
+                    <div class="brief-section-title">Notes for Engineering</div>
+                    <div class="brief-text" id="briefEngNotes">Voice uses pre-recorded TTS — production needs real-time. Quote pricing is hardcoded — needs QuoteX API. Customer data is sample — no real CRM connection.</div>
+                </div>
                 <div class="brief-section"><div class="brief-section-title">Open Questions for Engineering</div><div id="briefQuestions"><div class="brief-open-q">What's the right architecture for real-time context passing between chat and voice?</div><div class="brief-open-q">Can we use the existing speech SDK or do we need a custom integration?</div><div class="brief-open-q">What's the latency target for quote generation?</div></div></div>
-                <div class="brief-section"><div class="brief-section-title">Supporting Artifacts</div><div style="display:flex;flex-wrap:wrap;gap:6px;" id="briefArtifacts"><span class="brief-tag">✓ User Flow Diagrams</span><span class="brief-tag">✓ README</span><span class="brief-tag">✓ Conversation Scripts</span><span class="brief-tag">✓ Design Specs</span></div><div id="briefAttachments" style="display:none;margin-top:10px;padding:10px 14px;background:#f0f6fc;border-radius:8px;border:1px solid #c7e0f4;"></div><div style="margin-top:8px;font-size:11px;color:#605e5c;display:flex;align-items:center;gap:4px;"><span>🔗</span> <em>Attached files will be uploaded as ADO work item attachments when submitted to Engineering</em></div></div>
             </div>
-            <div class="brief-footer"><span>Generated by Mission: AI Possible · PM + Engineering: Better Together · Mar 3, 2026</span><div class="brief-score-badge"><div class="brief-score-dot" id="briefScoreDot" style="background:#0078d4;"></div> <span id="briefScoreText">7/7 Complete</span></div></div>
+            <div class="brief-footer"><span>Generated by Mission: AI Possible · PM + Engineering: Better Together · Mar 3, 2026</span><div class="brief-score-badge"><div class="brief-score-dot" id="briefScoreDot" style="background:#0078d4;"></div> <span id="briefScoreText">5/5 Complete</span></div></div>
         </div>
     </div>
 </div>
@@ -1145,19 +1092,19 @@ var mockAdoItems = [
 // Handshake data (for landing page) — uses real ADO work items from Project Vox
 var handshakeData = [
     // ── Sunil's handshakes (real features from ADO Scenario #13927662) ──
-    { name: 'Voice Agent Service × Voice Live API', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506378', adoState: 'closed', date: 'Feb 17, 2026', owner: 'Qiang Pei', ownerInitials: 'QP', parentId: '#13927662', milestone: 6, area: 'Digital Sales / Voice Agent', kickoffDate: 'Jan 27, 2026', protoDate: 'Feb 5, 2026', devStart: 'Feb 21, 2026', shipDate: 'Mar 2, 2026' },
-    { name: 'EOS Call Script & Workflow', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 7, adoId: '#15506380', adoState: 'new', date: 'Feb 28, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 12, 2026', protoDate: 'Feb 19, 2026', devStart: 'Mar 1, 2026' },
-    { name: 'Consent Validation & Time Zone Queuing', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 6, adoId: '#15506373', adoState: 'new', date: 'Mar 1, 2026', owner: 'Phaneendra Jayanty', ownerInitials: 'PJ', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 17, 2026', protoDate: 'Feb 24, 2026', devStart: 'Mar 3, 2026' },
-    { name: 'Configurable Tools for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 4, adoId: '#15506381', adoState: 'new', date: 'Mar 2, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 2, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 24, 2026' },
-    { name: 'Operational Dashboard for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 3, adoId: '#15506383', adoState: 'new', date: 'Mar 3, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 1, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 28, 2026' },
+    { name: 'Voice Agent Service × Voice Live API', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 5, adoId: '#15506378', adoState: 'closed', date: 'Feb 17, 2026', owner: 'Qiang Pei', ownerInitials: 'QP', parentId: '#13927662', milestone: 6, area: 'Digital Sales / Voice Agent', kickoffDate: 'Jan 27, 2026', protoDate: 'Feb 5, 2026', devStart: 'Feb 21, 2026', shipDate: 'Mar 2, 2026' },
+    { name: 'EOS Call Script & Workflow', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 5, adoId: '#15506380', adoState: 'new', date: 'Feb 28, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 12, 2026', protoDate: 'Feb 19, 2026', devStart: 'Mar 1, 2026' },
+    { name: 'Consent Validation & Time Zone Queuing', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'published', score: 4, adoId: '#15506373', adoState: 'new', date: 'Mar 1, 2026', owner: 'Phaneendra Jayanty', ownerInitials: 'PJ', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 17, 2026', protoDate: 'Feb 24, 2026', devStart: 'Mar 3, 2026' },
+    { name: 'Configurable Tools for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 3, adoId: '#15506381', adoState: 'new', date: 'Mar 2, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 2, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 24, 2026' },
+    { name: 'Operational Dashboard for Voice Agent', pm: 'Sunil Venugopal', pmInitials: 'SV', pmColor: '#0078d4', status: 'draft', score: 2, adoId: '#15506383', adoState: 'new', date: 'Mar 3, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 1, area: 'Digital Sales / Voice Agent', kickoffDate: 'Feb 28, 2026' },
     // ── Team handshakes (other features under the same Scenario) ──
-    { name: 'CCAPI SDK Integration', pm: 'Team', pmInitials: 'T', pmColor: '#5b2d90', status: 'published', score: 7, adoId: '#15506379', adoState: 'new', date: 'Feb 15, 2026', owner: 'Sathish Lenin', ownerInitials: 'SL', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent' },
-    { name: 'Live Transcripts & Call Recordings', pm: 'Team', pmInitials: 'T', pmColor: '#5b2d90', status: 'published', score: 7, adoId: '#15506382', adoState: 'new', date: 'Feb 20, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 3, area: 'Digital Sales / Voice Agent' },
-    { name: 'PPE & Prod Infrastructure', pm: 'Team', pmInitials: 'T', pmColor: '#107c10', status: 'published', score: 6, adoId: '#15506384', adoState: 'new', date: 'Feb 25, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 3, area: 'Digital Sales / Voice Agent' },
-    { name: 'Live Site Alerts & Monitoring', pm: 'Team', pmInitials: 'T', pmColor: '#107c10', status: 'draft', score: 5, adoId: '#15506388', adoState: 'new', date: 'Mar 1, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 2, area: 'Digital Sales / Voice Agent' },
-    { name: 'Auto Evaluation of Voice Agent', pm: 'Team', pmInitials: 'T', pmColor: '#d13438', status: 'draft', score: 3, adoId: '#15506395', adoState: 'new', date: 'Mar 2, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 1, area: 'Digital Sales / Voice Agent' },
-    { name: 'Business Data Ingestion Process', pm: 'Team', pmInitials: 'T', pmColor: '#d13438', status: 'published', score: 7, adoId: '#15506372', adoState: 'new', date: 'Jan 22, 2026', owner: 'Phaneendra Jayanty', ownerInitials: 'PJ', parentId: '#13927662', milestone: 3, area: 'Digital Sales / Voice Agent' },
-    { name: 'CCAPI POC Integration', pm: 'Team', pmInitials: 'T', pmColor: '#5b2d90', status: 'published', score: 7, adoId: '#15460458', adoState: 'new', date: 'Dec 24, 2025', owner: 'Rohit Mallya', ownerInitials: 'RM', parentId: '#13927662', milestone: 5, area: 'Marketing AI / Sales Enablement' }
+    { name: 'CCAPI SDK Integration', pm: 'Team', pmInitials: 'T', pmColor: '#5b2d90', status: 'published', score: 5, adoId: '#15506379', adoState: 'new', date: 'Feb 15, 2026', owner: 'Sathish Lenin', ownerInitials: 'SL', parentId: '#13927662', milestone: 4, area: 'Digital Sales / Voice Agent' },
+    { name: 'Live Transcripts & Call Recordings', pm: 'Team', pmInitials: 'T', pmColor: '#5b2d90', status: 'published', score: 5, adoId: '#15506382', adoState: 'new', date: 'Feb 20, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 3, area: 'Digital Sales / Voice Agent' },
+    { name: 'PPE & Prod Infrastructure', pm: 'Team', pmInitials: 'T', pmColor: '#107c10', status: 'published', score: 4, adoId: '#15506384', adoState: 'new', date: 'Feb 25, 2026', owner: 'Selva Sankaran', ownerInitials: 'SS', parentId: '#13927662', milestone: 3, area: 'Digital Sales / Voice Agent' },
+    { name: 'Live Site Alerts & Monitoring', pm: 'Team', pmInitials: 'T', pmColor: '#107c10', status: 'draft', score: 4, adoId: '#15506388', adoState: 'new', date: 'Mar 1, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 2, area: 'Digital Sales / Voice Agent' },
+    { name: 'Auto Evaluation of Voice Agent', pm: 'Team', pmInitials: 'T', pmColor: '#d13438', status: 'draft', score: 2, adoId: '#15506395', adoState: 'new', date: 'Mar 2, 2026', owner: null, ownerInitials: null, parentId: '#13927662', milestone: 1, area: 'Digital Sales / Voice Agent' },
+    { name: 'Business Data Ingestion Process', pm: 'Team', pmInitials: 'T', pmColor: '#d13438', status: 'published', score: 5, adoId: '#15506372', adoState: 'new', date: 'Jan 22, 2026', owner: 'Phaneendra Jayanty', ownerInitials: 'PJ', parentId: '#13927662', milestone: 3, area: 'Digital Sales / Voice Agent' },
+    { name: 'CCAPI POC Integration', pm: 'Team', pmInitials: 'T', pmColor: '#5b2d90', status: 'published', score: 5, adoId: '#15460458', adoState: 'new', date: 'Dec 24, 2025', owner: 'Rohit Mallya', ownerInitials: 'RM', parentId: '#13927662', milestone: 5, area: 'Marketing AI / Sales Enablement' }
 ];
 
 // ══════════════════════════════════════════════════════
@@ -1399,42 +1346,12 @@ function adoLink(id, label) {
 }
 
 function switchRole(role) {
-    // If clicking PM View while already in PM mode, navigate back to PM home
-    if (role === 'pm' && currentRole === 'pm') {
-        var builderActive = document.getElementById('view-builder').classList.contains('active');
-        if (builderActive) {
-            // User is in the builder — prompt to save
-            var overlay = document.createElement('div');
-            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s ease;';
-            overlay.innerHTML =
-                '<div style="background:white;border-radius:16px;padding:28px 32px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
-                    '<div style="text-align:center;margin-bottom:16px;">' +
-                        '<div style="font-size:36px;margin-bottom:8px;">📝</div>' +
-                        '<div style="font-size:17px;font-weight:700;color:#323130;">Unsaved changes</div>' +
-                        '<div style="font-size:13px;color:#605e5c;margin-top:8px;line-height:1.5;">You have a handshake in progress. Going back will discard your changes.</div>' +
-                    '</div>' +
-                    '<div style="display:flex;gap:10px;justify-content:center;">' +
-                        '<button id="keepEditingBtn" style="padding:10px 20px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;color:#323130;">Keep editing</button>' +
-                        '<button id="discardGoBackBtn" style="padding:10px 20px;background:#d13438;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">Discard & go back</button>' +
-                    '</div>' +
-                '</div>';
-            document.body.appendChild(overlay);
-            document.getElementById('keepEditingBtn').addEventListener('click', function() { overlay.remove(); });
-            document.getElementById('discardGoBackBtn').addEventListener('click', function() { overlay.remove(); showLanding(); });
-            return;
-        }
-        // If in brief or success view, just go to landing
-        showLanding();
-        return;
-    }
-
     currentRole = role;
     document.getElementById('rolePm').classList.toggle('active', role === 'pm');
     document.getElementById('roleLeader').classList.toggle('active', role === 'leadership');
     document.getElementById('pmLanding').style.display = role === 'pm' ? '' : 'none';
     document.getElementById('leadershipLanding').style.display = role === 'leadership' ? '' : 'none';
     closeAllDrills();
-    if (role === 'pm') showLanding();
     if (role === 'leadership') renderLeadershipView();
 }
 
@@ -1451,8 +1368,7 @@ function toggleDrill(id) {
         closeAllDrills();
         panel.classList.add('active');
         activeDrillId = id;
-        if (id === 'lead-timeline') { renderLeadershipTimeline(); }
-        else { populateDrill(id); }
+        populateDrill(id);
         panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 }
@@ -1471,8 +1387,8 @@ function closeAllDrills() {
 
 function populateDrill(id) {
     var myItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal'; });
-    var drafts = myItems.filter(function(h) { return h.milestone < 4; });
-    var activeDev = myItems.filter(function(h) { return h.milestone >= 4 && h.milestone <= 5; });
+    var drafts = myItems.filter(function(h) { return h.status === 'draft'; });
+    var activeDev = myItems.filter(function(h) { return h.status === 'published' && h.milestone >= 4 && h.milestone <= 5; });
     var shipped = myItems.filter(function(h) { return h.milestone === 6; });
     var total = myItems.length;
 
@@ -1492,50 +1408,37 @@ function populateDrill(id) {
         html += '<div style="font-size:28px;font-weight:700;color:#107c10;">' + shipped.length + '</div>';
         html += '<div style="font-size:12px;font-weight:600;color:#107c10;">🎉 Shipped</div></div>';
         html += '</div>';
-        // Mini E2E Pipeline — computed from shipped features for accurate E2E total
-        var shippedE2E = myItems.filter(function(h) { return h.shipDate && h.kickoffDate; });
-        var avgKP = 0, avgPH = 0, avgHP = 0, totalE2E = 0, hasShipped = shippedE2E.length > 0;
-        if (hasShipped) {
-            var sT = 0, sK = 0, sP = 0, sH = 0;
-            shippedE2E.forEach(function(h) {
-                sT += Math.round((new Date(h.shipDate) - new Date(h.kickoffDate)) / 86400000);
-                if (h.protoDate) sK += Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000);
-                if (h.protoDate && h.date) sP += Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000);
-                if (h.date) sH += Math.round((new Date(h.shipDate) - new Date(h.date)) / 86400000);
-            });
-            totalE2E = Math.round(sT / shippedE2E.length);
-            avgKP = Math.round(sK / shippedE2E.length);
-            avgPH = Math.round(sP / shippedE2E.length);
-            avgHP = Math.round(sH / shippedE2E.length);
-        } else {
-            var kpItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
-            var phItems = myItems.filter(function(h) { return h.protoDate && h.date && h.status === 'published'; });
-            if (kpItems.length > 0) { var s = 0; kpItems.forEach(function(h) { s += Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000); }); avgKP = Math.round(s / kpItems.length); }
-            if (phItems.length > 0) { var s = 0; phItems.forEach(function(h) { s += Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000); }); avgPH = Math.round(s / phItems.length); }
-            totalE2E = avgKP + avgPH;
-        }
-        var dataCount = hasShipped ? shippedE2E.length : Math.max(myItems.filter(function(h) { return h.kickoffDate && h.protoDate; }).length, 1);
+        // Mini E2E Pipeline for PM's own features — all 3 stages matching Leadership
+        var kpItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
+        var phItems = myItems.filter(function(h) { return h.protoDate && h.date && h.status === 'published'; });
+        var hpItems = myItems.filter(function(h) { return h.shipDate; });
+        var avgKP = 0, avgPH = 0, avgHP = 0;
+        if (kpItems.length > 0) { var s = 0; kpItems.forEach(function(h) { s += Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000); }); avgKP = Math.round(s / kpItems.length); }
+        if (phItems.length > 0) { var s = 0; phItems.forEach(function(h) { s += Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000); }); avgPH = Math.round(s / phItems.length); }
+        if (hpItems.length > 0) { var s = 0; hpItems.forEach(function(h) { s += Math.round((new Date(h.shipDate) - new Date(h.date)) / 86400000); }); avgHP = Math.round(s / hpItems.length); }
+        var dataCount = Math.max(kpItems.length, phItems.length, hpItems.length);
+        var totalE2E = avgKP + avgPH + (hpItems.length > 0 ? avgHP : 0);
 
         html += '<div style="background:linear-gradient(135deg,#1e2028 0%,#2a2d38 100%);border-radius:14px;padding:20px 24px;margin-bottom:20px;color:white;">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">';
         html += '<div style="font-size:14px;font-weight:600;">📐 My E2E: Kickoff → Production</div>';
-        html += '<div style="font-size:12px;color:#a0a0a0;">' + (hasShipped ? 'Based on ' + shippedE2E.length + ' shipped feature' + (shippedE2E.length > 1 ? 's' : '') : 'Based on ' + dataCount + ' features with milestone data') + '</div></div>';
+        html += '<div style="font-size:12px;color:#a0a0a0;">Based on ' + dataCount + ' features with milestone data</div></div>';
         html += '<div style="display:flex;gap:0;margin-bottom:10px;">';
-        var kpFlex = Math.max(avgKP, 2), phFlex = Math.max(avgPH, 2), hpFlex = hasShipped ? Math.max(avgHP, 2) : 3;
+        var kpFlex = Math.max(avgKP, 2), phFlex = Math.max(avgPH, 2), hpFlex = hpItems.length > 0 ? Math.max(avgHP, 2) : 3;
         html += '<div style="flex:' + kpFlex + ';background:#0078d4;border-radius:10px 0 0 10px;padding:10px 12px;text-align:center;border-right:2px solid #1e2028;">';
         html += '<div style="font-size:18px;font-weight:700;">' + avgKP + 'd</div>';
-        html += '<div style="font-size:10px;opacity:0.85;">Kickoff → Prototype</div></div>';
+        html += '<div style="font-size:10px;opacity:0.85;">Kickoff → Proto</div></div>';
         html += '<div style="flex:' + phFlex + ';background:#107c10;padding:10px 12px;text-align:center;border-right:2px solid #1e2028;">';
         html += '<div style="font-size:18px;font-weight:700;">' + avgPH + 'd</div>';
-        html += '<div style="font-size:10px;opacity:0.85;">Prototype → Handshake</div></div>';
-        if (hasShipped) {
+        html += '<div style="font-size:10px;opacity:0.85;">Proto → Handshake</div></div>';
+        if (hpItems.length > 0) {
             html += '<div style="flex:' + hpFlex + ';background:#8661c5;border-radius:0 10px 10px 0;padding:10px 12px;text-align:center;">';
             html += '<div style="font-size:18px;font-weight:700;">' + avgHP + 'd</div>';
-            html += '<div style="font-size:10px;opacity:0.85;">Handshake → Production</div></div>';
+            html += '<div style="font-size:10px;opacity:0.85;">Handshake → Prod</div></div>';
         } else {
             html += '<div style="flex:' + hpFlex + ';background:#3a3d48;border-radius:0 10px 10px 0;padding:10px 12px;text-align:center;">';
             html += '<div style="font-size:18px;font-weight:700;">—</div>';
-            html += '<div style="font-size:10px;opacity:0.65;">Handshake → Production</div></div>';
+            html += '<div style="font-size:10px;opacity:0.65;">Handshake → Prod</div></div>';
         }
         html += '</div>';
         html += '<div style="font-size:11px;color:#a0a0a0;text-align:center;">Total E2E: <strong style="color:white;">' + totalE2E + ' days</strong> avg</div>';
@@ -1547,10 +1450,10 @@ function populateDrill(id) {
             if (h.milestone === 6) { stage = 'Shipped'; stageColor = '#107c10'; stageBg = '#dff6dd'; }
             else if (h.milestone >= 4) { stage = 'In Dev'; stageColor = '#004e8c'; stageBg = '#d0e8ff'; }
             else { stage = 'Draft'; stageColor = '#8a6914'; stageBg = '#fff4ce'; }
-            var scoreColor = h.score >= 6 ? '#107c10' : h.score >= 4 ? '#ff8c00' : '#d13438';
+            var scoreColor = h.score >= 4 ? '#107c10' : h.score >= 3 ? '#ff8c00' : '#d13438';
             html += '<tr><td style="font-weight:600;">' + h.name + '</td>';
             html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:' + stageBg + ';color:' + stageColor + ';">' + stage + '</span></td>';
-            html += '<td style="color:' + scoreColor + ';font-weight:600;">' + h.score + '/7</td>';
+            html += '<td style="color:' + scoreColor + ';font-weight:600;">' + h.score + '/5</td>';
             html += '<td>' + adoLink(h.adoId) + '</td><td>' + h.date + '</td></tr>';
         });
         html += '</tbody></table>';
@@ -1584,8 +1487,8 @@ function populateDrill(id) {
         var pipelineItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
         var html = '<div class="drill-header"><div class="drill-title">⏱️ Full Pipeline Timeline</div><button class="drill-close" onclick="closeDrill(\'pm-velocity\')">✕</button></div>';
         html += '<div style="margin-bottom:16px;padding:10px 14px;background:#f0f6fc;border-radius:8px;font-size:13px;color:#004e8c;">Tracking each feature through all pipeline stages: <strong>Kickoff → Prototype → Handshake → Production</strong></div>';
-        html += '<table class="drill-table"><thead><tr><th>Feature</th><th style="text-align:center;">Kickoff→Prototype</th><th style="text-align:center;">Prototype→Handshake</th><th style="text-align:center;">Handshake→Production</th><th style="text-align:center;">End to End</th><th>ADO</th><th>Stage</th></tr></thead><tbody>';
-        var sumKP = 0, sumPH = 0, sumHP = 0, cntKP = 0, cntPH = 0, cntHP = 0, sumE2E = 0, cntE2E = 0;
+        html += '<table class="drill-table"><thead><tr><th>Feature</th><th style="text-align:center;">K→P</th><th style="text-align:center;">P→H</th><th style="text-align:center;">H→Prod</th><th>ADO</th><th>Stage</th></tr></thead><tbody>';
+        var sumKP = 0, sumPH = 0, sumHP = 0, cntKP = 0, cntPH = 0, cntHP = 0;
         pipelineItems.forEach(function(h) {
             var kp = Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000);
             var ph = h.status === 'published' ? Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000) : null;
@@ -1593,8 +1496,6 @@ function populateDrill(id) {
             sumKP += kp; cntKP++;
             if (ph !== null) { sumPH += ph; cntPH++; }
             if (hp !== null) { sumHP += hp; cntHP++; }
-            var e2e = h.shipDate && h.kickoffDate ? Math.round((new Date(h.shipDate) - new Date(h.kickoffDate)) / 86400000) : null;
-            if (e2e !== null) { sumE2E += e2e; cntE2E++; }
             var kpColor = kp <= 7 ? '#107c10' : kp <= 14 ? '#ff8c00' : '#d13438';
             var phColor = ph !== null ? (ph <= 7 ? '#107c10' : ph <= 14 ? '#ff8c00' : '#d13438') : '#a0a0a0';
             var hpColor = hp !== null ? (hp <= 14 ? '#107c10' : hp <= 21 ? '#ff8c00' : '#d13438') : '#a0a0a0';
@@ -1606,8 +1507,6 @@ function populateDrill(id) {
             html += '<td style="text-align:center;"><span style="color:' + kpColor + ';font-weight:600;">' + kp + 'd</span></td>';
             html += '<td style="text-align:center;"><span style="color:' + phColor + ';font-weight:600;">' + (ph !== null ? ph + 'd' : '—') + '</span></td>';
             html += '<td style="text-align:center;"><span style="color:' + hpColor + ';font-weight:600;">' + (hp !== null ? hp + 'd' : '—') + '</span></td>';
-            var e2eColor = e2e !== null ? (e2e <= 30 ? '#107c10' : e2e <= 45 ? '#ff8c00' : '#d13438') : '#a0a0a0';
-            html += '<td style="text-align:center;"><span style="color:' + e2eColor + ';font-weight:700;">' + (e2e !== null ? e2e + 'd' : '—') + '</span></td>';
             html += '<td>' + adoLink(h.adoId) + '</td>';
             html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:' + stageBg + ';color:' + stageC + ';">' + stage + '</span></td></tr>';
         });
@@ -1619,9 +1518,8 @@ function populateDrill(id) {
             html += '<td style="text-align:center;"><span style="color:#ff8c00;font-weight:600;">' + daysIn + 'd…</span></td>';
             html += '<td style="text-align:center;color:#a0a0a0;">—</td>';
             html += '<td style="text-align:center;color:#a0a0a0;">—</td>';
-            html += '<td style="text-align:center;color:#a0a0a0;">—</td>';
             html += '<td>' + adoLink(h.adoId) + '</td>';
-            html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#fff4ce;color:#8a6914;">Draft</span></td></tr>';
+            html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#fff4ce;color:#8a6914;">In Progress</span></td></tr>';
         });
         html += '</tbody></table>';
         // Summary row
@@ -1629,10 +1527,9 @@ function populateDrill(id) {
         var avgPH = cntPH > 0 ? Math.round(sumPH / cntPH) : 0;
         var avgHP = cntHP > 0 ? Math.round(sumHP / cntHP) : 0;
         html += '<div style="margin-top:12px;padding:12px 14px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#605e5c;display:flex;gap:16px;flex-wrap:wrap;">';
-        html += '<div>📐 <strong>Avg Kickoff→Prototype:</strong> <span style="color:#0078d4;font-weight:600;">' + avgKP + ' days</span></div>';
-        html += '<div>📐 <strong>Avg Prototype→Handshake:</strong> <span style="color:#107c10;font-weight:600;">' + avgPH + ' days</span></div>';
-        if (cntHP > 0) html += '<div>📐 <strong>Avg Handshake→Production:</strong> <span style="color:#8661c5;font-weight:600;">' + avgHP + ' days</span></div>';
-        if (cntE2E > 0) { var avgE2E = Math.round(sumE2E / cntE2E); html += '<div>📐 <strong>Avg End to End:</strong> <span style="color:#e83e8c;font-weight:600;">' + avgE2E + ' days</span></div>'; }
+        html += '<div>📐 <strong>Avg K→P:</strong> <span style="color:#0078d4;font-weight:600;">' + avgKP + ' days</span></div>';
+        html += '<div>📐 <strong>Avg P→H:</strong> <span style="color:#107c10;font-weight:600;">' + avgPH + ' days</span></div>';
+        if (cntHP > 0) html += '<div>📐 <strong>Avg H→Prod:</strong> <span style="color:#8661c5;font-weight:600;">' + avgHP + ' days</span></div>';
         html += '</div>';
         panel.innerHTML = html;
     }
@@ -1650,9 +1547,9 @@ function populateDrill(id) {
             html += '<div style="padding:14px 16px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div style="font-size:22px;">🚢</div><div><div style="font-weight:600;font-size:15px;">' + h.name + '</div><div style="font-size:12px;color:#605e5c;">Total lifecycle: <strong>' + totalD + ' days</strong> · ' + adoLink(h.adoId) + '</div></div></div>';
             // Timeline stages
             html += '<div style="display:flex;gap:0;border-radius:8px;overflow:hidden;">';
-            if (kp !== null) html += '<div style="flex:' + Math.max(kp,2) + ';background:#d0e8ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#004e8c;">' + kp + 'd</div><div style="font-size:10px;color:#004e8c;">Kickoff→Prototype</div></div>';
-            if (ph !== null) html += '<div style="flex:' + Math.max(ph,2) + ';background:#dff6dd;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#107c10;">' + ph + 'd</div><div style="font-size:10px;color:#107c10;">Prototype→Handshake</div></div>';
-            if (hp !== null) html += '<div style="flex:' + Math.max(hp,2) + ';background:#f0e6ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#5b2d90;">' + hp + 'd</div><div style="font-size:10px;color:#5b2d90;">Handshake→Production</div></div>';
+            if (kp !== null) html += '<div style="flex:' + Math.max(kp,2) + ';background:#d0e8ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#004e8c;">' + kp + 'd</div><div style="font-size:10px;color:#004e8c;">K→P</div></div>';
+            if (ph !== null) html += '<div style="flex:' + Math.max(ph,2) + ';background:#dff6dd;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#107c10;">' + ph + 'd</div><div style="font-size:10px;color:#107c10;">P→H</div></div>';
+            if (hp !== null) html += '<div style="flex:' + Math.max(hp,2) + ';background:#f0e6ff;padding:8px 10px;text-align:center;"><div style="font-size:15px;font-weight:700;color:#5b2d90;">' + hp + 'd</div><div style="font-size:10px;color:#5b2d90;">H→Prod</div></div>';
             html += '</div>';
             // Date timeline
             html += '<div style="display:flex;justify-content:space-between;font-size:11px;color:#8a8886;margin-top:8px;padding:0 4px;">';
@@ -1672,9 +1569,9 @@ function populateDrill(id) {
 function renderCard(h, showArea) {
     var statusClass = h.status === 'published' ? 'status-published' : 'status-draft';
     var statusLabel = h.status === 'published' ? 'Published' : 'Draft';
-    var scoreColor = h.score >= 6 ? '#107c10' : h.score >= 4 ? '#ff8c00' : '#d13438';
-    var scoreClass = h.score >= 6 ? 'score-high' : h.score >= 4 ? 'score-med' : 'score-low';
-    var pct = Math.round((h.score / 7) * 100);
+    var scoreColor = h.score >= 4 ? '#107c10' : h.score >= 3 ? '#ff8c00' : '#d13438';
+    var scoreClass = h.score >= 4 ? 'score-high' : h.score >= 3 ? 'score-med' : 'score-low';
+    var pct = Math.round((h.score / 5) * 100);
     var stateMap = { active: 'state-active', review: 'state-review', 'new': 'state-new', closed: 'state-closed' };
     var stateLabel = h.adoState ? h.adoState.charAt(0).toUpperCase() + h.adoState.slice(1) : '';
 
@@ -1685,120 +1582,24 @@ function renderCard(h, showArea) {
     var ownerHtml = h.owner ? '<div class="card-owner"><div class="card-owner-dot">' + h.ownerInitials + '</div> Assigned: ' + h.owner + '</div>' : '';
     var areaHtml = showArea ? '<div style="font-size:11px;color:#605e5c;margin-top:4px;">📂 ' + h.area + '</div>' : '';
 
-    var idx = handshakeData.indexOf(h);
-    var msHtml = renderMilestoneDates(h, idx);
-
-    return '<div class="handshake-card" onclick="showBrief(' + idx + ')">' +
+    return '<div class="handshake-card" onclick="showBrief(' + handshakeData.indexOf(h) + ')">' +
         '<div class="card-header"><div class="card-feature-name">' + h.name + '</div><div class="card-status ' + statusClass + '">' + statusLabel + '</div></div>' +
         '<div class="card-meta">' + h.date + '</div>' +
-        '<div class="card-score-row"><div class="card-score-bar"><div class="card-score-fill ' + scoreClass + '" style="width:' + pct + '%"></div></div><div class="card-score-label" style="color:' + scoreColor + ';">' + h.score + '/7</div></div>' +
-        adoHtml + ownerHtml + areaHtml + msHtml +
+        '<div class="card-score-row"><div class="card-score-bar"><div class="card-score-fill ' + scoreClass + '" style="width:' + pct + '%"></div></div><div class="card-score-label" style="color:' + scoreColor + ';">' + h.score + '/5</div></div>' +
+        adoHtml + ownerHtml + areaHtml +
         (h.status === 'draft' ? '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0;"><button onclick="event.stopPropagation();submitToEngineering(\'' + h.name.replace(/'/g, "\\'") + '\')" style="width:100%;padding:8px 16px;background:#107c10;color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background 0.2s;" onmouseover="this.style.background=\'#0b6a0b\'" onmouseout="this.style.background=\'#107c10\'">📤 Submit to Engineering</button></div>' : '') +
         '</div>';
-}
-
-// ── Editable Milestone Dates (inline on cards) ──
-function renderMilestoneDates(h, idx) {
-    var milestones = [
-        { key: 'kickoffDate', label: 'Kickoff', icon: '🚀' },
-        { key: 'protoDate',   label: 'Prototype', icon: '🛠️' },
-        { key: 'date',        label: 'Handshake', icon: '🤝' },
-        { key: 'shipDate',    label: 'Production', icon: '🚢' }
-    ];
-    var items = '';
-    milestones.forEach(function(m) {
-        var raw = h[m.key] || '';
-        var display = raw ? formatMsDate(raw) : '+ set';
-        var emptyClass = raw ? '' : ' empty';
-        // Source indicator: if we had ADO-synced data we'd mark it ⚡, for now all are ✏️ manual
-        var src = h['_src_' + m.key] === 'ado' ? '<span class="card-ms-src" title="Synced from ADO">⚡</span>' : '';
-        items += '<div class="card-ms-item">' +
-            '<span class="card-ms-icon">' + m.icon + '</span>' +
-            '<span class="card-ms-name">' + m.label + ':</span>' +
-            '<span class="card-ms-date' + emptyClass + '" onclick="event.stopPropagation();openMsDatePicker(this,' + idx + ',\'' + m.key + '\')" title="Click to edit">' + display + src + '</span>' +
-            '</div>';
-    });
-    return '<div class="card-milestones">' +
-        '<div class="card-milestones-label">📅 Milestone Dates <span style="font-weight:400;color:#c8c6c4;">(click to edit)</span></div>' +
-        '<div class="card-ms-grid">' + items + '</div>' +
-        '</div>';
-}
-
-function formatMsDate(dateStr) {
-    try {
-        var d = new Date(dateStr);
-        if (isNaN(d)) return dateStr;
-        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        return months[d.getMonth()] + ' ' + d.getDate();
-    } catch(e) { return dateStr; }
-}
-
-function openMsDatePicker(el, idx, key) {
-    // If there's already an input, don't double-add
-    if (el.querySelector('input')) return;
-    var h = handshakeData[idx];
-    var current = h[key] || '';
-    // Convert display date to YYYY-MM-DD for the input
-    var isoVal = '';
-    if (current) {
-        try {
-            var d = new Date(current);
-            if (!isNaN(d)) isoVal = d.toISOString().substring(0, 10);
-        } catch(e) {}
-    }
-    var inp = document.createElement('input');
-    inp.type = 'date';
-    inp.value = isoVal;
-    inp.style.cssText = 'position:absolute;opacity:0;width:0;height:0;top:0;left:0;';
-    el.style.position = 'relative';
-    el.appendChild(inp);
-    inp.focus();
-    inp.showPicker && inp.showPicker();
-
-    inp.addEventListener('change', function() {
-        var val = inp.value; // YYYY-MM-DD
-        if (val) {
-            // Store as readable format matching existing data
-            var parts = val.split('-');
-            var dt = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            var formatted = months[dt.getMonth()] + ' ' + dt.getDate() + ', ' + dt.getFullYear();
-            handshakeData[idx][key] = formatted;
-            handshakeData[idx]['_src_' + key] = 'manual';
-            // Auto-update milestone number based on filled dates
-            autoUpdateMilestone(idx);
-        }
-        inp.remove();
-        renderPmCards();
-        // Also refresh leadership if visible
-        if (document.getElementById('leadershipContent') && document.getElementById('leadershipContent').style.display !== 'none') {
-            renderLeadershipView();
-        }
-    });
-
-    inp.addEventListener('blur', function() {
-        setTimeout(function() { if (el.contains(inp)) inp.remove(); }, 200);
-    });
-}
-
-function autoUpdateMilestone(idx) {
-    var h = handshakeData[idx];
-    // Derive milestone from which dates are filled
-    if (h.shipDate) { h.milestone = 6; }
-    else if (h.devStart || (h.date && h.status === 'published')) { h.milestone = Math.max(h.milestone || 0, 4); }
-    else if (h.protoDate) { h.milestone = Math.max(h.milestone || 0, 3); }
-    else if (h.kickoffDate) { h.milestone = Math.max(h.milestone || 0, 2); }
 }
 
 function renderPmStats() {
     var myItems = handshakeData.filter(function(h) { return h.pm === 'Sunil Venugopal'; });
     var total = myItems.length;
-    var drafts = myItems.filter(function(h) { return h.milestone < 4; });
-    var activeDev = myItems.filter(function(h) { return h.milestone >= 4 && h.milestone <= 5; });
+    var drafts = myItems.filter(function(h) { return h.status === 'draft'; });
+    var activeDev = myItems.filter(function(h) { return h.status === 'published' && h.milestone >= 4 && h.milestone <= 5; });
     var shipped = myItems.filter(function(h) { return h.milestone === 6; });
 
-    // Compute averages for all 3 pipeline stages (velocity stat uses in-dev only for consistency)
-    var kpItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate && h.milestone >= 4 && h.milestone <= 5; });
+    // Compute averages for all 3 pipeline stages
+    var kpItems = myItems.filter(function(h) { return h.kickoffDate && h.protoDate; });
     var phItems = myItems.filter(function(h) { return h.protoDate && h.date && h.status === 'published'; });
     var hpItems = myItems.filter(function(h) { return h.shipDate; });
     var avgKP = 0, avgPH = 0, avgHP = 0;
@@ -1816,34 +1617,13 @@ function renderPmStats() {
     }
     var totalE2E = avgKP + avgPH + (hpItems.length > 0 ? avgHP : 0);
 
-    // E2E banner: compute from shipped features only so total matches shipped lifecycle
-    var shippedE2E = myItems.filter(function(h) { return h.shipDate && h.kickoffDate; });
-    var e2eTotal = 0, e2eKP = 0, e2ePH = 0, e2eHP = 0, e2eHasShipped = shippedE2E.length > 0;
-    if (e2eHasShipped) {
-        var sT = 0, sK = 0, sP = 0, sH = 0;
-        shippedE2E.forEach(function(h) {
-            sT += Math.round((new Date(h.shipDate) - new Date(h.kickoffDate)) / 86400000);
-            if (h.protoDate) sK += Math.round((new Date(h.protoDate) - new Date(h.kickoffDate)) / 86400000);
-            if (h.protoDate && h.date) sP += Math.round((new Date(h.date) - new Date(h.protoDate)) / 86400000);
-            if (h.date) sH += Math.round((new Date(h.shipDate) - new Date(h.date)) / 86400000);
-        });
-        e2eTotal = Math.round(sT / shippedE2E.length);
-        e2eKP = Math.round(sK / shippedE2E.length);
-        e2ePH = Math.round(sP / shippedE2E.length);
-        e2eHP = Math.round(sH / shippedE2E.length);
-    } else {
-        e2eTotal = avgKP + avgPH;
-        e2eKP = avgKP;
-        e2ePH = avgPH;
-    }
-
     // Stat boxes
     document.getElementById('statTotalVal').textContent = total;
     document.getElementById('statTotalSub').textContent = drafts.length + ' drafts · ' + activeDev.length + ' in dev · ' + shipped.length + ' shipped';
     document.getElementById('statActiveVal').textContent = activeDev.length;
     document.getElementById('statActiveSub').textContent = activeDev.length + ' of ' + total + ' total handshakes';
     document.getElementById('statVelocityVal').textContent = avgKP + ' days';
-    document.getElementById('statVelocitySub').textContent = 'Across ' + kpItems.length + ' features in dev';
+    document.getElementById('statVelocitySub').textContent = 'Across ' + kpItems.length + ' features with prototype';
     document.getElementById('statShippedVal').textContent = shipped.length;
     document.getElementById('statShippedSub').textContent = shipped.length + ' of ' + total + ' total handshakes';
 
@@ -1853,29 +1633,29 @@ function renderPmStats() {
     bHtml += '<div style="font-size:14px;font-weight:700;color:#ffffff;">⏱️ My E2E: Kickoff → Production</div>';
     bHtml += '<div style="display:flex;align-items:center;gap:8px;">';
     bHtml += '<span style="font-size:11px;color:#9ca0ae;text-transform:uppercase;letter-spacing:0.5px;">My Avg</span>';
-    bHtml += '<span style="font-size:24px;font-weight:700;color:#ffffff;">' + e2eTotal + ' days</span>';
+    bHtml += '<span style="font-size:24px;font-weight:700;color:#ffffff;">' + totalE2E + ' days</span>';
     bHtml += '</div></div>';
     bHtml += '<div style="display:flex;align-items:center;gap:0;position:relative;">';
-    var kpFlex = Math.max(e2eKP, 2), phFlex = Math.max(e2ePH, 2), hpFlex = e2eHasShipped ? Math.max(e2eHP, 2) : 4;
+    var kpFlex = Math.max(avgKP, 2), phFlex = Math.max(avgPH, 2), hpFlex = hpItems.length > 0 ? Math.max(avgHP, 2) : 4;
     bHtml += '<div style="flex:' + kpFlex + ';text-align:center;background:#0078d4;border-radius:10px 0 0 10px;padding:12px 6px;border-right:2px solid #1e2028;">';
-    bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + e2eKP + 'd</div>';
+    bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + avgKP + 'd</div>';
     bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Kickoff → Prototype</div></div>';
     bHtml += '<div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>';
     bHtml += '<div style="flex:' + phFlex + ';text-align:center;background:#107c10;padding:12px 6px;border-right:2px solid #1e2028;">';
-    bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + e2ePH + 'd</div>';
-    bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Prototype → Handshake</div></div>';
+    bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + avgPH + 'd</div>';
+    bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Proto → Handshake</div></div>';
     bHtml += '<div style="font-size:14px;color:#4a4e5a;margin:0 -2px;z-index:1;">›</div>';
-    if (e2eHasShipped) {
+    if (hpItems.length > 0) {
         bHtml += '<div style="flex:' + hpFlex + ';text-align:center;background:#8661c5;border-radius:0 10px 10px 0;padding:12px 6px;">';
-        bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + e2eHP + 'd</div>';
-        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Handshake → Production</div></div>';
+        bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">' + avgHP + 'd</div>';
+        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">Handshake → Prod</div></div>';
     } else {
         bHtml += '<div style="flex:' + hpFlex + ';text-align:center;background:#3a3d48;border-radius:0 10px 10px 0;padding:12px 6px;">';
         bHtml += '<div style="font-size:20px;font-weight:700;color:#ffffff;">—</div>';
-        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.65);font-weight:600;">Handshake → Production</div></div>';
+        bHtml += '<div style="font-size:10px;color:rgba(255,255,255,0.65);font-weight:600;">Handshake → Prod</div></div>';
     }
     bHtml += '</div>';
-    bHtml += '<div style="text-align:center;margin-top:10px;font-size:12px;color:#9ca0ae;">📐 ' + (e2eHasShipped ? 'Based on ' + shippedE2E.length + ' shipped feature' + (shippedE2E.length > 1 ? 's' : '') : 'Based on ' + kpItems.length + ' features with milestone data') + ' · Stages proportionally sized</div>';
+    bHtml += '<div style="text-align:center;margin-top:10px;font-size:12px;color:#9ca0ae;">📐 Based on ' + kpItems.length + ' features with milestone data · Stages proportionally sized</div>';
     bHtml += '</div>';
     document.getElementById('pmE2eBanner').innerHTML = bHtml;
 }
@@ -1904,8 +1684,6 @@ function renderLeadershipView() {
     // ── Aggregate KPIs ──
     var totalProjects = 0, onTrack = 0, atRisk = 0, issues = 0, inProduction = 0;
     var phaseTotals = { Proposal: 0, Design: 0, Development: 0, UAT: 0, Production: 0 };
-    // Milestone-aligned counts (consistent with PM view)
-    var milestoneTotals = { Draft: 0, 'In Dev': 0, Shipped: 0 };
     portfolioData.forEach(function(p) {
         p.projects.forEach(function(pr) {
             totalProjects++;
@@ -1913,38 +1691,34 @@ function renderLeadershipView() {
             else if (pr.status === 'At Risk') atRisk++;
             else if (pr.status === 'Issue') issues++;
             if (phaseTotals.hasOwnProperty(pr.phase)) phaseTotals[pr.phase]++;
-            if (pr.phase === 'Production') { inProduction++; milestoneTotals['Shipped']++; }
-            else if (pr.phase === 'Development' || pr.phase === 'UAT') milestoneTotals['In Dev']++;
-            else milestoneTotals['Draft']++;
+            if (pr.phase === 'Production') inProduction++;
         });
     });
 
-    // ── Dynamically update stat cards (non-duplicative — complementary to E2E banner) ──
-    var shippedPct = totalProjects > 0 ? Math.round((inProduction / totalProjects) * 100) : 0;
-    var needsAttention = atRisk + issues;
+    // ── Dynamically update stat cards ──
     document.getElementById('leaderStats').innerHTML =
         '<div class="stat-card" onclick="toggleDrill(\'lead-pipeline\')">' +
-            '<div class="stat-value" style="color:#0078d4;">' + totalProjects + '</div>' +
-            '<div class="stat-label">Total Projects</div>' +
-            '<div class="stat-sub">Across ' + portfolioData.length + ' portfolios</div>' +
-            '<div class="stat-expand-hint">View pipeline breakdown →</div>' +
+            '<div class="stat-value" style="color:#0078d4;">8 days</div>' +
+            '<div class="stat-label">Avg. Kickoff → Prototype</div>' +
+            '<div class="stat-sub">Idea to working demo</div>' +
+            '<div class="stat-expand-hint" style="color:#8a8886;">📐 Baseline · Target: 7d →</div>' +
         '</div>' +
         '<div class="stat-card" onclick="toggleDrill(\'lead-coverage\')">' +
-            '<div class="stat-value" style="font-size:22px;"><span style="color:#8a6914;">' + milestoneTotals['Draft'] + '</span> → <span style="color:#004e8c;">' + milestoneTotals['In Dev'] + '</span> → <span style="color:#107c10;">' + milestoneTotals['Shipped'] + '</span></div>' +
-            '<div class="stat-label">Draft → In Dev → Shipped</div>' +
-            '<div class="stat-sub">Milestone progression</div>' +
-            '<div class="stat-expand-hint">View stage details →</div>' +
+            '<div class="stat-value" style="color:#107c10;">6 days</div>' +
+            '<div class="stat-label">Avg. Prototype → Handshake</div>' +
+            '<div class="stat-sub">Validation + eng handoff</div>' +
+            '<div class="stat-expand-hint" style="color:#8a8886;">📐 Baseline · Target: 5d →</div>' +
         '</div>' +
         '<div class="stat-card" onclick="toggleDrill(\'lead-velocity\')">' +
-            '<div class="stat-value" style="color:#107c10;">' + onTrack + '</div>' +
-            '<div class="stat-label">On Track</div>' +
-            '<div class="stat-sub">' + (needsAttention > 0 ? '⚠️ ' + needsAttention + ' need' + (needsAttention === 1 ? 's' : '') + ' attention' : '✅ No issues flagged') + '</div>' +
-            '<div class="stat-expand-hint">View health details →</div>' +
+            '<div class="stat-value" style="color:#ff8c00;">12 days</div>' +
+            '<div class="stat-label">Avg. Handshake → Prod</div>' +
+            '<div class="stat-sub">Eng pickup to production</div>' +
+            '<div class="stat-expand-hint" style="color:#8a8886;">📐 Baseline · Target: 10d →</div>' +
         '</div>' +
         '<div class="stat-card" onclick="toggleDrill(\'lead-shipped\')">' +
             '<div class="stat-value" style="color:#5b2d90;">' + inProduction + '</div>' +
-            '<div class="stat-label">Shipped to Production</div>' +
-            '<div class="stat-sub">' + shippedPct + '% of total pipeline</div>' +
+            '<div class="stat-label">Shipped to Prod</div>' +
+            '<div class="stat-sub">Prototypes → live features</div>' +
             '<div class="stat-expand-hint">Click for details →</div>' +
         '</div>';
 
@@ -1966,18 +1740,14 @@ function renderLeadershipView() {
     '<div style="background:#fff8f0;border-radius:8px;padding:10px 14px;font-size:13px;color:#605e5c;margin-bottom:16px;">📐 <strong>Establishing baseline.</strong> This is a new process — we\'re measuring how quickly PMs go from idea to working prototype using GitHub Copilot + rapid prototyping. This baseline will be tracked quarter-over-quarter.</div>';
     // Phase distribution
     pipeHtml += '<div style="font-size:12px;font-weight:600;color:#323130;margin-bottom:6px;">Current Phase Distribution (' + totalProjects + ' projects)</div><div class="pipeline-bar">';
-    var msColors = { Draft: '#fff4ce', 'In Dev': '#d0e8ff', Shipped: '#dff6dd' };
-    var msTColors = { Draft: '#8a6914', 'In Dev': '#004e8c', Shipped: '#107c10' };
-    ['Draft', 'In Dev', 'Shipped'].forEach(function(ms) {
-        if (milestoneTotals[ms] > 0) {
-            pipeHtml += '<div class="pipeline-segment" style="width:' + Math.round((milestoneTotals[ms] / totalProjects) * 100) + '%;background:' + msColors[ms] + ';color:' + msTColors[ms] + ';">' + milestoneTotals[ms] + '</div>';
+    phaseOrder.forEach(function(ph) {
+        if (phaseTotals[ph] > 0) {
+            pipeHtml += '<div class="pipeline-segment" style="width:' + Math.round((phaseTotals[ph] / totalProjects) * 100) + '%;background:' + phaseColors[ph] + ';color:' + phaseTextColors[ph] + ';">' + phaseTotals[ph] + '</div>';
         }
     });
     pipeHtml += '</div><div class="pipeline-legend">';
-    var msLegendColors = { Draft: '#fff4ce', 'In Dev': '#d0e8ff', Shipped: '#dff6dd' };
-    var msLegendTextColors = { Draft: '#8a6914', 'In Dev': '#004e8c', Shipped: '#107c10' };
-    ['Draft', 'In Dev', 'Shipped'].forEach(function(ms) {
-        if (milestoneTotals[ms] > 0) pipeHtml += '<div class="pipeline-legend-item"><div class="pipeline-dot" style="background:' + msLegendColors[ms] + ';border:1px solid ' + msLegendTextColors[ms] + ';"></div> ' + ms + ' (' + milestoneTotals[ms] + ')</div>';
+    phaseOrder.forEach(function(ph) {
+        if (phaseTotals[ph] > 0) pipeHtml += '<div class="pipeline-legend-item"><div class="pipeline-dot" style="background:' + phaseColors[ph] + ';border:1px solid ' + phaseTextColors[ph] + ';"></div> ' + ph + ' (' + phaseTotals[ph] + ')</div>';
     });
     pipeHtml += '</div>';
     document.getElementById('drill-lead-pipeline').innerHTML = pipeHtml;
@@ -2068,12 +1838,9 @@ function renderLeadershipView() {
         var pAtRisk = projects.filter(function(pr) { return pr.status === 'At Risk'; }).length;
         var pIssue = projects.filter(function(pr) { return pr.status === 'Issue'; }).length;
         var pInProd = projects.filter(function(pr) { return pr.phase === 'Production'; }).length;
-        var pcounts = { Draft: 0, 'In Dev': 0, Shipped: 0 };
-        projects.forEach(function(pr) {
-            if (pr.phase === 'Production') pcounts['Shipped']++;
-            else if (pr.phase === 'Development' || pr.phase === 'UAT') pcounts['In Dev']++;
-            else pcounts['Draft']++;
-        });
+        var pcounts = {};
+        phaseOrder.forEach(function(ph) { pcounts[ph] = 0; });
+        projects.forEach(function(pr) { if (pcounts.hasOwnProperty(pr.phase)) pcounts[pr.phase]++; });
 
         var pStatus = pIssue > 0 ? 'Issue' : pAtRisk > 0 ? 'At Risk' : 'On Track';
         var total = projects.length;
@@ -2107,7 +1874,7 @@ function renderLeadershipView() {
             '</div>' +
             '<div style="background:#faf9f8;border-radius:8px;padding:10px 12px;text-align:center;">' +
                 '<div style="font-size:22px;font-weight:700;color:#5b2d90;">' + pInProd + '</div>' +
-                '<div style="font-size:10px;color:#605e5c;text-transform:uppercase;letter-spacing:0.3px;">Shipped</div>' +
+                '<div style="font-size:10px;color:#605e5c;text-transform:uppercase;letter-spacing:0.3px;">In Prod</div>' +
             '</div>' +
         '</div>';
 
@@ -2118,10 +1885,9 @@ function renderLeadershipView() {
         if (pIssue) barHtml += '<div style="width:' + ((pIssue/total)*100) + '%;background:#d13438;"></div>';
         barHtml += '</div>';
 
-        var msColorMap = { Draft: '#8a6914', 'In Dev': '#004e8c', Shipped: '#107c10' };
         var phHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">';
-        ['Draft', 'In Dev', 'Shipped'].forEach(function(ms) {
-            if (pcounts[ms] > 0) phHtml += '<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:#f5f5f5;color:' + msColorMap[ms] + ';font-weight:600;">' + ms + ': ' + pcounts[ms] + '</span>';
+        phaseOrder.forEach(function(ph) {
+            if (pcounts[ph] > 0) phHtml += '<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:#f5f5f5;color:' + phaseTextColors[ph] + ';font-weight:600;">' + ph + ': ' + pcounts[ph] + '</span>';
         });
         phHtml += '</div>';
 
@@ -2211,178 +1977,6 @@ function renderLeadershipView() {
         });
     }
     document.getElementById('needsAttentionContainer').innerHTML = attentionHtml;
-}
-
-// ══════════════════════════════════════════════════════
-// LEADERSHIP FULL PIPELINE TIMELINE
-// ══════════════════════════════════════════════════════
-var ltTimelineFilters = { portfolio: 'All', stage: 'All', status: 'All' };
-
-function renderLeadershipTimeline() {
-    var panel = document.getElementById('drill-lead-timeline');
-    if (!panel || panel.style.display === 'none') return;
-
-    // Flatten all projects with portfolio info + simulated cycle times
-    var portfolioCycle = {
-        'eCommerce Agents': { proto: 6, handshake: 4, prod: 10 },
-        'Marketing Planning & Execution': { proto: 9, handshake: 7, prod: 14 },
-        'Campaign Supply Chain': { proto: 10, handshake: 8, prod: 15 },
-        'Microsoft Demo Experiences': { proto: 5, handshake: 3, prod: 8 },
-        'Unified Commercial Marketing Profiles (UCMP)': { proto: 9, handshake: 7, prod: 13 },
-        'Connected Sales & Marketing Data': { proto: 7, handshake: 5, prod: 11 },
-        'Signal Flow Transformation': { proto: 11, handshake: 8, prod: 16 },
-        'Privacy': { proto: 8, handshake: 6, prod: 12 }
-    };
-
-    // Build flat project list with computed milestone stage + cycle data
-    var allProjects = [];
-    portfolioData.forEach(function(p) {
-        var cyc = portfolioCycle[p.name] || { proto: 8, handshake: 6, prod: 12 };
-        p.projects.forEach(function(pr, idx) {
-            // Map phase to milestone stage
-            var stage;
-            if (pr.phase === 'Production') stage = 'Shipped';
-            else if (pr.phase === 'Development' || pr.phase === 'UAT') stage = 'In Dev';
-            else stage = 'Draft';
-
-            // Simulated per-project cycle times with slight per-project variation
-            var seed = pr.name.length + idx;
-            var vary = function(base) { return Math.max(1, base + ((seed % 5) - 2)); };
-            var kp = null, ph = null, hp = null, e2e = null;
-
-            if (stage === 'Shipped') {
-                kp = vary(cyc.proto); ph = vary(cyc.handshake); hp = vary(cyc.prod);
-                e2e = kp + ph + hp;
-            } else if (stage === 'In Dev') {
-                kp = vary(cyc.proto); ph = vary(cyc.handshake);
-            } else if (pr.phase === 'Design') {
-                kp = vary(cyc.proto); // in prototype stage
-            }
-            // Proposal = fully Draft, no data yet
-
-            allProjects.push({
-                name: pr.name, portfolio: p.name, portfolioIcon: p.icon,
-                adoId: pr.adoId, owner: pr.owner, phase: pr.phase,
-                status: pr.status, statusDesc: pr.statusDesc,
-                stage: stage, kp: kp, ph: ph, hp: hp, e2e: e2e
-            });
-        });
-    });
-
-    // Apply filters
-    var filtered = allProjects.filter(function(pr) {
-        if (ltTimelineFilters.portfolio !== 'All' && pr.portfolio !== ltTimelineFilters.portfolio) return false;
-        if (ltTimelineFilters.stage !== 'All' && pr.stage !== ltTimelineFilters.stage) return false;
-        if (ltTimelineFilters.status !== 'All' && pr.status !== ltTimelineFilters.status) return false;
-        return true;
-    });
-
-    // Build HTML
-    var html = '<div class="drill-header"><div class="drill-title">⏱️ Full Pipeline Timeline — All Portfolios</div><button class="drill-close" onclick="closeDrill(\'lead-timeline\')">✕</button></div>';
-
-    // Filter bar
-    html += '<div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">';
-    html += '<div style="font-size:11px;color:#8a8886;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Filters:</div>';
-
-    // Portfolio filter
-    var portfolioNames = ['All'];
-    portfolioData.forEach(function(p) { portfolioNames.push(p.name); });
-    html += '<select onchange="ltTimelineFilters.portfolio=this.value;renderLeadershipTimeline();" style="padding:6px 10px;border:1px solid #e1e1e1;border-radius:6px;font-size:12px;background:white;cursor:pointer;">';
-    portfolioNames.forEach(function(pn) {
-        html += '<option value="' + pn + '"' + (ltTimelineFilters.portfolio === pn ? ' selected' : '') + '>' + (pn === 'All' ? '📂 All Portfolios' : pn) + '</option>';
-    });
-    html += '</select>';
-
-    // Stage filter chips
-    html += '<div style="display:flex;gap:4px;">';
-    var stages = ['All', 'Draft', 'In Dev', 'Shipped'];
-    var stageChipColors = { All: { bg: '#f5f5f5', color: '#323130', border: '#e1e1e1' }, Draft: { bg: '#fff4ce', color: '#8a6914', border: '#ffe0a0' }, 'In Dev': { bg: '#d0e8ff', color: '#004e8c', border: '#a0c8f0' }, Shipped: { bg: '#dff6dd', color: '#107c10', border: '#b8e6b0' } };
-    stages.forEach(function(s) {
-        var cc = stageChipColors[s];
-        var active = ltTimelineFilters.stage === s;
-        html += '<button onclick="ltTimelineFilters.stage=\'' + s + '\';renderLeadershipTimeline();" style="padding:4px 12px;border-radius:14px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid ' + (active ? cc.border : '#e1e1e1') + ';background:' + (active ? cc.bg : '#faf9f8') + ';color:' + (active ? cc.color : '#a0a0a0') + ';">' + s + '</button>';
-    });
-    html += '</div>';
-
-    // Status filter chips
-    html += '<div style="display:flex;gap:4px;">';
-    var statuses = ['All', 'On Track', 'At Risk'];
-    statuses.forEach(function(st) {
-        var active = ltTimelineFilters.status === st;
-        var stColor = st === 'On Track' ? '#107c10' : st === 'At Risk' ? '#ff8c00' : '#323130';
-        html += '<button onclick="ltTimelineFilters.status=\'' + st + '\';renderLeadershipTimeline();" style="padding:4px 12px;border-radius:14px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid ' + (active ? stColor : '#e1e1e1') + ';background:' + (active ? '#f5f5f5' : '#faf9f8') + ';color:' + (active ? stColor : '#a0a0a0') + ';">● ' + st + '</button>';
-    });
-    html += '</div>';
-
-    // Result count
-    html += '<div style="margin-left:auto;font-size:12px;color:#8a8886;">' + filtered.length + ' of ' + allProjects.length + ' projects</div>';
-    html += '</div>';
-
-    // Info banner
-    html += '<div style="margin-bottom:16px;padding:10px 14px;background:#f0f6fc;border-radius:8px;font-size:13px;color:#004e8c;">Tracking each project through all pipeline stages: <strong>Kickoff → Prototype → Handshake → Production</strong></div>';
-
-    // Table
-    html += '<div style="overflow-x:auto;"><table class="drill-table" style="table-layout:fixed;width:100%;">';
-    html += '<colgroup><col style="width:20%;"><col style="width:15%;"><col style="width:8%;"><col style="width:8%;"><col style="width:8%;"><col style="width:7%;"><col style="width:12%;"><col style="width:11%;"><col style="width:11%;"></colgroup>';
-    html += '<thead><tr><th>Project</th><th>Portfolio</th><th style="text-align:center;white-space:nowrap;">K→P</th><th style="text-align:center;white-space:nowrap;">P→H</th><th style="text-align:center;white-space:nowrap;">H→Prod</th><th style="text-align:center;white-space:nowrap;">E2E</th><th>ADO</th><th>Status</th><th>Stage</th></tr></thead><tbody>';
-
-    // Cumulative stats
-    var sumKP = 0, cntKP = 0, sumPH = 0, cntPH = 0, sumHP = 0, cntHP = 0, sumE2E = 0, cntE2E = 0;
-
-    filtered.forEach(function(pr) {
-        if (pr.kp !== null) { sumKP += pr.kp; cntKP++; }
-        if (pr.ph !== null) { sumPH += pr.ph; cntPH++; }
-        if (pr.hp !== null) { sumHP += pr.hp; cntHP++; }
-        if (pr.e2e !== null) { sumE2E += pr.e2e; cntE2E++; }
-
-        var kpColor = pr.kp !== null ? (pr.kp <= 7 ? '#107c10' : pr.kp <= 14 ? '#ff8c00' : '#d13438') : '#a0a0a0';
-        var phColor = pr.ph !== null ? (pr.ph <= 7 ? '#107c10' : pr.ph <= 14 ? '#ff8c00' : '#d13438') : '#a0a0a0';
-        var hpColor = pr.hp !== null ? (pr.hp <= 14 ? '#107c10' : pr.hp <= 21 ? '#ff8c00' : '#d13438') : '#a0a0a0';
-        var e2eColor = pr.e2e !== null ? (pr.e2e <= 25 ? '#107c10' : pr.e2e <= 35 ? '#ff8c00' : '#d13438') : '#a0a0a0';
-
-        var stageMap = { Draft: { bg: '#fff4ce', color: '#8a6914' }, 'In Dev': { bg: '#d0e8ff', color: '#004e8c' }, Shipped: { bg: '#dff6dd', color: '#107c10' } };
-        var sM = stageMap[pr.stage];
-        var statusColor = pr.status === 'On Track' ? '#107c10' : pr.status === 'At Risk' ? '#ff8c00' : pr.status === 'Issue' ? '#d13438' : '#a0a0a0';
-
-        html += '<tr>';
-        html += '<td style="font-weight:600;overflow:hidden;text-overflow:ellipsis;">' + pr.name + '</td>';
-        html += '<td style="font-size:12px;overflow:hidden;text-overflow:ellipsis;">' + pr.portfolioIcon + ' ' + pr.portfolio.replace('Unified Commercial Marketing Profiles (UCMP)', 'UCMP').replace('Connected Sales & Marketing Data', 'Connected Data').replace('Signal Flow Transformation', 'Signal Flow').replace('Microsoft Demo Experiences', 'Demo Experiences').replace('Campaign Supply Chain', 'Campaign SC').replace('Marketing Planning & Execution', 'Marketing P&E') + '</td>';
-        html += '<td style="text-align:center;"><span style="color:' + kpColor + ';font-weight:600;">' + (pr.kp !== null ? pr.kp + 'd' : '—') + '</span></td>';
-        html += '<td style="text-align:center;"><span style="color:' + phColor + ';font-weight:600;">' + (pr.ph !== null ? pr.ph + 'd' : '—') + '</span></td>';
-        html += '<td style="text-align:center;"><span style="color:' + hpColor + ';font-weight:600;">' + (pr.hp !== null ? pr.hp + 'd' : '—') + '</span></td>';
-        html += '<td style="text-align:center;"><span style="color:' + e2eColor + ';font-weight:700;">' + (pr.e2e !== null ? pr.e2e + 'd' : '—') + '</span></td>';
-        html += '<td>' + (pr.adoId ? '<a href="https://dev.azure.com/MicrosoftIT/OneITVSO/_workitems/edit/' + pr.adoId + '" target="_blank" style="color:#0078d4;font-weight:600;text-decoration:none;">#' + pr.adoId + ' ↗</a>' : '<span style="color:#a0a0a0;">—</span>') + '</td>';
-        html += '<td><span style="color:' + statusColor + ';font-weight:600;font-size:12px;">● ' + pr.status + '</span></td>';
-        html += '<td><span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:' + sM.bg + ';color:' + sM.color + ';">' + pr.stage + '</span></td>';
-        html += '</tr>';
-    });
-    html += '</tbody></table></div>';
-
-    // Summary row
-    html += '<div style="margin-top:12px;padding:12px 14px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#605e5c;display:flex;gap:16px;flex-wrap:wrap;">';
-    if (cntKP > 0) html += '<div>📐 <strong>Avg Kickoff→Prototype:</strong> <span style="color:#0078d4;font-weight:600;">' + Math.round(sumKP / cntKP) + ' days</span> <span style="color:#a0a0a0;">(' + cntKP + ' projects)</span></div>';
-    if (cntPH > 0) html += '<div>📐 <strong>Avg Prototype→Handshake:</strong> <span style="color:#107c10;font-weight:600;">' + Math.round(sumPH / cntPH) + ' days</span> <span style="color:#a0a0a0;">(' + cntPH + ' projects)</span></div>';
-    if (cntHP > 0) html += '<div>📐 <strong>Avg Handshake→Production:</strong> <span style="color:#8661c5;font-weight:600;">' + Math.round(sumHP / cntHP) + ' days</span> <span style="color:#a0a0a0;">(' + cntHP + ' projects)</span></div>';
-    if (cntE2E > 0) html += '<div>📐 <strong>Avg End to End:</strong> <span style="color:#e83e8c;font-weight:600;">' + Math.round(sumE2E / cntE2E) + ' days</span> <span style="color:#a0a0a0;">(' + cntE2E + ' shipped)</span></div>';
-    html += '</div>';
-
-    // Stage distribution mini bar
-    var draftCount = filtered.filter(function(pr) { return pr.stage === 'Draft'; }).length;
-    var devCount = filtered.filter(function(pr) { return pr.stage === 'In Dev'; }).length;
-    var shipCount = filtered.filter(function(pr) { return pr.stage === 'Shipped'; }).length;
-    var totalFiltered = filtered.length || 1;
-    html += '<div style="margin-top:10px;display:flex;height:8px;border-radius:4px;overflow:hidden;">';
-    if (draftCount > 0) html += '<div style="width:' + Math.round((draftCount / totalFiltered) * 100) + '%;background:#ffe0a0;" title="Draft: ' + draftCount + '"></div>';
-    if (devCount > 0) html += '<div style="width:' + Math.round((devCount / totalFiltered) * 100) + '%;background:#7bb8f0;" title="In Dev: ' + devCount + '"></div>';
-    if (shipCount > 0) html += '<div style="width:' + Math.round((shipCount / totalFiltered) * 100) + '%;background:#6dd58c;" title="Shipped: ' + shipCount + '"></div>';
-    html += '</div>';
-    html += '<div style="display:flex;gap:12px;margin-top:4px;font-size:11px;color:#8a8886;">';
-    if (draftCount > 0) html += '<span>✏️ Draft: ' + draftCount + '</span>';
-    if (devCount > 0) html += '<span>🚀 In Dev: ' + devCount + '</span>';
-    if (shipCount > 0) html += '<span>🎉 Shipped: ' + shipCount + '</span>';
-    html += '</div>';
-
-    panel.innerHTML = html;
 }
 
 function toggleAreaCard(el) {
@@ -2546,12 +2140,9 @@ function showBrief(idx) {
     }
 
     // Update brief footer score to match actual data
-    var scoreColor = h.score >= 6 ? '#107c10' : h.score >= 4 ? '#ff8c00' : '#d13438';
+    var scoreColor = h.score >= 4 ? '#107c10' : h.score >= 3 ? '#ff8c00' : '#d13438';
     document.getElementById('briefScoreDot').style.background = scoreColor;
-    document.getElementById('briefScoreText').textContent = h.score + '/7 Complete';
-
-    // Show attached artifacts in brief view
-    updateBriefAttachments();
+    document.getElementById('briefScoreText').textContent = h.score + '/5 Complete';
 
     showView('view-brief');
 }
@@ -2595,15 +2186,14 @@ function renderPickerList() {
     }
 
     container.innerHTML = items.map(function(item) {
-        var stateColor = item.state === 'Active' ? '#dff6dd' : item.state === 'Closed' ? '#deecf9' : item.state === 'Resolved' ? '#e8daef' : '#e8e8e8';
-        var stateText = item.state === 'Active' ? '#107c10' : item.state === 'Closed' ? '#0078d4' : item.state === 'Resolved' ? '#5b2d90' : '#605e5c';
+        var stateColor = item.state === 'Active' ? '#dff6dd' : '#e8e8e8';
+        var stateText = item.state === 'Active' ? '#107c10' : '#605e5c';
         var iterShort = item.iteration.split('\\').pop();
         var areaShort = item.areaPath.split('\\').slice(1).join(' / ');
-        var typeIcon = item.type === 'Scenario' ? 'S' : item.type === 'User Story' ? 'US' : 'F';
         var selectedClass = selectedAdoItem && selectedAdoItem.id === item.id ? ' selected' : '';
 
         return '<div class="picker-item' + selectedClass + '" onclick="selectPickerItem(' + item.id + ')">' +
-            '<div class="picker-item-icon">' + typeIcon + '</div>' +
+            '<div class="picker-item-icon">F</div>' +
             '<div class="picker-item-info">' +
                 '<div class="picker-item-title">' + item.title + '</div>' +
                 '<div class="picker-item-meta">' +
@@ -2667,10 +2257,8 @@ function autoFillFromAdo(item) {
     adoLinked = true;
     document.getElementById('featureName').value = item.title;
     document.getElementById('summary').value = item.description;
-    document.getElementById('primaryFlow').value = item.acceptanceCriteria.slice(0, 2).join(' → ');
-    document.getElementById('additionalScenarios').value = item.acceptanceCriteria.slice(2).map(function(c) { return '• ' + c; }).join('\n');
 
-    var badgeIds = ['badge-featureName', 'badge-summary', 'badge-primaryFlow', 'badge-additionalScenarios'];
+    var badgeIds = ['badge-featureName', 'badge-summary'];
     for (var i = 0; i < badgeIds.length; i++) {
         var badge = document.getElementById(badgeIds[i]);
         if (badge) badge.classList.add('visible');
@@ -2725,11 +2313,11 @@ document.addEventListener('dblclick', function(e) {
 function nextStep(n) {
     currentStep = n;
     updateSteps();
-    if (n === 4) calculateScore();
+    if (n === 3) calculateScore();
 }
 
 function updateSteps() {
-    for (var i = 1; i <= 4; i++) {
+    for (var i = 1; i <= 3; i++) {
         var sec = document.getElementById('step' + i);
         if (i === currentStep) sec.classList.add('active'); else sec.classList.remove('active');
         var dot = document.getElementById('stepDot' + i);
@@ -2737,7 +2325,7 @@ function updateSteps() {
         if (i < currentStep) dot.classList.add('done');
         else if (i === currentStep) dot.classList.add('active');
         else dot.classList.add('upcoming');
-        if (i < 4) {
+        if (i < 3) {
             var line = document.getElementById('stepLine' + i);
             line.className = 'step-line';
             if (i < currentStep) line.classList.add('done');
@@ -2757,71 +2345,6 @@ function toggleChip(el) {
 
 function toggleCheck(el) { el.classList.toggle('checked'); }
 
-// ── Artifact File Upload ──
-var artifactFiles = {}; // { userflow: { name, size, file }, readme: {...}, ... }
-
-function triggerArtifactUpload(key) {
-    document.getElementById('artifactFile-' + key).click();
-}
-
-function handleArtifactFile(input, key) {
-    var file = input.files && input.files[0];
-    if (!file) return;
-    // Store the file reference
-    artifactFiles[key] = { name: file.name, size: file.size, file: file };
-    // Auto-check the parent checklist item
-    var parent = input.closest('.checklist-item');
-    if (parent && !parent.classList.contains('checked')) parent.classList.add('checked');
-    // Update UI
-    var btn = document.getElementById('uploadBtn-' + key);
-    btn.classList.add('has-file');
-    btn.textContent = '✅ Replace';
-    var info = document.getElementById('fileInfo-' + key);
-    var sizeKB = Math.round(file.size / 1024);
-    var sizeLabel = sizeKB > 1024 ? (Math.round(sizeKB / 1024 * 10) / 10) + ' MB' : sizeKB + ' KB';
-    info.innerHTML = '📄 ' + file.name + ' (' + sizeLabel + ') <button class="artifact-file-remove" onclick="event.stopPropagation();removeArtifactFile(\'' + key + '\')">✕ remove</button>';
-    info.style.display = 'inline-flex';
-}
-
-function removeArtifactFile(key) {
-    delete artifactFiles[key];
-    var inp = document.getElementById('artifactFile-' + key);
-    if (inp) inp.value = '';
-    var btn = document.getElementById('uploadBtn-' + key);
-    btn.classList.remove('has-file');
-    btn.textContent = '📎 Attach';
-    var info = document.getElementById('fileInfo-' + key);
-    info.style.display = 'none';
-    info.innerHTML = '';
-}
-
-function getAttachedArtifactsSummary() {
-    var labels = { userflow: 'User Flow Diagrams', readme: 'README', scripts: 'Conversation Scripts', design: 'Design Specs' };
-    var attached = [];
-    for (var key in artifactFiles) {
-        if (artifactFiles[key]) attached.push({ key: key, label: labels[key] || key, name: artifactFiles[key].name, size: artifactFiles[key].size });
-    }
-    return attached;
-}
-
-// Update brief view to show attached files
-function updateBriefAttachments() {
-    var el = document.getElementById('briefAttachments');
-    if (!el) return;
-    var attached = getAttachedArtifactsSummary();
-    if (attached.length === 0) { el.style.display = 'none'; return; }
-    var html = '<div style="font-size:12px;font-weight:600;color:#0078d4;margin-bottom:6px;">📎 ' + attached.length + ' file' + (attached.length > 1 ? 's' : '') + ' attached</div>';
-    attached.forEach(function(a) {
-        var sizeKB = Math.round(a.size / 1024);
-        var sizeLabel = sizeKB > 1024 ? (Math.round(sizeKB / 1024 * 10) / 10) + ' MB' : sizeKB + ' KB';
-        html += '<div style="font-size:12px;display:flex;align-items:center;gap:6px;padding:3px 0;">' +
-            '<span>📄</span> <strong>' + a.label + ':</strong> ' + a.name + ' <span style="color:#a0a0a0;">(' + sizeLabel + ')</span></div>';
-    });
-    html += '<div style="margin-top:6px;font-size:11px;color:#5b2d90;display:flex;align-items:center;gap:4px;"><span>⚡</span> These will be attached to the ADO User Story via the Attachments API on submit</div>';
-    el.innerHTML = html;
-    el.style.display = 'block';
-}
-
 function selectOwner(el, name) {
     var options = document.querySelectorAll('.owner-option');
     for (var i = 0; i < options.length; i++) options[i].classList.remove('selected');
@@ -2838,35 +2361,31 @@ function calculateScore() {
     var adoTag = adoLinked ? ' <span style="color:#5b2d90;font-size:11px;">(from ADO)</span>' : '';
 
     if (document.getElementById('featureName').value.trim()) { score++; items.push('✅ Feature name' + adoTag); } else { items.push('⬜ Feature name'); }
-    if (document.getElementById('protoLink').value.trim()) { score++; items.push('✅ Prototype link'); } else { items.push('⬜ Prototype link'); }
-    if (document.getElementById('primaryFlow').value.trim()) { score++; items.push('✅ Primary flow' + adoTag); } else { items.push('⬜ Primary flow'); }
-    if (document.getElementById('additionalScenarios').value.trim()) { score++; items.push('✅ Additional scenarios' + adoTag); } else { items.push('⬜ Additional scenarios'); }
-    if (document.getElementById('simulated').value.trim()) { score++; items.push('✅ Boundaries defined'); } else { items.push('⬜ Where prototype ends'); }
-    if (document.getElementById('openQuestions').value.trim()) { score++; items.push('✅ Open questions'); } else { items.push('⬜ Open questions'); }
-    if (document.querySelector('#stakeholderChips .chip.selected')) { score++; items.push('✅ Stakeholder validation'); } else { items.push('⬜ Stakeholder validation'); }
+    if (document.getElementById('protoLink').value.trim()) { score++; items.push('✅ Repo link'); } else { items.push('⬜ Repo link'); }
+    if (document.getElementById('summary').value.trim()) { score++; items.push('✅ Summary' + adoTag); } else { items.push('⬜ Summary'); }
+    if (document.querySelector('#stakeholderChips .chip.selected')) { score++; items.push('✅ Business validation'); } else { items.push('⬜ Business validation'); }
+    if (document.getElementById('showcased').value.trim()) { score++; items.push('✅ What\'s been showcased'); } else { items.push('⬜ What\'s been showcased'); }
 
     var circumference = 213.6;
-    var offset = circumference - (score / 7) * circumference;
+    var offset = circumference - (score / 5) * circumference;
     var ring = document.getElementById('scoreRing');
     ring.style.strokeDashoffset = offset;
-    var color = score >= 6 ? '#107c10' : score >= 4 ? '#ff8c00' : '#d13438';
+    var color = score >= 4 ? '#107c10' : score >= 3 ? '#ff8c00' : '#d13438';
     ring.style.stroke = color;
-    document.getElementById('scoreText').textContent = score + '/7';
+    document.getElementById('scoreText').textContent = score + '/5';
     document.getElementById('scoreText').style.color = color;
 
     var messages = {
-        7: 'Ready to ship! This handshake has everything engineering needs.',
-        6: 'Almost there — one more field and this is complete.',
-        5: 'Good progress — fill in the remaining items.',
-        4: 'Halfway — the more you fill in, the fewer questions engineering will ask.',
-        3: 'Getting started — keep going to build a complete picture.',
-        2: 'Early stage — add more context.',
+        5: 'Ready to ship! This handshake has everything engineering needs.',
+        4: 'Almost there — one more field and this is complete.',
+        3: 'Good progress — fill in the remaining items.',
+        2: 'Getting started — keep going to build a complete picture.',
         1: 'Just the basics — fill in more to create a useful handshake.',
         0: 'Empty — go back and fill in the form fields.'
     };
     document.getElementById('scoreMessage').textContent = messages[score];
 
-    var adoLine = adoLinked && selectedAdoItem ? '<div style="font-size:13px;color:#5b2d90;padding:6px 0;margin-bottom:4px;">🔗 Linked to ADO #' + selectedAdoItem.id + ' — 4 fields auto-filled</div>' : '';
+    var adoLine = adoLinked && selectedAdoItem ? '<div style="font-size:13px;color:#5b2d90;padding:6px 0;margin-bottom:4px;">🔗 Linked to ADO #' + selectedAdoItem.id + ' — 2 fields auto-filled</div>' : '';
     document.getElementById('reviewSummary').innerHTML = '<div style="margin-top:16px;">' + adoLine +
         items.map(function(i) { return '<div style="font-size:14px;padding:4px 0;">' + i + '</div>'; }).join('') + '</div>';
 }
@@ -2926,101 +2445,51 @@ function openInAdo() {
 // SUBMIT TO ENGINEERING (from Draft)
 // ══════════════════════════════════════════════════════
 function submitToEngineering(featureName) {
-    // Find the handshake item
-    var h = handshakeData.find(function(item) { return item.name === featureName; });
-    var adoId = h ? h.adoId.replace('#', '') : '';
-    var parentId = h ? (h.parentId || '').replace('#', '') : '';
-
-    // Find matching mockAdoItem for rich data
-    var adoItem = mockAdoItems.find(function(m) { return String(m.id) === adoId; });
+    var workItemId = 13950000 + Math.floor(Math.random() * 1000);
 
     // Show confirmation modal
     var overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s ease;';
     overlay.innerHTML =
-        '<div style="background:white;border-radius:16px;padding:32px 36px;max-width:520px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
+        '<div style="background:white;border-radius:16px;padding:32px 36px;max-width:480px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
             '<div style="text-align:center;margin-bottom:20px;">' +
                 '<div style="font-size:40px;margin-bottom:8px;">📤</div>' +
                 '<div style="font-size:18px;font-weight:700;color:#323130;">Submit to Engineering?</div>' +
                 '<div style="font-size:14px;color:#605e5c;margin-top:8px;line-height:1.6;">This will create a <strong>User Story</strong> in ADO with the full handshake brief attached and notify the assigned engineering lead.</div>' +
             '</div>' +
-            '<div style="background:#f0fdf4;border-radius:10px;padding:14px 16px;margin-bottom:16px;">' +
+            '<div style="background:#f0fdf4;border-radius:10px;padding:14px 16px;margin-bottom:20px;">' +
                 '<div style="font-size:13px;color:#323130;"><strong>Feature:</strong> ' + featureName + '</div>' +
-                '<div style="font-size:13px;color:#323130;margin-top:4px;"><strong>Parent Feature ADO:</strong> #' + adoId + '</div>' +
-                (parentId ? '<div style="font-size:13px;color:#323130;margin-top:4px;"><strong>Parent Scenario:</strong> #' + parentId + '</div>' : '') +
+                '<div style="font-size:13px;color:#323130;margin-top:4px;"><strong>ADO ID:</strong> #' + workItemId + '</div>' +
                 '<div style="font-size:13px;color:#323130;margin-top:4px;"><strong>Status will change:</strong> Draft → <span style="color:#107c10;font-weight:600;">Submitted</span></div>' +
             '</div>' +
-            '<div style="background:#e8defb;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#5b2d90;display:flex;align-items:center;gap:6px;">🧪 Prototype mode — simulating ADO submission (no real work items created)</div>' +
-            (getAttachedArtifactsSummary().length > 0
-                ? '<div style="background:#f0f6fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#0078d4;display:flex;align-items:center;gap:6px;">📎 ' + getAttachedArtifactsSummary().length + ' artifact' + (getAttachedArtifactsSummary().length > 1 ? 's' : '') + ' will be attached to the ADO work item (' + getAttachedArtifactsSummary().map(function(a) { return a.name; }).join(', ') + ')</div>'
-                : '') +
             '<div style="display:flex;gap:10px;justify-content:flex-end;">' +
-                '<button id="submitCancelBtn" style="padding:10px 20px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;color:#323130;">Cancel</button>' +
-                '<button id="submitEngBtn" onclick="confirmSubmit(this,\'' + featureName.replace(/'/g, "\\'") + '\',\'' + adoId + '\')" style="padding:10px 20px;background:#107c10;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;">📤 Submit & Notify Eng</button>' +
+                '<button onclick="this.closest(\'div[style*=position\\\\:fixed]\').remove()" style="padding:10px 20px;background:#f0f0f0;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;color:#323130;">Cancel</button>' +
+                '<button onclick="confirmSubmit(this,\'' + featureName.replace(/'/g, "\\'") + '\',' + workItemId + ')" style="padding:10px 20px;background:#107c10;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;">📤 Submit & Notify Eng</button>' +
             '</div>' +
         '</div>';
     document.body.appendChild(overlay);
-    document.getElementById('submitCancelBtn').addEventListener('click', function() { overlay.remove(); });
 }
 
-function buildHandshakeBriefHtml(featureName, h, adoItem) {
-    var parts = [];
-    parts.push('<h2>🤝 PM–Engineering Handshake Brief</h2>');
-    parts.push('<p><strong>Feature:</strong> ' + featureName + '</p>');
-    if (h) {
-        parts.push('<p><strong>PM:</strong> ' + h.pm + ' · <strong>Area:</strong> ' + (h.area || 'N/A') + '</p>');
-        if (h.owner) parts.push('<p><strong>Eng Lead:</strong> ' + h.owner + '</p>');
-        if (h.kickoffDate) parts.push('<p><strong>Kickoff Date:</strong> ' + h.kickoffDate + '</p>');
-        if (h.protoDate) parts.push('<p><strong>Prototype Date:</strong> ' + h.protoDate + '</p>');
-    }
-    if (adoItem) {
-        parts.push('<h3>📋 Description</h3>');
-        parts.push('<p>' + adoItem.description + '</p>');
-        if (adoItem.acceptanceCriteria && adoItem.acceptanceCriteria.length > 0) {
-            parts.push('<h3>✅ Acceptance Criteria</h3><ul>');
-            adoItem.acceptanceCriteria.forEach(function(ac) { parts.push('<li>' + ac + '</li>'); });
-            parts.push('</ul>');
+function confirmSubmit(btn, featureName, workItemId) {
+    // Remove modal
+    btn.closest('div[style*="position:fixed"]').remove();
+
+    // Update the draft item status in data
+    handshakeData.forEach(function(h) {
+        if (h.name === featureName && h.status === 'draft') {
+            h.status = 'published';
         }
-        if (adoItem.tags && adoItem.tags.length > 0) {
-            parts.push('<p><strong>Tags:</strong> ' + adoItem.tags.join(', ') + '</p>');
-        }
-    }
-    parts.push('<hr><p style="font-size:11px;color:#888;">Generated by Handshake Builder · ' + new Date().toLocaleDateString() + '</p>');
-    return parts.join('\n');
-}
+    });
 
-function confirmSubmit(btn, featureName, adoId) {
-    var h = handshakeData.find(function(item) { return item.name === featureName; });
-    var simulatedId = 15500000 + Math.floor(Math.random() * 10000);
+    // Re-render PM cards
+    renderPmCards();
 
-    // Show spinner briefly
-    btn.disabled = true;
-    btn.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.6s linear infinite;"></span> Submitting...';
-
-    // Find the overlay (walk up to the fixed-position overlay)
-    var overlay = btn;
-    while (overlay && overlay !== document.body) {
-        if (overlay.style && overlay.style.position === 'fixed') break;
-        overlay = overlay.parentElement;
-    }
-
-    setTimeout(function() {
-        // Remove modal overlay
-        if (overlay && overlay !== document.body) overlay.remove();
-
-        // Update status
-        if (h && h.status === 'draft') { h.status = 'published'; }
-        renderPmCards();
-
-        // Success toast
-        var toast = document.createElement('div');
-        toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#107c10;color:white;padding:14px 28px;border-radius:10px;font-size:14px;z-index:1000;animation:fadeIn 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;max-width:600px;';
-        toast.innerHTML = '<span style="font-size:20px;">✅</span><div><strong>' + featureName + '</strong> submitted to engineering!<br>' +
-            '<span style="font-size:12px;opacity:0.85;">User Story #' + simulatedId + ' created in ADO · Parented under #' + adoId + ' · Eng lead notified</span><br>' +
-            '<span style="font-size:11px;opacity:0.7;font-style:italic;">🧪 Simulated — no real ADO work item was created</span></div>';
-        document.body.appendChild(toast);
-        setTimeout(function() { toast.remove(); }, 5000);
-    }, 800);
+    // Show success toast
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#107c10;color:white;padding:14px 28px;border-radius:10px;font-size:14px;z-index:1000;animation:fadeIn 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;';
+    toast.innerHTML = '<span style="font-size:20px;">✅</span><div><strong>' + featureName + '</strong> submitted to engineering!<br><span style="font-size:12px;opacity:0.85;">User Story #' + workItemId + ' created in ADO · Engineering lead notified</span></div>';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 4000);
 }
 
 // ══════════════════════════════════════════════════════
