@@ -875,9 +875,7 @@
 
         .message {
             display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            gap: 8px;
+            flex-direction: column;
             margin-bottom: 20px;
             animation: slideIn 0.3s ease-out;
         }
@@ -893,48 +891,8 @@
             }
         }
 
-        .chat-avatar-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .message.bot .chat-avatar-icon {
-            background: #e1efff;
-            border: 1px solid #b3d4f5;
-            overflow: hidden;
-        }
-
-        .chat-avatar-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .message.user .chat-avatar-icon {
-            background: #0f6cbd;
-            border: 1px solid #0d5ba3;
-            order: 2;
-        }
-
-        .message.human-agent .chat-avatar-icon {
-            background: #e1f5fe;
-            border: 1px solid #0078d4;
-        }
-
-        .message.system .chat-avatar-icon {
-            display: none;
-        }
-
         .message.user {
-            justify-content: flex-end;
+            align-items: flex-end;
         }
 
         .message-bubble {
@@ -992,7 +950,7 @@
 
         .message-time {
             font-size: 11px;
-            color: #605e5c;
+            color: #7a8998;
             margin-top: 8px;
         }
 
@@ -1003,7 +961,6 @@
 
         .message.user .message-time {
             text-align: right;
-            color: rgba(255, 255, 255, 0.8);
         }
 
         .typing-indicator {
@@ -1219,12 +1176,12 @@
         }
 
         .choice-modal {
-            background: #fafafa;
-            border-radius: 12px;
-            padding: 28px;
+            background: white;
+            border-radius: 4px;
+            padding: 24px;
             max-width: 450px;
             width: 90%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 6.4px 14.4px rgba(0, 0, 0, 0.13), 0 1.2px 3.6px rgba(0, 0, 0, 0.11);
             animation: slideUp 0.3s ease-out;
         }
 
@@ -1241,33 +1198,24 @@
 
         .modal-header {
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 24px;
         }
 
         .modal-icon {
-            font-size: 52px;
-            margin-bottom: 16px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+            font-size: 48px;
+            margin-bottom: 12px;
         }
 
         .modal-title {
             font-size: 20px;
-            font-weight: 700;
-            color: #1b3a4b;
-            margin-bottom: 4px;
-            letter-spacing: -0.3px;
+            font-weight: 600;
+            color: #323130;
+            margin-bottom: 8px;
         }
 
         .modal-subtitle {
             font-size: 14px;
-            color: #5a6a72;
+            color: #605e5c;
         }
 
         .choice-options {
@@ -1318,21 +1266,20 @@
 
         .modal-cancel {
             width: 100%;
-            padding: 12px;
-            background: #1b3a4b;
-            border: none;
-            border-radius: 8px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #8a8886;
+            border-radius: 2px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 600;
             font-family: 'Segoe UI', sans-serif;
-            color: white;
+            color: #323130;
             transition: all 0.2s;
-            letter-spacing: 0.2px;
         }
 
         .modal-cancel:hover {
-            background: #264653;
+            background: #f3f2f1;
+            border-color: #323130;
         }
 
         /* Call Screen */
@@ -1380,28 +1327,26 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: #f8fafc;
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 48px;
             margin-bottom: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
-            flex-shrink: 0;
         }
 
         .call-avatar img {
             width: 84px;
             height: 84px;
-            object-fit: cover;
+            object-fit: contain;
             border-radius: 50%;
-            filter: grayscale(1) sepia(1) hue-rotate(200deg) saturate(3) brightness(0.65) contrast(1.1);
+            filter: invert(38%) sepia(85%) saturate(500%) hue-rotate(165deg) brightness(95%);
         }
 
         .call-info {
-            flex-shrink: 0;
             text-align: center;
             margin-bottom: 32px;
         }
@@ -1451,16 +1396,6 @@
         .call-transcript-entry {
             margin-bottom: 16px;
             animation: slideIn 0.3s ease-out;
-            padding-left: 10px;
-            border-left: 3px solid transparent;
-        }
-
-        .call-transcript-entry.speaker-ai {
-            border-left-color: #14b8a6;
-        }
-
-        .call-transcript-entry.speaker-you {
-            border-left-color: #3b82f6;
         }
 
         .call-transcript-speaker {
@@ -1475,33 +1410,6 @@
             font-size: 14px;
             color: #323130;
             line-height: 1.5;
-        }
-
-        .call-transcript-entry.speaker-ai .call-transcript-speaker {
-            color: #0f766e;
-        }
-
-        .call-transcript-entry.speaker-you .call-transcript-speaker {
-            color: #2563eb;
-        }
-
-        .call-transcript-entry.speaker-system {
-            border-left: 2px dashed #c8c6c4;
-            padding: 8px 10px;
-            margin-bottom: 12px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 4px;
-        }
-
-        .call-transcript-entry.speaker-system .call-transcript-speaker {
-            display: none;
-        }
-
-        .call-transcript-entry.speaker-system .call-transcript-text {
-            font-size: 11.5px;
-            font-style: italic;
-            color: #8a8886;
-            line-height: 1.4;
         }
 
         .call-controls {
@@ -1768,34 +1676,25 @@
 
         .confirmation-message {
             text-align: center;
-            padding: 28px 24px 16px;
+            padding: 20px;
         }
 
         .confirmation-icon {
-            font-size: 52px;
-            margin-bottom: 16px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+            font-size: 48px;
+            margin-bottom: 12px;
         }
 
         .confirmation-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1b3a4b;
-            margin-bottom: 10px;
-            letter-spacing: -0.3px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #323130;
+            margin-bottom: 8px;
         }
 
         .confirmation-text {
             font-size: 14px;
-            color: #5a6a72;
-            line-height: 1.6;
+            color: #605e5c;
+            line-height: 1.5;
         }
 
         /* Voice Assistant Styles */
@@ -1968,14 +1867,6 @@
             display: block;
         }
 
-        .chat-option-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-            filter: grayscale(1) sepia(1) hue-rotate(200deg) saturate(3) brightness(0.65) contrast(1.1);
-        }
-
         .chat-option-content {
             flex: 1;
         }
@@ -2000,184 +1891,137 @@
             margin-top: 12px;
         }
 
-        /* Quote Summary Card */
-        .quote-card {
-            margin-top: 14px;
-            padding: 16px 18px;
-            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0fdfa 100%);
+        /* Inline Callback Form (v2 - lives inside chat bubble) */
+        .inline-form-card {
+            background: #ffffff;
+            border: 1px solid #d7e7f5;
             border-radius: 10px;
-            border-left: 4px solid #16a34a;
-            box-shadow: 0 2px 8px rgba(22, 163, 106, 0.1);
-            animation: quoteSlideIn 0.5s ease-out;
-            position: relative;
-            overflow: hidden;
+            padding: 14px 16px;
+            margin-top: 10px;
         }
 
-        .quote-card::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle, rgba(22, 163, 106, 0.08) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .quote-card-header {
+        .inline-form-card .inline-form-header {
             display: flex;
             align-items: center;
             gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .inline-form-card .inline-form-icon {
+            font-size: 20px;
+        }
+
+        .inline-form-card .inline-form-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1b1b1b;
+        }
+
+        .inline-form-card .inline-form-subtitle {
+            font-size: 12px;
+            color: #5c6f82;
             margin-bottom: 10px;
         }
 
-        .quote-card-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 10px;
-            background: #16a34a;
-            color: white;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
+        .inline-form-card .inline-form-group {
+            margin-bottom: 8px;
         }
 
-        .quote-card-ref {
+        .inline-form-card .inline-form-label {
+            display: block;
             font-size: 11px;
-            color: #6b7280;
-            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #323130;
+            margin-bottom: 2px;
         }
 
-        .quote-card-grid {
+        .inline-form-card .inline-form-input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #c8c6c4;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'Segoe UI', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #fafafa;
+        }
+
+        .inline-form-card .inline-form-input:focus {
+            border-color: #0078d4;
+            background: #fff;
+        }
+
+        .inline-form-card .inline-form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px 16px;
-            margin: 10px 0;
-        }
-
-        .quote-card-item {
-            font-size: 13px;
-            color: #374151;
-            line-height: 1.4;
-        }
-
-        .quote-card-item strong {
-            color: #111827;
-            font-weight: 600;
-        }
-
-        .quote-card-total {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px dashed #bbf7d0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .quote-card-total-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .quote-card-total-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: #16a34a;
-        }
-
-        .quote-card-footer {
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px solid #d1fae5;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             gap: 8px;
         }
 
-        .quote-card-email {
+        .inline-form-card .inline-form-submit {
+            width: 100%;
+            padding: 8px;
+            background: #0f6cbd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Segoe UI', sans-serif;
+            margin-top: 6px;
+            transition: background 0.2s;
+        }
+
+        .inline-form-card .inline-form-submit:hover {
+            background: #0d4f99;
+        }
+
+        .inline-form-card .inline-form-cancel {
+            width: 100%;
+            padding: 6px;
+            background: transparent;
+            color: #5c6f82;
+            border: 1px solid #d2d0ce;
+            border-radius: 4px;
+            cursor: pointer;
             font-size: 12px;
-            color: #059669;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            font-family: 'Segoe UI', sans-serif;
+            margin-top: 4px;
+            transition: all 0.2s;
         }
 
-        .quote-card-validity {
-            font-size: 11px;
-            color: #6b7280;
+        .inline-form-card .inline-form-cancel:hover {
+            background: #f3f2f1;
+            border-color: #8a8886;
         }
 
-        .quote-sent-pulse {
-            animation: quoteSentPulse 2s ease-in-out;
-        }
-
-        /* Conversation Summary Card */
-        .summary-card {
-            margin-top: 14px;
-            padding: 16px 18px;
-            background: linear-gradient(135deg, #eff6ff 0%, #eef2ff 50%, #f0f9ff 100%);
+        /* Inline confirmation card */
+        .inline-confirm-card {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
             border-radius: 10px;
-            border-left: 4px solid #0f6cbd;
-            box-shadow: 0 2px 8px rgba(15, 108, 189, 0.1);
-            animation: quoteSlideIn 0.5s ease-out;
+            padding: 14px 16px;
+            margin-top: 10px;
+            text-align: center;
         }
 
-        .summary-card-header {
+        .inline-confirm-card .confirm-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .inline-confirm-card .confirm-title {
             font-size: 14px;
             font-weight: 600;
-            color: #0f6cbd;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            color: #166534;
+            margin-bottom: 4px;
         }
 
-        .summary-card-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .summary-card-list li {
-            font-size: 13px;
-            color: #374151;
-            padding: 4px 0;
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-            line-height: 1.5;
-        }
-
-        .summary-card-list li::before {
-            content: '•';
-            color: #0f6cbd;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        .summary-card-footer {
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid #bfdbfe;
+        .inline-confirm-card .confirm-text {
             font-size: 12px;
-            color: #6b7280;
-            font-style: italic;
-        }
-
-        @keyframes quoteSlideIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes quoteSentPulse {
-            0% { box-shadow: 0 0 0 0 rgba(22, 163, 106, 0.3); }
-            50% { box-shadow: 0 0 0 8px rgba(22, 163, 106, 0); }
-            100% { box-shadow: 0 2px 8px rgba(22, 163, 106, 0.1); }
+            color: #15803d;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -2281,11 +2125,15 @@
             </div>
             <h3 class="context-title" id="contextTitle">Immediate Assist</h3>
             <p class="context-description" id="contextDescription">When a customer requests human support outside business hours, AI voice assistance is offered first for immediate help. A callback remains available at any time.</p>
+            <div class="context-how-to" id="contextHowTo" style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; font-size: 11.5px; color: #1e40af; line-height: 1.5; display: none;">
+                <strong>How to try:</strong> <span id="contextHowToText">Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat to start the off-hours flow.</span>
+            </div>
             <div class="context-divider"></div>
             <div class="variant-switcher">
                 <button class="variant-btn" id="variantHybrid" onclick="switchPrototypeVariant('hybrid')">Customer Choice</button>
                 <button class="variant-btn" id="variantAiFirst" onclick="switchPrototypeVariant('ai_first')">Immediate Assist</button>
                 <button class="variant-btn" id="variantHumanFirst" onclick="switchPrototypeVariant('human_first')">Assisted Follow-Up</button>
+                <button class="variant-btn" id="variantHumanFirstV2" onclick="switchPrototypeVariant('human_first_v2')">Assisted Follow-Up v2</button>
             </div>
             <div style="margin-top: 16px;">
                 <button onclick="copyPrototypeLink()" class="context-link" title="Share this prototype" style="display: inline-block; padding: 8px 16px; background: #0078d4; color: white; border: none; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; font-family: inherit;">📤 Share this Prototype</button>
@@ -2544,11 +2392,12 @@
             <div class="modal-header">
                 <div class="modal-icon">⏱️</div>
                 <div class="modal-title">Get Answers While You Wait</div>
+                <div class="modal-subtitle">Speak with our Ask Microsoft Voice Agent in the meantime</div>
             </div>
-            <p style="margin: 16px 0 24px; color: #5a6a72; font-size: 14px; line-height: 1.6; text-align: center;">
-                Your callback is confirmed. While you wait, our Voice Agent can help you explore Microsoft 365 options.
+            <p style="margin: 20px 0; color: #666; font-size: 14px; line-height: 1.6;">
+                Your callback request is confirmed. While you wait for a human agent, you can speak with our Ask Microsoft Voice Agent to learn more about Microsoft 365.
             </p>
-            <button class="form-submit" onclick="startVoiceSessionFromCallback()">Talk to &ldquo;Ask Microsoft Voice Agent&rdquo;</button>
+            <button class="form-submit" onclick="startVoiceSessionFromCallback()">Speak with Ask Microsoft Voice Agent</button>
             <button class="modal-cancel" style="margin-top: 12px;" onclick="closeSpeakWhileYouWaitModal()">Skip, Just Wait</button>
         </div>
     </div>
@@ -2620,41 +2469,17 @@
         let isSpeaking = false;
         let audioEnabled = true;
         let voiceSessionGeneration = 0;
-        let speechKeepAliveTimer = null;  // Chrome 15-second TTS bug workaround
-
-        // ── Chrome/Edge speechSynthesis keepalive ──────────────────────────
-        // Chrome silently kills any utterance longer than ~15 s.
-        // Workaround: pause() + resume() every 10 s while speaking.
-        function startSpeechKeepAlive() {
-            stopSpeechKeepAlive();
-            speechKeepAliveTimer = setInterval(() => {
-                if (speechSynthesis.speaking && !speechSynthesis.paused) {
-                    speechSynthesis.pause();
-                    speechSynthesis.resume();
-                }
-            }, 10000);
-        }
-        function stopSpeechKeepAlive() {
-            if (speechKeepAliveTimer) { clearInterval(speechKeepAliveTimer); speechKeepAliveTimer = null; }
-        }
-
         let callbackRequested = false;
         let callbackRequestedAfterVoiceCall = false;
         let offHoursAiFirstFlow = false;
         let callbackFlowContext = null;
-        let voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false };
+        let voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false, fromHumanFirstV2: false };
         let conversationContext = {
             numEmployees: null,
             workLocation: null,
             securityNeeds: null,
             timeline: null,
-            interestedPlans: [],
-            pricePerUser: null,
-            monthlyTotal: null,
-            quoteGenerated: false,
-            quoteId: null,
-            quoteSentToEmail: false,
-            quoteReadyForSend: false
+            interestedPlans: []
         };
 
         // Simulated Microsoft 365 knowledge base (in production, this would query the actual website)
@@ -2695,15 +2520,23 @@
         const prototypeVariants = {
             hybrid: {
                 title: 'Customer Choice',
-                description: 'Customers choose between speaking with the AI voice assistant immediately or requesting a callback from a Microsoft specialist. Designed to maximize transparency and customer control.'
+                description: 'Customers choose between speaking with the AI voice assistant immediately or requesting a callback from a Microsoft specialist. Designed to maximize transparency and customer control.',
+                howTo: 'Click the <em>\"Human Agent\"</em> button or type <em>\"talk to a human\"</em> in the chat to start the off-hours flow.'
             },
             human_first: {
                 title: 'Assisted Follow-Up',
-                description: 'Customers request a callback first. After confirming the follow-up, AI voice support is offered as an optional way to get immediate answers while they wait.'
+                description: 'Customers request a callback first. After confirming the follow-up, AI voice support is offered as an optional way to get immediate answers while they wait.',
+                howTo: 'Click the <em>\"Human Agent\"</em> button or type <em>\"talk to a human\"</em> in the chat to start the off-hours flow.'
+            },
+            human_first_v2: {
+                title: 'Assisted Follow-Up v2',
+                description: 'Same as Assisted Follow-Up, but the callback form, confirmation, and voice agent offer all stay inline within the chat window — no pop-ups or modals. Better for telemetry and a seamless experience.',
+                howTo: 'Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat to start the off-hours flow. Everything stays inside the chat.'
             },
             ai_first: {
                 title: 'Immediate Assist',
-                description: 'When a customer requests human support outside business hours, AI voice assistance is offered first for immediate help. A callback remains available at any time.'
+                description: 'When a customer requests human support outside business hours, AI voice assistance is offered first for immediate help. A callback remains available at any time.',
+                howTo: 'Click the <em>\"Human Agent\"</em> button or type <em>\"talk to a human\"</em> in the chat to start the off-hours flow.'
             }
         };
 
@@ -2713,14 +2546,27 @@
             document.getElementById('contextTitle').textContent = prototypeVariants[variant].title;
             document.getElementById('contextDescription').textContent = prototypeVariants[variant].description;
 
+            // Show/hide how-to hint
+            const howToEl = document.getElementById('contextHowTo');
+            const howToText = document.getElementById('contextHowToText');
+            if (prototypeVariants[variant].howTo) {
+                howToText.innerHTML = prototypeVariants[variant].howTo;
+                howToEl.style.display = 'block';
+            } else {
+                howToEl.style.display = 'none';
+            }
+
             document.getElementById('variantHybrid').classList.remove('active');
             document.getElementById('variantHumanFirst').classList.remove('active');
+            document.getElementById('variantHumanFirstV2').classList.remove('active');
             document.getElementById('variantAiFirst').classList.remove('active');
 
             if (variant === 'hybrid') {
                 document.getElementById('variantHybrid').classList.add('active');
             } else if (variant === 'human_first') {
                 document.getElementById('variantHumanFirst').classList.add('active');
+            } else if (variant === 'human_first_v2') {
+                document.getElementById('variantHumanFirstV2').classList.add('active');
             } else if (variant === 'ai_first') {
                 document.getElementById('variantAiFirst').classList.add('active');
             }
@@ -2856,18 +2702,7 @@
                 `;
             }
             
-            // Choose avatar icon based on message type
-            let avatarIcon = '';
-            if (type === 'bot') {
-                avatarIcon = '<div class="chat-avatar-icon"><img src="Icon.jpg" alt="Ask Microsoft" /></div>';
-            } else if (type === 'user') {
-                avatarIcon = '<div class="chat-avatar-icon">👤</div>';
-            } else if (type === 'human-agent') {
-                avatarIcon = '<div class="chat-avatar-icon">🎧</div>';
-            }
-
             messageDiv.innerHTML = `
-                ${avatarIcon}
                 <div class="message-bubble">
                     ${text.replace(/\n/g, '<br>')}
                     <div class="message-time">${getCurrentTime()}</div>
@@ -3001,6 +2836,10 @@
                 showHumanFirstOffHoursOffer();
                 return;
             }
+            if (prototypeVariant === 'human_first_v2') {
+                showHumanFirstV2OffHoursOffer();
+                return;
+            }
             if (prototypeVariant === 'ai_first') {
                 showOffHoursAiFirstOffer();
                 return;
@@ -3018,7 +2857,7 @@
                 <div class="options-container">
                     <div class="chat-option-card" onclick="selectSalesOption('ai-assistant')" role="button" tabindex="0">
                         <div class="chat-option-icon" style="background: white;">
-                            <img src="voice.png" alt="Ask Microsoft Voice Agent" style="width: 44px; height: 44px; display: block;" />
+                            <img src="voice-assistants.png" alt="Voice assistant" style="width: 44px; height: 44px; display: block;" />
                         </div>
                         <div class="chat-option-content">
                             <div class="chat-option-title">Speak with Ask Microsoft Voice Agent</div>
@@ -3086,6 +2925,327 @@
             `;
             chatMessages.appendChild(messageDiv);
             scrollToBottom();
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+         *  Assisted Follow-Up v2 — All interactions inline in chat
+         * ═══════════════════════════════════════════════════════════ */
+
+        function showHumanFirstV2OffHoursOffer() {
+            // Same as human_first: show callback option inline in chat
+            const optionsHTML = `
+                <div class="hours-notice" style="margin: 0 0 12px 0;">
+                    <div class="hours-title">Business hours notice</div>
+                    <div>You've reached us outside of business hours (M-F, 6 AM to 6 PM PT). I'm still here to help — please choose the option below to continue.</div>
+                </div>
+                <div class="options-container">
+                    <div class="chat-option-card" onclick="handleV2RequestCallback()" role="button" tabindex="0" style="background: #e1efff; box-shadow: 0 10px 24px rgba(15, 108, 189, 0.24); border-color: #d6e2f3;">
+                        <div class="chat-option-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M6.6 10.8a12.4 12.4 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24c1.1.36 2.3.56 3.6.56a1 1 0 0 1 1 1v3.5a1 1 0 0 1-1 1C10.1 21 3 13.9 3 5.9a1 1 0 0 1 1-1H7.5a1 1 0 0 1 1 1c0 1.3.2 2.5.56 3.6a1 1 0 0 1-.24 1l-2.2 2.2z"/>
+                            </svg>
+                        </div>
+                        <div class="chat-option-content">
+                            <div class="chat-option-title">Request a Callback</div>
+                            <div class="chat-option-description">A Microsoft sales associate will contact you within 48 hours to discuss your needs.</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot with-options';
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    How would you like to connect with our sales team?
+                    ${optionsHTML}
+                    <div class="message-time">just now</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function handleV2RequestCallback() {
+            addMessage('I\'d like to request a callback', 'user');
+            setTimeout(() => {
+                addMessage('I\'ll help you request a callback. Please fill out the form below so our sales team can reach out to you.', 'bot', false);
+                setTimeout(() => {
+                    showInlineChatCallbackForm();
+                }, 600);
+            }, 400);
+        }
+
+        function showInlineChatCallbackForm() {
+            // Pick a random test profile
+            const profiles = [
+                { name: 'Alex Chen', business: 'Northwind Architecture Group', email: 'alex.chen@northwind-example.com', phone: '(206) 555-0198', users: '42' },
+                { name: 'Priya Nair', business: 'Fabrikam Health Partners', email: 'priya.nair@fabrikam-example.com', phone: '(415) 555-0126', users: '85' },
+                { name: 'Jordan Rivera', business: 'Adventure Works Retail', email: 'jordan.rivera@adventureworks-example.com', phone: '(312) 555-0174', users: '23' }
+            ];
+            const p = profiles[Math.floor(Math.random() * profiles.length)];
+
+            const formHTML = `
+                <div class="inline-form-card">
+                    <div class="inline-form-header">
+                        <span class="inline-form-icon">📞</span>
+                        <span class="inline-form-title">Request a Callback</span>
+                    </div>
+                    <div class="inline-form-subtitle">We'll get back to you within 48 hours</div>
+                    <form id="inlineCallbackForm" onsubmit="submitInlineCallbackForm(event)">
+                        <div class="inline-form-group">
+                            <label class="inline-form-label">Name *</label>
+                            <input class="inline-form-input" id="inlineCbName" type="text" value="${p.name}" required />
+                        </div>
+                        <div class="inline-form-group">
+                            <label class="inline-form-label">Business Name *</label>
+                            <input class="inline-form-input" id="inlineCbBusiness" type="text" value="${p.business}" required />
+                        </div>
+                        <div class="inline-form-row">
+                            <div class="inline-form-group">
+                                <label class="inline-form-label">Email *</label>
+                                <input class="inline-form-input" id="inlineCbEmail" type="email" value="${p.email}" required />
+                            </div>
+                            <div class="inline-form-group">
+                                <label class="inline-form-label">Phone *</label>
+                                <input class="inline-form-input" id="inlineCbPhone" type="tel" value="${p.phone}" pattern="[0-9\\-\\+\\(\\)\\s]+" required />
+                            </div>
+                        </div>
+                        <div class="inline-form-group">
+                            <label class="inline-form-label">Estimated Users *</label>
+                            <input class="inline-form-input" id="inlineCbUsers" type="number" value="${p.users}" min="1" required />
+                        </div>
+                        <button type="submit" class="inline-form-submit">Submit Request</button>
+                    </form>
+                    <button class="inline-form-cancel" onclick="cancelInlineCallbackForm(this)">Cancel</button>
+                </div>
+            `;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot with-options';
+            messageDiv.id = 'inlineCallbackFormMessage';
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${formHTML}
+                    <div class="message-time">just now</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function cancelInlineCallbackForm(btn) {
+            // Remove the form message
+            const formMsg = document.getElementById('inlineCallbackFormMessage');
+            if (formMsg) formMsg.remove();
+            addMessage('Cancel callback request', 'user');
+            setTimeout(() => {
+                addMessage('No problem. If you change your mind, just let me know — I\'m here to help.', 'bot', false);
+            }, 400);
+        }
+
+        function submitInlineCallbackForm(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('inlineCbName').value;
+            const business = document.getElementById('inlineCbBusiness').value;
+            const email = document.getElementById('inlineCbEmail').value;
+            const phone = document.getElementById('inlineCbPhone').value;
+            const users = document.getElementById('inlineCbUsers').value;
+
+            console.log('Inline callback request:', { name, business, email, phone, users });
+
+            // Store in conversation context
+            conversationContext.customerName = name.split(' ')[0];
+            conversationContext.customerFullName = name;
+            conversationContext.businessName = business;
+            conversationContext.customerEmail = email;
+            conversationContext.customerPhone = phone;
+            conversationContext.numEmployees = parseInt(users) || null;
+            callbackRequested = true;
+
+            // Replace the form with a compact confirmation card
+            const formMsg = document.getElementById('inlineCallbackFormMessage');
+            if (formMsg) {
+                formMsg.querySelector('.message-bubble').innerHTML = `
+                    <div class="inline-confirm-card">
+                        <div class="confirm-icon">✅</div>
+                        <div class="confirm-title">Callback Request Submitted</div>
+                        <div class="confirm-text">Thank you, ${conversationContext.customerName}. A Microsoft sales associate will contact you within 48 hours.</div>
+                    </div>
+                    <div class="message-time">just now</div>
+                `;
+            }
+
+            addSystemMessage('📞 Callback request submitted for ' + conversationContext.customerFullName + ' (' + business + ').');
+
+            // After a brief pause, offer "Speak While You Wait" inline
+            setTimeout(() => {
+                showInlineSpeakWhileYouWait();
+            }, 800);
+        }
+
+        function showInlineSpeakWhileYouWait() {
+            const optionsHTML = `
+                <div style="margin-bottom: 12px; font-size: 14px; color: #555; line-height: 1.6;">
+                    Your callback request is confirmed. While you wait for a specialist, you can speak with our <strong>Ask Microsoft Voice Agent</strong> to get immediate answers about Microsoft 365.
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <button style="
+                        background: #0f6cbd; color: white; border: none;
+                        padding: 10px 16px; border-radius: 4px;
+                        font-size: 14px; font-weight: 500; cursor: pointer;
+                        transition: background 0.2s;
+                    "
+                    onmouseover="this.style.background='#0d4f99'"
+                    onmouseout="this.style.background='#0f6cbd'"
+                    onclick="handleV2SpeakNow()">
+                        Speak with Ask Microsoft Voice Agent
+                    </button>
+                    <button style="
+                        background: white; color: #0f6cbd;
+                        border: 1.5px solid #0f6cbd; padding: 10px 16px;
+                        border-radius: 4px; font-size: 14px; font-weight: 500;
+                        cursor: pointer; transition: all 0.2s;
+                    "
+                    onmouseover="this.style.background='#f0f8ff'"
+                    onmouseout="this.style.background='white'"
+                    onclick="handleV2SkipVoice()">
+                        Skip, Just Wait
+                    </button>
+                </div>
+                <div style="margin-top: 10px; font-size: 12px; color: #888; font-style: italic;">
+                    You can request a specialist at any time.
+                </div>
+            `;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div style="font-size: 15px; font-weight: 600; color: #262626; margin-bottom: 8px;">⏱️ Get Answers While You Wait</div>
+                    ${optionsHTML}
+                    <div class="message-time">just now</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function handleV2SpeakNow() {
+            addMessage('I\'d like to speak with the Ask Microsoft Voice Agent now', 'user');
+            setTimeout(() => {
+                addMessage('Absolutely. Connecting you to our Ask Microsoft Voice Agent now.', 'bot', false);
+                setTimeout(() => {
+                    voiceSessionContext.fromCallback = true;
+                    voiceSessionContext.fromHumanFirstV2 = true;
+                    startVoiceSession();
+                }, 800);
+            }, 400);
+        }
+
+        function handleV2SkipVoice() {
+            addMessage('Skip, just wait for the callback', 'user');
+            setTimeout(() => {
+                const wrapHTML = `
+                    <div style="font-size: 15px; font-weight: 600; color: #262626;">No problem at all.</div>
+                    <div style="margin-top: 10px; font-size: 14px; color: #555; line-height: 1.6;">
+                        Your callback is confirmed. A Microsoft specialist will follow up within 48 hours. If anything comes up in the meantime, I'm here to help.
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+                        <button style="
+                            background: #0f6cbd; color: white; border: none;
+                            padding: 10px 16px; border-radius: 4px;
+                            font-size: 14px; font-weight: 500; cursor: pointer;
+                            transition: background 0.2s;
+                        "
+                        onmouseover="this.style.background='#0d4f99'"
+                        onmouseout="this.style.background='#0f6cbd'"
+                        onclick="continueExploring()">
+                            Continue Exploring
+                        </button>
+                        <button style="
+                            background: white; color: #0f6cbd;
+                            border: 1.5px solid #0f6cbd; padding: 10px 16px;
+                            border-radius: 4px; font-size: 14px; font-weight: 500;
+                            cursor: pointer; transition: all 0.2s;
+                        "
+                        onmouseover="this.style.background='#f0f8ff'"
+                        onmouseout="this.style.background='white'"
+                        onclick="startNewConversation()">
+                            Start a New Conversation
+                        </button>
+                    </div>
+                    <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666; font-style: italic;">
+                        ${brandCloseText}
+                    </div>
+                `;
+
+                const chatMessages = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message bot';
+                messageDiv.innerHTML = '<div class="message-bubble">' + wrapHTML + '<div class="message-time">just now</div></div>';
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }, 500);
+        }
+
+        /* v2 post-voice wrap-up — shown after voice call ends */
+        function showV2PostVoiceWrapUp() {
+            const optionsHTML = `
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+                    <button style="
+                        background: #0f6cbd; color: white; border: none;
+                        padding: 10px 16px; border-radius: 4px;
+                        font-size: 14px; font-weight: 500; cursor: pointer;
+                        transition: background 0.2s;
+                    "
+                    onmouseover="this.style.background='#0d4f99'"
+                    onmouseout="this.style.background='#0f6cbd'"
+                    onclick="handleKeepCallback()">
+                        ✓ Keep My Callback
+                    </button>
+                    <button style="
+                        background: white; color: #0f6cbd;
+                        border: 1.5px solid #0f6cbd; padding: 10px 16px;
+                        border-radius: 4px; font-size: 14px; font-weight: 500;
+                        cursor: pointer; transition: all 0.2s;
+                    "
+                    onmouseover="this.style.background='#f0f8ff'"
+                    onmouseout="this.style.background='white'"
+                    onclick="handleCancelCallback()">
+                        I'm All Set for Now
+                    </button>
+                </div>
+                <div style="margin-top: 14px; font-size: 12px; color: #888; font-style: italic;">
+                    You can request a specialist at any time.
+                </div>
+            `;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Ask Microsoft Voice Agent.</div>
+                    <div style="margin-top: 12px; font-size: 14px; color: #555; line-height: 1.6;">
+                        I hope this conversation was helpful.<br/><br/>
+                        Your callback request is still scheduled so you can continue the discussion with a Microsoft specialist if you'd like.<br/><br/>
+                        <span style="font-weight: 500; color: #262626;">You're in control — please choose what works best for you.</span>
+                    </div>
+                    ${optionsHTML}
+                    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666; font-style: italic;">
+                        ${brandCloseText}
+                    </div>
+                    <div class="message-time">just now</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+            voiceSessionContext.fromHumanFirstV2 = false;
         }
 
         function showChoiceModal() {
@@ -3170,9 +3330,9 @@
                     callbackUsers: '42'
                 },
                 {
-                    callbackName: 'Marcus Thompson',
+                    callbackName: 'Priya Nair',
                     callbackBusiness: 'Fabrikam Health Partners',
-                    callbackEmail: 'marcus.thompson@fabrikam-example.com',
+                    callbackEmail: 'priya.nair@fabrikam-example.com',
                     callbackPhone: '(415) 555-0126',
                     callbackUsers: '85'
                 },
@@ -3312,36 +3472,24 @@
             }
 
             const words = text.trim().split(/\s+/).filter(Boolean).length;
-            // Neural voices average ~160 wpm = ~375ms/word; pad generously
-            const estimatedMs = Math.max(1800, Math.min(20000, words * 400));
-            const maxWaitMs = estimatedMs + 4000;
+            const estimatedMs = Math.max(1200, Math.min(12000, words * 420));
+            const maxWaitMs = estimatedMs + 2500;
             const startedAt = Date.now();
 
             return new Promise((resolve) => {
                 const checkSpeech = () => {
-                    // Poke the engine awake — prevents stall when tab is backgrounded
-                    try { if (speechSynthesis.paused) speechSynthesis.resume(); } catch(e) {}
-
                     const speakingNow = isSpeaking || speechSynthesis.speaking || speechSynthesis.pending;
-                    const elapsed = Date.now() - startedAt;
-                    const timedOut = elapsed > maxWaitMs;
+                    const timedOut = Date.now() - startedAt > maxWaitMs;
 
-                    // Only resolve when speech is actually done (or timed out)
-                    if (timedOut) {
-                        resolve();
-                        return;
-                    }
-                    if (!speakingNow && elapsed > 600) {
-                        // speech finished naturally; small grace period to avoid false negatives
+                    if (!speakingNow || timedOut) {
                         resolve();
                         return;
                     }
 
-                    setTimeout(checkSpeech, 80);
+                    setTimeout(checkSpeech, 120);
                 };
 
-                // Give speech engine time to start before first check
-                setTimeout(checkSpeech, 400);
+                setTimeout(checkSpeech, 150);
             });
         }
 
@@ -3362,20 +3510,19 @@
 
             if (voiceSessionContext.fromCallback && custName) {
                 // Personalized greeting — we already know the customer from the callback form
-                addCallTranscriptEntry('System', '🔍 Retrieved customer context from callback form — name, business, team size');
-                let contextGreeting = 'Hello ' + custName + ' — this is the Ask Microsoft Voice Agent. ';
+                let contextGreeting = 'Hi ' + custName + '! I\'m your Ask Microsoft Voice Agent. ';
                 if (bizName && numUsers) {
-                    contextGreeting += 'I see you\'ve requested a callback regarding Microsoft 365 for ' + bizName + ', approximately ' + numUsers + ' users. ';
+                    contextGreeting += 'I see you\'ve requested a callback for ' + bizName + ' with about ' + numUsers + ' users — great to connect with you in the meantime. ';
                 } else if (bizName) {
-                    contextGreeting += 'I see you\'ve requested a callback regarding Microsoft 365 for ' + bizName + '. ';
+                    contextGreeting += 'I see you\'ve requested a callback for ' + bizName + ' — great to connect with you in the meantime. ';
                 } else if (numUsers) {
-                    contextGreeting += 'I see you\'ve requested a callback regarding Microsoft 365 for a team of approximately ' + numUsers + ' users. ';
+                    contextGreeting += 'I see you\'ve requested a callback for a team of about ' + numUsers + ' — great to connect with you in the meantime. ';
                 }
-                contextGreeting += 'While your sales specialist connects with you, I\'m here to answer questions or help you explore options. How can I assist?';
-                await playLine('Ask Microsoft Voice Agent', contextGreeting, 500);
+                contextGreeting += 'How can I help you today?';
+                await playLine('AI Assistant', contextGreeting, 500);
                 await playLine('You', 'Thanks! Yes, we\'re looking to explore Microsoft 365 options for ' + (bizName || 'our team') + '. I wanted to learn more while I wait.', 420);
             } else {
-                await playLine('Ask Microsoft Voice Agent', 'Hello — this is the Ask Microsoft Voice Agent. I\'m here to help you explore Microsoft 365 options. How can I assist you today?', 500);
+                await playLine('AI Assistant', 'Hi there — I am Ask Microsoft Voice Agent. Happy to help. What can I help you with today?', 500);
                 await playLine('You', 'Hi, we\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
                 conversationContext.numEmployees = 20;
             }
@@ -3383,75 +3530,36 @@
 
             const teamSize = conversationContext.numEmployees || 20;
             const bizLabel = bizName || 'your business';
-            await playLine('Ask Microsoft Voice Agent', 'Great, ' + bizLabel + ' with ' + teamSize + ' employees — that\'s a perfect fit for our Business plans. Are your teams mostly in-office, fully remote, or hybrid?', 420);
+            await playLine('AI Assistant', 'Great, ' + bizLabel + ' with ' + teamSize + ' employees — that\'s a perfect fit for our Business plans. Are your teams mostly in-office, fully remote, or hybrid?', 420);
             await playLine('You', 'We\'re mostly hybrid, with a few fully remote staff.', 420);
             conversationContext.workLocation = 'hybrid';
 
-            await playLine('Ask Microsoft Voice Agent', 'That makes sense. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
+            await playLine('AI Assistant', 'That makes sense. Quick follow-up: are devices mostly company-managed, or are personal devices used too?', 450);
             await playLine('You', 'Mostly company laptops, plus some personal phones for email and Teams.', 420);
             conversationContext.securityNeeds = 'moderate';
 
-            await playLine('Ask Microsoft Voice Agent', 'Perfect, that helps. What decision timeline are you working toward?', 420);
+            await playLine('AI Assistant', 'Perfect, that helps. What decision timeline are you working toward?', 420);
             await playLine('You', 'Ideally this quarter — we\'re scaling up and need to get everyone on the same platform.', 450);
             conversationContext.timeline = 'this quarter';
             conversationContext.interestedPlans = ['Business Premium'];
             conversationContext.pricePerUser = 22;
             conversationContext.monthlyTotal = teamSize * conversationContext.pricePerUser;
 
-            addCallTranscriptEntry('System', '🧠 Tailoring plan recommendation based on team size, work style, and device mix');
-            await playLine('Ask Microsoft Voice Agent', 'Great — based on your team size of ' + teamSize + ', hybrid setup across warehouse and remote staff, and the device mix, Microsoft 365 Business Premium at $22 per user per month is likely a strong fit. That comes to $' + (teamSize * 22) + ' per month for your team.', 500);
-            await playLine('You', 'That\'s very helpful \u2014 thank you for walking me through that.', 420);
+            await playLine('AI Assistant', 'Great — based on your team size of ' + teamSize + ', hybrid setup across warehouse and remote staff, and the device mix, Microsoft 365 Business Premium at $22 per user per month is likely a strong fit. That comes to $' + (teamSize * 22) + ' per month for your team.', 500);
+            await playLine('You', 'That\'s really helpful, thanks for walking me through all of that.', 420);
 
-            // --- QUOTING FLOW ---
-            const custEmail = conversationContext.customerEmail || '';
-            await playLine('Ask Microsoft Voice Agent', 'I\'d be happy to send you a personalized quote with that pricing breakdown so you have something concrete to share with your team. Would that be helpful?', 500);
-            await playLine('You', 'Yes, that would be very helpful.', 420);
-
-            if (custEmail) {
-                // We already have email from callback form — use it directly
-                addCallTranscriptEntry('System', '📊 Generating personalized quote via QuoteX API — Business Premium, ' + teamSize + ' users');
-                conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
-                conversationContext.quoteGenerated = true;
-                conversationContext.quoteSentToEmail = true;
-                addCallTranscriptEntry('System', '📧 Using email from callback form — no need to ask the customer again');
-
-                await playLine('Ask Microsoft Voice Agent', 'Perfect — I already have your email from the callback form. I\'ve just generated and sent a personalized quote to ' + custEmail + '. You should have it in your inbox shortly. It\'s valid for 30 days.', 500);
-                await playLine('You', 'That\'s very convenient \u2014 thank you.', 420);
-            } else {
-                // No email on file — ask for it
-                addCallTranscriptEntry('System', '📊 Generating personalized quote via QuoteX API — Business Premium, ' + teamSize + ' users');
-                await playLine('Ask Microsoft Voice Agent', 'Sure — what\'s the best email address to send it to?', 420);
-                const demoEmail = 'alex@summitgear-example.com';
-                await playLine('You', 'It\'s ' + demoEmail, 420);
-                conversationContext.customerEmail = demoEmail;
-
-                conversationContext.quoteId = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Math.floor(Math.random() * 900) + 100);
-                conversationContext.quoteGenerated = true;
-                conversationContext.quoteSentToEmail = true;
-
-                await playLine('Ask Microsoft Voice Agent', 'Got it — I\'ve just sent the quote to ' + demoEmail + '. You\'ll find the full pricing breakdown in your inbox. It\'s valid for 30 days.', 500);
-                await playLine('You', 'That\'s excellent \u2014 thank you.', 420);
-            }
-            // --- END QUOTING FLOW ---
-
-            // Follow-up before closing
-            await playLine('Ask Microsoft Voice Agent', 'Before we wrap up — is there anything else I can help you with today?', 420);
-            await playLine('You', 'No, I think that covers everything. I really appreciate your help.', 420);
-
-            addCallTranscriptEntry('System', '📋 Passing full conversation context, quote details, and discovery notes to specialist');
-            await playLine('Ask Microsoft Voice Agent', 'My pleasure. Just so you know, your callback request with a Microsoft specialist is still in place — so they\'ll be reaching out to you as scheduled. They\'ll also have the quote details and a summary of our conversation so you won\'t need to repeat anything. And if you feel like we\'ve covered everything and you\'d rather cancel the callback, you\'ll have that option once we end this call.', 550);
-            await playLine('You', 'That\'s very helpful \u2014 thank you.', 420);
+            await playLine('AI Assistant', 'My pleasure! I\'m glad I could help. Just so you know, your callback request with a Microsoft specialist is still in place — so they\'ll be reaching out to you as scheduled. When you disconnect this call, you\'ll have the option to keep that callback or cancel it if you feel your questions have been fully answered. Either way, it\'s completely up to you.', 600);
+            await playLine('You', 'That\'s great — I\'ll keep the callback for now. Thanks again!', 420);
 
             const nameRef = custName ? (', ' + custName) : '';
             const bizRef = conversationContext.businessType ? (' helping ' + conversationContext.businessType) : '';
-            await playLine('Ask Microsoft Voice Agent', 'Sounds good' + nameRef + '! It was a pleasure speaking with you. Have a wonderful day, and we look forward to' + bizRef + ' thrive with Microsoft 365.', 500);
+            await playLine('AI Assistant', 'Sounds good' + nameRef + '! It was a pleasure chatting with you. Have a wonderful day, and we look forward to' + bizRef + ' thrive with Microsoft 365.', 500);
         }
 
         function addCallTranscriptEntry(speaker, text) {
             const transcriptArea = document.getElementById('callTranscriptArea');
             const entry = document.createElement('div');
-            const speakerClass = speaker === 'You' ? 'speaker-you' : (speaker === 'System' ? 'speaker-system' : 'speaker-ai');
-            entry.className = 'call-transcript-entry ' + speakerClass;
+            entry.className = 'call-transcript-entry';
             entry.innerHTML = `
                 <div class="call-transcript-speaker">${speaker}</div>
                 <div class="call-transcript-text">${text}</div>
@@ -3460,86 +3568,9 @@
             transcriptArea.scrollTop = transcriptArea.scrollHeight;
             
             // If this is any speaker (AI or You) and audio is enabled, use text-to-speech
-            if ((speaker === 'Ask Microsoft Voice Agent' || speaker === 'You') && audioEnabled && isVoiceMode) {
+            if ((speaker === 'AI Assistant' || speaker === 'You') && audioEnabled && isVoiceMode) {
                 speakText(text, speaker);
             }
-        }
-
-        // --- Quote Summary Card Generator ---
-        function generateQuoteCardHTML(options) {
-            const ctx = conversationContext;
-            const plan = (ctx.interestedPlans && ctx.interestedPlans.length > 0) ? ctx.interestedPlans[0] : 'Business Premium';
-            const users = ctx.numEmployees || 20;
-            const pricePerUser = ctx.pricePerUser || 22;
-            const monthly = ctx.monthlyTotal || (users * pricePerUser);
-            const annual = monthly * 12;
-            const quoteId = ctx.quoteId || 'Q-00000000-000';
-            const email = ctx.customerEmail;
-            const isSent = ctx.quoteSentToEmail;
-            const showEmail = options && options.showEmail !== undefined ? options.showEmail : true;
-            const overrideEmail = options && options.overrideEmail ? options.overrideEmail : null;
-            const displayEmail = overrideEmail || email;
-            const businessName = ctx.businessName || ctx.businessType || 'Your Business';
-
-            let badgeHTML = isSent
-                ? '<span class="quote-card-badge">\ud83d\udce7 Quote Sent</span>'
-                : '<span class="quote-card-badge">\ud83d\udccb Quote Generated</span>';
-
-            let footerHTML = '';
-            if (isSent && displayEmail && showEmail) {
-                footerHTML = '<div class="quote-card-footer"><div class="quote-card-email">\ud83d\udce7 Sent to ' + displayEmail + '</div><div class="quote-card-validity">Valid for 30 days</div></div>';
-            } else {
-                footerHTML = '<div class="quote-card-footer"><div class="quote-card-validity">Valid for 30 days</div></div>';
-            }
-
-            return '<div class="quote-card ' + (isSent ? 'quote-sent-pulse' : '') + '">' +
-                '<div class="quote-card-header">' + badgeHTML + '<span class="quote-card-ref">' + quoteId + '</span></div>' +
-                '<div class="quote-card-grid">' +
-                    '<div class="quote-card-item"><strong>Plan</strong><br/>Microsoft 365 ' + plan + '</div>' +
-                    '<div class="quote-card-item"><strong>Business</strong><br/>' + businessName + '</div>' +
-                    '<div class="quote-card-item"><strong>Users</strong><br/>' + users + ' users</div>' +
-                    '<div class="quote-card-item"><strong>Per User</strong><br/>$' + pricePerUser + '/user/mo</div>' +
-                '</div>' +
-                '<div class="quote-card-total">' +
-                    '<div><div class="quote-card-total-label">Monthly Total</div>' +
-                    '<div style="font-size: 11px; color: #6b7280;">Annual: $' + annual.toLocaleString() + '/year</div></div>' +
-                    '<div class="quote-card-total-value">$' + monthly + '/mo</div>' +
-                '</div>' +
-                footerHTML +
-            '</div>';
-        }
-
-        function addQuoteCardToChat(options) {
-            if (!conversationContext.quoteGenerated && !conversationContext.quoteReadyForSend) return;
-            const html = generateQuoteCardHTML(options);
-            const chatMessages = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message bot';
-            messageDiv.innerHTML = '<div class="message-bubble">' + html + '<div class="message-time">just now</div></div>';
-            chatMessages.appendChild(messageDiv);
-            scrollToBottom();
-        }
-
-        // --- Conversation Summary Card for Sales Associate ---
-        function generateSummaryCardHTML() {
-            const ctx = conversationContext;
-            const parts = [];
-            if (ctx.businessName || ctx.businessType) parts.push('Business: ' + (ctx.businessName || ctx.businessType));
-            if (ctx.numEmployees) parts.push('Team size: ~' + ctx.numEmployees + ' employees');
-            if (ctx.workLocation) parts.push('Work setup: ' + ctx.workLocation);
-            if (ctx.securityNeeds) parts.push('Security priority: ' + (ctx.securityNeeds === 'high' ? 'High \u2014 handles sensitive data' : ctx.securityNeeds));
-            if (ctx.timeline) parts.push('Timeline: ' + ctx.timeline);
-            if (ctx.interestedPlans && ctx.interestedPlans.length > 0) parts.push('Recommended plan: Microsoft 365 ' + ctx.interestedPlans[0]);
-            if (ctx.pricePerUser && ctx.numEmployees) parts.push('Pricing: $' + ctx.pricePerUser + '/user/mo \u00d7 ' + ctx.numEmployees + ' users = $' + (ctx.pricePerUser * ctx.numEmployees) + '/mo');
-            if (ctx.quoteSentToEmail && ctx.customerEmail) parts.push('\u2705 Quote sent to ' + ctx.customerEmail + ' (ID: ' + ctx.quoteId + ')');
-
-            if (parts.length === 0) return '';
-
-            return '<div class="summary-card">' +
-                '<div class="summary-card-header">\ud83d\udccb Conversation Summary (shared with your specialist)</div>' +
-                '<ul class="summary-card-list">' + parts.map(function(p) { return '<li>' + p + '</li>'; }).join('') + '</ul>' +
-                '<div class="summary-card-footer">This summary will be shared with the Microsoft specialist assigned to your callback so they can pick up right where we left off.</div>' +
-            '</div>';
         }
 
         function speakText(text, speaker) {
@@ -3564,15 +3595,12 @@
                     return;
                 }
                 
-                // Reset engine before each utterance — prevents stale queue
-                try { speechSynthesis.resume(); } catch(e) {}
-
                 const utterance = new SpeechSynthesisUtterance(text);
                 
                 // Configure voice settings based on speaker
-                if (speaker === 'Ask Microsoft Voice Agent') {
+                if (speaker === 'AI Assistant') {
                     utterance.rate = 1.0;   // Natural pace
-                    utterance.pitch = 1.0;  // Natural pitch (Neural voices handle this well)
+                    utterance.pitch = 1.0;  // Natural pitch
                 } else {
                     // User's voice — slightly different rate/pitch to ensure audible contrast
                     utterance.rate = 0.95;
@@ -3584,39 +3612,53 @@
                 const voices = speechSynthesis.getVoices();
                 
                 let preferredVoice;
-                if (speaker === 'Ask Microsoft Voice Agent') {
-                    // AI voice: Jenny Online primary (do NOT use Guy/Aria to avoid overlap with user)
+                if (speaker === 'AI Assistant') {
+                    // AI voice — Jenny Online exclusive (no Aria to avoid overlap with female user)
                     preferredVoice = 
-                        voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
-                        voices.find(v => v.name.includes('Jenny')) ||
-                        voices.find(v => v.name.includes('Microsoft Zira')) ||
-                        voices.find(v => v.name.includes('Google US English Female')) ||
-                        voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
-                        voices.find(v => v.lang === 'en-US' && v.localService) ||
-                        voices.find(v => v.lang === 'en-US') ||
+                        voices.find(voice => voice.name.includes('Jenny') && voice.name.includes('Online')) ||
+                        voices.find(voice => voice.name.includes('Jenny')) ||
+                        voices.find(voice => voice.name.includes('Microsoft Zira')) ||
+                        voices.find(voice => voice.name.includes('Google US English Female')) ||
+                        voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Female')) ||
+                        voices.find(voice => voice.lang === 'en-US' && voice.localService) ||
+                        voices.find(voice => voice.lang === 'en-US') ||
                         voices[0];
                 } else {
-                    // Customer — Guy/Ryan/Andrew Online (male voice, distinct from AI's Jenny)
-                    preferredVoice = 
-                        voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
-                        voices.find(v => v.name.includes('Ryan') && v.name.includes('Online')) ||
-                        voices.find(v => v.name.includes('Andrew') && v.name.includes('Online')) ||
-                        voices.find(v => v.name.includes('Microsoft David')) ||
-                        voices.find(v => v.name.includes('Google US English Male')) ||
-                        voices.find(v => v.lang === 'en-US' && v.name.includes('Male')) ||
-                        voices.find(v => v.lang === 'en-US') ||
-                        voices[0];
+                    // Select voice based on customer's name/gender
+                    const isFemaleCustomer = conversationContext.customerName && 
+                        ['Priya', 'Sarah', 'Maria', 'Lisa', 'Emma', 'Sophia', 'Aisha', 'Mei'].includes(conversationContext.customerName);
+                    if (isFemaleCustomer) {
+                        // Female user voice — Aria Online exclusive (no Jenny to avoid AI overlap)
+                        utterance.pitch = 1.05;  // Override: slightly higher for female user
+                        preferredVoice = 
+                            voices.find(voice => voice.name.includes('Aria') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Sara') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Microsoft Zira')) ||
+                            voices.find(voice => voice.name.includes('Google US English Female')) ||
+                            voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Female')) ||
+                            voices.find(voice => voice.lang === 'en-US') ||
+                            voices[0];
+                    } else {
+                        // Male user voice — Guy Online exclusive
+                        preferredVoice = 
+                            voices.find(voice => voice.name.includes('Guy') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Ryan') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Andrew') && voice.name.includes('Online')) ||
+                            voices.find(voice => voice.name.includes('Microsoft David')) ||
+                            voices.find(voice => voice.name.includes('Google US English Male')) ||
+                            voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Male')) ||
+                            voices.find(voice => voice.lang === 'en-US') ||
+                            voices[0];
+                    }
                 }
                 
                 if (preferredVoice) {
                     utterance.voice = preferredVoice;
-                    console.log(`[Voice] ${speaker} → ${preferredVoice.name}`);
                 }
                 
                 // Show speaking indicator
                 utterance.onstart = function() {
                     isSpeaking = true;
-                    startSpeechKeepAlive();  // prevent Chrome 15-sec cutoff
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.add('active');
@@ -3625,7 +3667,6 @@
                 
                 utterance.onend = function() {
                     isSpeaking = false;
-                    stopSpeechKeepAlive();
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.remove('active');
@@ -3633,41 +3674,12 @@
                 };
                 
                 utterance.onerror = function(event) {
-                    console.error(`Speech synthesis error for ${speaker}:`, event.error, '| Voice:', preferredVoice?.name);
+                    console.error('Speech synthesis error:', event);
                     isSpeaking = false;
-                    stopSpeechKeepAlive();
                     const indicator = document.getElementById('speakingIndicator');
                     const avatar = document.getElementById('callAvatar');
                     if (indicator) indicator.classList.remove('active');
                     if (avatar) avatar.style.transform = 'scale(1)';
-                    
-                    // If an Online/Neural voice failed, retry with a local fallback
-                    if (preferredVoice && !preferredVoice.localService) {
-                        // Don't retry if session was ended (disconnect)
-                        if (!audioEnabled || !isVoiceMode || speechGenerationAtStart !== voiceSessionGeneration) return;
-                        console.log(`[Voice] Retrying ${speaker} with local fallback voice...`);
-                        const retryUtterance = new SpeechSynthesisUtterance(text);
-                        retryUtterance.rate = 1.0;
-                        retryUtterance.pitch = 1.0;
-                        retryUtterance.volume = 1.0;
-                        const localVoices = speechSynthesis.getVoices();
-                        let fallback;
-                        if (speaker === 'Ask Microsoft Voice Agent') {
-                            fallback = localVoices.find(v => v.name.includes('Microsoft Zira') && v.localService) ||
-                                       localVoices.find(v => v.lang === 'en-US' && v.localService);
-                        } else {
-                            fallback = localVoices.find(v => v.name.includes('Microsoft David') && v.localService) ||
-                                       localVoices.find(v => v.lang === 'en-US' && v.localService && v.name.includes('Male'));
-                        }
-                        if (fallback) {
-                            retryUtterance.voice = fallback;
-                            console.log(`[Voice] Fallback → ${fallback.name}`);
-                        }
-                        retryUtterance.onstart = utterance.onstart;
-                        retryUtterance.onend = utterance.onend;
-                        retryUtterance.onerror = () => { isSpeaking = false; };
-                        try { speechSynthesis.speak(retryUtterance); } catch(e) {}
-                    }
                 };
                 
                 // Speak the text
@@ -3728,7 +3740,8 @@
             audioEnabled = false;
             isSpeaking = false;
             voiceSessionGeneration++;
-            stopSpeechKeepAlive();  // clean up keepalive timer
+            
+            // Stop call timer
             if (callTimer) {
                 clearInterval(callTimer);
                 callTimer = null;
@@ -3766,7 +3779,10 @@
             if (transcriptArea) transcriptArea.style.display = 'none';
             
             // Check if we came from callback flow - if so, show wrap-up in chat
-            if (callbackRequested && voiceSessionContext.fromCallback) {
+            if (voiceSessionContext.fromHumanFirstV2) {
+                closeCallScreen();
+                showV2PostVoiceWrapUp();
+            } else if (callbackRequested && voiceSessionContext.fromCallback) {
                 closeCallScreen();
                 showVoiceWrapUpScreen();
             } else if (voiceSessionContext.fromOffHoursAiFirst) {
@@ -3797,7 +3813,7 @@
                 <div class="options-container">
                     <div class="chat-option-card" onclick="handleOffHoursAiFirstSpeakNow()" role="button" tabindex="0" style="border-color: #0f6cbd; background: #e1efff; box-shadow: 0 10px 24px rgba(15, 108, 189, 0.24);">
                         <div class="chat-option-icon" style="background: white;">
-                            <img src="voice.png" alt="Ask Microsoft Voice Agent" style="width: 44px; height: 44px; display: block;" />
+                            <img src="voice-assistants.png" alt="Voice assistant" style="width: 44px; height: 44px; display: block;" />
                         </div>
                         <div class="chat-option-content">
                             <div class="chat-option-title">Speak with Ask Microsoft Voice Agent</div>
@@ -3854,24 +3870,9 @@
         }
 
         function showVoiceWrapUpScreen() {
-            // SCREEN 1: Voice Wrap-Up — compact summary with buttons visible immediately
-            const durationMin = Math.floor(callDuration / 60);
-            const durationSec = callDuration % 60;
-            const durationText = durationMin > 0
-                ? durationMin + ' min ' + durationSec + ' sec'
-                : durationSec + ' sec';
-
-            // Build compact summary lines
-            let summaryLines = '';
-            summaryLines += '<div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: #16a34a; font-size: 16px;">✅</span><span>Callback request submitted</span></div>';
-            summaryLines += '<div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: #0f6cbd; font-size: 16px;">🎙️</span><span>Connected with Ask Microsoft Voice Agent <span style="color: #888; font-size: 12px;">(Duration: ' + durationText + ')</span></span></div>';
-            if (conversationContext.quoteSentToEmail && conversationContext.customerEmail) {
-                summaryLines += '<div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: #16a34a; font-size: 16px;">📧</span><span>Personalized quote sent to <strong>' + conversationContext.customerEmail + '</strong></span></div>';
-            }
-            summaryLines += '<div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: #f59e0b; font-size: 16px;">📞</span><span>Callback status: <strong style="color: #0f6cbd;">Scheduled</strong> — a specialist will follow up</span></div>';
-
+            // SCREEN 1: Voice Wrap-Up (immediately after voice session ends)
             const optionsHTML = `
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
                     <button style="
                         background: #0f6cbd;
                         color: white;
@@ -3905,7 +3906,7 @@
                         I'm All Set for Now
                     </button>
                 </div>
-                <div style="margin-top: 10px; font-size: 12px; color: #888888; font-style: italic;">
+                <div style="margin-top: 14px; font-size: 12px; color: #888888; font-style: italic;">
                     You can request a specialist at any time.
                 </div>
             `;
@@ -3916,12 +3917,13 @@
             messageDiv.innerHTML = `
                 <div class="message-bubble">
                     <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Ask Microsoft Voice Agent.</div>
-                    <div style="margin-top: 12px; font-size: 13px; color: #444; line-height: 1.6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; background: #fafafa;">
-                        ${summaryLines}
+                    <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
+                        I hope this conversation was helpful.<br/><br/>
+                        Your callback request is still scheduled so you can continue the discussion with a Microsoft specialist if you'd like.<br/><br/>
+                        <span style="font-weight: 500; color: #262626;">You're in control — please choose what works best for you.</span>
                     </div>
-                    <div style="margin-top: 12px; font-size: 14px; color: #555; font-weight: 500;">You're in control — please choose what works best for you.</div>
                     ${optionsHTML}
-                    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
+                    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
                         ${brandCloseText}
                     </div>
                     <div class="message-time">just now</div>
@@ -4078,9 +4080,7 @@
         }
 
         function showKeepCallbackConfirmation() {
-            // SCREEN 2: Keep Callback Confirmation — compact with summary shared to sales associate
-            const summaryHTML = generateSummaryCardHTML();
-
+            // SCREEN 2: Keep Callback Confirmation
             const optionsHTML = `
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
                     <button style="
@@ -4125,9 +4125,8 @@
                 <div class="message-bubble">
                     <div style="font-size: 16px; font-weight: 600; color: #262626;">Great — your callback request remains scheduled.</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
-                        A Microsoft specialist will follow up as planned. We've shared the conversation summary and quote details with them so they can pick up right where you left off — you won't need to repeat anything.
+                        A Microsoft specialist will follow up as planned. In the meantime, feel free to continue exploring here.
                     </div>
-                    ${summaryHTML}
                     ${optionsHTML}
                     <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666666; font-style: italic;">
                         ${brandCloseText}
@@ -4234,7 +4233,7 @@
             callbackRequestedAfterVoiceCall = false;
             offHoursAiFirstFlow = false;
             callbackFlowContext = null;
-            voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false };
+            voiceSessionContext = { fromCallback: false, fromOffHoursAiFirst: false, fromHumanFirstV2: false };
             conversationContext = {
                 numEmployees: null,
                 workLocation: null,
@@ -4473,7 +4472,7 @@
             const transcript = document.getElementById('voiceTranscript');
             
             // Initial greeting
-            addTranscriptEntry('Ask Microsoft Voice Agent', 'Hello! I\'m your Ask Microsoft Voice Agent for Microsoft 365 Business. I\'m here to help you find the right plan for your business. To get started, could you tell me a bit about your company? How many employees do you have?');
+            addTranscriptEntry('AI Assistant', 'Hello! I\'m your Ask Microsoft Voice Agent for Microsoft 365 Business. I\'m here to help you find the right plan for your business. To get started, could you tell me a bit about your company? How many employees do you have?');
             
             // Simulate an interactive conversation flow
             setTimeout(() => {
@@ -4481,40 +4480,40 @@
                 conversationContext.numEmployees = 15;
                 
                 setTimeout(() => {
-                    addTranscriptEntry('Ask Microsoft Voice Agent', 'Perfect! A 15-person team is ideal for our Microsoft 365 Business offerings. Are your employees primarily working in the office, remotely, or a hybrid setup?');
+                    addTranscriptEntry('AI Assistant', 'Perfect! A 15-person team is ideal for our Microsoft 365 Business offerings. Are your employees primarily working in the office, remotely, or a hybrid setup?');
                     
                     setTimeout(() => {
                         addTranscriptEntry('You', 'We\'re mostly remote with some hybrid workers.');
                         conversationContext.workLocation = 'hybrid/remote';
                         
                         setTimeout(() => {
-                            addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s very common these days. Microsoft 365 is excellent for remote and hybrid teams with Microsoft Teams for collaboration and OneDrive for cloud storage. Now, how important is security to your organization? Do you handle sensitive customer data or have any specific compliance requirements?');
+                            addTranscriptEntry('AI Assistant', 'That\'s very common these days. Microsoft 365 is excellent for remote and hybrid teams with Microsoft Teams for collaboration and OneDrive for cloud storage. Now, how important is security to your organization? Do you handle sensitive customer data or have any specific compliance requirements?');
                             
                             setTimeout(() => {
                                 addTranscriptEntry('You', 'Security is pretty important to us. We handle some customer information.');
                                 conversationContext.securityNeeds = 'high';
                                 
                                 setTimeout(() => {
-                                    addTranscriptEntry('Ask Microsoft Voice Agent', 'I completely understand. Security is critical for protecting customer information. Based on what you\'ve shared - a 15-person team working remotely with security needs - I\'d recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, data loss prevention, and all the productivity apps like Word, Excel, PowerPoint, Teams, and 1TB of OneDrive storage per user. What\'s your timeline for making a decision?');
+                                    addTranscriptEntry('AI Assistant', 'I completely understand. Security is critical for protecting customer information. Based on what you\'ve shared - a 15-person team working remotely with security needs - I\'d recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, data loss prevention, and all the productivity apps like Word, Excel, PowerPoint, Teams, and 1TB of OneDrive storage per user. What\'s your timeline for making a decision?');
                                     
                                     setTimeout(() => {
                                         addTranscriptEntry('You', 'We\'re looking to move forward pretty soon, maybe this month.');
                                         conversationContext.timeline = 'this month';
                                         
                                         setTimeout(() => {
-                                            addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s great to hear you\'re ready to move forward! I can connect you with a Microsoft specialist who can help finalize the next steps, provide detailed pricing for your specific needs, and ensure you get the right setup for your team. Would you like me to arrange a callback?');
+                                            addTranscriptEntry('AI Assistant', 'That\'s great to hear you\'re ready to move forward! I can connect you with a Microsoft specialist who can help finalize the next steps, provide detailed pricing for your specific needs, and ensure you get the right setup for your team. Would you like me to arrange a callback?');
                                             
                                             setTimeout(() => {
                                                 addTranscriptEntry('You', 'Yes, that would be helpful. What about pricing? Can you give me an idea of the costs?');
                                                 
                                                 setTimeout(() => {
-                                                    addTranscriptEntry('Ask Microsoft Voice Agent', 'Microsoft 365 Business Premium is $22 per user per month. For your 15-person team, that would be $330 per month. However, a Microsoft specialist can discuss volume licensing, payment options, and help you understand the full value. They\'ll also make sure you\'re aware of any current promotions. Shall I set up that callback for you?');
+                                                    addTranscriptEntry('AI Assistant', 'Microsoft 365 Business Premium is $22 per user per month. For your 15-person team, that would be $330 per month. However, a Microsoft specialist can discuss volume licensing, payment options, and help you understand the full value. They\'ll also make sure you\'re aware of any current promotions. Shall I set up that callback for you?');
                                                     
                                                     setTimeout(() => {
                                                         addTranscriptEntry('You', 'Yes, please set up the callback.');
                                                         
                                                         setTimeout(() => {
-                                                            addTranscriptEntry('Ask Microsoft Voice Agent', 'Perfect! I\'ll transition you to our callback request form to capture your details. A Microsoft sales associate will reach out to you within 48 hours to discuss your specific needs and next steps. Let me switch you over now.');
+                                                            addTranscriptEntry('AI Assistant', 'Perfect! I\'ll transition you to our callback request form to capture your details. A Microsoft sales associate will reach out to you within 48 hours to discuss your specific needs and next steps. Let me switch you over now.');
                                                             
                                                             setTimeout(() => {
                                                                 endVoiceSession();
@@ -4553,35 +4552,35 @@
             
             // Handle common M365 questions
             if (lowerMessage.includes('difference between') && (lowerMessage.includes('standard') || lowerMessage.includes('premium'))) {
-                addTranscriptEntry('Ask Microsoft Voice Agent', 'Great question! Microsoft 365 Business Standard includes all the core productivity apps like Word, Excel, PowerPoint, Outlook, and Teams, plus 1TB of cloud storage and email hosting for $12.50 per user per month. Business Premium, at $22 per user per month, includes everything in Standard plus advanced security features like advanced threat protection, device management, and data loss prevention. For businesses handling sensitive data or those with security compliance needs, Premium is the better choice.');
+                addTranscriptEntry('AI Assistant', 'Great question! Microsoft 365 Business Standard includes all the core productivity apps like Word, Excel, PowerPoint, Outlook, and Teams, plus 1TB of cloud storage and email hosting for $12.50 per user per month. Business Premium, at $22 per user per month, includes everything in Standard plus advanced security features like advanced threat protection, device management, and data loss prevention. For businesses handling sensitive data or those with security compliance needs, Premium is the better choice.');
                 return;
             }
 
             if (lowerMessage.includes('what') && lowerMessage.includes('plan') && lowerMessage.includes('best')) {
-                addTranscriptEntry('Ask Microsoft Voice Agent', 'To recommend the best plan for you, I\'d like to know a bit more about your business. How many employees do you have, and what are your primary needs - basic productivity tools, or do you also need advanced security and compliance features?');
+                addTranscriptEntry('AI Assistant', 'To recommend the best plan for you, I\'d like to know a bit more about your business. How many employees do you have, and what are your primary needs - basic productivity tools, or do you also need advanced security and compliance features?');
                 return;
             }
 
             if (lowerMessage.includes('security') && lowerMessage.includes('add')) {
-                addTranscriptEntry('Ask Microsoft Voice Agent', 'Microsoft 365 Business Premium includes comprehensive security features built-in, including Microsoft Defender for Business, which provides threat protection, device management, and data loss prevention. For most small to medium businesses, the security in Premium is sufficient. However, if you have specific compliance requirements or need advanced security management, a specialist can help assess your needs. Would you like me to connect you with someone who can provide a detailed security assessment?');
+                addTranscriptEntry('AI Assistant', 'Microsoft 365 Business Premium includes comprehensive security features built-in, including Microsoft Defender for Business, which provides threat protection, device management, and data loss prevention. For most small to medium businesses, the security in Premium is sufficient. However, if you have specific compliance requirements or need advanced security management, a specialist can help assess your needs. Would you like me to connect you with someone who can provide a detailed security assessment?');
                 return;
             }
             
             // Handle callback request during voice conversation
             if (lowerMessage.includes('callback') || lowerMessage.includes('specialist') || lowerMessage.includes('representative')) {
-                addTranscriptEntry('Ask Microsoft Voice Agent', 'I understand you\'d like to speak with a Microsoft specialist. I can arrange a callback for you right away. Would you like me to do that?');
+                addTranscriptEntry('AI Assistant', 'I understand you\'d like to speak with a Microsoft specialist. I can arrange a callback for you right away. Would you like me to do that?');
                 return;
             }
             
             // Handle discount/pricing questions
             if (lowerMessage.includes('discount') || lowerMessage.includes('deal') || lowerMessage.includes('cheaper') || lowerMessage.includes('negotiate')) {
-                addTranscriptEntry('Ask Microsoft Voice Agent', 'I\'m not able to adjust pricing or negotiate discounts. A Microsoft specialist can help you with detailed pricing, volume licensing options, and make sure you\'re aware of any current promotions or special offers. Would you like me to arrange a callback with a specialist?');
+                addTranscriptEntry('AI Assistant', 'I\'m not able to adjust pricing or negotiate discounts. A Microsoft specialist can help you with detailed pricing, volume licensing options, and make sure you\'re aware of any current promotions or special offers. Would you like me to arrange a callback with a specialist?');
                 return;
             }
             
             // Handle purchase intent
             if (lowerMessage.includes('move forward') || lowerMessage.includes('purchase') || lowerMessage.includes('buy') || lowerMessage.includes('sign up')) {
-                addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s excellent! I\'m glad I could help you find the right solution. To finalize your purchase and get your team set up, I\'ll connect you with a Microsoft specialist who can process your order, help with onboarding, and answer any final questions. Would you like me to arrange that callback now?');
+                addTranscriptEntry('AI Assistant', 'That\'s excellent! I\'m glad I could help you find the right solution. To finalize your purchase and get your team set up, I\'ll connect you with a Microsoft specialist who can process your order, help with onboarding, and answer any final questions. Would you like me to arrange that callback now?');
                 return;
             }
             
@@ -4589,33 +4588,33 @@
             if (lowerMessage.match(/\d+/) && (lowerMessage.includes('employee') || lowerMessage.includes('people') || lowerMessage.includes('user'))) {
                 const num = lowerMessage.match(/\d+/)[0];
                 conversationContext.numEmployees = parseInt(num);
-                addTranscriptEntry('Ask Microsoft Voice Agent', `Perfect! For a ${num}-person business, Microsoft 365 Business plans are ideal. Are your employees primarily working in the office, remotely, or a hybrid setup?`);
+                addTranscriptEntry('AI Assistant', `Perfect! For a ${num}-person business, Microsoft 365 Business plans are ideal. Are your employees primarily working in the office, remotely, or a hybrid setup?`);
                 return;
             }
             
             // Work location
             if (lowerMessage.includes('remote') || lowerMessage.includes('hybrid') || lowerMessage.includes('office') || lowerMessage.includes('home')) {
                 conversationContext.workLocation = lowerMessage.includes('remote') ? 'remote' : lowerMessage.includes('hybrid') ? 'hybrid' : 'office';
-                addTranscriptEntry('Ask Microsoft Voice Agent', 'That\'s helpful to know. Microsoft 365 works great for all work environments with cloud-based collaboration tools. Now, how important is security to your organization? Do you handle sensitive customer data?');
+                addTranscriptEntry('AI Assistant', 'That\'s helpful to know. Microsoft 365 works great for all work environments with cloud-based collaboration tools. Now, how important is security to your organization? Do you handle sensitive customer data?');
                 return;
             }
             
             // Security needs
             if ((lowerMessage.includes('security') || lowerMessage.includes('secure') || lowerMessage.includes('important') || lowerMessage.includes('yes')) && conversationContext.securityNeeds === null) {
                 conversationContext.securityNeeds = 'high';
-                addTranscriptEntry('Ask Microsoft Voice Agent', 'Security is definitely critical. For organizations with security concerns, I\'d strongly recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, and data loss prevention to keep your data safe. What\'s your timeline for making a decision?');
+                addTranscriptEntry('AI Assistant', 'Security is definitely critical. For organizations with security concerns, I\'d strongly recommend Microsoft 365 Business Premium. It includes advanced threat protection, device management, and data loss prevention to keep your data safe. What\'s your timeline for making a decision?');
                 return;
             }
 
             // Timeline
             if (lowerMessage.includes('soon') || lowerMessage.includes('month') || lowerMessage.includes('week') || lowerMessage.includes('asap')) {
                 conversationContext.timeline = lowerMessage.includes('week') ? 'this week' : 'soon';
-                addTranscriptEntry('Ask Microsoft Voice Agent', 'Great timing! I can help expedite your setup. Based on your needs, I recommend connecting with a Microsoft specialist who can finalize everything quickly and get your team up and running. Shall I arrange that for you?');
+                addTranscriptEntry('AI Assistant', 'Great timing! I can help expedite your setup. Based on your needs, I recommend connecting with a Microsoft specialist who can finalize everything quickly and get your team up and running. Shall I arrange that for you?');
                 return;
             }
             
             // Default helpful response
-            addTranscriptEntry('Ask Microsoft Voice Agent', 'I see. Let me provide some additional context. Microsoft 365 Business offers three main plans: Basic ($6/user/month) for web-only apps, Standard ($12.50/user/month) with desktop apps and email, and Premium ($22/user/month) with advanced security. Based on what you\'ve shared, would you like a specific recommendation, or would you prefer to speak with a Microsoft specialist for a more detailed consultation?');
+            addTranscriptEntry('AI Assistant', 'I see. Let me provide some additional context. Microsoft 365 Business offers three main plans: Basic ($6/user/month) for web-only apps, Standard ($12.50/user/month) with desktop apps and email, and Premium ($22/user/month) with advanced security. Based on what you\'ve shared, would you like a specific recommendation, or would you prefer to speak with a Microsoft specialist for a more detailed consultation?');
         }
 
         function toggleVoiceMute() {
@@ -4634,7 +4633,9 @@
         function endVoiceSession() {
             isVoiceMode = false;
             voiceMuted = false;
-            stopSpeechKeepAlive();  // clean up keepalive timer
+            
+            // Restore header to original state
+            document.getElementById('agentAvatar').textContent = '💬';
             document.getElementById('agentName').textContent = 'Ask Microsoft';
             
             // Add summary to chat
@@ -4657,7 +4658,7 @@
         }
 
         function toggleBackToChat() {
-            addTranscriptEntry('Ask Microsoft Voice Agent', 'Switching to text chat. Your conversation history is saved. How else can I help you?');
+            addTranscriptEntry('AI Assistant', 'Switching to text chat. Your conversation history is saved. How else can I help you?');
             
             setTimeout(() => {
                 endVoiceSession();
