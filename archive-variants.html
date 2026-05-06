@@ -2130,8 +2130,8 @@
                 <strong>How to try:</strong> <span id="contextHowToText">Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat to start the off-hours flow.</span>
             </div>
             <div class="context-divider"></div>
-            <div class="variant-switcher" style="display: none;">
-                <button class="variant-btn" id="variantHumanFirstV2" onclick="switchPrototypeVariant('human_first_v2')">Assisted Follow-Up v2</button>
+            <div class="variant-switcher">
+                <button class="variant-btn" id="variantHumanFirstV2" style="display:none;"></button>
                 <button class="variant-btn" id="variantHumanFirst" onclick="switchPrototypeVariant('human_first')">Assisted Follow-Up</button>
                 <button class="variant-btn" id="variantAiFirst" onclick="switchPrototypeVariant('ai_first')">Immediate Assist</button>
                 <button class="variant-btn" id="variantHybrid" onclick="switchPrototypeVariant('hybrid')">Customer Choice</button>
@@ -2516,7 +2516,7 @@
         };
 
         /* Prototype Context Panel - Variant Management */
-        let prototypeVariant = 'human_first_v2';
+        let prototypeVariant = localStorage.getItem('prototypeVariant') || 'ai_first';
 
         const prototypeVariants = {
             hybrid: {
@@ -2530,9 +2530,9 @@
                 howTo: 'Click the <em>\"Human Agent\"</em> button or type <em>\"talk to a human\"</em> in the chat to start the off-hours flow.'
             },
             human_first_v2: {
-                title: 'Assisted Follow-Up',
-                description: 'When a customer requests human support outside business hours, they can request a callback. The entire experience — form, confirmation, and optional voice agent — stays within the chat window for a seamless interaction.',
-                howTo: 'Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat to start the off-hours flow.'
+                title: 'Assisted Follow-Up v2',
+                description: 'Same as Assisted Follow-Up, but the callback form, confirmation, and voice agent offer all stay inline within the chat window — no pop-ups or modals. Better for telemetry and a seamless experience.',
+                howTo: 'Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat to start the off-hours flow. Everything stays inside the chat.'
             },
             ai_first: {
                 title: 'Immediate Assist',
