@@ -347,23 +347,28 @@
         }
 
         .context-refresh {
-            border: 1px solid #ccf0e6;
-            background: white;
-            color: #0d5d52;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
+            border: 1.5px solid #14b8a6;
+            background: #f0fdfa;
+            color: #0f766e;
+            width: auto;
+            height: 30px;
+            padding: 0 10px;
+            border-radius: 15px;
             cursor: pointer;
             font-size: 12px;
+            font-weight: 600;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 4px;
             transition: all 0.2s;
         }
 
         .context-refresh:hover {
-            background: #d1fae5;
-            border-color: #2dd4bf;
+            background: #ccfbf1;
+            border-color: #0d9488;
+            transform: scale(1.05);
         }
 
         .context-link {
@@ -1824,9 +1829,14 @@
         }
 
         /* In-Chat Option Cards */
+        @keyframes subtlePulse {
+            0%, 100% { box-shadow: 0 2px 8px rgba(15, 108, 189, 0.15); }
+            50% { box-shadow: 0 4px 18px rgba(15, 108, 189, 0.35); }
+        }
+
         .chat-option-card {
             background: white;
-            border: 1px solid #e2e8f0;
+            border: 1.5px solid #b8d4f0;
             border-radius: 12px;
             padding: 18px 20px;
             margin: 8px 0;
@@ -1835,7 +1845,22 @@
             display: flex;
             align-items: flex-start;
             gap: 14px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 8px rgba(15, 108, 189, 0.15);
+            animation: subtlePulse 2.5s ease-in-out infinite;
+            position: relative;
+        }
+
+        .chat-option-card::after {
+            content: 'Click to continue →';
+            display: block;
+            position: absolute;
+            bottom: 6px;
+            right: 12px;
+            font-size: 10px;
+            color: #0f6cbd;
+            font-weight: 600;
+            opacity: 0.7;
+            pointer-events: none;
         }
 
         .chat-option-card:hover {
@@ -2121,7 +2146,7 @@
             <div class="context-header-row">
                 <div class="context-header">Prototype Scenario</div>
                 <div class="context-actions">
-                    <button class="context-refresh" title="Refresh" onclick="refreshPrototype()" aria-label="Refresh">↻</button>
+                    <button class="context-refresh" title="Restart prototype" onclick="refreshPrototype()" aria-label="Restart">↻ Restart</button>
                 </div>
             </div>
             <h3 class="context-title" id="contextTitle">Immediate Assist</h3>
