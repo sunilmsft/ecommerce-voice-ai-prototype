@@ -1829,9 +1829,9 @@
         }
 
         /* In-Chat Option Cards */
-        @keyframes cardPulse {
-            0%, 100% { box-shadow: 0 2px 6px rgba(15, 108, 189, 0.1); border-color: #b8d4f0; }
-            50% { box-shadow: 0 6px 30px rgba(15, 108, 189, 0.55), 0 0 0 4px rgba(15, 108, 189, 0.12); border-color: #5a9fd4; }
+        @keyframes btnPulse {
+            0%, 100% { box-shadow: 0 2px 4px rgba(15, 108, 189, 0.2); }
+            50% { box-shadow: 0 4px 20px rgba(15, 108, 189, 0.6), 0 0 0 4px rgba(15, 108, 189, 0.15); }
         }
 
         .chat-option-card {
@@ -1846,7 +1846,7 @@
             align-items: flex-start;
             gap: 14px;
             box-shadow: 0 2px 6px rgba(15, 108, 189, 0.1);
-            animation: cardPulse 1.8s ease-in-out infinite;
+            animation: btnPulse 1.8s ease-in-out infinite;
         }
 
         .chat-option-card:hover {
@@ -1906,11 +1906,10 @@
         /* Inline Callback Form (v2 - lives inside chat bubble) */
         .inline-form-card {
             background: #ffffff;
-            border: 2px solid #b8d4f0;
+            border: 1px solid #d7e7f5;
             border-radius: 10px;
             padding: 14px 16px;
             margin-top: 10px;
-            animation: cardPulse 1.8s ease-in-out infinite;
         }
 
         .inline-form-card .inline-form-header {
@@ -1984,6 +1983,7 @@
             font-family: 'Segoe UI', sans-serif;
             margin-top: 6px;
             transition: background 0.2s;
+            animation: btnPulse 1.8s ease-in-out infinite;
         }
 
         .inline-form-card .inline-form-submit:hover {
@@ -2021,11 +2021,10 @@
 
         /* Pulsing interactive card for speak-while-you-wait */
         .interactive-card {
-            border: 2px solid #b8d4f0;
+            border: 1px solid #d7e7f5;
             border-radius: 10px;
             padding: 16px;
             background: #ffffff;
-            animation: cardPulse 1.8s ease-in-out infinite;
         }
 
         .inline-confirm-card .confirm-icon {
@@ -3120,6 +3119,7 @@
                         padding: 10px 16px; border-radius: 4px;
                         font-size: 14px; font-weight: 500; cursor: pointer;
                         transition: background 0.2s;
+                        animation: btnPulse 1.8s ease-in-out infinite;
                     "
                     onmouseover="this.style.background='#0d4f99'"
                     onmouseout="this.style.background='#0f6cbd'"
