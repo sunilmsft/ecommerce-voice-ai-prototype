@@ -2044,6 +2044,135 @@
             color: #15803d;
             line-height: 1.4;
         }
+
+        /* ===================== VOICE-IN-WIDGET ===================== */
+        .viw-voice-bar {
+            background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+            padding: 12px 16px; display: none; align-items: center; gap: 10px;
+            color: white; z-index: 5;
+        }
+        .viw-voice-bar.active { display: flex; }
+        .viw-vb-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0;
+        }
+        .viw-vb-avatar.speaking { animation: viwPulse 1.5s ease-in-out infinite; }
+        @keyframes viwPulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+            50% { box-shadow: 0 0 0 7px rgba(255,255,255,0); }
+        }
+        .viw-vb-info { flex: 1; }
+        .viw-vb-title { font-size: 12px; font-weight: 600; opacity: 0.95; }
+        .viw-vb-status { font-size: 11px; opacity: 0.8; display: flex; align-items: center; gap: 5px; }
+        .viw-vb-timer { font-variant-numeric: tabular-nums; }
+        .viw-status-dot { width: 5px; height: 5px; border-radius: 50%; background: #7fecad; animation: statusPulseViw 2s ease-in-out infinite; }
+        @keyframes statusPulseViw { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .viw-vb-controls { display: flex; gap: 5px; }
+        .viw-ctrl-btn {
+            width: 30px; height: 30px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.2); color: white; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all 0.15s;
+        }
+        .viw-ctrl-btn:hover { background: rgba(255,255,255,0.3); }
+        .viw-ctrl-btn.end { background: #d13438; }
+        .viw-ctrl-btn.end:hover { background: #a80000; }
+        .viw-ctrl-btn.muted { background: rgba(239,68,68,0.8); }
+
+        .viw-voice-active {
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            padding: 30px 20px; text-align: center; gap: 16px; flex: 1;
+            background: linear-gradient(180deg, #f0f6ff 0%, #f3f9ff 100%);
+        }
+        .viw-voice-active.active { display: flex; }
+        .viw-visual {
+            width: 100px; height: 100px; border-radius: 50%;
+            background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+            display: flex; align-items: center; justify-content: center; font-size: 40px; position: relative;
+        }
+        .viw-visual .viw-ring {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            border: 2px solid rgba(0,120,212,0.3); animation: viwRingPulse 2s ease-out infinite;
+        }
+        .viw-visual .viw-ring:nth-child(2) { animation-delay: 0.5s; }
+        .viw-visual .viw-ring:nth-child(3) { animation-delay: 1s; }
+        @keyframes viwRingPulse { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.8); opacity: 0; } }
+        .viw-visual.agent-speaking .viw-ring { border-color: rgba(0,188,242,0.4); }
+        .viw-visual.user-speaking .viw-ring { border-color: rgba(16,124,16,0.4); }
+        .viw-waveform { display: flex; gap: 3px; align-items: center; height: 36px; }
+        .viw-wave-bar {
+            width: 3px; background: #0078d4; border-radius: 2px;
+            animation: viwWave 1.2s ease-in-out infinite;
+        }
+        .viw-wave-bar:nth-child(1) { animation-delay: 0s; height: 10px; }
+        .viw-wave-bar:nth-child(2) { animation-delay: 0.1s; height: 18px; }
+        .viw-wave-bar:nth-child(3) { animation-delay: 0.2s; height: 24px; }
+        .viw-wave-bar:nth-child(4) { animation-delay: 0.3s; height: 30px; }
+        .viw-wave-bar:nth-child(5) { animation-delay: 0.4s; height: 24px; }
+        .viw-wave-bar:nth-child(6) { animation-delay: 0.5s; height: 18px; }
+        .viw-wave-bar:nth-child(7) { animation-delay: 0.6s; height: 10px; }
+        @keyframes viwWave {
+            0%,100% { transform: scaleY(0.4); opacity: 0.4; }
+            50% { transform: scaleY(1); opacity: 1; }
+        }
+        .viw-label { font-size: 15px; font-weight: 600; color: #1b1b1b; }
+        .viw-sublabel { font-size: 12px; color: #605e5c; max-width: 280px; line-height: 1.5; }
+        .viw-topic {
+            display: inline-block; background: #e5eef8; color: #0078d4;
+            font-size: 10px; font-weight: 600; padding: 3px 9px;
+            border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .viw-caption { font-size: 13px; color: #424242; font-style: italic; min-height: 40px; max-width: 300px; line-height: 1.5; }
+
+        /* Context summary + quoting cards for voice-in-widget */
+        .viw-context-card {
+            background: linear-gradient(135deg, #f0f6ff 0%, #e5eef8 100%);
+            border: 1px solid #b8d4f0; border-radius: 8px; padding: 12px 14px; margin-top: 4px;
+        }
+        .viw-context-title {
+            font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+            color: #0078d4; margin-bottom: 6px;
+        }
+        .viw-context-items { display: flex; flex-direction: column; gap: 3px; }
+        .viw-ctx-item { font-size: 11px; color: #424242; display: flex; gap: 5px; }
+        .viw-ctx-label { color: #605e5c; min-width: 70px; flex-shrink: 0; }
+        .viw-ctx-value { font-weight: 600; color: #1b1b1b; }
+
+        .viw-prefill-card {
+            background: #f0f6ff; border-radius: 6px; padding: 10px 12px;
+            margin: 8px 0; border-left: 3px solid #0078d4;
+        }
+        .viw-prefill-title { font-size: 10px; font-weight: 600; color: #0078d4; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .viw-prefill-item { font-size: 11px; color: #424242; margin-bottom: 1px; }
+        .viw-prefill-item strong { color: #1b1b1b; }
+
+        .viw-plan-card {
+            background: white; border: 1px solid #e1e1e1; border-radius: 8px;
+            padding: 12px 14px; margin-top: 6px; cursor: pointer; transition: all 0.15s;
+        }
+        .viw-plan-card:hover { border-color: #0078d4; }
+        .viw-plan-card.selected { border-color: #0078d4; border-width: 2px; background: #f7fbff; }
+        .viw-plan-type { font-size: 10px; color: #605e5c; margin-bottom: 3px; display: flex; align-items: center; gap: 5px; }
+        .viw-plan-check {
+            width: 14px; height: 14px; border: 2px solid #c8c8c8; border-radius: 3px;
+            display: inline-flex; align-items: center; justify-content: center; font-size: 9px;
+        }
+        .viw-plan-card.selected .viw-plan-check { background: #0078d4; border-color: #0078d4; color: white; }
+        .viw-plan-name { font-size: 13px; font-weight: 600; color: #1b1b1b; margin-bottom: 1px; }
+        .viw-plan-billing { font-size: 12px; color: #605e5c; margin-bottom: 4px; }
+        .viw-plan-price { font-size: 16px; font-weight: 700; color: #1b1b1b; }
+        .viw-plan-price span { font-size: 12px; font-weight: 400; color: #605e5c; }
+
+        .viw-quote-card {
+            background: white; border: 1px solid #e1e1e1; border-radius: 8px;
+            padding: 14px 16px; margin-top: 6px;
+        }
+        .viw-quote-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+        .viw-quote-table th { font-size: 10px; color: #605e5c; text-align: left; padding: 4px 0; border-bottom: 1px solid #e1e1e1; }
+        .viw-quote-table td { font-size: 12px; color: #1b1b1b; padding: 6px 0; }
+        .viw-quote-total { text-align: right; padding-top: 6px; }
+        .viw-quote-total-amt { font-size: 20px; font-weight: 700; color: #1b1b1b; }
+        .viw-quote-total-note { font-size: 10px; color: #999; }
     </style>
 </head>
 <body>
@@ -2150,11 +2279,12 @@
                 <strong>How to try:</strong> <span id="contextHowToText">Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat to start the off-hours flow.</span>
             </div>
             <div class="context-divider"></div>
-            <div class="variant-switcher" style="display: none;">
-                <button class="variant-btn" id="variantHumanFirstV2" onclick="switchPrototypeVariant('human_first_v2')">Assisted Follow-Up v2</button>
-                <button class="variant-btn" id="variantHumanFirst" onclick="switchPrototypeVariant('human_first')">Assisted Follow-Up</button>
-                <button class="variant-btn" id="variantAiFirst" onclick="switchPrototypeVariant('ai_first')">Immediate Assist</button>
-                <button class="variant-btn" id="variantHybrid" onclick="switchPrototypeVariant('hybrid')">Customer Choice</button>
+            <div class="variant-switcher">
+                <button class="variant-btn" id="variantHumanFirstV2" onclick="switchPrototypeVariant('human_first_v2')">Original (Full-Screen Voice)</button>
+                <button class="variant-btn" id="variantVoiceInWidget" onclick="switchPrototypeVariant('voice_in_widget')">Voice-in-Widget (New)</button>
+                <button class="variant-btn" id="variantHumanFirst" onclick="switchPrototypeVariant('human_first')" style="display:none;">Assisted Follow-Up</button>
+                <button class="variant-btn" id="variantAiFirst" onclick="switchPrototypeVariant('ai_first')" style="display:none;">Immediate Assist</button>
+                <button class="variant-btn" id="variantHybrid" onclick="switchPrototypeVariant('hybrid')" style="display:none;">Customer Choice</button>
             </div>
             <div style="margin-top: 16px;">
                 <button onclick="copyPrototypeLink()" class="context-link" title="Share this prototype" style="display: inline-block; padding: 8px 16px; background: #0078d4; color: white; border: none; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; font-family: inherit;">📤 Share this Prototype</button>
@@ -2234,6 +2364,44 @@
                 <button class="minimize-btn" onclick="minimizeChat()" title="Minimize">−</button>
                 <button class="close-btn" onclick="closeChat()" title="Close">✕</button>
             </div>
+        </div>
+
+        <!-- Voice-in-Widget Bar (shown during in-widget voice session) -->
+        <div class="viw-voice-bar" id="viwVoiceBar">
+            <div class="viw-vb-avatar" id="viwAvatar">🎧</div>
+            <div class="viw-vb-info">
+                <div class="viw-vb-title">Ask Microsoft Voice Agent</div>
+                <div class="viw-vb-status">
+                    <span class="viw-status-dot"></span>
+                    <span id="viwStatus">Connected</span>
+                    <span>·</span>
+                    <span class="viw-vb-timer" id="viwTimer">00:00</span>
+                </div>
+            </div>
+            <div class="viw-vb-controls">
+                <button class="viw-ctrl-btn" id="viwMuteBtn" title="Mute" onclick="toggleViwMute()">🎤</button>
+                <button class="viw-ctrl-btn" id="viwSpeakerBtn" title="Speaker" onclick="toggleViwSpeaker()">🔊</button>
+                <button class="viw-ctrl-btn end" title="End call" onclick="endInWidgetVoiceCall()">✕</button>
+            </div>
+        </div>
+
+        <!-- Voice-in-Widget Active Area (replaces chat during voice) -->
+        <div class="viw-voice-active" id="viwVoiceActive">
+            <div class="viw-visual" id="viwVisual">
+                <div class="viw-ring"></div>
+                <div class="viw-ring"></div>
+                <div class="viw-ring"></div>
+                🎧
+            </div>
+            <div class="viw-waveform">
+                <div class="viw-wave-bar"></div><div class="viw-wave-bar"></div><div class="viw-wave-bar"></div>
+                <div class="viw-wave-bar"></div><div class="viw-wave-bar"></div><div class="viw-wave-bar"></div>
+                <div class="viw-wave-bar"></div>
+            </div>
+            <div class="viw-label" id="viwLabel">Voice Agent is speaking...</div>
+            <div class="viw-sublabel">You can continue browsing microsoft.com while we talk</div>
+            <div class="viw-topic" id="viwTopic">GETTING STARTED</div>
+            <div class="viw-caption" id="viwCaption"></div>
         </div>
 
         <div class="chat-messages" id="chatMessages">
@@ -2558,6 +2726,11 @@
                 title: 'Immediate Assist',
                 description: 'When a customer requests human support outside business hours, AI voice assistance is offered first for immediate help. A callback remains available at any time.',
                 howTo: 'Click the <em>\"Human Agent\"</em> button or type <em>\"talk to a human\"</em> in the chat to start the off-hours flow.'
+            },
+            voice_in_widget: {
+                title: 'Voice-in-Widget (New)',
+                description: 'Same callback-first flow, but voice happens <strong>inside the chat widget</strong> instead of a full-screen overlay. The customer keeps browsing microsoft.com while talking. After voice ends, context carries over into the quoting experience.',
+                howTo: 'Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat. After the callback form, click <em>"Speak with Ask Microsoft Voice Agent"</em> to see the in-widget voice experience.'
             }
         };
 
@@ -2581,6 +2754,7 @@
             document.getElementById('variantHumanFirst').classList.remove('active');
             document.getElementById('variantHumanFirstV2').classList.remove('active');
             document.getElementById('variantAiFirst').classList.remove('active');
+            document.getElementById('variantVoiceInWidget').classList.remove('active');
 
             if (variant === 'hybrid') {
                 document.getElementById('variantHybrid').classList.add('active');
@@ -2590,6 +2764,8 @@
                 document.getElementById('variantHumanFirstV2').classList.add('active');
             } else if (variant === 'ai_first') {
                 document.getElementById('variantAiFirst').classList.add('active');
+            } else if (variant === 'voice_in_widget') {
+                document.getElementById('variantVoiceInWidget').classList.add('active');
             }
         }
 
@@ -2599,6 +2775,18 @@
             if (prototypeVariant === variant) {
                 return;
             }
+
+            // Clean up voice-in-widget state before switching
+            document.getElementById('viwVoiceBar').classList.remove('active');
+            document.getElementById('viwVoiceActive').classList.remove('active');
+            const cm = document.getElementById('chatMessages');
+            if (cm) cm.style.display = '';
+            const ia = document.querySelector('.chat-input-area');
+            if (ia) ia.style.display = '';
+            isVoiceMode = false;
+            if (typeof viwSessionGen !== 'undefined') { viwSessionGen++; }
+            if (typeof stopViwTimer === 'function') { stopViwTimer(); }
+            try { speechSynthesis.cancel(); } catch(e) {}
 
             prototypeVariant = variant;
             localStorage.setItem('prototypeVariant', variant);
@@ -2857,7 +3045,7 @@
                 showHumanFirstOffHoursOffer();
                 return;
             }
-            if (prototypeVariant === 'human_first_v2') {
+            if (prototypeVariant === 'human_first_v2' || prototypeVariant === 'voice_in_widget') {
                 showHumanFirstV2OffHoursOffer();
                 return;
             }
@@ -3166,7 +3354,11 @@
                 setTimeout(() => {
                     voiceSessionContext.fromCallback = true;
                     voiceSessionContext.fromHumanFirstV2 = true;
-                    startVoiceSession();
+                    if (prototypeVariant === 'voice_in_widget') {
+                        startInWidgetVoiceSession();
+                    } else {
+                        startVoiceSession();
+                    }
                 }, 800);
             }, 400);
         }
@@ -4897,6 +5089,529 @@
                 closeCallbackFormModal();
             }
         });
+
+        // ===================== VOICE-IN-WIDGET ENGINE =====================
+
+        let viwTimerInterval = null;
+        let viwSeconds = 0;
+        let viwMuted = false;
+        let viwAudioEnabled = true;
+        let viwSessionGen = 0;
+        let viwIsSpeaking = false;
+
+        function startInWidgetVoiceSession() {
+            isVoiceMode = true;
+            viwAudioEnabled = true;
+            audioEnabled = true;
+            viwSessionGen++;
+
+            // Load voices
+            if (speechSynthesis.getVoices().length === 0) {
+                speechSynthesis.addEventListener('voiceschanged', () => {});
+            }
+
+            // Hide chat messages, show voice-in-widget UI
+            const cm = document.getElementById('chatMessages');
+            const qa = document.getElementById('quickActions');
+            const ia = document.querySelector('.chat-input-area');
+            cm.style.display = 'none';
+            if (qa) qa.style.display = 'none';
+            if (ia) ia.style.display = 'none';
+            document.getElementById('viwVoiceBar').classList.add('active');
+            document.getElementById('viwVoiceActive').classList.add('active');
+
+            // Reset
+            document.getElementById('viwStatus').textContent = 'Connecting...';
+            document.getElementById('viwTimer').textContent = '00:00';
+            document.getElementById('viwLabel').textContent = 'Connecting...';
+            document.getElementById('viwCaption').textContent = '';
+            document.getElementById('viwTopic').textContent = 'CONNECTING';
+
+            setTimeout(() => {
+                document.getElementById('viwStatus').textContent = 'Connected';
+                document.getElementById('viwLabel').textContent = 'Voice Agent is speaking...';
+                startViwTimer();
+                startInWidgetVoiceConversation();
+            }, 2000);
+        }
+
+        function startViwTimer() {
+            viwSeconds = 0;
+            viwTimerInterval = setInterval(() => {
+                viwSeconds++;
+                const m = String(Math.floor(viwSeconds / 60)).padStart(2, '0');
+                const s = String(viwSeconds % 60).padStart(2, '0');
+                document.getElementById('viwTimer').textContent = m + ':' + s;
+            }, 1000);
+        }
+
+        function stopViwTimer() { clearInterval(viwTimerInterval); }
+
+        function setViwState(state, caption, topic) {
+            const visual = document.getElementById('viwVisual');
+            const avatar = document.getElementById('viwAvatar');
+            const label = document.getElementById('viwLabel');
+            document.getElementById('viwCaption').textContent = caption || '';
+            if (topic) document.getElementById('viwTopic').textContent = topic;
+
+            if (state === 'agent-speaking') {
+                label.textContent = 'Voice Agent is speaking...';
+                visual.className = 'viw-visual agent-speaking';
+                avatar.classList.add('speaking');
+                document.querySelectorAll('.viw-wave-bar').forEach(b => b.style.background = '#00bcf2');
+            } else if (state === 'user-speaking') {
+                label.textContent = 'You\'re speaking...';
+                visual.className = 'viw-visual user-speaking';
+                avatar.classList.remove('speaking');
+                document.querySelectorAll('.viw-wave-bar').forEach(b => b.style.background = '#107c10');
+            } else if (state === 'processing') {
+                label.textContent = 'Processing...';
+                visual.className = 'viw-visual';
+                avatar.classList.remove('speaking');
+                document.querySelectorAll('.viw-wave-bar').forEach(b => b.style.background = '#605e5c');
+            }
+        }
+
+        function viwSpeakText(text, speaker) {
+            if (!viwAudioEnabled || !isVoiceMode) return;
+            const genAtStart = viwSessionGen;
+
+            const doSpeak = () => {
+                if (!viwAudioEnabled || !isVoiceMode || genAtStart !== viwSessionGen) return;
+                if (speechSynthesis.speaking) { setTimeout(doSpeak, 100); return; }
+                if (!viwAudioEnabled || !isVoiceMode || genAtStart !== viwSessionGen) return;
+
+                const utt = new SpeechSynthesisUtterance(text);
+                const voices = speechSynthesis.getVoices();
+
+                if (speaker === 'AI') {
+                    utt.rate = 1.0; utt.pitch = 1.0;
+                    utt.voice = voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
+                        voices.find(v => v.name.includes('Jenny')) ||
+                        voices.find(v => v.name.includes('Zira')) ||
+                        voices.find(v => v.lang === 'en-US') || voices[0];
+                } else {
+                    utt.rate = 0.95; utt.pitch = 0.9;
+                    const isFemale = conversationContext.customerName &&
+                        ['Priya','Sarah','Maria','Lisa','Emma','Sophia','Aisha','Mei'].includes(conversationContext.customerName);
+                    if (isFemale) {
+                        utt.pitch = 1.05;
+                        utt.voice = voices.find(v => v.name.includes('Aria') && v.name.includes('Online')) ||
+                            voices.find(v => v.name.includes('Sara') && v.name.includes('Online')) ||
+                            voices.find(v => v.lang === 'en-US') || voices[0];
+                    } else {
+                        utt.voice = voices.find(v => v.name.includes('Guy') && v.name.includes('Online')) ||
+                            voices.find(v => v.name.includes('Ryan') && v.name.includes('Online')) ||
+                            voices.find(v => v.name.includes('David')) ||
+                            voices.find(v => v.lang === 'en-US') || voices[0];
+                    }
+                }
+                utt.volume = 1.0;
+                utt.onstart = () => { viwIsSpeaking = true; };
+                utt.onend = () => { viwIsSpeaking = false; };
+                utt.onerror = () => { viwIsSpeaking = false; };
+                try { speechSynthesis.speak(utt); } catch(e) { console.error(e); }
+            };
+            doSpeak();
+        }
+
+        function viwWaitForSpeech(text) {
+            if (!viwAudioEnabled || !isVoiceMode) return Promise.resolve();
+            const words = text.trim().split(/\s+/).length;
+            const estMs = Math.max(1200, Math.min(12000, words * 420));
+            const maxMs = estMs + 2500;
+            const start = Date.now();
+            return new Promise(resolve => {
+                const check = () => {
+                    if (!(viwIsSpeaking || speechSynthesis.speaking || speechSynthesis.pending) || Date.now() - start > maxMs) {
+                        resolve(); return;
+                    }
+                    setTimeout(check, 120);
+                };
+                setTimeout(check, 150);
+            });
+        }
+
+        async function startInWidgetVoiceConversation() {
+            const gen = viwSessionGen;
+            const play = async (speaker, text, topic, pause) => {
+                if (gen !== viwSessionGen) return;
+                const state = speaker === 'AI' ? 'agent-speaking' : 'user-speaking';
+                setViwState(state, '"' + text + '"', topic);
+                viwSpeakText(text, speaker);
+                await viwWaitForSpeech(text);
+                if (gen !== viwSessionGen) return;
+                await new Promise(r => setTimeout(r, pause || 450));
+            };
+
+            const name = conversationContext.customerName || '';
+            const biz = conversationContext.businessName || '';
+            const users = conversationContext.numEmployees || 20;
+
+            let greeting = 'Hi ' + (name || 'there') + '! I\'m your Ask Microsoft Voice Agent. ';
+            if (biz && users) greeting += 'I see you\'ve requested a callback for ' + biz + ' with about ' + users + ' users — great to connect with you in the meantime. ';
+            greeting += 'How can I help you today?';
+            await play('AI', greeting, 'GETTING STARTED', 500);
+
+            await play('User', 'We\'re about ' + users + ' people, mostly hybrid. I want to understand which plan would be the best fit.', 'DISCUSSING: TEAM SIZE & WORK STYLE', 500);
+            conversationContext.workLocation = 'hybrid';
+
+            await play('AI', 'Great question! For a hybrid team of ' + users + ', I\'d recommend Microsoft 365 Business Premium. It gives you the full Office desktop apps, Teams for collaboration, and importantly — Intune for device management and Defender for Business for security.', 'DISCUSSING: PLAN RECOMMENDATION', 500);
+
+            await play('User', 'Security is a big deal for us — we deal with sensitive client documents. What would that cost?', 'DISCUSSING: SECURITY & PRICING', 500);
+            conversationContext.securityNeeds = 'high';
+
+            const monthly = users * 22;
+            conversationContext.interestedPlans = ['Business Premium'];
+            conversationContext.pricePerUser = 22;
+            conversationContext.monthlyTotal = monthly;
+            await play('AI', 'Business Premium is $22 per user per month with an annual commitment. For ' + users + ' users, that\'s about $' + monthly + ' per month. It includes everything — desktop apps, advanced security, device management, and 1 TB of OneDrive per user.', 'DISCUSSING: PRICING DETAILS', 500);
+
+            await play('User', 'Can I get a formal quote? We need to review it internally before deciding.', 'QUOTE REQUESTED', 500);
+
+            // Warm handoff
+            await play('AI', 'Absolutely! A quote has detailed line items that are easier to review visually. Let me set that up in the chat for you — I\'ll carry over everything we\'ve discussed so you won\'t need to repeat anything.', 'WARM HANDOFF → QUOTING', 500);
+
+            await play('AI', 'It was great chatting' + (name ? ', ' + name : '') + '. Your callback is still confirmed and your specialist will have a summary of our conversation. Switching you to chat now!', 'ENDING VOICE SESSION', 500);
+
+            // End voice, transition to chat with context + quoting
+            if (gen !== viwSessionGen) return;
+            endInWidgetVoiceCall();
+        }
+
+        function endInWidgetVoiceCall() {
+            isVoiceMode = false;
+            viwAudioEnabled = false;
+            audioEnabled = false;
+            viwIsSpeaking = false;
+            viwSessionGen++;
+            stopViwTimer();
+
+            try { speechSynthesis.cancel(); } catch(e) {}
+
+            // Hide voice UI, restore chat
+            document.getElementById('viwVoiceBar').classList.remove('active');
+            document.getElementById('viwVoiceActive').classList.remove('active');
+            const cm = document.getElementById('chatMessages');
+            const ia = document.querySelector('.chat-input-area');
+            cm.style.display = '';
+            if (ia) ia.style.display = '';
+
+            const mins = String(Math.floor(viwSeconds / 60)).padStart(1, '0');
+            const secs = String(viwSeconds % 60).padStart(2, '0');
+            addSystemMessage('🎙️ Voice session ended · ' + mins + ':' + secs + ' · Conversation context saved');
+
+            // Show context summary
+            setTimeout(() => showViwContextSummary(), 800);
+        }
+
+        function showViwContextSummary() {
+            const name = conversationContext.customerFullName || conversationContext.customerName || 'Customer';
+            const biz = conversationContext.businessName || '';
+            const users = conversationContext.numEmployees || 20;
+            const monthly = users * 22;
+            const yearly = monthly * 12;
+
+            const summaryHTML = `
+                <div class="viw-context-card">
+                    <div class="viw-context-title">📋 Voice Conversation Summary</div>
+                    <div class="viw-context-items">
+                        <div class="viw-ctx-item"><span class="viw-ctx-label">Customer</span><span class="viw-ctx-value">${name}${biz ? ', ' + biz : ''}</span></div>
+                        <div class="viw-ctx-item"><span class="viw-ctx-label">Team size</span><span class="viw-ctx-value">~${users} users</span></div>
+                        <div class="viw-ctx-item"><span class="viw-ctx-label">Work style</span><span class="viw-ctx-value">Hybrid</span></div>
+                        <div class="viw-ctx-item"><span class="viw-ctx-label">Plan interest</span><span class="viw-ctx-value">Microsoft 365 Business Premium</span></div>
+                        <div class="viw-ctx-item"><span class="viw-ctx-label">Key needs</span><span class="viw-ctx-value">Security, Teams, device management</span></div>
+                        <div class="viw-ctx-item"><span class="viw-ctx-label">Billing pref.</span><span class="viw-ctx-value">Annual commitment</span></div>
+                        <div class="viw-ctx-item"><span class="viw-ctx-label">Next step</span><span class="viw-ctx-value">Formal quote requested</span></div>
+                    </div>
+                </div>
+            `;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = 'message bot';
+            msg.innerHTML = '<div class="message-bubble">' + summaryHTML + '<div class="message-time">just now</div></div>';
+            chatMessages.appendChild(msg);
+            scrollToBottom();
+
+            // After summary, start quoting flow
+            setTimeout(() => {
+                addMessage('I\'ve got everything from your voice conversation. Let me start the quoting experience — I\'ve pre-filled what I can so you don\'t have to repeat yourself.', 'bot', false);
+                setTimeout(() => showViwQuotingPrefill(), 1000);
+            }, 1200);
+        }
+
+        function showViwQuotingPrefill() {
+            const users = conversationContext.numEmployees || 20;
+            const html = `
+                <div style="font-size: 14px; font-weight: 600; color: #262626; margin-bottom: 6px;">Configure your subscription</div>
+                <div style="font-size: 13px; color: #555; margin-bottom: 8px;">Based on your voice conversation, here's what I have:</div>
+                <div class="viw-prefill-card">
+                    <div class="viw-prefill-title">🎙️ From your voice conversation</div>
+                    <div class="viw-prefill-item">Plan: <strong>Microsoft 365 Business Premium</strong></div>
+                    <div class="viw-prefill-item">Billing: <strong>Annual subscription</strong></div>
+                    <div class="viw-prefill-item">Includes Teams: <strong>Yes</strong></div>
+                    <div class="viw-prefill-item">Users: <strong>${users}</strong></div>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button style="flex:1; background:#0f6cbd; color:white; border:none; padding:10px 16px; border-radius:4px; font-size:14px; font-weight:500; cursor:pointer; font-family:inherit;"
+                        onmouseover="this.style.background='#0d4f99'" onmouseout="this.style.background='#0f6cbd'"
+                        onclick="viwAcceptPrefill()">✓ Use these details</button>
+                    <button style="flex:1; background:white; color:#605e5c; border:1px solid #d7e7f5; padding:10px 16px; border-radius:4px; font-size:14px; font-weight:500; cursor:pointer; font-family:inherit;"
+                        onclick="viwStartFresh()">Start fresh</button>
+                </div>
+            `;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = 'message bot';
+            msg.innerHTML = '<div class="message-bubble"><div class="interactive-card">' + html + '</div><div class="message-time">just now</div></div>';
+            chatMessages.appendChild(msg);
+            scrollToBottom();
+        }
+
+        function viwAcceptPrefill() {
+            addMessage('✓ Use these details', 'user');
+            setTimeout(() => {
+                addMessage('Great! Here\'s the plan matching your needs:', 'bot', false);
+                setTimeout(() => showViwPlanCards(), 800);
+            }, 500);
+        }
+
+        function viwStartFresh() {
+            addMessage('Start fresh', 'user');
+            setTimeout(() => {
+                addMessage('No problem — let\'s start from the beginning. Are you interested in monthly or yearly subscription plans?', 'bot', false);
+            }, 500);
+        }
+
+        function showViwPlanCards() {
+            const users = conversationContext.numEmployees || 20;
+            const html = `
+                <div class="viw-plan-card selected" onclick="viwSelectPlan(this, 'premium')">
+                    <div class="viw-plan-type"><span class="viw-plan-check">✓</span> Annual Subscription</div>
+                    <div class="viw-plan-name">Microsoft 365 Business Premium</div>
+                    <div class="viw-plan-billing">Pay yearly</div>
+                    <div class="viw-plan-price">$22.00 <span>user/mo</span></div>
+                </div>
+                <div class="viw-plan-card" onclick="viwSelectPlan(this, 'premium_copilot')">
+                    <div class="viw-plan-type"><span class="viw-plan-check"></span> Annual Subscription</div>
+                    <div class="viw-plan-name">Microsoft 365 Business Premium and<br>Microsoft 365 Copilot Business</div>
+                    <div class="viw-plan-billing">Pay yearly</div>
+                    <div class="viw-plan-price">$43.00 <span>user/mo</span></div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button style="background:#0f6cbd; color:white; border:none; padding:10px 20px; border-radius:4px; font-size:14px; font-weight:500; cursor:pointer; font-family:inherit;"
+                        onmouseover="this.style.background='#0d4f99'" onmouseout="this.style.background='#0f6cbd'"
+                        onclick="viwGenerateQuote()">Generate Quote</button>
+                </div>
+            `;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = 'message bot';
+            msg.id = 'viwPlanCardsMsg';
+            msg.innerHTML = '<div class="message-bubble"><div class="interactive-card">' + html + '</div><div class="message-time">just now</div></div>';
+            chatMessages.appendChild(msg);
+            scrollToBottom();
+        }
+
+        let viwSelectedPlan = 'premium';
+        function viwSelectPlan(el, plan) {
+            viwSelectedPlan = plan;
+            const container = el.parentElement;
+            container.querySelectorAll('.viw-plan-card').forEach(c => {
+                c.classList.remove('selected');
+                c.querySelector('.viw-plan-check').textContent = '';
+            });
+            el.classList.add('selected');
+            el.querySelector('.viw-plan-check').textContent = '✓';
+        }
+
+        function viwGenerateQuote() {
+            const users = conversationContext.numEmployees || 20;
+            const price = viwSelectedPlan === 'premium' ? 22 : 43;
+            const planName = viwSelectedPlan === 'premium' ? 'Microsoft 365 Business Premium' : 'Microsoft 365 Business Premium and Microsoft 365 Copilot Business';
+            const yearly = users * price * 12;
+
+            addMessage('Generate quote for ' + planName, 'user');
+            setTimeout(() => {
+                const html = `
+                    <div style="font-size: 13px; color: #605e5c; margin-bottom: 8px;">Here's a draft quote for your review and reference:</div>
+                    <div class="viw-quote-card">
+                        <div style="font-size: 14px; font-weight: 700; color: #1b1b1b; margin-bottom: 8px;">${planName}</div>
+                        <table class="viw-quote-table">
+                            <tr><th>Qty</th><th>Price per user</th><th>Year total</th></tr>
+                            <tr><td>${users}</td><td>$${price}.00/mo, paid yearly</td><td>$${yearly.toLocaleString()}.00</td></tr>
+                        </table>
+                        <div style="font-size: 11px; color: #605e5c; margin-bottom: 6px;">(Annual subscription · Auto renews)</div>
+                        <div class="viw-quote-total">
+                            <div style="font-size: 11px; color: #605e5c;">Year subtotal</div>
+                            <div class="viw-quote-total-amt">$${yearly.toLocaleString()}.00</div>
+                            <div class="viw-quote-total-note">(without tax and fees)</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 13px; color: #555; line-height: 1.5;">
+                        Almost there! If everything looks good, I can send you a confirmation email with next steps.
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <button style="background:#0f6cbd; color:white; border:none; padding:10px 16px; border-radius:4px; font-size:14px; font-weight:500; cursor:pointer; font-family:inherit;"
+                            onmouseover="this.style.background='#0d4f99'" onmouseout="this.style.background='#0f6cbd'"
+                            onclick="viwSendQuoteEmail()">Yes, send it to my email</button>
+                        <button style="background:white; color:#605e5c; border:1px solid #d7e7f5; padding:10px 16px; border-radius:4px; font-size:14px; font-weight:500; cursor:pointer; font-family:inherit;">Make changes</button>
+                    </div>
+                `;
+
+                const chatMessages = document.getElementById('chatMessages');
+                const msg = document.createElement('div');
+                msg.className = 'message bot';
+                msg.innerHTML = '<div class="message-bubble"><div class="interactive-card">' + html + '</div><div class="message-time">just now</div></div>';
+                chatMessages.appendChild(msg);
+                scrollToBottom();
+            }, 1000);
+        }
+
+        function viwSendQuoteEmail() {
+            addMessage('Yes, send it to my email', 'user');
+            const name = conversationContext.customerName || 'Customer';
+            const email = conversationContext.customerEmail || 'customer@example.com';
+            setTimeout(() => {
+                const html = `
+                    <div style="font-size: 13px; color: #555; margin-bottom: 10px;">I'll send the quote to your email on file:</div>
+                    <div style="background:white; border:1px solid #e1e1e1; border-radius:6px; padding:12px 14px;">
+                        <div style="margin-bottom: 8px;">
+                            <div style="font-size: 11px; color: #d13438; font-weight: 600; margin-bottom: 3px;">First Name *</div>
+                            <div style="padding: 8px 10px; border: 1px solid #c8c8c8; border-radius: 4px; font-size: 13px;">${name}</div>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <div style="font-size: 11px; color: #d13438; font-weight: 600; margin-bottom: 3px;">Email *</div>
+                            <div style="padding: 8px 10px; border: 1px solid #c8c8c8; border-radius: 4px; font-size: 13px;">${email}</div>
+                        </div>
+                        <button style="background:#0f6cbd; color:white; border:none; padding:8px 20px; border-radius:4px; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit;"
+                            onmouseover="this.style.background='#0d4f99'" onmouseout="this.style.background='#0f6cbd'"
+                            onclick="viwSubmitQuoteEmail()">Submit</button>
+                    </div>
+                `;
+                const chatMessages = document.getElementById('chatMessages');
+                const msg = document.createElement('div');
+                msg.className = 'message bot';
+                msg.innerHTML = '<div class="message-bubble"><div class="interactive-card">' + html + '</div><div class="message-time">just now</div></div>';
+                chatMessages.appendChild(msg);
+                scrollToBottom();
+            }, 800);
+        }
+
+        function viwSubmitQuoteEmail() {
+            addMessage('Submit', 'user');
+            const email = conversationContext.customerEmail || 'customer@example.com';
+            setTimeout(() => {
+                // Quote sent confirmation
+                const confirmHTML = `
+                    <div class="inline-confirm-card">
+                        <div class="confirm-icon">📧</div>
+                        <div class="confirm-title">Quote Sent!</div>
+                        <div class="confirm-text">
+                            Your quote has been sent to <strong>${email}</strong>.<br>
+                            Quote ID: <strong>QT-2026-05-14-1923</strong>
+                        </div>
+                    </div>
+                `;
+                const chatMessages = document.getElementById('chatMessages');
+                const msg = document.createElement('div');
+                msg.className = 'message bot';
+                msg.innerHTML = '<div class="message-bubble">' + confirmHTML + '<div class="message-time">just now</div></div>';
+                chatMessages.appendChild(msg);
+                scrollToBottom();
+
+                // Then show what specialist will see + wrap-up
+                setTimeout(() => showViwSpecialistSummary(), 1200);
+            }, 800);
+        }
+
+        function showViwSpecialistSummary() {
+            const name = conversationContext.customerFullName || conversationContext.customerName || 'Customer';
+            const biz = conversationContext.businessName || '';
+            const users = conversationContext.numEmployees || 20;
+            const email = conversationContext.customerEmail || '';
+            const price = viwSelectedPlan === 'premium' ? 22 : 43;
+            const planName = viwSelectedPlan === 'premium' ? 'M365 Business Premium' : 'M365 Business Premium + Copilot';
+            const yearly = users * price * 12;
+
+            addMessage('Your quote is on its way! Your callback is also still confirmed — when your specialist calls, they\'ll have the full context from your voice conversation and your quote details.', 'bot', false);
+
+            setTimeout(() => {
+                const summaryHTML = `
+                    <div class="viw-context-card">
+                        <div class="viw-context-title">📋 What Your Sales Specialist Will See</div>
+                        <div class="viw-context-items">
+                            <div class="viw-ctx-item"><span class="viw-ctx-label">Customer</span><span class="viw-ctx-value">${name}${biz ? ', ' + biz : ''}</span></div>
+                            <div class="viw-ctx-item"><span class="viw-ctx-label">Voice summary</span><span class="viw-ctx-value">${users}-user hybrid team, security-focused</span></div>
+                            <div class="viw-ctx-item"><span class="viw-ctx-label">Quote</span><span class="viw-ctx-value">QT-2026-05-14-1923 — ${planName}, ${users} users, $${yearly.toLocaleString()}/yr</span></div>
+                            <div class="viw-ctx-item"><span class="viw-ctx-label">Quote sent to</span><span class="viw-ctx-value">${email}</span></div>
+                            <div class="viw-ctx-item"><span class="viw-ctx-label">Callback ref</span><span class="viw-ctx-value">CB-2026-05-14-0847</span></div>
+                        </div>
+                    </div>
+                `;
+                const chatMessages = document.getElementById('chatMessages');
+                const msg = document.createElement('div');
+                msg.className = 'message bot';
+                msg.innerHTML = '<div class="message-bubble">' + summaryHTML + '<div class="message-time">just now</div></div>';
+                chatMessages.appendChild(msg);
+                scrollToBottom();
+
+                // Final wrap-up card
+                setTimeout(() => showViwFinalWrapUp(), 1000);
+            }, 1000);
+        }
+
+        function showViwFinalWrapUp() {
+            const name = conversationContext.customerName || '';
+            const optionsHTML = `
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+                    <button style="background: #0f6cbd; color: white; border: none; padding: 10px 16px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; font-family:inherit;"
+                        onmouseover="this.style.background='#0d4f99'" onmouseout="this.style.background='#0f6cbd'"
+                        onclick="handleKeepCallback()">✓ Keep My Callback</button>
+                    <button style="background: white; color: #0f6cbd; border: 1.5px solid #0f6cbd; padding: 10px 16px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family:inherit;"
+                        onmouseover="this.style.background='#f0f8ff'" onmouseout="this.style.background='white'"
+                        onclick="handleCancelCallback()">I'm All Set, Cancel Callback</button>
+                </div>
+            `;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = 'message bot';
+            msg.innerHTML = `
+                <div class="message-bubble">
+                    <div style="font-size: 16px; font-weight: 600; color: #262626;">You're all set${name ? ', ' + name : ''}!</div>
+                    <div style="margin-top: 10px; font-size: 14px; color: #555; line-height: 1.6;">
+                        Quote emailed. Callback confirmed. Your specialist will have everything they need. Is there anything else I can help with?
+                    </div>
+                    ${optionsHTML}
+                    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e8e8; font-size: 13px; color: #666; font-style: italic;">
+                        ${brandCloseText}
+                    </div>
+                    <div class="message-time">just now</div>
+                </div>
+            `;
+            chatMessages.appendChild(msg);
+            scrollToBottom();
+            voiceSessionContext.fromHumanFirstV2 = false;
+        }
+
+        function toggleViwMute() {
+            viwMuted = !viwMuted;
+            const btn = document.getElementById('viwMuteBtn');
+            btn.textContent = viwMuted ? '🔇' : '🎤';
+            btn.classList.toggle('muted', viwMuted);
+        }
+
+        function toggleViwSpeaker() {
+            viwAudioEnabled = !viwAudioEnabled;
+            audioEnabled = viwAudioEnabled;
+            const btn = document.getElementById('viwSpeakerBtn');
+            btn.textContent = viwAudioEnabled ? '🔊' : '🔈';
+            if (!viwAudioEnabled && speechSynthesis.speaking) speechSynthesis.cancel();
+        }
     </script>
 </body>
 </html>
