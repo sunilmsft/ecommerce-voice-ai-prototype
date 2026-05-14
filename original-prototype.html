@@ -5098,6 +5098,7 @@
         let viwAudioEnabled = true;
         let viwSessionGen = 0;
         let viwIsSpeaking = false;
+        let viwSpeechDoneResolve = null;
 
         function startInWidgetVoiceSession() {
             isVoiceMode = true;
@@ -5208,8 +5209,8 @@
                 }
                 utt.volume = 1.0;
                 utt.onstart = () => { viwIsSpeaking = true; };
-                utt.onend = () => { viwIsSpeaking = false; };
-                utt.onerror = () => { viwIsSpeaking = false; };
+                utt.onend = () => { viwIsSpeaking = false; if (viwSpeechDoneResolve) { const r = viwSpeechDoneResolve; viwSpeechDoneResolve = null; r(); } };
+                utt.onerror = () => { viwIsSpeaking = false; if (viwSpeechDoneResolve) { const r = viwSpeechDoneResolve; viwSpeechDoneResolve = null; r(); } };
                 try { speechSynthesis.speak(utt); } catch(e) { console.error(e); }
             };
             doSpeak();
@@ -5218,17 +5219,13 @@
         function viwWaitForSpeech(text) {
             if (!viwAudioEnabled || !isVoiceMode) return Promise.resolve();
             const words = text.trim().split(/\s+/).length;
-            const estMs = Math.max(1200, Math.min(12000, words * 420));
-            const maxMs = estMs + 2500;
-            const start = Date.now();
+            const maxMs = Math.max(6000, words * 600) + 4000;
             return new Promise(resolve => {
-                const check = () => {
-                    if (!(viwIsSpeaking || speechSynthesis.speaking || speechSynthesis.pending) || Date.now() - start > maxMs) {
-                        resolve(); return;
-                    }
-                    setTimeout(check, 120);
-                };
-                setTimeout(check, 150);
+                viwSpeechDoneResolve = resolve;
+                // Fallback timeout in case onend never fires
+                setTimeout(() => {
+                    if (viwSpeechDoneResolve === resolve) { viwSpeechDoneResolve = null; resolve(); }
+                }, maxMs);
             });
         }
 
