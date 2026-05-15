@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ask Microsoft Voice Agent — In-Widget Voice Mode</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f3f2f1;
+    display: flex;
+    justify-content: flex-end;
+    min-height: 100vh;
+  }
+
+  /* Fake page background to show the widget in context */
+  .page-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 450px;
+    bottom: 0;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+  }
+
+  .page-bg-content {
+    max-width: 600px;
+    color: #444;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .page-bg-content h2 {
+    font-size: 28px;
+    color: #1b1b1b;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .page-bg-content p {
+    margin-bottom: 12px;
+    color: #605e5c;
+  }
+
+  .page-bg-content .fake-pricing {
+    background: #f3f9ff;
+    border: 1px solid #d7e7f5;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+
+  .page-bg-content .fake-pricing h3 {
+    color: #0078d4;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  /* ===================== CHAT WIDGET ===================== */
+  .chat-container {
+    width: 450px;
+    max-width: 450px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: #f3f9ff;
+    border-radius: 16px 0 0 16px;
+    border: 1px solid #d7e7f5;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    overflow: hidden;
+  }
+
+  /* Header */
+  .chat-header {
+    background: white;
+    border-bottom: 1px solid #e5eef8;
+    padding: 12px 16px;
+    min-height: 56px;
+    box-shadow: 0 3px 8px rgba(15, 108, 189, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .agent-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #e1efff 0%, #f3f9ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .agent-info .agent-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1b1b1b;
+  }
+
+  .agent-info .agent-status {
+    font-size: 12px;
+    color: #605e5c;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 4px;
+  }
+
+  .header-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #0f6cbd;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .header-btn:hover { background: #f0f6ff; }
+
+  /* ===================== VOICE BAR ===================== */
+  .voice-bar {
+    background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+    padding: 14px 16px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .voice-bar.active {
+    display: flex;
+  }
+
+  .voice-bar-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .voice-bar-avatar.speaking {
+    animation: avatarPulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes avatarPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+  }
+
+  .voice-bar-info {
+    flex: 1;
+  }
+
+  .voice-bar-title {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.95;
+  }
+
+  .voice-bar-status {
+    font-size: 11px;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .voice-bar-timer {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #7fecad;
+    animation: statusPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes statusPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .voice-bar-controls {
+    display: flex;
+    gap: 6px;
+  }
+
+  .vb-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: all 0.15s;
+  }
+
+  .vb-btn:hover { background: rgba(255,255,255,0.3); }
+  .vb-btn.end { background: #d13438; }
+  .vb-btn.end:hover { background: #a80000; }
+  .vb-btn.muted { background: rgba(239, 68, 68, 0.8); }
+
+  /* ===================== MESSAGES AREA ===================== */
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scroll-behavior: smooth;
+  }
+
+  .message {
+    display: flex;
+    flex-direction: column;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message.bot { align-items: flex-start; }
+  .message.user { align-items: flex-end; }
+  .message.system { align-items: center; }
+
+  .message-bubble {
+    max-width: 92%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  .message.bot .message-bubble {
+    background: white;
+    border: 1px solid #d7e7f5;
+    color: #1b1b1b;
+  }
+
+  .message.user .message-bubble {
+    background: #0f6cbd;
+    color: white;
+    border: none;
+  }
+
+  .message.system .message-bubble {
+    background: #fff4ce;
+    border: 1px solid #ffb900;
+    font-size: 13px;
+    max-width: 90%;
+    text-align: center;
+    color: #605e5c;
+  }
+
+  .message-time {
+    font-size: 11px;
+    color: #7a8998;
+    margin-top: 4px;
+    padding: 0 4px;
+  }
+
+  .message.user .message-time { text-align: right; }
+
+  /* Voice transcript messages get a special indicator */
+  .message.voice-transcript .message-bubble {
+    position: relative;
+  }
+
+  .message.voice-transcript.bot .message-bubble {
+    border-left: 3px solid #0078d4;
+  }
+
+  .message.voice-transcript.user .message-bubble {
+    border-right: 3px solid rgba(255,255,255,0.5);
+  }
+
+  .voice-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .message.bot .voice-label { color: #0078d4; }
+  .message.user .voice-label { color: rgba(255,255,255,0.8); }
+
+  /* ===================== INLINE CARDS ===================== */
+  .inline-confirm-card {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 4px;
+  }
+
+  .confirm-title {
+    color: #166534;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .confirm-text {
+    color: #15803d;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* Voice offer card */
+  .voice-offer-card {
+    background: white;
+    border: 2px solid #b8d4f0;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-top: 8px;
+  }
+
+  .voice-offer-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1b1b1b;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .voice-offer-desc {
+    font-size: 13px;
+    color: #605e5c;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .voice-offer-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .voice-offer-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+
+  .voice-offer-btn.primary {
+    background: #0f6cbd;
+    color: white;
+    animation: btnPulse 1.8s ease-in-out infinite;
+  }
+
+  .voice-offer-btn.primary:hover { background: #0b5cab; }
+
+  .voice-offer-btn.secondary {
+    background: #f3f9ff;
+    color: #605e5c;
+    border: 1px solid #d7e7f5;
+  }
+
+  .voice-offer-btn.secondary:hover { background: #e5eef8; }
+
+  @keyframes btnPulse {
+    0%, 100% { box-shadow: 0 2px 4px rgba(15,108,189,0.2); }
+    50% { box-shadow: 0 4px 20px rgba(15,108,189,0.5), 0 0 0 3px rgba(15,108,189,0.12); }
+  }
+
+  /* ===================== LISTENING INDICATOR ===================== */
+  .listening-bar {
+    padding: 12px 16px;
+    background: white;
+    border-top: 1px solid #e5eef8;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .listening-bar.active { display: flex; }
+
+  .listening-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .listening-dot {
+    width: 4px;
+    height: 16px;
+    background: #0078d4;
+    border-radius: 2px;
+    animation: listeningWave 1.2s ease-in-out infinite;
+  }
+
+  .listening-dot:nth-child(1) { animation-delay: 0s; }
+  .listening-dot:nth-child(2) { animation-delay: 0.15s; }
+  .listening-dot:nth-child(3) { animation-delay: 0.3s; }
+  .listening-dot:nth-child(4) { animation-delay: 0.45s; }
+  .listening-dot:nth-child(5) { animation-delay: 0.6s; }
+
+  @keyframes listeningWave {
+    0%, 100% { height: 6px; opacity: 0.4; }
+    50% { height: 20px; opacity: 1; }
+  }
+
+  .listening-text {
+    font-size: 12px;
+    color: #605e5c;
+    font-weight: 500;
+  }
+
+  /* ===================== INPUT AREA ===================== */
+  .chat-input-area {
+    padding: 12px 16px;
+    background: #f3f9ff;
+    border-top: 1px solid #e5eef8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chat-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #c9def5;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    background: white;
+    outline: none;
+    resize: none;
+    min-height: 40px;
+    max-height: 80px;
+  }
+
+  .chat-input:focus { box-shadow: 0 0 0 2px rgba(15, 108, 189, 0.15); }
+
+  .send-button {
+    width: 40px;
+    height: 40px;
+    background: #0f6cbd;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .send-button:hover { background: #0b5cab; }
+
+  /* ===================== CONTEXT SUMMARY CARD ===================== */
+  .context-summary-card {
+    background: linear-gradient(135deg, #f0f6ff 0%, #e5eef8 100%);
+    border: 1px solid #b8d4f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 4px;
+  }
+
+  .context-summary-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #0078d4;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .context-summary-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .context-item {
+    font-size: 12px;
+    color: #424242;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .context-item-label {
+    color: #605e5c;
+    min-width: 80px;
+  }
+
+  .context-item-value {
+    font-weight: 600;
+    color: #1b1b1b;
+  }
+
+  /* ===================== POST-VOICE WRAP-UP ===================== */
+  .wrapup-card {
+    background: white;
+    border: 2px solid #86efac;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-top: 8px;
+  }
+
+  .wrapup-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #166534;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .wrapup-text {
+    font-size: 13px;
+    color: #605e5c;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .wrapup-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .wrapup-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+
+  .wrapup-btn.primary {
+    background: #107c10;
+    color: white;
+  }
+
+  .wrapup-btn.secondary {
+    background: #f0fdf4;
+    color: #605e5c;
+    border: 1px solid #86efac;
+  }
+
+  /* Typing indicator */
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 8px 0;
+  }
+
+  .typing-dot {
+    width: 8px;
+    height: 8px;
+    background: #0078d4;
+    border-radius: 50%;
+    animation: typing 1.4s infinite;
+    opacity: 0.4;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* Scrollbar */
+  .chat-messages::-webkit-scrollbar { width: 6px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: #c9def5; border-radius: 3px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+
+  /* Instructions overlay */
+  .instructions {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    font-size: 13px;
+    color: #424242;
+    max-width: 340px;
+    z-index: 500;
+    line-height: 1.6;
+  }
+
+  .instructions strong { color: #0078d4; }
+
+  .instructions .step-list {
+    margin: 8px 0 0 0;
+    padding-left: 18px;
+  }
+
+  .instructions .step-list li {
+    margin-bottom: 4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Fake page background -->
+<div class="page-bg">
+  <div class="page-bg-content">
+    <h2>Microsoft 365 for Business</h2>
+    <p>Get the desktop apps, intelligent cloud services, and advanced security you need to bring your ideas to life and run your business.</p>
+    <div class="fake-pricing">
+      <h3>Microsoft 365 Business Premium</h3>
+      <p><strong>$22.00</strong> user/month (annual commitment)</p>
+      <p style="font-size:13px; color:#605e5c;">Includes: Word, Excel, PowerPoint, Outlook, Teams, SharePoint, OneDrive, Exchange, Intune, Defender for Business, Azure Information Protection, and more.</p>
+    </div>
+    <p>Compare all Microsoft 365 plans to find the right fit for your organization. Need help deciding? Talk to a sales specialist.</p>
+    <p style="color:#999; font-size:12px; margin-top:30px;">← This is the microsoft.com page that stays visible and browseable during the voice call</p>
+  </div>
+</div>
+
+<!-- Chat Widget -->
+<div class="chat-container">
+
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="header-left">
+      <div class="agent-avatar">🤖</div>
+      <div class="agent-info">
+        <div class="agent-name">Ask Microsoft</div>
+        <div class="agent-status" id="agentStatus">Online</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="header-btn" title="Minimize">─</button>
+      <button class="header-btn" title="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- Voice Bar (hidden by default, shown during voice session) -->
+  <div class="voice-bar" id="voiceBar">
+    <div class="voice-bar-avatar" id="voiceAvatar">🎧</div>
+    <div class="voice-bar-info">
+      <div class="voice-bar-title">Ask Microsoft Voice Agent</div>
+      <div class="voice-bar-status">
+        <span class="status-dot"></span>
+        <span id="voiceStatus">Connected</span>
+        <span>·</span>
+        <span class="voice-bar-timer" id="voiceTimer">00:00</span>
+      </div>
+    </div>
+    <div class="voice-bar-controls">
+      <button class="vb-btn" id="muteBtn" title="Mute" onclick="toggleMute()">🎤</button>
+      <button class="vb-btn" id="speakerBtn" title="Speaker" onclick="toggleSpeaker()">🔊</button>
+      <button class="vb-btn end" title="End call" onclick="endVoiceCall()">✕</button>
+    </div>
+  </div>
+
+  <!-- Messages Area -->
+  <div class="chat-messages" id="chatMessages">
+    <!-- Pre-existing chat history -->
+  </div>
+
+  <!-- Listening indicator (shown during voice mode instead of text input) -->
+  <div class="listening-bar" id="listeningBar">
+    <div class="listening-dots">
+      <div class="listening-dot"></div>
+      <div class="listening-dot"></div>
+      <div class="listening-dot"></div>
+      <div class="listening-dot"></div>
+      <div class="listening-dot"></div>
+    </div>
+    <span class="listening-text" id="listeningText">Listening...</span>
+  </div>
+
+  <!-- Text Input (hidden during voice mode) -->
+  <div class="chat-input-area" id="chatInputArea">
+    <input class="chat-input" placeholder="Type your message..." />
+    <button class="send-button">➤</button>
+  </div>
+
+</div>
+
+<!-- Instructions -->
+<div class="instructions" id="instructions">
+  <strong>Voice-in-Widget Mockup</strong>
+  <ol class="step-list">
+    <li>Chat shows the callback confirmation</li>
+    <li>Click <strong>"Speak with Voice Agent"</strong></li>
+    <li>Voice bar appears, transcript streams as chat bubbles</li>
+    <li>Quote intent → warm handoff back to chat</li>
+    <li>End call → wrap-up with context summary</li>
+  </ol>
+  <div style="margin-top:8px; font-size:12px; color:#999;">Auto-playing demo — watch the full flow</div>
+</div>
+
+<script>
+  const chatMessages = document.getElementById('chatMessages');
+  const voiceBar = document.getElementById('voiceBar');
+  const listeningBar = document.getElementById('listeningBar');
+  const chatInputArea = document.getElementById('chatInputArea');
+  const voiceAvatar = document.getElementById('voiceAvatar');
+  const voiceTimer = document.getElementById('voiceTimer');
+  const voiceStatus = document.getElementById('voiceStatus');
+  const agentStatus = document.getElementById('agentStatus');
+
+  let timerInterval = null;
+  let seconds = 0;
+  let isMuted = false;
+
+  function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function addMessage(type, text, options = {}) {
+    const msg = document.createElement('div');
+    msg.className = `message ${type}` + (options.voiceTranscript ? ' voice-transcript' : '');
+
+    let bubbleContent = '';
+
+    if (options.voiceTranscript) {
+      const speaker = type === 'bot' ? '🎙️ Voice Agent' : '🎤 You (speaking)';
+      bubbleContent += `<div class="voice-label">${speaker}</div>`;
+    }
+
+    bubbleContent += text;
+
+    if (options.time !== false) {
+      bubbleContent += `<div class="message-time">${options.time || 'just now'}</div>`;
+    }
+
+    msg.innerHTML = `<div class="message-bubble">${bubbleContent}</div>`;
+    chatMessages.appendChild(msg);
+    scrollToBottom();
+    return msg;
+  }
+
+  function addSystemMessage(text) {
+    const msg = document.createElement('div');
+    msg.className = 'message system';
+    msg.innerHTML = `<div class="message-bubble">${text}</div>`;
+    chatMessages.appendChild(msg);
+    scrollToBottom();
+  }
+
+  function addCard(html) {
+    const container = document.createElement('div');
+    container.className = 'message bot';
+    container.style.animation = 'slideIn 0.3s ease-out';
+    container.innerHTML = `<div>${html}</div>`;
+    chatMessages.appendChild(container);
+    scrollToBottom();
+    return container;
+  }
+
+  function showTyping() {
+    const msg = document.createElement('div');
+    msg.className = 'message bot';
+    msg.id = 'typingIndicator';
+    msg.innerHTML = `
+      <div class="message-bubble" style="padding: 12px 20px;">
+        <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>`;
+    chatMessages.appendChild(msg);
+    scrollToBottom();
+  }
+
+  function hideTyping() {
+    const el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+  }
+
+  function startTimer() {
+    seconds = 0;
+    voiceTimer.textContent = '00:00';
+    timerInterval = setInterval(() => {
+      seconds++;
+      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      voiceTimer.textContent = `${m}:${s}`;
+    }, 1000);
+  }
+
+  function stopTimer() {
+    clearInterval(timerInterval);
+  }
+
+  function startVoiceMode() {
+    voiceBar.classList.add('active');
+    listeningBar.classList.add('active');
+    chatInputArea.style.display = 'none';
+    agentStatus.textContent = 'Voice session active';
+    startTimer();
+  }
+
+  function stopVoiceMode() {
+    voiceBar.classList.remove('active');
+    listeningBar.classList.remove('active');
+    chatInputArea.style.display = 'flex';
+    agentStatus.textContent = 'Online';
+    stopTimer();
+  }
+
+  function toggleMute() {
+    isMuted = !isMuted;
+    const btn = document.getElementById('muteBtn');
+    btn.textContent = isMuted ? '🔇' : '🎤';
+    btn.classList.toggle('muted', isMuted);
+  }
+
+  function toggleSpeaker() {
+    const btn = document.getElementById('speakerBtn');
+    btn.textContent = btn.textContent === '🔊' ? '🔈' : '🔊';
+  }
+
+  function setListeningState(state) {
+    const text = document.getElementById('listeningText');
+    if (state === 'listening') {
+      text.textContent = 'Listening...';
+      listeningBar.querySelectorAll('.listening-dot').forEach(d => d.style.background = '#0078d4');
+    } else if (state === 'speaking') {
+      text.textContent = 'Agent speaking...';
+      listeningBar.querySelectorAll('.listening-dot').forEach(d => d.style.background = '#00bcf2');
+    } else if (state === 'processing') {
+      text.textContent = 'Processing...';
+      listeningBar.querySelectorAll('.listening-dot').forEach(d => d.style.background = '#605e5c');
+    }
+  }
+
+  function endVoiceCall() {
+    // Jump to wrap-up if called manually
+    stopVoiceMode();
+    addSystemMessage('Voice session ended');
+    showWrapUp();
+  }
+
+  function showWrapUp() {
+    addCard(`
+      <div class="context-summary-card">
+        <div class="context-summary-title">📋 Conversation Summary — Saved for Your Sales Specialist</div>
+        <div class="context-summary-items">
+          <div class="context-item"><span class="context-item-label">Customer</span><span class="context-item-value">Alex Chen, Northwind Architecture Group</span></div>
+          <div class="context-item"><span class="context-item-label">Team size</span><span class="context-item-value">~42 users</span></div>
+          <div class="context-item"><span class="context-item-label">Interest</span><span class="context-item-value">Microsoft 365 Business Premium</span></div>
+          <div class="context-item"><span class="context-item-label">Work style</span><span class="context-item-value">Hybrid (3 days office, 2 remote)</span></div>
+          <div class="context-item"><span class="context-item-label">Key needs</span><span class="context-item-value">Security, Teams collaboration, device management</span></div>
+          <div class="context-item"><span class="context-item-label">Timeline</span><span class="context-item-value">This quarter</span></div>
+          <div class="context-item"><span class="context-item-label">Open question</span><span class="context-item-value">Requested formal quote — redirected to chat</span></div>
+        </div>
+      </div>
+    `);
+
+    setTimeout(() => {
+      addCard(`
+        <div class="wrapup-card">
+          <div class="wrapup-title">✅ Your callback is still confirmed</div>
+          <div class="wrapup-text">Your sales specialist will have the full conversation summary above when they call. Is there anything else you'd like to do?</div>
+          <div class="wrapup-buttons">
+            <button class="wrapup-btn primary">Keep My Callback</button>
+            <button class="wrapup-btn secondary">I'm All Set, Cancel</button>
+          </div>
+        </div>
+      `);
+    }, 1200);
+  }
+
+  // ===================== AUTO-PLAY DEMO =====================
+  async function runDemo() {
+    // Step 1: Show existing chat context
+    await wait(600);
+    addMessage('bot', 'Hi! I\'m your Ask Microsoft assistant. How can I help you today?', { time: '2 min ago' });
+
+    await wait(800);
+    addMessage('user', 'I\'d like to speak with a sales specialist about Microsoft 365 for my team.', { time: '2 min ago' });
+
+    await wait(600);
+    addSystemMessage('⏰ Our sales specialists are available M–F, 6 AM – 6 PM PT. Outside of business hours, you can request a callback.');
+
+    // Step 2: Callback confirmed
+    await wait(1000);
+    addCard(`
+      <div class="inline-confirm-card">
+        <div class="confirm-title">✅ Callback Confirmed</div>
+        <div class="confirm-text">
+          <strong>Alex Chen</strong> — Northwind Architecture Group<br>
+          A specialist will call you within 48 hours at (425) 555-0187.<br>
+          <span style="font-size:12px; color:#605e5c;">Reference #: CB-2026-05-14-0847</span>
+        </div>
+      </div>
+    `);
+
+    // Step 3: Voice offer
+    await wait(1500);
+    showTyping();
+    await wait(1200);
+    hideTyping();
+
+    addMessage('bot', 'Your callback is all set! While you wait, would you like to speak with our AI voice agent? It can help answer questions about Microsoft 365 plans, features, and pricing — so you\'re even more prepared when your specialist calls.');
+
+    await wait(800);
+    const offerContainer = addCard(`
+      <div class="voice-offer-card">
+        <div class="voice-offer-title">🎙️ Get Answers While You Wait</div>
+        <div class="voice-offer-desc">Have a voice conversation with our AI assistant — same knowledge as the chat, just through voice. Your callback stays confirmed either way.</div>
+        <div class="voice-offer-buttons">
+          <button class="voice-offer-btn primary" id="speakBtn">🎙️ Yes, let's talk</button>
+          <button class="voice-offer-btn secondary">No thanks, I'll wait</button>
+        </div>
+      </div>
+    `);
+
+    // Wait, then auto-click
+    await wait(3000);
+
+    // Disable offer buttons
+    offerContainer.querySelectorAll('.voice-offer-btn').forEach(b => {
+      b.disabled = true;
+      b.style.opacity = '0.5';
+      b.style.animation = 'none';
+      b.style.cursor = 'default';
+    });
+
+    addMessage('user', '🎙️ Yes, let\'s talk');
+
+    await wait(500);
+    addSystemMessage('🎙️ Connecting to Ask Microsoft Voice Agent...');
+
+    // Step 4: Voice mode activates
+    await wait(1500);
+    startVoiceMode();
+    voiceStatus.textContent = 'Connecting...';
+
+    await wait(1500);
+    voiceStatus.textContent = 'Connected';
+
+    // Voice conversation as chat bubbles
+    await wait(1000);
+    setListeningState('speaking');
+    voiceAvatar.classList.add('speaking');
+    addMessage('bot', 'Hi Alex! I\'m your Ask Microsoft Voice Agent. I see you\'ve requested a callback for Northwind Architecture Group with about 42 users — great to connect with you in the meantime. How can I help you today?', { voiceTranscript: true });
+
+    await wait(4000);
+    setListeningState('listening');
+    voiceAvatar.classList.remove('speaking');
+
+    await wait(2000);
+    addMessage('user', 'Yeah, we\'re looking at Microsoft 365 for our team. We\'re about 42 people, mostly hybrid — three days in the office, two remote. I want to understand which plan would be the best fit.', { voiceTranscript: true });
+
+    await wait(3500);
+    setListeningState('speaking');
+    voiceAvatar.classList.add('speaking');
+    addMessage('bot', 'Great question! For a hybrid team of 42, I\'d recommend looking at Microsoft 365 Business Premium. It gives you the full Office desktop apps, Teams for collaboration, and importantly — Intune for device management and Defender for Business for security. Those are especially valuable when your team is working from multiple locations.', { voiceTranscript: true });
+
+    await wait(5000);
+    setListeningState('listening');
+    voiceAvatar.classList.remove('speaking');
+
+    await wait(2000);
+    addMessage('user', 'That sounds right. Security is a big deal for us — we\'re an architecture firm so we deal with sensitive client documents. What would that cost for 42 users?', { voiceTranscript: true });
+
+    await wait(3500);
+    setListeningState('speaking');
+    voiceAvatar.classList.add('speaking');
+    addMessage('bot', 'Business Premium is $22 per user per month with an annual commitment. For 42 users, that\'s about $924 per month. It includes everything — the desktop apps, advanced security, device management, and 1 TB of OneDrive storage per user.', { voiceTranscript: true });
+
+    await wait(4500);
+    setListeningState('listening');
+    voiceAvatar.classList.remove('speaking');
+
+    await wait(2000);
+    addMessage('user', 'OK that\'s helpful. Can I get a formal quote with a breakdown? We\'d need to review it internally before making a decision.', { voiceTranscript: true });
+
+    // Step 5: Quote intent detected — warm handoff
+    await wait(3000);
+    setListeningState('speaking');
+    voiceAvatar.classList.add('speaking');
+    addMessage('bot', 'Absolutely! Quotes have a lot of detail — line items, quantities, pricing tiers — so it\'s much easier to review visually. Let me pull that up in the chat for you where you can see everything clearly. I\'ll pass along everything we\'ve discussed so you won\'t need to repeat anything.', { voiceTranscript: true });
+
+    await wait(4500);
+    voiceAvatar.classList.remove('speaking');
+
+    // End voice gracefully
+    await wait(1500);
+    addMessage('bot', 'It was great chatting with you, Alex. Your callback is still confirmed, and your specialist will have a summary of our conversation. Let me hand you over to the chat now for your quote.', { voiceTranscript: true });
+
+    await wait(2500);
+    stopVoiceMode();
+    addSystemMessage('🎙️ Voice session ended — conversation context saved');
+
+    // Step 6: Context summary + wrap-up
+    await wait(1200);
+    showWrapUp();
+  }
+
+  // Start the demo
+  runDemo();
+</script>
+
+</body>
+</html>

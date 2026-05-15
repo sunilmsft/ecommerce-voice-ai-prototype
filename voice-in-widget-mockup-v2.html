@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ask Microsoft Voice Agent — In-Widget Voice Mode (v2)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f3f2f1;
+    display: flex;
+    justify-content: flex-end;
+    min-height: 100vh;
+  }
+
+  /* Fake page background */
+  .page-bg {
+    position: fixed;
+    top: 0; left: 0; right: 450px; bottom: 0;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+  }
+  .page-bg-content { max-width: 600px; color: #444; font-size: 14px; line-height: 1.8; }
+  .page-bg-content h2 { font-size: 28px; color: #1b1b1b; margin-bottom: 16px; font-weight: 600; }
+  .page-bg-content p { margin-bottom: 12px; color: #605e5c; }
+  .page-bg-content .fake-pricing { background: #f3f9ff; border: 1px solid #d7e7f5; border-radius: 8px; padding: 20px; margin: 20px 0; }
+  .page-bg-content .fake-pricing h3 { color: #0078d4; font-size: 18px; margin-bottom: 8px; }
+
+  /* ===================== CHAT WIDGET ===================== */
+  .chat-container {
+    width: 450px; max-width: 450px; height: 100vh;
+    position: fixed; top: 0; right: 0;
+    background: #f3f9ff;
+    border-radius: 16px 0 0 16px;
+    border: 1px solid #d7e7f5;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    display: flex; flex-direction: column;
+    z-index: 1000; overflow: hidden;
+  }
+
+  /* Header */
+  .chat-header {
+    background: white; border-bottom: 1px solid #e5eef8;
+    padding: 12px 16px; min-height: 56px;
+    box-shadow: 0 3px 8px rgba(15, 108, 189, 0.12);
+    display: flex; align-items: center; justify-content: space-between; z-index: 10;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .agent-avatar {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: linear-gradient(135deg, #e1efff 0%, #f3f9ff 100%);
+    display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+  }
+  .agent-info .agent-name { font-size: 15px; font-weight: 600; color: #1b1b1b; }
+  .agent-info .agent-status { font-size: 12px; color: #605e5c; }
+  .header-actions { display: flex; gap: 4px; }
+  .header-btn {
+    width: 32px; height: 32px; border-radius: 8px; border: none;
+    background: transparent; color: #0f6cbd; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .header-btn:hover { background: #f0f6ff; }
+
+  /* ===================== VOICE BAR ===================== */
+  .voice-bar {
+    background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+    padding: 14px 16px; display: none; align-items: center; gap: 12px;
+    color: white; position: relative; overflow: hidden;
+  }
+  .voice-bar.active { display: flex; }
+  .voice-bar-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0; position: relative;
+  }
+  .voice-bar-avatar.speaking { animation: avatarPulse 1.5s ease-in-out infinite; }
+  @keyframes avatarPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+  }
+  .voice-bar-info { flex: 1; }
+  .voice-bar-title { font-size: 13px; font-weight: 600; opacity: 0.95; }
+  .voice-bar-status { font-size: 11px; opacity: 0.8; display: flex; align-items: center; gap: 6px; }
+  .voice-bar-timer { font-variant-numeric: tabular-nums; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #7fecad; animation: statusPulse 2s ease-in-out infinite; }
+  @keyframes statusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .voice-bar-controls { display: flex; gap: 6px; }
+  .vb-btn {
+    width: 34px; height: 34px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,0.2); color: white; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; transition: all 0.15s;
+  }
+  .vb-btn:hover { background: rgba(255,255,255,0.3); }
+  .vb-btn.end { background: #d13438; }
+  .vb-btn.end:hover { background: #a80000; }
+  .vb-btn.muted { background: rgba(239, 68, 68, 0.8); }
+
+  /* ===================== MESSAGES AREA ===================== */
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 16px;
+    display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth;
+  }
+  .message { display: flex; flex-direction: column; animation: slideIn 0.3s ease-out; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .message.bot { align-items: flex-start; }
+  .message.user { align-items: flex-end; }
+  .message.system { align-items: center; }
+  .message-bubble {
+    max-width: 92%; padding: 12px 16px; border-radius: 16px;
+    font-size: 14px; line-height: 1.6; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+  .message.bot .message-bubble { background: white; border: 1px solid #d7e7f5; color: #1b1b1b; }
+  .message.user .message-bubble { background: #0f6cbd; color: white; border: none; }
+  .message.system .message-bubble {
+    background: #fff4ce; border: 1px solid #ffb900; font-size: 13px;
+    max-width: 90%; text-align: center; color: #605e5c;
+  }
+  .message-time { font-size: 11px; color: #7a8998; margin-top: 4px; padding: 0 4px; }
+  .message.user .message-time { text-align: right; }
+
+  /* ===================== VOICE ACTIVE STATE ===================== */
+  .voice-active-area {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 30px;
+    text-align: center;
+    gap: 20px;
+    flex: 1;
+    background: linear-gradient(180deg, #f0f6ff 0%, #f3f9ff 100%);
+  }
+  .voice-active-area.active { display: flex; }
+
+  .voice-visual {
+    width: 120px; height: 120px; border-radius: 50%;
+    background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; position: relative;
+  }
+  .voice-visual .ring {
+    position: absolute; width: 100%; height: 100%; border-radius: 50%;
+    border: 2px solid rgba(0,120,212,0.3);
+    animation: ringPulse 2s ease-out infinite;
+  }
+  .voice-visual .ring:nth-child(2) { animation-delay: 0.5s; }
+  .voice-visual .ring:nth-child(3) { animation-delay: 1s; }
+  @keyframes ringPulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+  .voice-visual.agent-speaking .ring { border-color: rgba(0,188,242,0.4); }
+  .voice-visual.user-speaking .ring { border-color: rgba(16,124,16,0.4); }
+
+  .voice-active-label {
+    font-size: 16px; font-weight: 600; color: #1b1b1b;
+  }
+  .voice-active-sublabel {
+    font-size: 13px; color: #605e5c; line-height: 1.5; max-width: 300px;
+  }
+  .voice-active-caption {
+    font-size: 14px; color: #424242; font-style: italic;
+    min-height: 44px; max-width: 340px; line-height: 1.5;
+    transition: opacity 0.3s;
+  }
+
+  /* Waveform bars */
+  .waveform {
+    display: flex; gap: 3px; align-items: center; height: 40px;
+  }
+  .waveform-bar {
+    width: 4px; background: #0078d4; border-radius: 2px;
+    animation: waveBar 1.2s ease-in-out infinite;
+  }
+  .waveform-bar:nth-child(1) { animation-delay: 0s; height: 12px; }
+  .waveform-bar:nth-child(2) { animation-delay: 0.1s; height: 20px; }
+  .waveform-bar:nth-child(3) { animation-delay: 0.2s; height: 28px; }
+  .waveform-bar:nth-child(4) { animation-delay: 0.3s; height: 36px; }
+  .waveform-bar:nth-child(5) { animation-delay: 0.4s; height: 28px; }
+  .waveform-bar:nth-child(6) { animation-delay: 0.5s; height: 20px; }
+  .waveform-bar:nth-child(7) { animation-delay: 0.6s; height: 12px; }
+  @keyframes waveBar {
+    0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
+    50% { transform: scaleY(1); opacity: 1; }
+  }
+
+  .voice-topic-tag {
+    display: inline-block; background: #e5eef8; color: #0078d4;
+    font-size: 11px; font-weight: 600; padding: 4px 10px;
+    border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  /* ===================== INLINE CARDS ===================== */
+  .inline-confirm-card {
+    background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px;
+    padding: 14px 16px; margin-top: 4px;
+  }
+  .confirm-title { color: #166534; font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .confirm-text { color: #15803d; font-size: 13px; line-height: 1.5; }
+
+  /* Voice offer card */
+  .voice-offer-card {
+    background: white; border: 2px solid #b8d4f0; border-radius: 12px;
+    padding: 18px 20px; margin-top: 8px;
+  }
+  .voice-offer-title { font-size: 15px; font-weight: 600; color: #1b1b1b; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .voice-offer-desc { font-size: 13px; color: #605e5c; line-height: 1.5; margin-bottom: 14px; }
+  .voice-offer-buttons { display: flex; gap: 8px; }
+  .voice-offer-btn {
+    flex: 1; padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 600; transition: all 0.15s;
+  }
+  .voice-offer-btn.primary { background: #0f6cbd; color: white; animation: btnPulse 1.8s ease-in-out infinite; }
+  .voice-offer-btn.primary:hover { background: #0b5cab; }
+  .voice-offer-btn.secondary { background: #f3f9ff; color: #605e5c; border: 1px solid #d7e7f5; }
+  .voice-offer-btn.secondary:hover { background: #e5eef8; }
+  @keyframes btnPulse {
+    0%, 100% { box-shadow: 0 2px 4px rgba(15,108,189,0.2); }
+    50% { box-shadow: 0 4px 20px rgba(15,108,189,0.5), 0 0 0 3px rgba(15,108,189,0.12); }
+  }
+
+  /* ===================== CONTEXT SUMMARY CARD ===================== */
+  .context-summary-card {
+    background: linear-gradient(135deg, #f0f6ff 0%, #e5eef8 100%);
+    border: 1px solid #b8d4f0; border-radius: 10px; padding: 14px 16px; margin-top: 4px;
+  }
+  .context-summary-title {
+    font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    color: #0078d4; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+  }
+  .context-summary-items { display: flex; flex-direction: column; gap: 4px; }
+  .context-item { font-size: 12px; color: #424242; display: flex; align-items: baseline; gap: 6px; }
+  .context-item-label { color: #605e5c; min-width: 80px; }
+  .context-item-value { font-weight: 600; color: #1b1b1b; }
+
+  /* ===================== QUOTING FLOW ===================== */
+  .quote-intro-card {
+    background: white; border: 2px solid #0078d4; border-radius: 12px;
+    padding: 18px 20px; margin-top: 8px;
+  }
+  .quote-intro-title { font-size: 15px; font-weight: 600; color: #1b1b1b; margin-bottom: 6px; }
+  .quote-intro-desc { font-size: 13px; color: #605e5c; line-height: 1.5; margin-bottom: 14px; }
+  .quote-prefill {
+    background: #f0f6ff; border-radius: 8px; padding: 12px 14px;
+    margin-bottom: 14px; border-left: 3px solid #0078d4;
+  }
+  .quote-prefill-title { font-size: 11px; font-weight: 600; color: #0078d4; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .quote-prefill-item { font-size: 12px; color: #424242; margin-bottom: 2px; }
+  .quote-prefill-item strong { color: #1b1b1b; }
+  .quote-intro-buttons { display: flex; gap: 8px; }
+  .quote-intro-btn {
+    flex: 1; padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 600; transition: all 0.15s;
+  }
+  .quote-intro-btn.primary { background: #0f6cbd; color: white; }
+  .quote-intro-btn.primary:hover { background: #0b5cab; }
+  .quote-intro-btn.secondary { background: #f3f9ff; color: #605e5c; border: 1px solid #d7e7f5; }
+
+  /* Subscription plan cards */
+  .plan-card {
+    background: white; border: 1px solid #e1e1e1; border-radius: 10px;
+    padding: 16px 18px; margin-top: 6px; cursor: pointer; transition: all 0.15s;
+  }
+  .plan-card:hover { border-color: #0078d4; box-shadow: 0 2px 8px rgba(0,120,212,0.12); }
+  .plan-card.selected { border-color: #0078d4; border-width: 2px; background: #f7fbff; }
+  .plan-card-type { font-size: 11px; color: #605e5c; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .plan-card-checkbox {
+    width: 16px; height: 16px; border: 2px solid #c8c8c8; border-radius: 3px;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 10px;
+  }
+  .plan-card.selected .plan-card-checkbox { background: #0078d4; border-color: #0078d4; color: white; }
+  .plan-card-name { font-size: 14px; font-weight: 600; color: #1b1b1b; margin-bottom: 2px; }
+  .plan-card-billing { font-size: 13px; color: #605e5c; margin-bottom: 6px; }
+  .plan-card-price { font-size: 18px; font-weight: 700; color: #1b1b1b; }
+  .plan-card-price span { font-size: 13px; font-weight: 400; color: #605e5c; }
+
+  /* Quote result card */
+  .quote-result-card {
+    background: white; border: 2px solid #e1e1e1; border-radius: 10px;
+    padding: 20px; margin-top: 8px;
+  }
+  .quote-result-header { font-size: 14px; color: #605e5c; margin-bottom: 12px; }
+  .quote-result-plan { font-size: 15px; font-weight: 700; color: #1b1b1b; margin-bottom: 12px; }
+  .quote-result-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  .quote-result-table th {
+    font-size: 11px; color: #605e5c; text-align: left; padding: 6px 0;
+    border-bottom: 1px solid #e1e1e1; font-weight: 600;
+  }
+  .quote-result-table td {
+    font-size: 13px; color: #1b1b1b; padding: 8px 0; border-bottom: 1px solid #f0f0f0;
+  }
+  .quote-result-total {
+    text-align: right; padding-top: 8px;
+  }
+  .quote-result-total-label { font-size: 12px; color: #605e5c; }
+  .quote-result-total-amount { font-size: 24px; font-weight: 700; color: #1b1b1b; }
+  .quote-result-total-note { font-size: 11px; color: #999; }
+
+  .quote-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .quote-action-btn {
+    flex: 1; padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 600; transition: all 0.15s;
+  }
+  .quote-action-btn.primary { background: #0f6cbd; color: white; }
+  .quote-action-btn.secondary { background: #f5f5f5; color: #605e5c; border: 1px solid #e1e1e1; }
+
+  /* ===================== POST-VOICE WRAP-UP ===================== */
+  .wrapup-card {
+    background: white; border: 2px solid #86efac; border-radius: 12px;
+    padding: 18px 20px; margin-top: 8px;
+  }
+  .wrapup-title { font-size: 14px; font-weight: 600; color: #166534; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .wrapup-text { font-size: 13px; color: #605e5c; line-height: 1.5; margin-bottom: 14px; }
+  .wrapup-buttons { display: flex; gap: 8px; }
+  .wrapup-btn {
+    flex: 1; padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 600; transition: all 0.15s;
+  }
+  .wrapup-btn.primary { background: #107c10; color: white; }
+  .wrapup-btn.secondary { background: #f0fdf4; color: #605e5c; border: 1px solid #86efac; }
+
+  /* Typing indicator */
+  .typing-indicator { display: flex; gap: 4px; padding: 8px 0; }
+  .typing-dot {
+    width: 8px; height: 8px; background: #0078d4; border-radius: 50%;
+    animation: typing 1.4s infinite; opacity: 0.4;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* Listening bar */
+  .listening-bar {
+    padding: 12px 16px; background: white; border-top: 1px solid #e5eef8;
+    display: none; align-items: center; justify-content: center; gap: 8px;
+  }
+  .listening-bar.active { display: flex; }
+
+  /* Input area */
+  .chat-input-area {
+    padding: 12px 16px; background: #f3f9ff; border-top: 1px solid #e5eef8;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .chat-input {
+    flex: 1; padding: 10px 14px; border: 1px solid #c9def5; border-radius: 10px;
+    font-family: inherit; font-size: 14px; background: white; outline: none;
+  }
+  .chat-input:focus { box-shadow: 0 0 0 2px rgba(15, 108, 189, 0.15); }
+  .send-button {
+    width: 40px; height: 40px; background: #0f6cbd; border: none; border-radius: 10px;
+    color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+
+  /* Scrollbar */
+  .chat-messages::-webkit-scrollbar { width: 6px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: #c9def5; border-radius: 3px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+
+  /* Instructions overlay */
+  .instructions {
+    position: fixed; bottom: 20px; left: 20px;
+    background: white; border-radius: 12px; padding: 16px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    font-size: 13px; color: #424242; max-width: 360px; z-index: 500; line-height: 1.6;
+  }
+  .instructions strong { color: #0078d4; }
+  .instructions .step-list { margin: 8px 0 0 0; padding-left: 18px; }
+  .instructions .step-list li { margin-bottom: 4px; }
+  .step-active { color: #0078d4; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- Fake page background -->
+<div class="page-bg">
+  <div class="page-bg-content">
+    <h2>Microsoft 365 for Business</h2>
+    <p>Get the desktop apps, intelligent cloud services, and advanced security you need to bring your ideas to life and run your business.</p>
+    <div class="fake-pricing">
+      <h3>Microsoft 365 Business Premium</h3>
+      <p><strong>$22.00</strong> user/month (annual commitment)</p>
+      <p style="font-size:13px; color:#605e5c;">Includes: Word, Excel, PowerPoint, Outlook, Teams, SharePoint, OneDrive, Exchange, Intune, Defender for Business, Azure Information Protection, and more.</p>
+    </div>
+    <p>Compare all Microsoft 365 plans to find the right fit for your organization.</p>
+    <p style="color:#999; font-size:12px; margin-top:30px;">← The microsoft.com page stays visible and browseable during the entire experience</p>
+  </div>
+</div>
+
+<!-- Chat Widget -->
+<div class="chat-container">
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="header-left">
+      <div class="agent-avatar">🤖</div>
+      <div class="agent-info">
+        <div class="agent-name">Ask Microsoft</div>
+        <div class="agent-status" id="agentStatus">Online</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="header-btn" title="Minimize">─</button>
+      <button class="header-btn" title="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- Voice Bar -->
+  <div class="voice-bar" id="voiceBar">
+    <div class="voice-bar-avatar" id="voiceAvatar">🎧</div>
+    <div class="voice-bar-info">
+      <div class="voice-bar-title">Ask Microsoft Voice Agent</div>
+      <div class="voice-bar-status">
+        <span class="status-dot"></span>
+        <span id="voiceStatus">Connected</span>
+        <span>·</span>
+        <span class="voice-bar-timer" id="voiceTimer">00:00</span>
+      </div>
+    </div>
+    <div class="voice-bar-controls">
+      <button class="vb-btn" id="muteBtn" title="Mute">🎤</button>
+      <button class="vb-btn" id="speakerBtn" title="Speaker">🔊</button>
+      <button class="vb-btn end" title="End call">✕</button>
+    </div>
+  </div>
+
+  <!-- Chat Messages (hidden during voice) -->
+  <div class="chat-messages" id="chatMessages"></div>
+
+  <!-- Voice Active State (shown during voice, replaces chat messages) -->
+  <div class="voice-active-area" id="voiceActiveArea">
+    <div class="voice-visual" id="voiceVisual">
+      <div class="ring"></div>
+      <div class="ring"></div>
+      <div class="ring"></div>
+      🎧
+    </div>
+    <div class="waveform" id="waveform">
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+      <div class="waveform-bar"></div>
+    </div>
+    <div class="voice-active-label" id="voiceActiveLabel">Voice Agent is speaking...</div>
+    <div class="voice-active-sublabel">You can continue browsing microsoft.com while we talk</div>
+    <div class="voice-topic-tag" id="voiceTopicTag">DISCUSSING: PLAN OPTIONS</div>
+    <div class="voice-active-caption" id="voiceCaption"></div>
+  </div>
+
+  <!-- Listening bar -->
+  <div class="listening-bar" id="listeningBar">
+    <span style="font-size: 12px; color: #605e5c; font-weight: 500;" id="listeningText">🎙️ Voice session active</span>
+  </div>
+
+  <!-- Text Input -->
+  <div class="chat-input-area" id="chatInputArea">
+    <input class="chat-input" placeholder="Type your message..." />
+    <button class="send-button">➤</button>
+  </div>
+</div>
+
+<!-- Instructions -->
+<div class="instructions" id="instructions">
+  <strong>Voice-in-Widget Mockup v2</strong>
+  <ol class="step-list" id="stepList">
+    <li id="step1">Callback confirmation (after hours)</li>
+    <li id="step2">Voice offer — "Get Answers While You Wait"</li>
+    <li id="step3">Voice session (clean visual — no transcript)</li>
+    <li id="step4">Warm handoff → context summary</li>
+    <li id="step5">Quoting flow with pre-filled context</li>
+    <li id="step6">Draft quote → email to customer</li>
+    <li id="step7">Wrap-up — callback still confirmed</li>
+  </ol>
+  <div style="margin-top:8px; font-size:12px; color:#999;">Auto-playing demo — watch the full flow</div>
+</div>
+
+<script>
+const chatMessages = document.getElementById('chatMessages');
+const voiceBar = document.getElementById('voiceBar');
+const voiceActiveArea = document.getElementById('voiceActiveArea');
+const listeningBar = document.getElementById('listeningBar');
+const chatInputArea = document.getElementById('chatInputArea');
+const voiceAvatar = document.getElementById('voiceAvatar');
+const voiceTimer = document.getElementById('voiceTimer');
+const voiceStatus = document.getElementById('voiceStatus');
+const agentStatus = document.getElementById('agentStatus');
+const voiceVisual = document.getElementById('voiceVisual');
+const voiceCaption = document.getElementById('voiceCaption');
+const voiceActiveLabel = document.getElementById('voiceActiveLabel');
+const voiceTopicTag = document.getElementById('voiceTopicTag');
+
+let timerInterval = null;
+let seconds = 0;
+
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function scrollToBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
+
+function highlightStep(n) {
+  document.querySelectorAll('#stepList li').forEach(li => li.classList.remove('step-active'));
+  const el = document.getElementById('step' + n);
+  if (el) el.classList.add('step-active');
+}
+
+function addMessage(type, text, options = {}) {
+  const msg = document.createElement('div');
+  msg.className = `message ${type}`;
+  let html = text;
+  if (options.time !== false) html += `<div class="message-time">${options.time || 'just now'}</div>`;
+  msg.innerHTML = `<div class="message-bubble">${html}</div>`;
+  chatMessages.appendChild(msg);
+  scrollToBottom();
+  return msg;
+}
+
+function addSystemMessage(text) {
+  const msg = document.createElement('div');
+  msg.className = 'message system';
+  msg.innerHTML = `<div class="message-bubble">${text}</div>`;
+  chatMessages.appendChild(msg);
+  scrollToBottom();
+}
+
+function addCard(html) {
+  const c = document.createElement('div');
+  c.className = 'message bot';
+  c.style.animation = 'slideIn 0.3s ease-out';
+  c.innerHTML = `<div>${html}</div>`;
+  chatMessages.appendChild(c);
+  scrollToBottom();
+  return c;
+}
+
+function showTyping() {
+  const msg = document.createElement('div');
+  msg.className = 'message bot'; msg.id = 'typingIndicator';
+  msg.innerHTML = `<div class="message-bubble" style="padding:12px 20px;"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  chatMessages.appendChild(msg); scrollToBottom();
+}
+
+function hideTyping() { const el = document.getElementById('typingIndicator'); if (el) el.remove(); }
+
+function startTimer() {
+  seconds = 0; voiceTimer.textContent = '00:00';
+  timerInterval = setInterval(() => {
+    seconds++;
+    voiceTimer.textContent = `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
+  }, 1000);
+}
+
+function stopTimer() { clearInterval(timerInterval); }
+
+function startVoiceMode() {
+  voiceBar.classList.add('active');
+  chatMessages.style.display = 'none';
+  voiceActiveArea.classList.add('active');
+  listeningBar.classList.add('active');
+  chatInputArea.style.display = 'none';
+  agentStatus.textContent = 'Voice session active';
+  startTimer();
+}
+
+function stopVoiceMode() {
+  voiceBar.classList.remove('active');
+  voiceActiveArea.classList.remove('active');
+  chatMessages.style.display = 'flex';
+  listeningBar.classList.remove('active');
+  chatInputArea.style.display = 'flex';
+  agentStatus.textContent = 'Online';
+  stopTimer();
+}
+
+function setVoiceState(state, caption, topic) {
+  voiceCaption.textContent = caption || '';
+  if (topic) voiceTopicTag.textContent = topic;
+
+  if (state === 'agent-speaking') {
+    voiceActiveLabel.textContent = 'Voice Agent is speaking...';
+    voiceVisual.className = 'voice-visual agent-speaking';
+    voiceAvatar.classList.add('speaking');
+    document.querySelectorAll('.waveform-bar').forEach(b => b.style.background = '#00bcf2');
+  } else if (state === 'user-speaking') {
+    voiceActiveLabel.textContent = 'You\'re speaking...';
+    voiceVisual.className = 'voice-visual user-speaking';
+    voiceAvatar.classList.remove('speaking');
+    document.querySelectorAll('.waveform-bar').forEach(b => b.style.background = '#107c10');
+  } else if (state === 'processing') {
+    voiceActiveLabel.textContent = 'Processing...';
+    voiceVisual.className = 'voice-visual';
+    voiceAvatar.classList.remove('speaking');
+    document.querySelectorAll('.waveform-bar').forEach(b => b.style.background = '#605e5c');
+  }
+}
+
+// ===================== AUTO-PLAY DEMO =====================
+async function runDemo() {
+
+  // ---- STEP 1: Chat + Callback ----
+  highlightStep(1);
+  await wait(600);
+  addMessage('bot', 'Hi! I\'m your Ask Microsoft assistant. How can I help you today?', { time: '2 min ago' });
+  await wait(800);
+  addMessage('user', 'I\'d like to speak with a sales specialist about Microsoft 365 for my team.', { time: '2 min ago' });
+  await wait(600);
+  addSystemMessage('⏰ Our sales specialists are available M–F, 6 AM – 6 PM PT. Outside of business hours, you can request a callback.');
+  await wait(1000);
+  addCard(`
+    <div class="inline-confirm-card">
+      <div class="confirm-title">✅ Callback Confirmed</div>
+      <div class="confirm-text">
+        <strong>Alex Chen</strong> — Northwind Architecture Group<br>
+        A specialist will call you within 48 hours at (425) 555-0187.<br>
+        <span style="font-size:12px; color:#605e5c;">Reference #: CB-2026-05-14-0847</span>
+      </div>
+    </div>
+  `);
+
+  // ---- STEP 2: Voice Offer ----
+  highlightStep(2);
+  await wait(1500);
+  showTyping(); await wait(1200); hideTyping();
+  addMessage('bot', 'Your callback is all set! While you wait, would you like to speak with our AI voice agent? It can answer questions about Microsoft 365 plans, features, and pricing — so you\'re even more prepared when your specialist calls.');
+  await wait(800);
+  const offerContainer = addCard(`
+    <div class="voice-offer-card">
+      <div class="voice-offer-title">🎙️ Get Answers While You Wait</div>
+      <div class="voice-offer-desc">Have a voice conversation with our AI assistant. Your callback stays confirmed either way.</div>
+      <div class="voice-offer-buttons">
+        <button class="voice-offer-btn primary" id="speakBtn">🎙️ Yes, let's talk</button>
+        <button class="voice-offer-btn secondary">No thanks, I'll wait</button>
+      </div>
+    </div>
+  `);
+
+  await wait(3000);
+  offerContainer.querySelectorAll('.voice-offer-btn').forEach(b => { b.disabled = true; b.style.opacity = '0.5'; b.style.animation = 'none'; b.style.cursor = 'default'; });
+  addMessage('user', '🎙️ Yes, let\'s talk');
+  await wait(500);
+  addSystemMessage('🎙️ Connecting to Ask Microsoft Voice Agent...');
+
+  // ---- STEP 3: Voice Session (clean visual, no transcript) ----
+  highlightStep(3);
+  await wait(1500);
+  startVoiceMode();
+  voiceStatus.textContent = 'Connecting...';
+  await wait(1500);
+  voiceStatus.textContent = 'Connected';
+
+  // Simulate voice conversation with captions + topic tags
+  setVoiceState('agent-speaking',
+    '"Hi Alex! I see you\'ve requested a callback for Northwind Architecture Group. How can I help while you wait?"',
+    'GETTING STARTED');
+  await wait(4000);
+
+  setVoiceState('user-speaking',
+    '"We\'re about 42 people, mostly hybrid. I want to understand which plan is the best fit."',
+    'DISCUSSING: TEAM SIZE & WORK STYLE');
+  await wait(3500);
+
+  setVoiceState('agent-speaking',
+    '"For a hybrid team of 42, I\'d recommend Microsoft 365 Business Premium — it has Intune for device management and Defender for security..."',
+    'DISCUSSING: PLAN RECOMMENDATION');
+  await wait(5000);
+
+  setVoiceState('user-speaking',
+    '"Security is a big deal — we deal with sensitive client documents. What would that cost?"',
+    'DISCUSSING: SECURITY & PRICING');
+  await wait(3500);
+
+  setVoiceState('agent-speaking',
+    '"Business Premium is $22 per user per month annual. For 42 users, that\'s about $924 per month."',
+    'DISCUSSING: PRICING DETAILS');
+  await wait(4500);
+
+  setVoiceState('user-speaking',
+    '"Can I get a formal quote? We need to review it internally before deciding."',
+    'QUOTE REQUESTED');
+  await wait(3000);
+
+  // ---- STEP 4: Warm Handoff ----
+  highlightStep(4);
+  setVoiceState('agent-speaking',
+    '"Absolutely! A quote has detailed line items that are easier to review visually. Let me set that up in the chat — I\'ll carry over everything we\'ve discussed."',
+    'WARM HANDOFF → QUOTING');
+  await wait(5000);
+
+  setVoiceState('agent-speaking',
+    '"It was great chatting, Alex. Your callback is still confirmed and the summary will be ready for your specialist. Switching you to chat now!"',
+    'ENDING VOICE SESSION');
+  await wait(3500);
+
+  // End voice, back to chat
+  stopVoiceMode();
+  addSystemMessage('🎙️ Voice session ended · 1 min 42 sec · Conversation context saved');
+
+  // Context summary
+  await wait(1000);
+  addCard(`
+    <div class="context-summary-card">
+      <div class="context-summary-title">📋 Voice Conversation Summary</div>
+      <div class="context-summary-items">
+        <div class="context-item"><span class="context-item-label">Customer</span><span class="context-item-value">Alex Chen, Northwind Architecture Group</span></div>
+        <div class="context-item"><span class="context-item-label">Team size</span><span class="context-item-value">~42 users</span></div>
+        <div class="context-item"><span class="context-item-label">Work style</span><span class="context-item-value">Hybrid (3 days office, 2 remote)</span></div>
+        <div class="context-item"><span class="context-item-label">Plan interest</span><span class="context-item-value">Microsoft 365 Business Premium</span></div>
+        <div class="context-item"><span class="context-item-label">Key needs</span><span class="context-item-value">Security, Teams, device management</span></div>
+        <div class="context-item"><span class="context-item-label">Billing pref.</span><span class="context-item-value">Annual commitment</span></div>
+        <div class="context-item"><span class="context-item-label">Next step</span><span class="context-item-value">Formal quote requested</span></div>
+      </div>
+    </div>
+  `);
+
+  // ---- STEP 5: Quoting Flow with Context ----
+  highlightStep(5);
+  await wait(1500);
+  showTyping(); await wait(1000); hideTyping();
+  addMessage('bot', 'I\'ve got everything from your voice conversation. Let me start the quoting experience — I\'ve pre-filled what I can so you don\'t have to repeat yourself.');
+
+  await wait(1200);
+  addCard(`
+    <div class="quote-intro-card">
+      <div class="quote-intro-title">Configure your subscription</div>
+      <div class="quote-intro-desc">Based on your voice conversation, here's what I have:</div>
+      <div class="quote-prefill">
+        <div class="quote-prefill-title">🎙️ From your voice conversation</div>
+        <div class="quote-prefill-item">Plan: <strong>Microsoft 365 Business Premium</strong></div>
+        <div class="quote-prefill-item">Billing: <strong>Annual subscription</strong></div>
+        <div class="quote-prefill-item">Includes Teams: <strong>Yes</strong></div>
+        <div class="quote-prefill-item">Users: <strong>42</strong></div>
+      </div>
+      <div class="quote-intro-buttons">
+        <button class="quote-intro-btn primary">✓ Use these details</button>
+        <button class="quote-intro-btn secondary">Start fresh</button>
+      </div>
+    </div>
+  `);
+
+  // User accepts pre-filled details
+  await wait(3000);
+  addMessage('user', '✓ Use these details');
+
+  // Show recommended plan (pre-selected)
+  await wait(1000);
+  showTyping(); await wait(800); hideTyping();
+  addMessage('bot', 'Great! Here\'s the plan matching your needs. I\'ve pre-selected it based on our conversation:');
+
+  await wait(800);
+  addCard(`
+    <div class="plan-card selected">
+      <div class="plan-card-type"><span class="plan-card-checkbox">✓</span> Annual Subscription</div>
+      <div class="plan-card-name">Microsoft 365 Business Premium</div>
+      <div class="plan-card-billing">Pay yearly</div>
+      <div class="plan-card-price">$22.00 <span>user/mo</span></div>
+    </div>
+  `);
+
+  // Also show an upsell option
+  await wait(400);
+  addCard(`
+    <div class="plan-card">
+      <div class="plan-card-type"><span class="plan-card-checkbox"></span> Annual Subscription</div>
+      <div class="plan-card-name">Microsoft 365 Business Premium and<br>Microsoft 365 Copilot Business</div>
+      <div class="plan-card-billing">Pay yearly</div>
+      <div class="plan-card-price">$43.00 <span>user/mo</span></div>
+    </div>
+  `);
+
+  // ---- STEP 6: Draft Quote ----
+  highlightStep(6);
+  await wait(2500);
+  addMessage('bot', 'Great. Generating your quote for <strong>Microsoft 365 Business Premium</strong> × <strong>42 users</strong>...');
+
+  await wait(1500);
+  showTyping(); await wait(1200); hideTyping();
+
+  addCard(`
+    <div class="quote-result-card">
+      <div class="quote-result-header">Here's a draft quote for your review and reference:</div>
+      <div class="quote-result-plan">Microsoft 365 Business Premium</div>
+      <table class="quote-result-table">
+        <tr><th>Qty</th><th>Price per user</th><th>Year total</th></tr>
+        <tr><td>42</td><td>$22.00/mo, paid yearly</td><td>$11,088.00</td></tr>
+      </table>
+      <div style="font-size:12px; color:#605e5c; margin-bottom:8px;">(Annual subscription · Auto renews)</div>
+      <div class="quote-result-total">
+        <div class="quote-result-total-label">Year subtotal</div>
+        <div class="quote-result-total-amount">$11,088.00</div>
+        <div class="quote-result-total-note">(without tax and fees)</div>
+      </div>
+    </div>
+  `);
+
+  await wait(1500);
+  addMessage('bot', 'Almost there! If everything looks good, I can send you a confirmation email with next steps.<br><br><span style="font-size:12px; color:#605e5c;">If you\'re currently working with a Microsoft Partner or account executive, we encourage you to continue working with them for licensing procurement.</span>');
+
+  await wait(1000);
+  addCard(`
+    <div style="display:flex; gap:8px; margin-top:4px;">
+      <button class="quote-action-btn primary">Yes, send it to my email</button>
+      <button class="quote-action-btn secondary">Make changes</button>
+    </div>
+  `);
+
+  await wait(2500);
+  addMessage('user', 'Yes, send it to my email');
+
+  await wait(1000);
+  showTyping(); await wait(800); hideTyping();
+  addMessage('bot', 'I\'ll need your first name and email to send the quote with your Quote ID and next steps.');
+
+  // Email capture form
+  await wait(800);
+  addCard(`
+    <div style="background:white; border:1px solid #e1e1e1; border-radius:10px; padding:16px;">
+      <div style="margin-bottom:12px;">
+        <div style="font-size:12px; color:#d13438; font-weight:600; margin-bottom:4px;">First Name *</div>
+        <div style="padding:10px 12px; border:1px solid #c8c8c8; border-radius:6px; font-size:14px; color:#1b1b1b;">Alex</div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div style="font-size:12px; color:#d13438; font-weight:600; margin-bottom:4px;">Email *</div>
+        <div style="padding:10px 12px; border:1px solid #c8c8c8; border-radius:6px; font-size:14px; color:#1b1b1b;">alex.chen@northwindarch.com</div>
+      </div>
+      <button class="quote-action-btn primary" style="width:auto; padding:10px 24px;">Submit</button>
+    </div>
+  `);
+
+  await wait(2000);
+  addMessage('user', 'Submit');
+  await wait(800);
+  showTyping(); await wait(600); hideTyping();
+
+  addCard(`
+    <div class="inline-confirm-card">
+      <div class="confirm-title">📧 Quote Sent!</div>
+      <div class="confirm-text">
+        Your quote has been sent to <strong>alex.chen@northwindarch.com</strong>.<br>
+        Quote ID: <strong>QT-2026-05-14-1923</strong><br>
+        <span style="font-size:12px; color:#605e5c;">A Microsoft Sales representative may also contact you to discuss the quote.</span>
+      </div>
+    </div>
+  `);
+
+  // ---- STEP 7: Wrap-up ----
+  highlightStep(7);
+  await wait(1500);
+  showTyping(); await wait(800); hideTyping();
+
+  addMessage('bot', 'Your quote is on its way! Your callback is also still confirmed — when your specialist calls, they\'ll have the full context from your voice conversation and your quote details.');
+
+  await wait(1200);
+  addCard(`
+    <div class="context-summary-card">
+      <div class="context-summary-title">📋 What Your Sales Specialist Will See</div>
+      <div class="context-summary-items">
+        <div class="context-item"><span class="context-item-label">Customer</span><span class="context-item-value">Alex Chen, Northwind Architecture Group</span></div>
+        <div class="context-item"><span class="context-item-label">Voice summary</span><span class="context-item-value">42-user hybrid team, security-focused, needs Teams + device mgmt</span></div>
+        <div class="context-item"><span class="context-item-label">Quote</span><span class="context-item-value">QT-2026-05-14-1923 — M365 Business Premium, 42 users, $11,088/yr</span></div>
+        <div class="context-item"><span class="context-item-label">Quote sent to</span><span class="context-item-value">alex.chen@northwindarch.com</span></div>
+        <div class="context-item"><span class="context-item-label">Callback ref</span><span class="context-item-value">CB-2026-05-14-0847</span></div>
+      </div>
+    </div>
+  `);
+
+  await wait(1200);
+  addCard(`
+    <div class="wrapup-card">
+      <div class="wrapup-title">✅ You're all set, Alex!</div>
+      <div class="wrapup-text">Quote emailed. Callback confirmed. Your specialist will have everything they need. Is there anything else I can help with?</div>
+      <div class="wrapup-buttons">
+        <button class="wrapup-btn primary">Keep My Callback</button>
+        <button class="wrapup-btn secondary">I'm All Set, Cancel Callback</button>
+      </div>
+    </div>
+  `);
+}
+
+runDemo();
+</script>
+</body>
+</html>
