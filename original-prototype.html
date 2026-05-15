@@ -5089,6 +5089,7 @@
         let viwSessionGen = 0;
         let viwIsSpeaking = false;
         let viwSpeechDoneResolve = null;
+        let viwConversationCompleted = false;
 
         function startInWidgetVoiceSession() {
             isVoiceMode = true;
@@ -5113,6 +5114,8 @@
             document.getElementById('viwTimer').textContent = '00:00';
 
             addSystemMessage('🎙️ Connecting to Ask Microsoft Voice Agent...');
+
+            viwConversationCompleted = false;
 
             setTimeout(() => {
                 document.getElementById('viwStatus').textContent = 'Connected';
@@ -5251,6 +5254,7 @@
 
             // End voice, transition to chat with context + quoting
             if (gen !== viwSessionGen) return;
+            viwConversationCompleted = true;
             endInWidgetVoiceCall();
         }
 
@@ -5273,8 +5277,15 @@
             const secs = String(viwSeconds % 60).padStart(2, '0');
             addSystemMessage('🎙️ Voice session ended · ' + mins + ':' + secs + ' · Conversation context saved');
 
-            // Show context summary
-            setTimeout(() => showViwContextSummary(), 800);
+            if (viwConversationCompleted) {
+                // Natural end — show context summary + quoting flow
+                setTimeout(() => showViwContextSummary(), 800);
+            } else {
+                // User disconnected early — just confirm callback is still active
+                setTimeout(() => {
+                    addMessage('No worries — your callback is still confirmed. A Microsoft specialist will reach out within 48 hours. If you\'d like to restart the voice conversation or need anything else, I\'m here to help.', 'bot', false);
+                }, 800);
+            }
         }
 
         function showViwContextSummary() {
