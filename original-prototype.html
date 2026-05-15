@@ -2289,7 +2289,7 @@
                 <strong>How to try:</strong> <span id="contextHowToText">Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat to start the off-hours flow.</span>
             </div>
             <div class="context-divider"></div>
-            <div class="variant-switcher">
+            <div class="variant-switcher" style="display: none;">
                 <button class="variant-btn" id="variantHumanFirstV2" onclick="switchPrototypeVariant('human_first_v2')">Original (Full-Screen Voice)</button>
                 <button class="variant-btn" id="variantVoiceInWidget" onclick="switchPrototypeVariant('voice_in_widget')">Voice-in-Widget (New)</button>
                 <button class="variant-btn" id="variantHumanFirst" onclick="switchPrototypeVariant('human_first')" style="display:none;">Assisted Follow-Up</button>
@@ -2695,7 +2695,9 @@
         };
 
         /* Prototype Context Panel - Variant Management */
-        let prototypeVariant = 'human_first_v2';
+        let prototypeVariant = 'voice_in_widget';
+        // Force voice_in_widget for all visitors (clear any old localStorage setting)
+        localStorage.setItem('prototypeVariant', 'voice_in_widget');
 
         const prototypeVariants = {
             hybrid: {
@@ -2719,9 +2721,9 @@
                 howTo: 'Click the <em>\"Human Agent\"</em> button or type <em>\"talk to a human\"</em> in the chat to start the off-hours flow.'
             },
             voice_in_widget: {
-                title: 'Voice-in-Widget (New)',
-                description: 'Same callback-first flow, but voice happens <strong>inside the chat widget</strong> instead of a full-screen overlay. The customer keeps browsing microsoft.com while talking. After voice ends, context carries over into the quoting experience.',
-                howTo: 'Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat. After the callback form, click <em>"Speak with Ask Microsoft Voice Agent"</em> to see the in-widget voice experience.'
+                title: 'Assisted Follow-Up',
+                description: 'When a customer requests human support outside business hours, they can request a callback. The entire experience — form, confirmation, and optional voice agent — stays within the chat window for a seamless interaction.',
+                howTo: 'Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat to start the off-hours flow.'
             }
         };
 
