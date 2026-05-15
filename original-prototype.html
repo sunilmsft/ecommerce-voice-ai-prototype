@@ -2413,7 +2413,7 @@
         <div class="viw-voice-bar" id="viwVoiceBar">
             <div class="viw-vb-avatar" id="viwAvatar">🎧</div>
             <div class="viw-vb-info">
-                <div class="viw-vb-title">Ask Microsoft Voice Agent</div>
+                <div class="viw-vb-title">Ask Microsoft Voice Mode</div>
                 <div class="viw-vb-status">
                     <span class="viw-status-dot"></span>
                     <span id="viwStatus">Connected</span>
@@ -2508,7 +2508,7 @@
                 <div class="choice-card" onclick="selectSalesOption('ai-assistant')">
                     <div class="choice-card-icon">🤖</div>
                     <div class="choice-card-content">
-                        <div class="choice-card-title">Ask Microsoft Voice Agent</div>
+                        <div class="choice-card-title">Ask Microsoft Voice Mode</div>
                         <div class="choice-card-description">Available immediately. Can answer most product and plan questions.</div>
                     </div>
                 </div>
@@ -2572,12 +2572,12 @@
             <div class="modal-header">
                 <div class="modal-icon">⏱️</div>
                 <div class="modal-title">Get Answers While You Wait</div>
-                <div class="modal-subtitle">Speak with our Ask Microsoft Voice Agent in the meantime</div>
+                <div class="modal-subtitle">Try Ask Microsoft Voice Mode in the meantime</div>
             </div>
             <p style="margin: 20px 0; color: #666; font-size: 14px; line-height: 1.6;">
-                Your callback request is confirmed. While you wait for a human agent, you can speak with our Ask Microsoft Voice Agent to learn more about Microsoft 365.
+                Your callback request is confirmed. While you wait for a human agent, you can try Ask Microsoft Voice Mode to learn more about Microsoft 365.
             </p>
-            <button class="form-submit" onclick="startVoiceSessionFromCallback()">Speak with Ask Microsoft Voice Agent</button>
+            <button class="form-submit" onclick="startVoiceSessionFromCallback()">Try Ask Microsoft Voice Mode</button>
             <button class="modal-cancel" style="margin-top: 12px;" onclick="closeSpeakWhileYouWaitModal()">Skip, Just Wait</button>
         </div>
     </div>
@@ -2589,10 +2589,10 @@
         </div>
         <div class="call-screen-content">
             <div class="pulse-ring" id="pulseRing" style="display: none;"></div>
-            <div class="call-avatar" id="callAvatar"><img src="voice.png" alt="Ask Microsoft Voice Agent" /></div>
+            <div class="call-avatar" id="callAvatar"><img src="voice.png" alt="Ask Microsoft Voice Mode" /></div>
             <div class="call-info">
                 <div class="call-agent-name" id="callAgentName">Connecting...</div>
-                <div class="call-status connecting" id="callStatus">Connecting you to Ask Microsoft Voice Agent...</div>
+                <div class="call-status connecting" id="callStatus">Starting Ask Microsoft Voice Mode...</div>
                 <div class="call-timer" id="callTimer" style="display: none;">00:00</div>
             </div>
             <div class="call-transcript-area" id="callTranscriptArea">
@@ -2712,7 +2712,7 @@
             },
             human_first_v2: {
                 title: 'Assisted Follow-Up',
-                description: 'When a customer requests human support outside business hours, they can request a callback. The entire experience — form, confirmation, and optional voice agent — stays within the chat window for a seamless interaction.',
+                description: 'When a customer requests human support outside business hours, they can request a callback. The entire experience — form, confirmation, and optional voice mode — stays within the chat window for a seamless interaction.',
                 howTo: 'Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat to start the off-hours flow.'
             },
             ai_first: {
@@ -2722,7 +2722,7 @@
             },
             voice_in_widget: {
                 title: 'Assisted Follow-Up',
-                description: 'When a customer requests human support outside business hours, they can request a callback. The entire experience — form, confirmation, and optional voice agent — stays within the chat window for a seamless interaction.',
+                description: 'When a customer requests human support outside business hours, they can request a callback. The entire experience — form, confirmation, and optional voice mode — stays within the chat window for a seamless interaction.',
                 howTo: 'Click the <em>"Human Agent"</em> button or type <em>"talk to a human"</em> in the chat to start the off-hours flow.'
             }
         };
@@ -3059,7 +3059,7 @@
                             <img src="voice-assistants.png" alt="Voice assistant" style="width: 44px; height: 44px; display: block;" />
                         </div>
                         <div class="chat-option-content">
-                            <div class="chat-option-title">Speak with Ask Microsoft Voice Agent</div>
+                            <div class="chat-option-title">Try Ask Microsoft Voice Mode</div>
                             <div class="chat-option-description">Available immediately. Get answers to product and plan questions through an interactive voice conversation.</div>
                         </div>
                     </div>
@@ -3289,7 +3289,7 @@
         function showInlineSpeakWhileYouWait() {
             const optionsHTML = `
                 <div style="margin-bottom: 12px; font-size: 14px; color: #555; line-height: 1.6;">
-                    Your callback request is confirmed. While you wait for a specialist, you can speak with our <strong>Ask Microsoft Voice Agent</strong> to get immediate answers about Microsoft 365.
+                    Your callback request is confirmed. While you wait for a specialist, you can try <strong>Ask Microsoft Voice Mode</strong> to get immediate answers about Microsoft 365.
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     <button style="
@@ -3302,7 +3302,7 @@
                     onmouseover="this.style.background='#0d4f99'"
                     onmouseout="this.style.background='#0f6cbd'"
                     onclick="handleV2SpeakNow()">
-                        Speak with Ask Microsoft Voice Agent
+                        Try Ask Microsoft Voice Mode
                     </button>
                     <button style="
                         background: white; color: #0f6cbd;
@@ -3338,9 +3338,9 @@
         }
 
         function handleV2SpeakNow() {
-            addMessage('I\'d like to speak with the Ask Microsoft Voice Agent now', 'user');
+            addMessage('I\'d like to try Ask Microsoft Voice Mode', 'user');
             setTimeout(() => {
-                addMessage('Absolutely. Connecting you to our Ask Microsoft Voice Agent now.', 'bot', false);
+                addMessage('Absolutely. Starting Ask Microsoft Voice Mode for you now.', 'bot', false);
                 setTimeout(() => {
                     voiceSessionContext.fromCallback = true;
                     voiceSessionContext.fromHumanFirstV2 = true;
@@ -3436,7 +3436,7 @@
             messageDiv.className = 'message bot';
             messageDiv.innerHTML = `
                 <div class="message-bubble">
-                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Ask Microsoft Voice Agent.</div>
+                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for trying Ask Microsoft Voice Mode.</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555; line-height: 1.6;">
                         I hope this conversation was helpful.<br/><br/>
                         Your callback request is still scheduled so you can continue the discussion with a Microsoft specialist if you'd like.<br/><br/>
@@ -3505,9 +3505,9 @@
         function selectSalesOption(option) {
             // Add user's choice to chat
             if (option === 'ai-assistant') {
-                addMessage('I\'d like to speak with the Ask Microsoft Voice Agent now', 'user');
+                addMessage('I\'d like to try Ask Microsoft Voice Mode', 'user');
                 setTimeout(() => {
-                    addMessage('Great choice! Connecting you to our Ask Microsoft Voice Agent...', 'bot', false);
+                    addMessage('Great choice! Starting Ask Microsoft Voice Mode for you...', 'bot', false);
                     setTimeout(() => {
                         voiceSessionContext.fromCallback = false;
                         startVoiceSession();
@@ -3607,7 +3607,7 @@
         function closeCallbackConfirmationAndOffer() {
             document.getElementById('callbackConfirmationModal').classList.remove('active');
             if (prototypeVariant === 'hybrid' && callbackRequestedAfterVoiceCall) {
-                addMessage('Your callback is confirmed. If you have questions while you wait, you can engage with the Ask Microsoft Voice Agent again by visiting this page anytime.', 'bot', false);
+                addMessage('Your callback is confirmed. If you have questions while you wait, you can use Ask Microsoft Voice Mode again by visiting this page anytime.', 'bot', false);
                 callbackRequestedAfterVoiceCall = false;
                 return;
             }
@@ -3644,7 +3644,7 @@
             
             // Reset call screen elements
             document.getElementById('callAgentName').textContent = 'Connecting...';
-            document.getElementById('callStatus').textContent = 'Connecting you to Ask Microsoft Voice Agent...';
+            document.getElementById('callStatus').textContent = 'Starting Ask Microsoft Voice Mode...';
             document.getElementById('callStatus').classList.add('connecting');
             document.getElementById('callTimer').style.display = 'none';
             document.getElementById('callTranscriptArea').classList.remove('active');
@@ -3656,7 +3656,7 @@
             
             // Simulate connection
             setTimeout(() => {
-                document.getElementById('callAgentName').textContent = 'Ask Microsoft Voice Agent';
+                document.getElementById('callAgentName').textContent = 'Ask Microsoft Voice Mode';
                 document.getElementById('callStatus').textContent = 'Starting AI voice session...';
                 document.getElementById('pulseRing').style.display = 'none';
             }, 2000);
@@ -3716,7 +3716,7 @@
 
             if (voiceSessionContext.fromCallback && custName) {
                 // Personalized greeting — we already know the customer from the callback form
-                let contextGreeting = 'Hi ' + custName + '! I\'m your Ask Microsoft Voice Agent. ';
+                let contextGreeting = 'Hi ' + custName + '! Welcome to Ask Microsoft Voice Mode. ';
                 if (bizName && numUsers) {
                     contextGreeting += 'I see you\'ve requested a callback for ' + bizName + ' with about ' + numUsers + ' users — great to connect with you in the meantime. ';
                 } else if (bizName) {
@@ -3728,7 +3728,7 @@
                 await playLine('AI Assistant', contextGreeting, 500);
                 await playLine('You', 'Thanks! Yes, we\'re looking to explore Microsoft 365 options for ' + (bizName || 'our team') + '. I wanted to learn more while I wait.', 420);
             } else {
-                await playLine('AI Assistant', 'Hi there — I am Ask Microsoft Voice Agent. Happy to help. What can I help you with today?', 500);
+                await playLine('AI Assistant', 'Hi there — welcome to Ask Microsoft Voice Mode. Happy to help. What can I help you with today?', 500);
                 await playLine('You', 'Hi, we\'re looking for Microsoft 365 licensing for our team of about 20.', 420);
                 conversationContext.numEmployees = 20;
             }
@@ -4012,7 +4012,7 @@
                     <div>You've reached us outside of business hours (M-F, 6 AM to 6 PM PT). I'm still here to help — please choose one of the options below.</div>
                 </div>
                 <div style="margin: 4px 0 12px 0; font-size: 14px; color: #555555; line-height: 1.6;">
-                    If you'd like immediate help, you can speak with our Ask Microsoft Voice Agent now.
+                    If you'd like immediate help, you can try Ask Microsoft Voice Mode now.
                     <br/><br/>
                     You can also request a callback from a Microsoft specialist.
                 </div>
@@ -4022,7 +4022,7 @@
                             <img src="voice-assistants.png" alt="Voice assistant" style="width: 44px; height: 44px; display: block;" />
                         </div>
                         <div class="chat-option-content">
-                            <div class="chat-option-title">Speak with Ask Microsoft Voice Agent</div>
+                            <div class="chat-option-title">Try Ask Microsoft Voice Mode</div>
                             <div class="chat-option-description">Available immediately. Get answers to product and plan questions through an interactive voice conversation.</div>
                         </div>
                     </div>
@@ -4054,9 +4054,9 @@
         }
 
         function handleOffHoursAiFirstSpeakNow() {
-            addMessage('I\'d like to speak with the Ask Microsoft Voice Agent now', 'user');
+            addMessage('I\'d like to try Ask Microsoft Voice Mode', 'user');
             setTimeout(() => {
-                addMessage('Absolutely. Connecting you to our Ask Microsoft Voice Agent now.', 'bot', false);
+                addMessage('Absolutely. Starting Ask Microsoft Voice Mode for you now.', 'bot', false);
                 setTimeout(() => {
                     voiceSessionContext.fromCallback = false;
                     voiceSessionContext.fromOffHoursAiFirst = true;
@@ -4122,7 +4122,7 @@
             messageDiv.className = 'message bot';
             messageDiv.innerHTML = `
                 <div class="message-bubble">
-                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Ask Microsoft Voice Agent.</div>
+                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for trying Ask Microsoft Voice Mode.</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
                         I hope this conversation was helpful.<br/><br/>
                         Your callback request is still scheduled so you can continue the discussion with a Microsoft specialist if you'd like.<br/><br/>
@@ -4193,7 +4193,7 @@
             messageDiv.className = 'message bot';
             messageDiv.innerHTML = `
                 <div class="message-bubble">
-                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for speaking with our Ask Microsoft Voice Agent.</div>
+                    <div style="font-size: 16px; font-weight: 600; color: #262626;">Thanks for trying Ask Microsoft Voice Mode.</div>
                     <div style="margin-top: 12px; font-size: 14px; color: #555555; line-height: 1.6;">
                         I hope this conversation was helpful.<br/><br/>
                         If you'd still like to connect with a Microsoft specialist, you can request a callback below.<br/><br/>
@@ -4536,7 +4536,7 @@
             }
 
             if (callStatus) {
-                callStatus.textContent = 'Connecting you to Ask Microsoft Voice Agent...';
+                callStatus.textContent = 'Starting Ask Microsoft Voice Mode...';
                 callStatus.classList.add('connecting');
             }
 
@@ -4671,14 +4671,14 @@
             // Add message to chat
             const minutes = Math.floor(callDuration / 60);
             const seconds = callDuration % 60;
-            addSystemMessage(`🤖 Ask Microsoft Voice Agent call ended (Duration: ${minutes}m ${seconds}s)`);
+            addSystemMessage(`🤖 Ask Microsoft Voice Mode call ended (Duration: ${minutes}m ${seconds}s)`);
         }
 
         function startVoiceConversation() {
             const transcript = document.getElementById('voiceTranscript');
             
             // Initial greeting
-            addTranscriptEntry('AI Assistant', 'Hello! I\'m your Ask Microsoft Voice Agent for Microsoft 365 Business. I\'m here to help you find the right plan for your business. To get started, could you tell me a bit about your company? How many employees do you have?');
+            addTranscriptEntry('AI Assistant', 'Hello! Welcome to Ask Microsoft Voice Mode for Microsoft 365 Business. I\'m here to help you find the right plan for your business. To get started, could you tell me a bit about your company? How many employees do you have?');
             
             // Simulate an interactive conversation flow
             setTimeout(() => {
@@ -4845,12 +4845,12 @@
             document.getElementById('agentName').textContent = 'Ask Microsoft';
             
             // Add summary to chat
-            addSystemMessage('🤖 Ask Microsoft Voice Agent session ended. Transcript saved.');
+            addSystemMessage('🤖 Ask Microsoft Voice Mode session ended. Transcript saved.');
             
             // Copy transcript to chat as a system message
             const transcriptEntries = document.querySelectorAll('.transcript-entry');
             if (transcriptEntries.length > 0) {
-                addMessage('Thank you for speaking with our Ask Microsoft Voice Agent! If you need further assistance, feel free to ask or request a callback with a Microsoft specialist.', 'bot', true);
+                addMessage('Thank you for trying Ask Microsoft Voice Mode! If you need further assistance, feel free to ask or request a callback with a Microsoft specialist.', 'bot', true);
             }
             
             // Reset interface
@@ -5113,13 +5113,13 @@
             document.getElementById('viwStatus').textContent = 'Connecting...';
             document.getElementById('viwTimer').textContent = '00:00';
 
-            addSystemMessage('🎙️ Connecting to Ask Microsoft Voice Agent...');
+            addSystemMessage('🎙️ Starting Ask Microsoft Voice Mode...');
 
             viwConversationCompleted = false;
 
             setTimeout(() => {
                 document.getElementById('viwStatus').textContent = 'Connected';
-                addSystemMessage('🎙️ Voice Agent connected · You can continue browsing while we talk');
+                addSystemMessage('🎙️ Voice Mode active · You can continue browsing while we talk');
                 startViwTimer();
                 startInWidgetVoiceConversation();
             }, 2000);
@@ -5226,7 +5226,7 @@
             const biz = conversationContext.businessName || '';
             const users = conversationContext.numEmployees || 20;
 
-            let greeting = 'Hi ' + (name || 'there') + '! I\'m your Ask Microsoft Voice Agent. ';
+            let greeting = 'Hi ' + (name || 'there') + '! Welcome to Ask Microsoft Voice Mode. ';
             if (biz && users) greeting += 'I see you\'ve requested a callback for ' + biz + ' with about ' + users + ' users — great to connect with you in the meantime. ';
             greeting += 'How can I help you today?';
             await play('AI', greeting, 'GETTING STARTED', 500);
