@@ -2048,8 +2048,9 @@
         /* ===================== VOICE-IN-WIDGET ===================== */
         .viw-voice-bar {
             background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
-            padding: 12px 16px; display: none; align-items: center; gap: 10px;
-            color: white; z-index: 5;
+            padding: 10px 14px; display: none; align-items: center; gap: 10px;
+            color: white; z-index: 5; border-radius: 8px; margin: 0 8px 8px 8px;
+            box-shadow: 0 2px 12px rgba(0,120,212,0.25);
         }
         .viw-voice-bar.active { display: flex; }
         .viw-vb-avatar {
@@ -2366,44 +2367,6 @@
             </div>
         </div>
 
-        <!-- Voice-in-Widget Bar (shown during in-widget voice session) -->
-        <div class="viw-voice-bar" id="viwVoiceBar">
-            <div class="viw-vb-avatar" id="viwAvatar">🎧</div>
-            <div class="viw-vb-info">
-                <div class="viw-vb-title">Ask Microsoft Voice Agent</div>
-                <div class="viw-vb-status">
-                    <span class="viw-status-dot"></span>
-                    <span id="viwStatus">Connected</span>
-                    <span>·</span>
-                    <span class="viw-vb-timer" id="viwTimer">00:00</span>
-                </div>
-            </div>
-            <div class="viw-vb-controls">
-                <button class="viw-ctrl-btn" id="viwMuteBtn" title="Mute" onclick="toggleViwMute()">🎤</button>
-                <button class="viw-ctrl-btn" id="viwSpeakerBtn" title="Speaker" onclick="toggleViwSpeaker()">🔊</button>
-                <button class="viw-ctrl-btn end" title="End call" onclick="endInWidgetVoiceCall()">✕</button>
-            </div>
-        </div>
-
-        <!-- Voice-in-Widget Active Area (replaces chat during voice) -->
-        <div class="viw-voice-active" id="viwVoiceActive">
-            <div class="viw-visual" id="viwVisual">
-                <div class="viw-ring"></div>
-                <div class="viw-ring"></div>
-                <div class="viw-ring"></div>
-                🎧
-            </div>
-            <div class="viw-waveform">
-                <div class="viw-wave-bar"></div><div class="viw-wave-bar"></div><div class="viw-wave-bar"></div>
-                <div class="viw-wave-bar"></div><div class="viw-wave-bar"></div><div class="viw-wave-bar"></div>
-                <div class="viw-wave-bar"></div>
-            </div>
-            <div class="viw-label" id="viwLabel">Voice Agent is speaking...</div>
-            <div class="viw-sublabel">You can continue browsing microsoft.com while we talk</div>
-            <div class="viw-topic" id="viwTopic">GETTING STARTED</div>
-            <div class="viw-caption" id="viwCaption"></div>
-        </div>
-
         <div class="chat-messages" id="chatMessages">
             <div class="message bot">
                 <div class="message-bubble">
@@ -2435,6 +2398,25 @@
 
         <div class="disclaimer">
             AI-generated content may be incorrect
+        </div>
+
+        <!-- Voice-in-Widget Bar (shown during in-widget voice session, replaces input area) -->
+        <div class="viw-voice-bar" id="viwVoiceBar">
+            <div class="viw-vb-avatar" id="viwAvatar">🎧</div>
+            <div class="viw-vb-info">
+                <div class="viw-vb-title">Ask Microsoft Voice Agent</div>
+                <div class="viw-vb-status">
+                    <span class="viw-status-dot"></span>
+                    <span id="viwStatus">Connected</span>
+                    <span>·</span>
+                    <span class="viw-vb-timer" id="viwTimer">00:00</span>
+                </div>
+            </div>
+            <div class="viw-vb-controls">
+                <button class="viw-ctrl-btn" id="viwMuteBtn" title="Mute" onclick="toggleViwMute()">🎤</button>
+                <button class="viw-ctrl-btn" id="viwSpeakerBtn" title="Speaker" onclick="toggleViwSpeaker()">🔊</button>
+                <button class="viw-ctrl-btn end" title="End call" onclick="endInWidgetVoiceCall()">✕</button>
+            </div>
         </div>
 
         <div class="chat-input-area">
@@ -2778,9 +2760,6 @@
 
             // Clean up voice-in-widget state before switching
             document.getElementById('viwVoiceBar').classList.remove('active');
-            document.getElementById('viwVoiceActive').classList.remove('active');
-            const cm = document.getElementById('chatMessages');
-            if (cm) cm.style.display = '';
             const ia = document.querySelector('.chat-input-area');
             if (ia) ia.style.display = '';
             isVoiceMode = false;
@@ -5111,26 +5090,22 @@
                 speechSynthesis.addEventListener('voiceschanged', () => {});
             }
 
-            // Hide chat messages, show voice-in-widget UI
-            const cm = document.getElementById('chatMessages');
+            // Keep chat visible, hide input area, show voice bar at bottom
             const qa = document.getElementById('quickActions');
             const ia = document.querySelector('.chat-input-area');
-            cm.style.display = 'none';
             if (qa) qa.style.display = 'none';
             if (ia) ia.style.display = 'none';
             document.getElementById('viwVoiceBar').classList.add('active');
-            document.getElementById('viwVoiceActive').classList.add('active');
 
-            // Reset
+            // Reset bar state
             document.getElementById('viwStatus').textContent = 'Connecting...';
             document.getElementById('viwTimer').textContent = '00:00';
-            document.getElementById('viwLabel').textContent = 'Connecting...';
-            document.getElementById('viwCaption').textContent = '';
-            document.getElementById('viwTopic').textContent = 'CONNECTING';
+
+            addSystemMessage('🎙️ Connecting to Ask Microsoft Voice Agent...');
 
             setTimeout(() => {
                 document.getElementById('viwStatus').textContent = 'Connected';
-                document.getElementById('viwLabel').textContent = 'Voice Agent is speaking...';
+                addSystemMessage('🎙️ Voice Agent connected · You can continue browsing while we talk');
                 startViwTimer();
                 startInWidgetVoiceConversation();
             }, 2000);
@@ -5148,29 +5123,19 @@
 
         function stopViwTimer() { clearInterval(viwTimerInterval); }
 
-        function setViwState(state, caption, topic) {
-            const visual = document.getElementById('viwVisual');
+        function setViwState(state) {
             const avatar = document.getElementById('viwAvatar');
-            const label = document.getElementById('viwLabel');
-            document.getElementById('viwCaption').textContent = caption || '';
-            if (topic) document.getElementById('viwTopic').textContent = topic;
-
             if (state === 'agent-speaking') {
-                label.textContent = 'Voice Agent is speaking...';
-                visual.className = 'viw-visual agent-speaking';
                 avatar.classList.add('speaking');
-                document.querySelectorAll('.viw-wave-bar').forEach(b => b.style.background = '#00bcf2');
-            } else if (state === 'user-speaking') {
-                label.textContent = 'You\'re speaking...';
-                visual.className = 'viw-visual user-speaking';
+            } else {
                 avatar.classList.remove('speaking');
-                document.querySelectorAll('.viw-wave-bar').forEach(b => b.style.background = '#107c10');
-            } else if (state === 'processing') {
-                label.textContent = 'Processing...';
-                visual.className = 'viw-visual';
-                avatar.classList.remove('speaking');
-                document.querySelectorAll('.viw-wave-bar').forEach(b => b.style.background = '#605e5c');
             }
+        }
+
+        function viwAddTranscriptMessage(speaker, text) {
+            const side = speaker === 'AI' ? 'bot' : 'user';
+            const prefix = speaker === 'AI' ? '🎙️ ' : '';
+            addMessage(prefix + text, side, false);
         }
 
         function viwSpeakText(text, speaker) {
@@ -5234,10 +5199,12 @@
             const play = async (speaker, text, topic, pause) => {
                 if (gen !== viwSessionGen) return;
                 const state = speaker === 'AI' ? 'agent-speaking' : 'user-speaking';
-                setViwState(state, '"' + text + '"', topic);
+                setViwState(state);
+                viwAddTranscriptMessage(speaker, text);
                 viwSpeakText(text, speaker);
                 await viwWaitForSpeech(text);
                 if (gen !== viwSessionGen) return;
+                setViwState('idle');
                 await new Promise(r => setTimeout(r, pause || 450));
             };
 
@@ -5286,12 +5253,9 @@
 
             try { speechSynthesis.cancel(); } catch(e) {}
 
-            // Hide voice UI, restore chat
+            // Hide voice bar, restore input area
             document.getElementById('viwVoiceBar').classList.remove('active');
-            document.getElementById('viwVoiceActive').classList.remove('active');
-            const cm = document.getElementById('chatMessages');
             const ia = document.querySelector('.chat-input-area');
-            cm.style.display = '';
             if (ia) ia.style.display = '';
 
             const mins = String(Math.floor(viwSeconds / 60)).padStart(1, '0');
