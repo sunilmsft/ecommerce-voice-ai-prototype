@@ -3805,11 +3805,11 @@
                 
                 // Configure voice settings based on speaker
                 if (speaker === 'AI Assistant') {
-                    utterance.rate = 1.0;   // Natural pace
+                    utterance.rate = 0.95;   // Slightly slower for natural pace
                     utterance.pitch = 1.0;  // Natural pitch
                 } else {
                     // User's voice — slightly different rate/pitch to ensure audible contrast
-                    utterance.rate = 0.95;
+                    utterance.rate = 0.92;
                     utterance.pitch = 0.9;  // Lower pitch = distinct from AI
                 }
                 utterance.volume = 1.0;
@@ -3819,8 +3819,10 @@
                 
                 let preferredVoice;
                 if (speaker === 'AI Assistant') {
-                    // AI voice — Jenny Online exclusive (no Aria to avoid overlap with female user)
+                    // AI voice — prefer Natural neural voices in Edge, then Jenny Online
                     preferredVoice = 
+                        voices.find(voice => voice.name.includes('Jenny') && voice.name.includes('Natural')) ||
+                        voices.find(voice => voice.name.includes('Ana') && voice.name.includes('Natural')) ||
                         voices.find(voice => voice.name.includes('Jenny') && voice.name.includes('Online')) ||
                         voices.find(voice => voice.name.includes('Jenny')) ||
                         voices.find(voice => voice.name.includes('Microsoft Zira')) ||
@@ -5165,8 +5167,10 @@
                 const voices = speechSynthesis.getVoices();
 
                 if (speaker === 'AI') {
-                    utt.rate = 1.0; utt.pitch = 1.0;
-                    utt.voice = voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
+                    utt.rate = 0.95; utt.pitch = 1.0;
+                    utt.voice = voices.find(v => v.name.includes('Jenny') && v.name.includes('Natural')) ||
+                        voices.find(v => v.name.includes('Ana') && v.name.includes('Natural')) ||
+                        voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
                         voices.find(v => v.name.includes('Jenny')) ||
                         voices.find(v => v.name.includes('Zira')) ||
                         voices.find(v => v.lang === 'en-US') || voices[0];
