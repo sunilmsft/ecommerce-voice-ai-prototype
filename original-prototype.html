@@ -5341,7 +5341,7 @@
         function showViwQuotingPrefill() {
             const users = conversationContext.numEmployees || 20;
             const html = `
-                <div style="font-size: 14px; font-weight: 600; color: #262626; margin-bottom: 6px;">Configure your subscription</div>
+                <div style="font-size: 14px; font-weight: 600; color: #262626; margin-bottom: 6px;">Get a quote</div>
                 <div style="font-size: 13px; color: #555; margin-bottom: 8px;">Based on your voice conversation, here's what I have:</div>
                 <div class="viw-prefill-card">
                     <div class="viw-prefill-title">🎙️ From your voice conversation</div>
@@ -5378,8 +5378,228 @@
         function viwStartFresh() {
             addMessage('Start fresh', 'user');
             setTimeout(() => {
-                addMessage('No problem — let\'s start from the beginning. Are you interested in monthly or yearly subscription plans?', 'bot', false);
+                viwQuotingWizardWelcome();
             }, 500);
+        }
+
+        function viwQuotingWizardWelcome() {
+            const html = `
+                <div style="font-size: 14px; color: #424242; line-height: 1.6; margin-bottom: 10px;">
+                    Welcome to the new quoting experience, now available in preview.
+                </div>
+                <div style="font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 10px;">
+                    With annual subscription and yearly payment, you will save with the lowest effective monthly price:
+                </div>
+                <ul style="font-size: 13px; color: #424242; line-height: 1.8; margin: 0 0 10px 16px; padding: 0;">
+                    <li>Microsoft 365 Business Standard — $12.50 user/mo (paid yearly)</li>
+                    <li>Microsoft 365 Business Premium — $22.00 user/mo (paid yearly)</li>
+                    <li>Microsoft 365 Business Basic — $6.00 user/mo (paid yearly)</li>
+                </ul>
+                <div style="font-size: 13px; color: #424242; margin-bottom: 10px;">Do you want to continue with this or see other options?</div>
+                <div style="display: flex; gap: 8px;">
+                    <button style="background:#0f6cbd; color:white; border:none; padding:8px 16px; border-radius:4px; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit;"
+                        onmouseover="this.style.background='#0d4f99'" onmouseout="this.style.background='#0f6cbd'"
+                        onclick="viwQuotingWizardYearly()">Continue with yearly</button>
+                    <button style="background:white; color:#605e5c; border:1px solid #d7e7f5; padding:8px 16px; border-radius:4px; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit;"
+                        onclick="viwQuotingWizardAskBilling()">See other options</button>
+                </div>
+            `;
+            const chatMessages = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = 'message bot';
+            msg.innerHTML = '<div class="message-bubble"><div class="interactive-card">' + html + '</div><div class="message-time">just now</div></div>';
+            chatMessages.appendChild(msg);
+            scrollToBottom();
+        }
+
+        function viwQuotingWizardAskBilling() {
+            addMessage('See other options', 'user');
+            setTimeout(() => {
+                addMessage('Are you interested in monthly or yearly subscription plans?\n\nIf you\'re not sure, you can ask what the difference is.', 'bot', false);
+            }, 500);
+            // User can type "yearly" or "monthly" — handled via viwQuotingWizardYearly/Monthly buttons
+            setTimeout(() => {
+                const html = `
+                    <div style="display: flex; gap: 8px;">
+                        <button style="background:#0f6cbd; color:white; border:none; padding:8px 16px; border-radius:4px; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit;"
+                            onmouseover="this.style.background='#0d4f99'" onmouseout="this.style.background='#0f6cbd'"
+                            onclick="viwQuotingWizardYearly()">Yearly</button>
+                        <button style="background:white; color:#605e5c; border:1px solid #d7e7f5; padding:8px 16px; border-radius:4px; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit;"
+                            onclick="viwQuotingWizardMonthly()">Monthly</button>
+                    </div>
+                `;
+                const chatMessages = document.getElementById('chatMessages');
+                const msg = document.createElement('div');
+                msg.className = 'message bot';
+                msg.innerHTML = '<div class="message-bubble"><div class="interactive-card">' + html + '</div><div class="message-time">just now</div></div>';
+                chatMessages.appendChild(msg);
+                scrollToBottom();
+            }, 900);
+        }
+
+        let viwWizardBilling = 'yearly';
+
+        function viwQuotingWizardYearly() {
+            viwWizardBilling = 'yearly';
+            addMessage('Yearly', 'user');
+            setTimeout(() => viwShowAllPlanCards('yearly'), 600);
+        }
+
+        function viwQuotingWizardMonthly() {
+            viwWizardBilling = 'monthly';
+            addMessage('Monthly', 'user');
+            setTimeout(() => viwShowAllPlanCards('monthly'), 600);
+        }
+
+        function viwShowAllPlanCards(billing) {
+            const yearly = billing === 'yearly';
+            const plans = [
+                { id: 'basic', name: 'Microsoft 365 Business Basic', yearlyPrice: 6.00, monthlyPrice: 6.30 },
+                { id: 'standard', name: 'Microsoft 365 Business Standard', yearlyPrice: 12.50, monthlyPrice: 13.13 },
+                { id: 'standard_copilot', name: 'Microsoft 365 Business Standard and\nMicrosoft 365 Copilot Business', yearlyPrice: 33.50, monthlyPrice: 35.18 },
+                { id: 'premium', name: 'Microsoft 365 Business Premium', yearlyPrice: 22.00, monthlyPrice: 23.10 },
+                { id: 'premium_copilot', name: 'Microsoft 365 Business Premium and\nMicrosoft 365 Copilot Business', yearlyPrice: 43.00, monthlyPrice: 45.15 },
+                { id: 'basic_copilot', name: 'Microsoft 365 Business Basic and\nMicrosoft 365 Copilot Business', yearlyPrice: 27.00, monthlyPrice: 28.35 },
+            ];
+
+            let cardsHTML = `
+                <div style="font-size: 14px; font-weight: 600; color: #262626; margin-bottom: 4px;">Configure your subscription</div>
+                <div style="font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 6px;">
+                    In order to get an accurate quote for you, let's configure a couple more things.<br><br>
+                    Which subscription and payment option will work best for your business?
+                </div>
+                <div style="font-size: 12px; color: #605e5c; margin-bottom: 8px;">If eligible, an additional Copilot discount will be applied at checkout.</div>
+            `;
+
+            plans.forEach(p => {
+                const price = yearly ? p.yearlyPrice : p.monthlyPrice;
+                const payLabel = yearly ? 'Pay yearly' : 'Pay monthly';
+                cardsHTML += `
+                    <div class="viw-plan-card" onclick="viwWizardSelectPlan(this, '${p.id}', '${p.name.replace(/\n/g, ' ')}', ${price})">
+                        <div class="viw-plan-type"><span class="viw-plan-check"></span> Annual Subscription</div>
+                        <div class="viw-plan-name">${p.name.replace(/\n/g, '<br>')}</div>
+                        <div class="viw-plan-billing">${payLabel}</div>
+                        <div class="viw-plan-price">$${price.toFixed(2)} <span>user/mo</span></div>
+                    </div>
+                `;
+            });
+
+            cardsHTML += `
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button style="background:#0f6cbd; color:white; border:none; padding:8px 16px; border-radius:4px; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit;"
+                        onmouseover="this.style.background='#0d4f99'" onmouseout="this.style.background='#0f6cbd'"
+                        onclick="viwWizardSubmitPlan()">Submit</button>
+                    <button style="background:white; color:#605e5c; border:1px solid #d7e7f5; padding:8px 16px; border-radius:4px; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit;"
+                        onclick="viwQuotingWizardAskBilling()">Change previous info</button>
+                </div>
+            `;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = 'message bot';
+            msg.innerHTML = '<div class="message-bubble"><div class="interactive-card">' + cardsHTML + '</div><div class="message-time">just now</div></div>';
+            chatMessages.appendChild(msg);
+            scrollToBottom();
+        }
+
+        let viwWizardSelectedPlanId = null;
+        let viwWizardSelectedPlanName = '';
+        let viwWizardSelectedPrice = 0;
+
+        function viwWizardSelectPlan(el, id, name, price) {
+            viwWizardSelectedPlanId = id;
+            viwWizardSelectedPlanName = name;
+            viwWizardSelectedPrice = price;
+            const container = el.closest('.interactive-card');
+            container.querySelectorAll('.viw-plan-card').forEach(c => {
+                c.classList.remove('selected');
+                c.querySelector('.viw-plan-check').textContent = '';
+            });
+            el.classList.add('selected');
+            el.querySelector('.viw-plan-check').textContent = '✓';
+        }
+
+        function viwWizardSubmitPlan() {
+            if (!viwWizardSelectedPlanId) {
+                alert('Please select a plan first.');
+                return;
+            }
+            addMessage(viwWizardSelectedPlanName, 'user');
+            setTimeout(() => {
+                addMessage('Great. How many users will be using <strong>' + viwWizardSelectedPlanName + '</strong>?', 'bot', false);
+                // Show a user count input
+                setTimeout(() => {
+                    const html = `
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input type="number" id="viwWizardUserCount" min="1" max="300" value="${conversationContext.numEmployees || 20}"
+                                style="width: 80px; padding: 8px 10px; border: 1px solid #c8c8c8; border-radius: 4px; font-size: 14px; font-family: inherit;">
+                            <button style="background:#0f6cbd; color:white; border:none; padding:8px 16px; border-radius:4px; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit;"
+                                onmouseover="this.style.background='#0d4f99'" onmouseout="this.style.background='#0f6cbd'"
+                                onclick="viwWizardSubmitUsers()">Submit</button>
+                        </div>
+                    `;
+                    const chatMessages = document.getElementById('chatMessages');
+                    const msg = document.createElement('div');
+                    msg.className = 'message bot';
+                    msg.innerHTML = '<div class="message-bubble"><div class="interactive-card">' + html + '</div><div class="message-time">just now</div></div>';
+                    chatMessages.appendChild(msg);
+                    scrollToBottom();
+                }, 600);
+            }, 500);
+        }
+
+        function viwWizardSubmitUsers() {
+            const input = document.getElementById('viwWizardUserCount');
+            const users = parseInt(input.value) || 20;
+            conversationContext.numEmployees = users;
+            addMessage('' + users, 'user');
+            viwSelectedPlan = viwWizardSelectedPlanId;
+            // Generate the quote using existing flow
+            setTimeout(() => {
+                viwGenerateQuoteFromWizard(viwWizardSelectedPlanName, viwWizardSelectedPrice, users);
+            }, 600);
+        }
+
+        function viwGenerateQuoteFromWizard(planName, pricePerUser, users) {
+            const yearly = users * pricePerUser * 12;
+            const payLabel = viwWizardBilling === 'yearly' ? 'paid once yearly' : 'paid monthly';
+
+            const html = `
+                <div style="font-size: 13px; color: #605e5c; margin-bottom: 8px;">Here's a draft quote for your review and reference:</div>
+                <div class="viw-quote-card">
+                    <div style="font-size: 14px; font-weight: 700; color: #1b1b1b; margin-bottom: 8px;">${planName}</div>
+                    <table class="viw-quote-table">
+                        <tr><th>Qty</th><th>Price per user</th><th>Year total</th></tr>
+                        <tr><td>${users}</td><td>$${pricePerUser.toFixed(2)}/mo, ${payLabel}</td><td>$${yearly.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td></tr>
+                    </table>
+                    <div style="font-size: 11px; color: #605e5c; margin-bottom: 6px;">(Annual subscription · Auto renews)</div>
+                    <div class="viw-quote-total">
+                        <div style="font-size: 11px; color: #605e5c;">Year subtotal</div>
+                        <div class="viw-quote-total-amt">$${yearly.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        <div class="viw-quote-total-note">(without tax and fees)</div>
+                    </div>
+                </div>
+                <div style="margin-top: 10px; font-size: 13px; color: #555; line-height: 1.5;">
+                    Almost there! If everything looks good, I can send you a confirmation email with next steps.
+                </div>
+                <div style="margin-top: 8px; font-size: 12px; color: #605e5c; line-height: 1.5;">
+                    If you're currently working with a Microsoft Partner or account executive, we encourage you to continue working with them to ensure you receive the best support as they manage your licensing procurement and agreement.
+                </div>
+                <div style="margin-top: 6px; font-size: 12px; color: #605e5c;">Add-on products require a Microsoft 365 Business base plan. Eligibility will be verified before purchase.</div>
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button style="background:#0f6cbd; color:white; border:none; padding:10px 16px; border-radius:4px; font-size:14px; font-weight:500; cursor:pointer; font-family:inherit;"
+                        onmouseover="this.style.background='#0d4f99'" onmouseout="this.style.background='#0f6cbd'"
+                        onclick="viwSendQuoteEmail()">Yes, send it to my email.</button>
+                    <button style="background:white; color:#605e5c; border:1px solid #d7e7f5; padding:10px 16px; border-radius:4px; font-size:14px; font-weight:500; cursor:pointer; font-family:inherit;">Make changes</button>
+                </div>
+            `;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = 'message bot';
+            msg.innerHTML = '<div class="message-bubble"><div class="interactive-card">' + html + '</div><div class="message-time">just now</div></div>';
+            chatMessages.appendChild(msg);
+            scrollToBottom();
         }
 
         function showViwPlanCards() {
