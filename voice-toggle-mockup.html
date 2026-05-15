@@ -3,47 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Toggle Mockup — Ask Microsoft</title>
+    <title>Voice Toggle Prototype — Ask Microsoft</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #f3f2f1;
             min-height: 100vh;
         }
 
-        /* ── Fake store background ── */
+        /* ── Store background ── */
         .store-bg {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, #667eea22, #764ba244);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: fixed; inset: 0;
+            background: linear-gradient(180deg, #f5f5f5, #e8e8e8);
             z-index: 0;
         }
-        .store-bg-text {
-            font-size: 18px;
-            color: #999;
-            text-align: center;
-            line-height: 2;
+        .store-bg-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 40px;
         }
+        .store-bg-inner h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1b1b1b;
+            margin-bottom: 8px;
+        }
+        .store-bg-inner p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+            max-width: 500px;
+        }
+        .store-hero {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+        }
+        .store-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 200px;
+            border: 1px solid #e0e0e0;
+        }
+        .store-card .label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+        .store-card .title { font-size: 15px; font-weight: 600; color: #1b1b1b; margin: 6px 0; }
+        .store-card .price { font-size: 13px; color: #0f6cbd; font-weight: 600; }
 
         /* ── Chat widget ── */
         .chat-widget {
             width: 420px;
-            height: 640px;
+            height: 100vh;
             background: #f3f9ff;
-            border-radius: 16px 0 0 16px;
-            border: 1px solid #d7e7f5;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            border-left: 1px solid #d7e7f5;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.08);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             position: fixed;
-            top: calc(50% - 320px);
-            right: 0;
+            top: 0; right: 0;
             z-index: 100;
         }
 
@@ -56,21 +75,22 @@
             align-items: center;
             gap: 12px;
             min-height: 56px;
-            box-shadow: 0 3px 8px rgba(15,108,189,0.12);
+            box-shadow: 0 3px 8px rgba(15,108,189,0.08);
+            flex-shrink: 0;
         }
         .agent-avatar {
             width: 40px; height: 40px;
             border-radius: 10px;
             background: #e8f2ff;
             display: flex; align-items: center; justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
+            font-size: 20px; flex-shrink: 0;
         }
         .agent-info { flex: 1; }
         .agent-name { font-size: 16px; font-weight: 600; color: #1b1b1b; }
-        .agent-status { font-size: 11px; color: #605e5c; margin-top: 1px; }
+        .agent-status { font-size: 11px; color: #605e5c; margin-top: 1px; transition: all 0.3s; }
+        .agent-status.voice-on { color: #107c10; font-weight: 600; }
         .header-actions { display: flex; gap: 4px; }
-        .header-btn {
+        .hdr-btn {
             width: 32px; height: 32px;
             background: transparent; border: none;
             color: #0f6cbd; cursor: pointer;
@@ -78,7 +98,43 @@
             display: flex; align-items: center; justify-content: center;
             transition: background 0.2s;
         }
-        .header-btn:hover { background: #e8f2ff; }
+        .hdr-btn:hover { background: #e8f2ff; }
+
+        /* ── Voice banner ── */
+        .voice-banner {
+            display: none;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #1b1b1b, #2d2d2d);
+            color: white;
+            font-size: 12px;
+            align-items: center;
+            gap: 10px;
+            justify-content: space-between;
+            flex-shrink: 0;
+            animation: bannerIn 0.3s ease;
+        }
+        @keyframes bannerIn {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .voice-banner.show { display: flex; }
+        .vb-left { display: flex; align-items: center; gap: 8px; }
+        .vb-dot {
+            width: 8px; height: 8px;
+            background: #4caf50; border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .vb-text { font-weight: 500; }
+        .vb-end {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white; font-size: 11px;
+            padding: 4px 12px; border-radius: 12px;
+            cursor: pointer; transition: all 0.2s;
+            font-family: inherit;
+        }
+        .vb-end:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
 
         /* ── Messages ── */
         .chat-messages {
@@ -87,15 +143,16 @@
             padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
         .msg {
-            max-width: 82%;
+            max-width: 85%;
             padding: 10px 14px;
             border-radius: 14px;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.55;
             animation: msgIn 0.3s ease;
+            white-space: pre-line;
         }
         @keyframes msgIn {
             from { opacity: 0; transform: translateY(8px); }
@@ -112,7 +169,16 @@
             color: white;
             align-self: flex-end;
         }
-        .msg .voice-badge {
+        .msg.system {
+            align-self: center;
+            background: #e8f2ff;
+            color: #0058a3;
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            max-width: 90%;
+        }
+        .voice-badge {
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -120,110 +186,73 @@
             opacity: 0.7;
             margin-top: 4px;
         }
-        .msg.user .voice-badge { color: rgba(255,255,255,0.8); }
+        .msg.user .voice-badge { color: rgba(255,255,255,0.75); }
         .msg.bot .voice-badge { color: #888; }
 
         .typing-indicator {
             display: none;
             align-self: flex-start;
-            padding: 10px 18px;
+            padding: 12px 18px;
             background: white;
             border: 1px solid #e5eef8;
             border-radius: 14px;
+            gap: 5px; align-items: center;
         }
-        .typing-indicator.show { display: flex; gap: 4px; align-items: center; }
+        .typing-indicator.show { display: flex; }
         .typing-dot {
             width: 6px; height: 6px;
             background: #999; border-radius: 50%;
-            animation: typingBounce 1.2s infinite;
+            animation: bounce 1.2s infinite;
         }
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typingBounce {
-            0%, 80%, 100% { transform: translateY(0); }
+        @keyframes bounce {
+            0%,80%,100% { transform: translateY(0); }
             40% { transform: translateY(-6px); }
         }
 
-        /* ── Voice Mode active banner ── */
-        .voice-active-banner {
+        /* ── Listening bar (replaces input when actively listening) ── */
+        .listening-bar {
             display: none;
-            padding: 8px 16px;
-            background: linear-gradient(135deg, #1b1b1b, #2d2d2d);
-            color: white;
-            font-size: 12px;
-            align-items: center;
-            gap: 10px;
-            justify-content: space-between;
-        }
-        .voice-active-banner.show { display: flex; }
-        .vab-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .vab-indicator {
-            width: 8px; height: 8px;
-            background: #4caf50;
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .vab-text { font-weight: 500; }
-        .vab-end {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            font-size: 11px;
-            padding: 4px 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-        .vab-end:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.5);
-        }
-
-        /* ── Listening overlay (shows when mic is active) ── */
-        .listening-overlay {
-            display: none;
-            padding: 20px 16px;
+            padding: 16px;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            flex-shrink: 0;
+            animation: slideUp 0.3s ease;
         }
-        .listening-overlay.show { display: flex; }
-        .listening-wave {
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .listening-bar.show { display: flex; }
+        .wave-container {
             display: flex;
             align-items: center;
             gap: 3px;
-            height: 40px;
+            height: 36px;
         }
-        .listening-wave .bar {
+        .wave-bar {
             width: 4px;
-            background: #0f6cbd;
+            background: #4da6ff;
             border-radius: 4px;
-            animation: waveBar 0.8s ease-in-out infinite;
+            animation: waveAnim 0.8s ease-in-out infinite;
         }
-        .listening-wave .bar:nth-child(1) { height: 12px; animation-delay: 0s; }
-        .listening-wave .bar:nth-child(2) { height: 24px; animation-delay: 0.1s; }
-        .listening-wave .bar:nth-child(3) { height: 36px; animation-delay: 0.2s; }
-        .listening-wave .bar:nth-child(4) { height: 28px; animation-delay: 0.3s; }
-        .listening-wave .bar:nth-child(5) { height: 16px; animation-delay: 0.4s; }
-        .listening-wave .bar:nth-child(6) { height: 32px; animation-delay: 0.5s; }
-        .listening-wave .bar:nth-child(7) { height: 20px; animation-delay: 0.6s; }
-        @keyframes waveBar {
-            0%, 100% { transform: scaleY(0.5); }
+        .wave-bar:nth-child(1) { height: 10px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 20px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 30px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 24px; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 14px; animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { height: 28px; animation-delay: 0.5s; }
+        .wave-bar:nth-child(7) { height: 18px; animation-delay: 0.6s; }
+        @keyframes waveAnim {
+            0%,100% { transform: scaleY(0.5); }
             50% { transform: scaleY(1.2); }
         }
-        .listening-text {
-            color: rgba(255,255,255,0.8);
-            font-size: 13px;
+        .listening-label {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
         }
         .live-transcript {
             color: white;
@@ -231,34 +260,59 @@
             font-weight: 500;
             text-align: center;
             min-height: 22px;
+            max-width: 90%;
+            word-wrap: break-word;
         }
-
-        /* ── Speaking overlay (TTS playing) ── */
-        .speaking-overlay {
-            display: none;
-            padding: 16px;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
+        .listening-controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
         }
-        .speaking-overlay.show { display: flex; }
-        .speaking-ring {
-            width: 48px; height: 48px;
-            border: 3px solid #0f6cbd;
+        .listen-ctrl {
+            width: 36px; height: 36px;
             border-radius: 50%;
+            border: none; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            animation: speakRing 1.5s ease-in-out infinite;
+            font-size: 14px; transition: all 0.2s;
         }
-        @keyframes speakRing {
-            0%, 100% { transform: scale(1); border-color: #0f6cbd; }
-            50% { transform: scale(1.08); border-color: #4da6ff; }
+        .listen-ctrl.cancel {
+            background: rgba(255,255,255,0.1);
+            color: white;
         }
-        .speaking-ring .icon { font-size: 20px; }
-        .speaking-label {
-            color: rgba(255,255,255,0.7);
+        .listen-ctrl.cancel:hover { background: rgba(255,255,255,0.2); }
+
+        /* ── Speaking indicator bar ── */
+        .speaking-indicator {
+            display: none;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #1b1b1b, #2d2d2d);
+            color: white;
             font-size: 12px;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
         }
+        .speaking-indicator.show { display: flex; }
+        .speak-ring {
+            width: 20px; height: 20px;
+            border: 2px solid #4da6ff;
+            border-radius: 50%;
+            animation: ringPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes ringPulse {
+            0%,100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.15); opacity: 0.7; }
+        }
+        .speak-stop {
+            margin-left: auto;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white; font-size: 11px;
+            padding: 3px 10px; border-radius: 10px;
+            cursor: pointer; font-family: inherit;
+            transition: all 0.2s;
+        }
+        .speak-stop:hover { background: rgba(255,255,255,0.1); }
 
         /* ── Input area ── */
         .chat-input-area {
@@ -268,6 +322,7 @@
             display: flex;
             gap: 8px;
             align-items: flex-end;
+            flex-shrink: 0;
         }
         .chat-input {
             flex: 1;
@@ -279,8 +334,7 @@
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
             resize: none;
-            min-height: 40px;
-            max-height: 80px;
+            min-height: 40px; max-height: 80px;
             background: white;
         }
         .chat-input:focus {
@@ -288,13 +342,13 @@
             box-shadow: 0 0 0 2px rgba(15,108,189,0.15);
         }
         .chat-input::placeholder { color: #a19f9d; }
-
-        /* Voice + send buttons next to input */
         .input-actions {
             display: flex;
             gap: 4px;
             align-items: center;
         }
+
+        /* Mic button */
         .mic-btn {
             width: 40px; height: 40px;
             background: transparent;
@@ -303,32 +357,21 @@
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: all 0.2s;
-            color: #605e5c;
-            font-size: 18px;
-            flex-shrink: 0;
-            position: relative;
+            color: #605e5c; font-size: 18px; flex-shrink: 0;
         }
-        .mic-btn:hover {
-            background: #e8f2ff;
-            border-color: #0f6cbd;
-            color: #0f6cbd;
-        }
+        .mic-btn:hover { background: #e8f2ff; border-color: #0f6cbd; color: #0f6cbd; }
         .mic-btn.active {
-            background: #0f6cbd;
-            border-color: #0f6cbd;
-            color: white;
+            background: #d32f2f; border-color: #d32f2f; color: white;
             animation: micPulse 2s infinite;
         }
         @keyframes micPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(15,108,189,0.3); }
-            50% { box-shadow: 0 0 0 8px rgba(15,108,189,0); }
+            0%,100% { box-shadow: 0 0 0 0 rgba(211,47,47,0.3); }
+            50% { box-shadow: 0 0 0 8px rgba(211,47,47,0); }
         }
-        .mic-btn svg {
-            width: 18px; height: 18px;
-            fill: currentColor;
-        }
+        .mic-btn svg { width: 18px; height: 18px; fill: currentColor; }
 
-        .voice-mode-btn {
+        /* Voice mode toggle */
+        .vm-btn {
             width: 40px; height: 40px;
             background: transparent;
             border: 1px solid #c9def5;
@@ -336,274 +379,86 @@
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: all 0.2s;
-            color: #605e5c;
-            font-size: 16px;
-            flex-shrink: 0;
+            color: #605e5c; flex-shrink: 0;
         }
-        .voice-mode-btn:hover {
-            background: #e8f2ff;
-            border-color: #0f6cbd;
-            color: #0f6cbd;
-        }
-        .voice-mode-btn.active {
-            background: #0f6cbd;
-            border-color: #0f6cbd;
-            color: white;
-        }
-        .voice-mode-btn svg {
-            width: 18px; height: 18px;
-            fill: currentColor;
-        }
+        .vm-btn:hover { background: #e8f2ff; border-color: #0f6cbd; color: #0f6cbd; }
+        .vm-btn.active { background: #0f6cbd; border-color: #0f6cbd; color: white; }
+        .vm-btn svg { width: 18px; height: 18px; fill: currentColor; }
 
+        /* Send */
         .send-btn {
             width: 40px; height: 40px;
-            background: #0f6cbd;
-            color: white;
-            border: none;
-            border-radius: 50%;
+            background: #0f6cbd; color: white;
+            border: none; border-radius: 50%;
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: background 0.2s;
-            font-size: 16px;
             flex-shrink: 0;
         }
         .send-btn:hover { background: #0b5cab; }
         .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .send-btn svg {
-            width: 16px; height: 16px;
-            fill: currentColor;
-        }
-
-        /* ── Tooltip ── */
-        .tooltip {
-            display: none;
-            position: absolute;
-            bottom: calc(100% + 8px);
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1b1b1b;
-            color: white;
-            font-size: 11px;
-            padding: 6px 10px;
-            border-radius: 6px;
-            white-space: nowrap;
-            pointer-events: none;
-            z-index: 200;
-        }
-        .tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: #1b1b1b;
-        }
-
-        /* ── State labels ── */
-        .state-label {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 12px 24px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            z-index: 200;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        .state-label h3 {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1b1b1b;
-            margin-bottom: 2px;
-        }
-        .state-label p {
-            font-size: 12px;
-            color: #666;
-        }
-
-        /* ── Step navigation ── */
-        .step-nav {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            z-index: 200;
-        }
-        .step-btn {
-            padding: 10px 20px;
-            background: white;
-            border: 1px solid #d2d0ce;
-            border-radius: 24px;
-            font-size: 13px;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #333;
-            font-weight: 500;
-        }
-        .step-btn:hover {
-            background: #0f6cbd;
-            color: white;
-            border-color: #0f6cbd;
-        }
-        .step-btn.active {
-            background: #0f6cbd;
-            color: white;
-            border-color: #0f6cbd;
-        }
-        .step-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        /* ── Info panel ── */
-        .info-panel {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 340px;
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            z-index: 200;
-        }
-        .info-panel h2 {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1b1b1b;
-            margin-bottom: 4px;
-        }
-        .info-panel .subtitle {
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 16px;
-        }
-        .info-step {
-            display: flex;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-            align-items: flex-start;
-        }
-        .info-step:last-child { border-bottom: none; }
-        .info-step .num {
-            width: 24px; height: 24px;
-            background: #f0f0f0;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 700; color: #888;
-            flex-shrink: 0;
-        }
-        .info-step.active .num {
-            background: #0f6cbd;
-            color: white;
-        }
-        .info-step.done .num {
-            background: #107c10;
-            color: white;
-        }
-        .info-step .label {
-            font-size: 13px;
-            color: #333;
-            line-height: 1.5;
-        }
-        .info-step .label strong {
-            display: block;
-            font-size: 13px;
-            color: #1b1b1b;
-        }
-        .info-step .label span {
-            font-size: 11px;
-            color: #888;
-        }
-
-        .approach-tag {
-            display: inline-block;
-            background: #e8f2ff;
-            color: #0f6cbd;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 3px 10px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-        }
+        .send-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
         /* Disclaimer */
         .disclaimer {
-            padding: 6px 16px 8px;
-            font-size: 10px;
-            color: #999;
+            padding: 5px 16px 6px;
+            font-size: 10px; color: #999;
             text-align: center;
             background: #f3f9ff;
+            flex-shrink: 0;
         }
+
+        /* Quick actions */
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0 16px 12px;
+        }
+        .quick-btn {
+            padding: 6px 14px;
+            background: white;
+            border: 1px solid #c9def5;
+            border-radius: 16px;
+            font-size: 12px;
+            font-family: inherit;
+            color: #0f6cbd;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-btn:hover { background: #e8f2ff; border-color: #0f6cbd; }
     </style>
 </head>
 <body>
 
     <!-- Background -->
     <div class="store-bg">
-        <div class="store-bg-text">
-            microsoft.com/store<br>
-            (product page background)
-        </div>
-    </div>
-
-    <!-- Info panel -->
-    <div class="info-panel" id="infoPanel">
-        <div class="approach-tag">Alternative Approach — Voice Toggle</div>
-        <h2>Voice Mode as Input Toggle</h2>
-        <div class="subtitle">Mic icon next to input — like Copilot, ChatGPT, Gemini</div>
-
-        <div class="info-step active" id="infoStep1">
-            <div class="num">1</div>
-            <div class="label">
-                <strong>Default chat — mic icon visible</strong>
-                <span>Customer sees mic + voice mode icons next to input</span>
-            </div>
-        </div>
-        <div class="info-step" id="infoStep2">
-            <div class="num">2</div>
-            <div class="label">
-                <strong>Customer taps voice mode icon</strong>
-                <span>Voice Mode activates — banner confirms it's on</span>
-            </div>
-        </div>
-        <div class="info-step" id="infoStep3">
-            <div class="num">3</div>
-            <div class="label">
-                <strong>Customer speaks their question</strong>
-                <span>STT transcribes → shows as chat bubble → AI responds in voice</span>
-            </div>
-        </div>
-        <div class="info-step" id="infoStep4">
-            <div class="num">4</div>
-            <div class="label">
-                <strong>AI responds in voice + text</strong>
-                <span>TTS reads response aloud, transcript shows in chat</span>
-            </div>
-        </div>
-        <div class="info-step" id="infoStep5">
-            <div class="num">5</div>
-            <div class="label">
-                <strong>Customer toggles off anytime</strong>
-                <span>Back to text chat — full transcript preserved</span>
+        <div class="store-bg-inner">
+            <h1>Microsoft 365</h1>
+            <p>Productivity apps and cloud services for businesses of all sizes. Find the right plan for your organization.</p>
+            <div class="store-hero">
+                <div class="store-card">
+                    <div class="label">For business</div>
+                    <div class="title">Business Basic</div>
+                    <div class="price">$6.00 user/month</div>
+                </div>
+                <div class="store-card">
+                    <div class="label">Most popular</div>
+                    <div class="title">Business Standard</div>
+                    <div class="price">$12.50 user/month</div>
+                </div>
+                <div class="store-card">
+                    <div class="label">Best security</div>
+                    <div class="title">Business Premium</div>
+                    <div class="price">$22.00 user/month</div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Chat Widget -->
-    <div class="chat-widget" id="chatWidget">
+    <div class="chat-widget">
 
-        <!-- Header -->
         <div class="chat-header">
             <div class="agent-avatar">💬</div>
             <div class="agent-info">
@@ -611,229 +466,380 @@
                 <div class="agent-status" id="agentStatus">AI Assistant · Online</div>
             </div>
             <div class="header-actions">
-                <button class="header-btn" title="Minimize">─</button>
-                <button class="header-btn" title="Close">✕</button>
+                <button class="hdr-btn" title="Minimize">─</button>
+                <button class="hdr-btn" title="Close">✕</button>
             </div>
         </div>
 
-        <!-- Voice active banner -->
-        <div class="voice-active-banner" id="voiceBanner">
-            <div class="vab-left">
-                <div class="vab-indicator"></div>
-                <span class="vab-text">Voice Mode active</span>
+        <div class="voice-banner" id="voiceBanner">
+            <div class="vb-left">
+                <div class="vb-dot"></div>
+                <span class="vb-text">Voice Mode active — speak or type</span>
             </div>
-            <button class="vab-end" onclick="goToStep(5)">End Voice Mode</button>
+            <button class="vb-end" onclick="toggleVoiceMode()">End</button>
         </div>
 
-        <!-- Messages -->
+        <div class="speaking-indicator" id="speakingBar">
+            <div class="speak-ring"></div>
+            <span>Ask Microsoft is speaking...</span>
+            <button class="speak-stop" onclick="stopSpeaking()">Stop</button>
+        </div>
+
         <div class="chat-messages" id="chatMessages">
-            <div class="msg bot">
-                Hi! I'm your Ask Microsoft assistant. I can help you with Microsoft 365 plans, pricing, and features. What can I help you with today?
-            </div>
+            <div class="msg bot">Hi! I'm your Ask Microsoft assistant. I can help you find the right Microsoft 365 plan for your business. What can I help you with?</div>
         </div>
 
-        <!-- Listening overlay -->
-        <div class="listening-overlay" id="listeningOverlay">
-            <div class="listening-wave">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-            <div class="listening-text">Listening...</div>
-            <div class="live-transcript" id="liveTranscript"></div>
-        </div>
-
-        <!-- Speaking overlay -->
-        <div class="speaking-overlay" id="speakingOverlay">
-            <div class="speaking-ring">
-                <span class="icon">🔊</span>
-            </div>
-            <div class="speaking-label">Ask Microsoft is speaking...</div>
-        </div>
-
-        <!-- Typing indicator -->
         <div class="typing-indicator" id="typingIndicator">
             <div class="typing-dot"></div>
             <div class="typing-dot"></div>
             <div class="typing-dot"></div>
         </div>
 
-        <!-- Disclaimer -->
-        <div class="disclaimer">AI-generated responses may contain errors. Verify important information.</div>
+        <div class="quick-actions" id="quickActions">
+            <button class="quick-btn" onclick="sendQuick('Compare plans')">Compare plans</button>
+            <button class="quick-btn" onclick="sendQuick('What is Copilot?')">What is Copilot?</button>
+            <button class="quick-btn" onclick="sendQuick('Security features')">Security features</button>
+            <button class="quick-btn" onclick="sendQuick('Free trial')">Free trial</button>
+        </div>
 
-        <!-- Input area -->
+        <div class="listening-bar" id="listeningBar">
+            <div class="wave-container">
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+            <div class="listening-label">Listening...</div>
+            <div class="live-transcript" id="liveTranscript"></div>
+            <div class="listening-controls">
+                <button class="listen-ctrl cancel" onclick="cancelListening()" title="Cancel">✕</button>
+            </div>
+        </div>
+
         <div class="chat-input-area" id="inputArea">
-            <textarea class="chat-input" id="messageInput" placeholder="Ask a question..." rows="1"></textarea>
+            <textarea class="chat-input" id="msgInput" placeholder="Ask a question..." rows="1"
+                onkeypress="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
             <div class="input-actions">
-                <button class="mic-btn" id="micBtn" title="Voice input" onclick="handleMicClick()">
+                <button class="mic-btn" id="micBtn" title="Speak" onclick="handleMicClick()">
                     <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-                    <div class="tooltip" id="micTooltip">Click to speak</div>
                 </button>
-                <button class="voice-mode-btn" id="voiceModeBtn" title="Voice Mode" onclick="handleVoiceModeClick()">
+                <button class="vm-btn" id="vmBtn" title="Toggle Voice Mode" onclick="toggleVoiceMode()">
                     <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                    <div class="tooltip" id="vmTooltip">Turn on Voice Mode</div>
                 </button>
-                <button class="send-btn" id="sendBtn" title="Send">
+                <button class="send-btn" title="Send" onclick="sendMessage()">
                     <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                 </button>
             </div>
         </div>
-    </div>
 
-    <!-- Step navigation -->
-    <div class="step-nav">
-        <button class="step-btn active" onclick="goToStep(1)">1 · Default</button>
-        <button class="step-btn" onclick="goToStep(2)">2 · Activate</button>
-        <button class="step-btn" onclick="goToStep(3)">3 · Speak</button>
-        <button class="step-btn" onclick="goToStep(4)">4 · AI Responds</button>
-        <button class="step-btn" onclick="goToStep(5)">5 · Toggle Off</button>
+        <div class="disclaimer">AI-generated · Verify important information</div>
     </div>
 
     <script>
-        let currentStep = 1;
+        // ===== STATE =====
+        let voiceModeOn = false;
+        let isListening = false;
+        let isSpeaking = false;
+        let recognition = null;
+        let synth = window.speechSynthesis;
 
-        // Simulated conversation data
-        const userQuestion = "What's included in Microsoft 365 Business Premium?";
-        const botResponse = "Microsoft 365 Business Premium includes everything in Business Standard, plus advanced security features like Microsoft Defender for Business, Azure Information Protection, and Intune device management. It's $22 per user per month with an annual subscription. Would you like me to compare it with Business Standard?";
+        // ===== KNOWLEDGE BASE (same as original prototype) =====
+        const kb = {
+            plans: "Microsoft 365 offers several plans for businesses:\n\n• Business Basic — $6/user/month\n  Web and mobile Office apps, Exchange email, 1TB OneDrive, Teams\n\n• Business Standard — $12.50/user/month\n  Desktop Office apps, all Basic features, webinars, customer booking\n\n• Business Premium — $22/user/month\n  Advanced cybersecurity, device management, all Standard features, Defender for Business\n\nAll plans include Teams, OneDrive, Exchange, SharePoint, and support up to 300 users.",
+            copilot: "Microsoft 365 Copilot is an AI-powered productivity assistant:\n\n• Available in Word, Excel, PowerPoint, Outlook, Teams\n• Drafts documents, analyzes data, creates presentations, summarizes meetings\n• $30/user/month as an add-on\n• Requires Business Standard, Premium, or Enterprise plan\n• Enterprise-grade security and privacy\n\nSave up to 16% when bundled with qualifying subscriptions.",
+            apps: "Microsoft 365 includes premium productivity applications:\n\n• Word, Excel, PowerPoint, Outlook\n• Teams — chat, video meetings, collaboration\n• OneDrive — 1TB cloud storage per user\n• SharePoint, OneNote, Access & Publisher (PC)\n\nWeb, desktop, and mobile versions available depending on your plan.",
+            security: "Microsoft 365 Business Premium provides enterprise-grade security:\n\n• Microsoft Defender for Business\n• Data Loss Prevention\n• Multi-factor authentication\n• Mobile device management\n• Azure Information Protection\n• Attack simulation training\n• Conditional access policies\n\nBusiness Basic and Standard include baseline security. Premium includes comprehensive protection.",
+            comparison: "Business Plans Comparison:\n\nBasic ($6/mo) — Best for email, cloud storage, web apps\n✓ Email hosting ✓ 1TB storage ✓ Web/mobile apps ✓ Teams\n✗ Desktop apps ✗ Advanced security\n\nStandard ($12.50/mo) — Best for full productivity\n✓ Everything in Basic ✓ Desktop apps ✓ Webinars\n✗ Advanced security\n\nPremium ($22/mo) — Best for security & compliance\n✓ Everything in Standard ✓ Advanced security ✓ Device management ✓ Threat protection",
+            trial: "Microsoft 365 Free Trial:\n\n• 30-day free trial for Business Standard and Business Premium\n• No credit card required\n• Full access to all features\n• Up to 25 users\n• Data preserved if you purchase\n\nStart at microsoft.com/microsoft-365/business",
+            migration: "Migrating to Microsoft 365:\n\n• FastTrack assistance for 150+ seats (no extra cost)\n• Migration tools for Google Workspace, on-premises\n• Typical timeline: 1–4 weeks\n• Email, contacts, calendars, and files included\n• No downtime for most scenarios",
+            features: "Key Microsoft 365 Business features:\n\n• 1TB OneDrive per user\n• Exchange email with 50GB mailbox\n• Teams meetings for up to 300 participants\n• Full-featured mobile apps (iOS & Android)\n• Custom domain email addresses\n• Automatic updates with latest features\n\nBusiness Premium adds security, device management, and compliance."
+        };
 
-        function goToStep(step) {
-            currentStep = step;
+        // ===== RESPONSE MATCHING =====
+        function getResponse(text) {
+            const msg = text.toLowerCase();
+            if (msg.includes('compare') || msg.includes('difference') || msg.includes('which plan')) return kb.comparison;
+            if (msg.includes('plan') || msg.includes('pricing') || msg.includes('cost') || msg.includes('price')) return kb.plans;
+            if (msg.includes('copilot') || (msg.includes('ai') && msg.includes('assist'))) return kb.copilot;
+            if (msg.includes('security') || msg.includes('protect') || msg.includes('defender') || msg.includes('safe')) return kb.security;
+            if (msg.includes('app') || msg.includes('word') || msg.includes('excel') || msg.includes('teams') || msg.includes('outlook')) return kb.apps;
+            if (msg.includes('trial') || msg.includes('free') || msg.includes('try')) return kb.trial;
+            if (msg.includes('migrat') || msg.includes('switch') || msg.includes('move from') || msg.includes('google')) return kb.migration;
+            if (msg.includes('feature') || msg.includes('include') || msg.includes('storage') || msg.includes('email')) return kb.features;
+            if (msg.includes('thank')) return "You're welcome! Is there anything else I can help you with?";
+            if (msg.includes('hello') || msg.includes('hi ') || msg.includes('hey')) return "Hello! I can help with Microsoft 365 plans, pricing, features, security, and more. What would you like to know?";
+            return "I can help with Microsoft 365 plans, pricing, features, security, Copilot, and migrations. What would you like to know about?";
+        }
 
-            // Update step buttons
-            document.querySelectorAll('.step-btn').forEach((btn, i) => {
-                btn.classList.toggle('active', i + 1 === step);
-            });
+        // ===== UI HELPERS =====
+        function scrollToBottom() {
+            const el = document.getElementById('chatMessages');
+            setTimeout(() => { el.scrollTop = el.scrollHeight; }, 50);
+        }
 
-            // Update info steps
-            for (let i = 1; i <= 5; i++) {
-                const el = document.getElementById('infoStep' + i);
-                el.className = 'info-step';
-                if (i < step) el.classList.add('done');
-                else if (i === step) el.classList.add('active');
+        function addMessage(text, type, badge) {
+            const el = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'msg ' + type;
+            div.textContent = text;
+            if (badge) {
+                const b = document.createElement('div');
+                b.className = 'voice-badge';
+                b.textContent = badge;
+                div.appendChild(b);
             }
+            el.appendChild(div);
+            scrollToBottom();
+            return div;
+        }
 
-            // Reset all overlays
-            document.getElementById('voiceBanner').classList.remove('show');
-            document.getElementById('listeningOverlay').classList.remove('show');
-            document.getElementById('speakingOverlay').classList.remove('show');
-            document.getElementById('typingIndicator').classList.remove('show');
-            document.getElementById('micBtn').classList.remove('active');
-            document.getElementById('voiceModeBtn').classList.remove('active');
-            document.getElementById('agentStatus').textContent = 'AI Assistant · Online';
+        function addSystemMsg(text) {
+            const el = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'msg system';
+            div.textContent = text;
+            el.appendChild(div);
+            scrollToBottom();
+        }
 
-            switch(step) {
-                case 1:
-                    resetChat();
-                    break;
-                case 2:
-                    resetChat();
-                    activateVoiceMode();
-                    break;
-                case 3:
-                    resetChat();
-                    activateVoiceMode();
-                    showListening();
-                    break;
-                case 4:
-                    resetChat();
-                    activateVoiceMode();
-                    showAIResponse();
-                    break;
-                case 5:
-                    resetChat();
-                    showDeactivated();
-                    break;
+        function showTyping() { document.getElementById('typingIndicator').classList.add('show'); scrollToBottom(); }
+        function hideTyping() { document.getElementById('typingIndicator').classList.remove('show'); }
+
+        // ===== SEND MESSAGE (typed) =====
+        function sendMessage() {
+            const input = document.getElementById('msgInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            input.value = '';
+            document.getElementById('quickActions').style.display = 'none';
+
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                const response = getResponse(text);
+                const badge = voiceModeOn ? '🔊 Spoken aloud' : null;
+                addMessage(response, 'bot', badge);
+                if (voiceModeOn) speakText(response);
+            }, 800 + Math.random() * 800);
+        }
+
+        function sendQuick(text) {
+            document.getElementById('msgInput').value = text;
+            sendMessage();
+        }
+
+        // ===== VOICE MODE TOGGLE =====
+        function toggleVoiceMode() {
+            voiceModeOn = !voiceModeOn;
+            const vmBtn = document.getElementById('vmBtn');
+            const banner = document.getElementById('voiceBanner');
+            const status = document.getElementById('agentStatus');
+            const input = document.getElementById('msgInput');
+
+            if (voiceModeOn) {
+                vmBtn.classList.add('active');
+                banner.classList.add('show');
+                status.textContent = 'AI Assistant · Voice Mode';
+                status.classList.add('voice-on');
+                input.placeholder = 'Voice Mode on — speak or type...';
+                addSystemMsg('🔊 Voice Mode activated — responses will be spoken aloud. Tap the mic to speak.');
+            } else {
+                vmBtn.classList.remove('active');
+                banner.classList.remove('show');
+                status.textContent = 'AI Assistant · Online';
+                status.classList.remove('voice-on');
+                input.placeholder = 'Ask a question...';
+                stopSpeaking();
+                if (isListening) cancelListening();
+                addSystemMsg('Voice Mode turned off');
             }
         }
 
-        function resetChat() {
-            const msgs = document.getElementById('chatMessages');
-            msgs.innerHTML = `
-                <div class="msg bot">
-                    Hi! I'm your Ask Microsoft assistant. I can help you with Microsoft 365 plans, pricing, and features. What can I help you with today?
-                </div>
-            `;
-            document.getElementById('messageInput').value = '';
-            document.getElementById('messageInput').placeholder = 'Ask a question...';
-            document.getElementById('liveTranscript').textContent = '';
-        }
+        // ===== SPEECH RECOGNITION (STT) =====
+        function initRecognition() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) {
+                alert('Speech recognition is not supported in this browser. Please use Chrome or Edge.');
+                return null;
+            }
+            const rec = new SR();
+            rec.continuous = false;
+            rec.interimResults = true;
+            rec.lang = 'en-US';
 
-        function activateVoiceMode() {
-            document.getElementById('voiceBanner').classList.add('show');
-            document.getElementById('voiceModeBtn').classList.add('active');
-            document.getElementById('agentStatus').textContent = 'AI Assistant · Voice Mode';
-            document.getElementById('messageInput').placeholder = 'Voice Mode on — speak or type...';
-        }
+            rec.onresult = (event) => {
+                let interim = '';
+                let final = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        final += event.results[i][0].transcript;
+                    } else {
+                        interim += event.results[i][0].transcript;
+                    }
+                }
+                document.getElementById('liveTranscript').textContent = final || interim;
+            };
 
-        function showListening() {
-            document.getElementById('listeningOverlay').classList.add('show');
-            document.getElementById('micBtn').classList.add('active');
-            document.getElementById('liveTranscript').textContent = userQuestion;
-        }
+            rec.onend = () => {
+                if (!isListening) return;
+                const transcript = document.getElementById('liveTranscript').textContent.trim();
+                stopListeningUI();
+                if (transcript) {
+                    processVoiceInput(transcript);
+                }
+            };
 
-        function showAIResponse() {
-            const msgs = document.getElementById('chatMessages');
-            msgs.innerHTML = `
-                <div class="msg bot">
-                    Hi! I'm your Ask Microsoft assistant. I can help you with Microsoft 365 plans, pricing, and features. What can I help you with today?
-                </div>
-                <div class="msg user">
-                    ${userQuestion}
-                    <div class="voice-badge">🎤 Voice input</div>
-                </div>
-                <div class="msg bot">
-                    ${botResponse}
-                    <div class="voice-badge">🔊 Spoken aloud</div>
-                </div>
-            `;
-            document.getElementById('speakingOverlay').classList.add('show');
-            msgs.scrollTop = msgs.scrollHeight;
-        }
+            rec.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                stopListeningUI();
+                if (event.error === 'no-speech') {
+                    addSystemMsg('No speech detected — tap the mic to try again');
+                } else if (event.error === 'not-allowed') {
+                    addSystemMsg('Microphone access denied — please allow mic access and try again');
+                }
+            };
 
-        function showDeactivated() {
-            const msgs = document.getElementById('chatMessages');
-            msgs.innerHTML = `
-                <div class="msg bot">
-                    Hi! I'm your Ask Microsoft assistant. I can help you with Microsoft 365 plans, pricing, and features. What can I help you with today?
-                </div>
-                <div class="msg user">
-                    ${userQuestion}
-                    <div class="voice-badge">🎤 Voice input</div>
-                </div>
-                <div class="msg bot">
-                    ${botResponse}
-                    <div class="voice-badge">🔊 Spoken aloud</div>
-                </div>
-            `;
-            document.getElementById('messageInput').placeholder = 'Ask a question...';
-            document.getElementById('agentStatus').textContent = 'AI Assistant · Online';
-            msgs.scrollTop = msgs.scrollHeight;
+            return rec;
         }
 
         function handleMicClick() {
-            if (currentStep === 2) goToStep(3);
+            if (isListening) {
+                isListening = false;
+                if (recognition) recognition.stop();
+                return;
+            }
+
+            // If voice mode isn't on, turn it on automatically
+            if (!voiceModeOn) {
+                toggleVoiceMode();
+            }
+
+            startListening();
         }
 
-        function handleVoiceModeClick() {
-            if (currentStep === 1) goToStep(2);
-            else if (currentStep >= 2 && currentStep <= 4) goToStep(5);
+        function startListening() {
+            // Stop any current speech first
+            stopSpeaking();
+
+            recognition = initRecognition();
+            if (!recognition) return;
+
+            isListening = true;
+            document.getElementById('liveTranscript').textContent = '';
+            document.getElementById('listeningBar').classList.add('show');
+            document.getElementById('inputArea').style.display = 'none';
+            document.getElementById('micBtn').classList.add('active');
+
+            try {
+                recognition.start();
+            } catch (e) {
+                console.error('Recognition start error:', e);
+                stopListeningUI();
+            }
         }
 
-        // Tooltip behavior
-        document.querySelectorAll('.mic-btn, .voice-mode-btn').forEach(btn => {
-            btn.addEventListener('mouseenter', () => {
-                const tip = btn.querySelector('.tooltip');
-                if (tip) tip.style.display = 'block';
+        function cancelListening() {
+            isListening = false;
+            if (recognition) {
+                try { recognition.abort(); } catch(e) {}
+            }
+            stopListeningUI();
+        }
+
+        function stopListeningUI() {
+            isListening = false;
+            document.getElementById('listeningBar').classList.remove('show');
+            document.getElementById('inputArea').style.display = 'flex';
+            document.getElementById('micBtn').classList.remove('active');
+        }
+
+        function processVoiceInput(text) {
+            addMessage(text, 'user', '🎤 Voice input');
+            document.getElementById('quickActions').style.display = 'none';
+
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                const response = getResponse(text);
+                addMessage(response, 'bot', '🔊 Spoken aloud');
+                speakText(response);
+            }, 800 + Math.random() * 800);
+        }
+
+        // ===== TEXT-TO-SPEECH (TTS) =====
+        function speakText(text) {
+            if (!synth || !voiceModeOn) return;
+            stopSpeaking();
+
+            // Clean text for natural speech
+            const cleaned = text
+                .replace(/[•✓✗📄🔍🔊]/g, '')
+                .replace(/\n\n/g, '. ')
+                .replace(/\n/g, '. ')
+                .replace(/\s+/g, ' ')
+                .replace(/\.\s*\./g, '.')
+                .trim();
+
+            const utterance = new SpeechSynthesisUtterance(cleaned);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+
+            // Pick the best AI voice
+            const voices = synth.getVoices();
+            const preferred =
+                voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
+                voices.find(v => v.name.includes('Jenny')) ||
+                voices.find(v => v.name.includes('Zira')) ||
+                voices.find(v => v.name.includes('Google US English Female')) ||
+                voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
+                voices.find(v => v.lang === 'en-US' && v.localService) ||
+                voices.find(v => v.lang === 'en-US') ||
+                voices[0];
+
+            if (preferred) utterance.voice = preferred;
+
+            utterance.onstart = () => {
+                isSpeaking = true;
+                document.getElementById('speakingBar').classList.add('show');
+            };
+
+            utterance.onend = () => {
+                isSpeaking = false;
+                document.getElementById('speakingBar').classList.remove('show');
+                // Auto-listen for next question after AI finishes speaking
+                if (voiceModeOn) {
+                    setTimeout(() => {
+                        if (voiceModeOn && !isListening && !isSpeaking) {
+                            startListening();
+                        }
+                    }, 800);
+                }
+            };
+
+            utterance.onerror = (e) => {
+                console.error('TTS error:', e);
+                isSpeaking = false;
+                document.getElementById('speakingBar').classList.remove('show');
+            };
+
+            synth.speak(utterance);
+        }
+
+        function stopSpeaking() {
+            if (synth && synth.speaking) synth.cancel();
+            isSpeaking = false;
+            document.getElementById('speakingBar').classList.remove('show');
+        }
+
+        // ===== INIT =====
+        // Pre-load voices (Chrome requires this)
+        if (synth.getVoices().length === 0) {
+            synth.addEventListener('voiceschanged', () => {
+                console.log('Voices loaded:', synth.getVoices().length);
             });
-            btn.addEventListener('mouseleave', () => {
-                const tip = btn.querySelector('.tooltip');
-                if (tip) tip.style.display = 'none';
-            });
-        });
+        }
     </script>
 </body>
 </html>
