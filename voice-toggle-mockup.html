@@ -543,6 +543,7 @@
         let isSpeaking = false;
         let recognition = null;
         let synth = window.speechSynthesis;
+        let speechGen = 0; // generation counter for chunked speech cancellation
 
         // ===== KNOWLEDGE BASE — sourced from microsoft.com/microsoft-365 =====
         const kb = {
@@ -565,6 +566,34 @@
             smallbiz: "For a small business, here's what I'd recommend:\n\n• Microsoft 365 Business Basic ($6/user/month) — Best if your team mostly needs email, cloud storage, and Teams for meetings. Includes web and mobile Office apps, Exchange email, 1 TB OneDrive, and Microsoft Teams.\n\n• Microsoft 365 Business Standard ($12.50/user/month) — Best for full productivity. Adds desktop apps (Word, Excel, PowerPoint, Outlook) you can install on up to 5 devices, plus Bookings for appointment scheduling and webinar hosting.\n\n• Microsoft 365 Business Premium ($22/user/month) — Best if security is a priority. Adds advanced threat protection, device management with Intune, and Defender for Business.\n\nAll plans support up to 300 users and include Teams, OneDrive, and SharePoint. Would you like more details on any of these?",
             recommend: "To find the right Microsoft 365 plan, it depends on what you need most:\n\n• Just need email and cloud storage? → Business Basic ($6/user/month)\n• Need desktop Office apps too? → Business Standard ($12.50/user/month)\n• Need advanced security and device management? → Business Premium ($22/user/month)\n• Just need Office apps, no email hosting? → Apps for Business ($8.25/user/month)\n\nFor personal or family use:\n• Just you? → Personal ($9.99/month)\n• Family of up to 6? → Family ($12.99/month)\n\nAll plans include a free 1-month trial. What matters most to you — I can help narrow it down!"
         };
+
+        // ===== CONVERSATIONAL VOICE SUMMARIES =====
+        // Short, natural spoken versions — chat still shows full KB detail
+        const voiceResponses = {
+            home: "Microsoft 365 for home comes in two plans. Personal is about ten dollars a month for one person, and Family is about thirteen dollars a month and covers up to six people. Both include all the premium apps like Word, Excel, and PowerPoint, plus one terabyte of OneDrive storage and Copilot AI. I've put the full breakdown in the chat so you can see the details.",
+            personal: "Microsoft 365 Personal is about ten dollars a month for one person. You get all the premium apps, Word, Excel, PowerPoint, Outlook, plus one terabyte of cloud storage, Microsoft Defender for security, and Copilot AI built right in. It works across all your devices.",
+            family: "Microsoft 365 Family is about thirteen dollars a month and you can share it with up to six people. Everyone gets their own terabyte of storage, so six terabytes total. It also includes Family Safety for screen time and content filtering, which is great if you have kids.",
+            business: "For business, there are four tiers. Business Basic starts at six dollars per user per month — that gives you web and mobile apps, email, and Teams. Business Standard is twelve fifty and adds the full desktop apps. And Business Premium at twenty-two dollars brings in advanced security and device management. I've listed all the details in the chat for you.",
+            copilot: "Copilot is Microsoft's AI assistant, and it's built right into all the Microsoft 365 apps. It can draft documents in Word, analyze data in Excel, create presentations, summarize your emails — things like that. For home users it's included in your subscription. For business, it's an add-on at thirty dollars per user per month.",
+            apps: "Microsoft 365 includes premium versions of Word, Excel, PowerPoint, Outlook, OneNote, and Teams. You also get OneDrive for cloud storage, Clipchamp for video editing, and Microsoft Designer for graphics. Everything works across Windows, Mac, iPhone, and Android, and you always get the latest features.",
+            security: "For security, all plans include the basics like encryption and multi-factor authentication. If you need more advanced protection, Business Premium at twenty-two dollars per user per month adds Microsoft Defender for Business, Intune for device management, and data loss prevention. For home users, Defender comes included.",
+            comparison: "Quick overview — for home, Personal is about ten dollars a month for one person, Family is thirteen for up to six. For business, Basic is six dollars per user, Standard is twelve fifty, and Premium is twenty-two with advanced security. Copilot is included for home and thirty dollars extra per user for business. The full comparison is in the chat.",
+            trial: "You can try any Microsoft 365 plan free for one month. Full access to everything, no commitment. Just cancel before the month is up if it's not for you, and your data carries over if you decide to subscribe.",
+            migration: "Switching to Microsoft 365 is pretty straightforward. There are built-in migration tools for Google Workspace and other providers. For larger organizations, Microsoft offers FastTrack assistance at no extra cost. Most migrations take about one to four weeks with little to no downtime.",
+            features: "The main features are the premium Office apps — Word, Excel, PowerPoint, Outlook — plus one terabyte of OneDrive storage, Microsoft Teams for meetings and chat, and Copilot AI built into everything. You can collaborate in real time, and everything syncs across all your devices.",
+            onedrive: "OneDrive gives you one terabyte of cloud storage per user. It syncs across all your devices, has a Personal Vault for sensitive files, and includes ransomware detection with thirty days of file recovery. It's included in every Microsoft 365 plan.",
+            teams: "Teams is included in every Microsoft 365 plan. You get chat, video meetings with up to three hundred people, file sharing, and channels for organizing your work. Business Standard and above also include webinar hosting. Works on desktop, web, and mobile.",
+            smallbiz: "For a small business, it really depends on what you need most. If it's mainly email and Teams, Business Basic at six dollars per user is a great starting point. If your team needs the full desktop apps like Word and Excel, go with Standard at twelve fifty. And if security is a big priority, Premium at twenty-two dollars adds endpoint protection and device management. All three support up to three hundred users.",
+            recommend: "It depends on what matters most to you. Need just email and cloud storage? Business Basic at six dollars. Want the full desktop apps too? Standard at twelve fifty. Security a priority? Premium at twenty-two. For personal use, it's either Personal at about ten dollars, or Family at thirteen if you want to share. Want me to dig into any of those?",
+        };
+
+        // Map a full KB response to its conversational voice version
+        function getVoiceVersion(response) {
+            for (const [key, value] of Object.entries(kb)) {
+                if (response === value && voiceResponses[key]) return voiceResponses[key];
+            }
+            return null;
+        }
 
         // ===== RESPONSE MATCHING =====
         function getResponse(text) {
@@ -690,7 +719,10 @@
                 const response = getResponse(text);
                 const badge = voiceModeOn ? '🔊 Spoken aloud' : null;
                 addMessage(response, 'bot', badge);
-                if (voiceModeOn) speakText(response);
+                if (voiceModeOn) {
+                    const voiceVersion = getVoiceVersion(response) || conversationalize(response);
+                    speakText(voiceVersion);
+                }
             }, 800 + Math.random() * 800);
         }
 
@@ -948,55 +980,76 @@
                     hideTyping();
                     const response = getResponse(text);
                     addMessage(response, 'bot', '🔊 Spoken aloud');
-                    speakText(response);
+                    const voiceVersion = getVoiceVersion(response) || conversationalize(response);
+                    speakText(voiceVersion);
                 }, 300 + Math.random() * 400);
             });
         }
 
         // ===== TEXT-TO-SPEECH (TTS) =====
+        // Sentence-chunked speech — each sentence spoken individually with natural pauses
         function speakText(text) {
             if (!synth || !voiceModeOn) return;
             stopSpeaking();
 
-            // Convert structured text to natural conversational speech
-            const cleaned = conversationalize(text);
+            const gen = ++speechGen;
+            // Split on sentence boundaries (period/question/exclamation followed by space)
+            const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+            let i = 0;
 
-            const utterance = new SpeechSynthesisUtterance(cleaned);
-            utterance.rate = 0.92;  // Natural conversational pace
-            utterance.pitch = 1.0;
-            utterance.volume = 1.0;
-
-            const preferred = getPreferredVoice();
-            if (preferred) utterance.voice = preferred;
-
-            utterance.onstart = () => {
-                isSpeaking = true;
-                document.getElementById('speakingBar').classList.add('show');
-            };
-
-            utterance.onend = () => {
-                isSpeaking = false;
-                document.getElementById('speakingBar').classList.remove('show');
-                // Auto-listen for next question after AI finishes speaking
-                if (voiceModeOn) {
-                    setTimeout(() => {
-                        if (voiceModeOn && !isListening && !isSpeaking) {
-                            startListening();
-                        }
-                    }, 1000);
+            const speakNext = () => {
+                if (gen !== speechGen) return; // cancelled
+                if (i >= sentences.length) {
+                    // All sentences done
+                    isSpeaking = false;
+                    document.getElementById('speakingBar').classList.remove('show');
+                    // Auto-listen after a natural pause
+                    if (voiceModeOn) {
+                        setTimeout(() => {
+                            if (gen === speechGen && voiceModeOn && !isListening && !isSpeaking) {
+                                startListening();
+                            }
+                        }, 1200);
+                    }
+                    return;
                 }
+
+                const sentence = sentences[i].trim();
+                i++;
+                if (!sentence) { speakNext(); return; }
+
+                const utt = new SpeechSynthesisUtterance(sentence);
+                utt.rate = 0.90 + Math.random() * 0.06; // Subtle variation: 0.90-0.96
+                utt.pitch = 1.0;
+                utt.volume = 1.0;
+                const voice = getPreferredVoice();
+                if (voice) utt.voice = voice;
+
+                utt.onstart = () => {
+                    isSpeaking = true;
+                    document.getElementById('speakingBar').classList.add('show');
+                };
+
+                utt.onend = () => {
+                    if (gen !== speechGen) return;
+                    // Natural pause between sentences (250-500ms)
+                    setTimeout(speakNext, 250 + Math.random() * 250);
+                };
+
+                utt.onerror = (e) => {
+                    console.error('TTS chunk error:', e);
+                    // Try next sentence on error
+                    if (gen === speechGen) setTimeout(speakNext, 100);
+                };
+
+                synth.speak(utt);
             };
 
-            utterance.onerror = (e) => {
-                console.error('TTS error:', e);
-                isSpeaking = false;
-                document.getElementById('speakingBar').classList.remove('show');
-            };
-
-            synth.speak(utterance);
+            speakNext();
         }
 
         function stopSpeaking() {
+            speechGen++; // Invalidate any ongoing chunked speech
             if (synth && synth.speaking) synth.cancel();
             isSpeaking = false;
             document.getElementById('speakingBar').classList.remove('show');
