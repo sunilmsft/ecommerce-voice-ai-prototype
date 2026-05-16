@@ -481,7 +481,7 @@
 
         <div class="speaking-indicator" id="speakingBar">
             <div class="speak-ring"></div>
-            <span>Ask Microsoft is speaking...</span>
+            <span id="speakingLabel">Ask Microsoft is speaking...</span>
             <button class="speak-stop" onclick="stopSpeaking()">Stop</button>
         </div>
 
@@ -699,6 +699,107 @@
             sendMessage();
         }
 
+        // ===== CONVERSATIONAL VOICE HELPERS =====
+        const thinkingPhrases = [
+            "Sure, let me look that up for you.",
+            "Great question, let me check on that.",
+            "Good question. One moment.",
+            "Let me pull up the details on that.",
+            "Absolutely, let me find the right info for you.",
+            "Sure thing, let me check.",
+        ];
+
+        const signOffPhrases = [
+            "Thanks for chatting! I'm here anytime you want to talk.",
+            "Happy to help! Just tap the mic if you want to talk again.",
+            "Glad I could help. Feel free to reach out anytime!",
+        ];
+
+        function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        function getConversationContext() {
+            const msgs = document.querySelectorAll('#chatMessages .msg.user');
+            if (msgs.length === 0) return null;
+            const allText = Array.from(msgs).map(m => m.textContent.toLowerCase()).join(' ');
+            if (allText.includes('business') || allText.includes('company') || allText.includes('team') || allText.includes('organization')) return 'business';
+            if (allText.includes('family') || allText.includes('home') || allText.includes('personal')) return 'home';
+            if (allText.includes('plan') || allText.includes('pricing') || allText.includes('cost')) return 'pricing';
+            if (allText.includes('copilot') || allText.includes('ai')) return 'copilot';
+            if (allText.includes('security') || allText.includes('protect')) return 'security';
+            return null;
+        }
+
+        function generateGreeting() {
+            const ctx = getConversationContext();
+            const greetings = {
+                business: "Hi, I'm your Ask Microsoft voice assistant. I see you've been exploring Microsoft 365 for your business, anything I can help you figure out?",
+                home: "Hi, I'm your Ask Microsoft voice assistant. Looks like you've been checking out Microsoft 365 for home, want me to help you find the right plan?",
+                pricing: "Hi, I'm your Ask Microsoft voice assistant. I see you've been looking at plans and pricing, I can walk you through the options if you'd like.",
+                copilot: "Hi, I'm your Ask Microsoft voice assistant. I see you're interested in Copilot. Want to know more about what it can do?",
+                security: "Hi, I'm your Ask Microsoft voice assistant. Looks like security is on your mind, I can help you understand what's included across the different plans.",
+            };
+            return greetings[ctx] || "Hi, I'm your Ask Microsoft voice assistant. How can I help you today?";
+        }
+
+        function conversationalize(text) {
+            // Short responses — just clean up
+            if (text.length < 200) {
+                return text.replace(/[•✓✗📄🔍🔊🎤💡]/g, '')
+                    .replace(/\$([\d.]+)/g, '$1 dollars')
+                    .replace(/\n/g, ' ')
+                    .replace(/ — /g, ', ')
+                    .replace(/\s+/g, ' ').trim();
+            }
+            let lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            let spoken = [];
+            for (let line of lines) {
+                line = line.replace(/^[•\-\*]\s*/, '');
+                line = line.replace(/[•✓✗📄🔍🔊🎤💡⭐]/g, '');
+                line = line.replace(/\$([\d.]+)\/user\/month/g, '$1 dollars per user per month');
+                line = line.replace(/\$([\d.]+)\/month/g, '$1 dollars a month');
+                line = line.replace(/\$([\d.]+)\/year/g, '$1 dollars a year');
+                line = line.replace(/\$([\d.]+)/g, '$1 dollars');
+                line = line.replace(/ — /g, ', ');
+                if (line.trim()) spoken.push(line.trim());
+            }
+            let result = spoken.join('. ');
+            // Truncate very long responses for voice
+            if (result.length > 700) {
+                let cut = result.lastIndexOf('.', 600);
+                if (cut < 200) cut = 600;
+                result = result.substring(0, cut + 1) + " I've put the full details in the chat for you to look over.";
+            }
+            return result.replace(/\.\s*\./g, '.').replace(/,\s*,/g, ',').replace(/\s+/g, ' ').trim();
+        }
+
+        function getPreferredVoice() {
+            const voices = synth.getVoices();
+            return voices.find(v => v.name.includes('Jenny') && v.name.includes('Natural')) ||
+                voices.find(v => v.name.includes('Ana') && v.name.includes('Natural')) ||
+                voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
+                voices.find(v => v.name.includes('Jenny')) ||
+                voices.find(v => v.name.includes('Zira')) ||
+                voices.find(v => v.name.includes('Google US English Female')) ||
+                voices.find(v => v.lang === 'en-US' && v.name.includes('Natural')) ||
+                voices.find(v => v.lang === 'en-US' && v.name.includes('Online')) ||
+                voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
+                voices.find(v => v.lang === 'en-US') ||
+                voices[0];
+        }
+
+        // Speak a brief phrase (thinking, sign-off) without full speaking indicator
+        function speakBrief(text, callback) {
+            if (!synth) { if (callback) callback(); return; }
+            const utt = new SpeechSynthesisUtterance(text);
+            utt.rate = 0.92;
+            utt.pitch = 1.0;
+            const voice = getPreferredVoice();
+            if (voice) utt.voice = voice;
+            utt.onend = () => setTimeout(callback || (() => {}), 250);
+            utt.onerror = () => { if (callback) callback(); };
+            synth.speak(utt);
+        }
+
         // ===== VOICE MODE TOGGLE =====
         function toggleVoiceMode() {
             voiceModeOn = !voiceModeOn;
@@ -713,15 +814,25 @@
                 status.textContent = 'AI Assistant · Voice Mode';
                 status.classList.add('voice-on');
                 input.placeholder = 'Voice Mode on — speak or type...';
-                addSystemMsg('🔊 Voice Mode activated — responses will be spoken aloud. Tap the mic to speak.');
+                addSystemMsg('🔊 Voice Mode activated');
+
+                // Speak a context-aware greeting
+                const greeting = generateGreeting();
+                addMessage(greeting, 'bot', '🔊 Spoken aloud');
+                setTimeout(() => speakText(greeting), 400);
             } else {
+                // Speak a polite sign-off before turning off
+                stopSpeaking();
+                if (isListening) cancelListening();
+                const signOff = pickRandom(signOffPhrases);
+                addMessage(signOff, 'bot');
+                speakBrief(signOff);
+
                 vmBtn.classList.remove('active');
                 banner.classList.remove('show');
                 status.textContent = 'AI Assistant · Online';
                 status.classList.remove('voice-on');
                 input.placeholder = 'Ask a question...';
-                stopSpeaking();
-                if (isListening) cancelListening();
                 addSystemMsg('Voice Mode turned off');
             }
         }
@@ -828,13 +939,18 @@
             addMessage(text, 'user', '🎤 Voice input');
             document.getElementById('quickActions').style.display = 'none';
 
+            // Speak a natural thinking phrase while "looking up" the answer
+            const thinking = pickRandom(thinkingPhrases);
             showTyping();
-            setTimeout(() => {
-                hideTyping();
-                const response = getResponse(text);
-                addMessage(response, 'bot', '🔊 Spoken aloud');
-                speakText(response);
-            }, 800 + Math.random() * 800);
+            speakBrief(thinking, () => {
+                // Brief pause after thinking phrase, then deliver the response
+                setTimeout(() => {
+                    hideTyping();
+                    const response = getResponse(text);
+                    addMessage(response, 'bot', '🔊 Spoken aloud');
+                    speakText(response);
+                }, 300 + Math.random() * 400);
+            });
         }
 
         // ===== TEXT-TO-SPEECH (TTS) =====
@@ -842,38 +958,15 @@
             if (!synth || !voiceModeOn) return;
             stopSpeaking();
 
-            // Clean text for natural conversational speech
-            const cleaned = text
-                .replace(/[•✓✗📄🔍🔊🎤]/g, '')
-                .replace(/\n\n/g, '. ')
-                .replace(/\n/g, ', ')
-                .replace(/\s+/g, ' ')
-                .replace(/\.\s*\./g, '.')
-                .replace(/,\s*,/g, ',')
-                .replace(/ — /g, ', ')
-                .replace(/\$/g, ' dollars ')
-                .trim();
+            // Convert structured text to natural conversational speech
+            const cleaned = conversationalize(text);
 
             const utterance = new SpeechSynthesisUtterance(cleaned);
-            utterance.rate = 0.95;  // Slightly slower for natural conversational pace
+            utterance.rate = 0.92;  // Natural conversational pace
             utterance.pitch = 1.0;
             utterance.volume = 1.0;
 
-            // Pick the most natural voice — prefer "Natural" neural voices in Edge
-            const voices = synth.getVoices();
-            const preferred =
-                voices.find(v => v.name.includes('Jenny') && v.name.includes('Natural')) ||
-                voices.find(v => v.name.includes('Ana') && v.name.includes('Natural')) ||
-                voices.find(v => v.name.includes('Jenny') && v.name.includes('Online')) ||
-                voices.find(v => v.name.includes('Jenny')) ||
-                voices.find(v => v.name.includes('Zira')) ||
-                voices.find(v => v.name.includes('Google US English Female')) ||
-                voices.find(v => v.lang === 'en-US' && v.name.includes('Natural')) ||
-                voices.find(v => v.lang === 'en-US' && v.name.includes('Online')) ||
-                voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
-                voices.find(v => v.lang === 'en-US') ||
-                voices[0];
-
+            const preferred = getPreferredVoice();
             if (preferred) utterance.voice = preferred;
 
             utterance.onstart = () => {
@@ -890,7 +983,7 @@
                         if (voiceModeOn && !isListening && !isSpeaking) {
                             startListening();
                         }
-                    }, 800);
+                    }, 1000);
                 }
             };
 
