@@ -733,12 +733,10 @@
 
         // ===== CONVERSATIONAL VOICE HELPERS =====
         const thinkingPhrases = [
-            "Sure, let me look that up for you.",
-            "Great question, let me check on that.",
-            "Good question. One moment.",
-            "Let me pull up the details on that.",
-            "Absolutely, let me find the right info for you.",
-            "Sure thing, let me check.",
+            "Let me check.",
+            "One moment.",
+            "Let me see.",
+            "Sure, let me look.",
         ];
 
         const signOffPhrases = [
@@ -848,10 +846,14 @@
                 input.placeholder = 'Voice Mode on — speak or type...';
                 addSystemMsg('🔊 Voice Mode activated');
 
-                // Speak a context-aware greeting
+                // Speak a context-aware greeting, then auto-start listening
                 const greeting = generateGreeting();
                 addMessage(greeting, 'bot', '🔊 Spoken aloud');
                 setTimeout(() => speakText(greeting), 400);
+                // Backup: if auto-listen didn't start after greeting, force it
+                setTimeout(() => {
+                    if (voiceModeOn && !isListening && !isSpeaking) startListening();
+                }, 6000);
             } else {
                 // Speak a polite sign-off before turning off
                 stopSpeaking();
@@ -900,13 +902,23 @@
                 stopListeningUI();
                 if (transcript) {
                     processVoiceInput(transcript);
+                } else if (voiceModeOn) {
+                    // No speech detected but voice mode is on — keep listening
+                    setTimeout(() => {
+                        if (voiceModeOn && !isSpeaking && !isListening) startListening();
+                    }, 500);
                 }
             };
 
             rec.onerror = (event) => {
                 console.error('Speech recognition error:', event.error);
                 stopListeningUI();
-                if (event.error === 'no-speech') {
+                if (event.error === 'no-speech' && voiceModeOn) {
+                    // Auto-restart listening — voice mode stays alive
+                    setTimeout(() => {
+                        if (voiceModeOn && !isSpeaking && !isListening) startListening();
+                    }, 500);
+                } else if (event.error === 'no-speech') {
                     addSystemMsg('No speech detected — tap the mic to try again');
                 } else if (event.error === 'not-allowed') {
                     addSystemMsg('Microphone access denied — please allow mic access and try again');
@@ -923,9 +935,10 @@
                 return;
             }
 
-            // If voice mode isn't on, turn it on automatically
+            // If voice mode isn't on, turn it on — greeting will auto-start listening
             if (!voiceModeOn) {
                 toggleVoiceMode();
+                return; // greeting → auto-listen handles it
             }
 
             startListening();
