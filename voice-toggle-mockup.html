@@ -560,41 +560,84 @@
             migration: "Switching to Microsoft 365 is straightforward:\n\n• Migration tools for Google Workspace, other email providers, and on-premises Exchange\n• FastTrack deployment assistance at no extra cost for 150+ seats\n• Typical timeline: 1 to 4 weeks depending on organization size\n• Email, contacts, calendars, and files can all be migrated\n• Minimal or zero downtime for most scenarios\n• Step-by-step setup wizard in the Microsoft 365 admin center\n\nFor home users, you can import email and files from any existing account.",
             features: "Key features included in Microsoft 365:\n\n• Premium Office apps — Word, Excel, PowerPoint, Outlook, OneNote\n• 1 TB OneDrive cloud storage per user\n• Microsoft Teams — meetings up to 300 participants, chat, channels\n• Real-time co-authoring — collaborate on documents simultaneously\n• Copilot AI — drafting, summarizing, analyzing across all apps\n• Cross-platform — Windows, Mac, iOS, Android, and web\n• Always up to date — automatic feature and security updates\n• Exchange email with 50 GB mailbox (Business plans)\n• SharePoint intranets and team sites (Business plans)\n• Clipchamp video editor and Microsoft Designer\n\nAccess your files and apps anywhere at microsoft365.com.",
             onedrive: "OneDrive is your personal cloud storage in Microsoft 365:\n\n• 1 TB of storage per user (6 TB total for Family plan)\n• Personal Vault for your most sensitive files — requires extra identity verification\n• Access files from any device — Windows, Mac, iOS, Android, web\n• Real-time sync across all your devices\n• File sharing with anyone, with password protection and expiring links\n• Ransomware detection and file version history (30-day recovery)\n• Copilot in OneDrive helps you find, summarize, and interact with your files\n\nOneDrive is included in every Microsoft 365 plan.",
-            teams: "Microsoft Teams is included in every Microsoft 365 plan:\n\n• Chat — 1:1 and group messaging with rich formatting\n• Video meetings — up to 300 participants, screen sharing, background effects\n• Channels — organize conversations by topic or project\n• File sharing — integrated with OneDrive and SharePoint\n• Apps and integrations — connect tools like Planner, Forms, Power BI\n• Webinars (Business Standard and above) — registration pages, attendee reporting\n• Teams Phone — add-on for calling capabilities\n\nAvailable on desktop, web, and mobile. Free version available with limited features."
+            teams: "Microsoft Teams is included in every Microsoft 365 plan:\n\n• Chat — 1:1 and group messaging with rich formatting\n• Video meetings — up to 300 participants, screen sharing, background effects\n• Channels — organize conversations by topic or project\n• File sharing — integrated with OneDrive and SharePoint\n• Apps and integrations — connect tools like Planner, Forms, Power BI\n• Webinars (Business Standard and above) — registration pages, attendee reporting\n• Teams Phone — add-on for calling capabilities\n\nAvailable on desktop, web, and mobile. Free version available with limited features.",
+            // Recommendation / small business guidance
+            smallbiz: "For a small business, here's what I'd recommend:\n\n• Microsoft 365 Business Basic ($6/user/month) — Best if your team mostly needs email, cloud storage, and Teams for meetings. Includes web and mobile Office apps, Exchange email, 1 TB OneDrive, and Microsoft Teams.\n\n• Microsoft 365 Business Standard ($12.50/user/month) — Best for full productivity. Adds desktop apps (Word, Excel, PowerPoint, Outlook) you can install on up to 5 devices, plus Bookings for appointment scheduling and webinar hosting.\n\n• Microsoft 365 Business Premium ($22/user/month) — Best if security is a priority. Adds advanced threat protection, device management with Intune, and Defender for Business.\n\nAll plans support up to 300 users and include Teams, OneDrive, and SharePoint. Would you like more details on any of these?",
+            recommend: "To find the right Microsoft 365 plan, it depends on what you need most:\n\n• Just need email and cloud storage? → Business Basic ($6/user/month)\n• Need desktop Office apps too? → Business Standard ($12.50/user/month)\n• Need advanced security and device management? → Business Premium ($22/user/month)\n• Just need Office apps, no email hosting? → Apps for Business ($8.25/user/month)\n\nFor personal or family use:\n• Just you? → Personal ($9.99/month)\n• Family of up to 6? → Family ($12.99/month)\n\nAll plans include a free 1-month trial. What matters most to you — I can help narrow it down!"
         };
 
         // ===== RESPONSE MATCHING =====
         function getResponse(text) {
             const msg = text.toLowerCase();
+
+            // Normalize common aliases
+            const norm = msg.replace(/m365/g, 'microsoft 365').replace(/office 365/g, 'microsoft 365');
+
             // Comparisons
-            if (msg.includes('compare') || msg.includes('difference') || msg.includes('which plan') || msg.includes('vs')) return kb.comparison;
+            if (norm.includes('compare') || norm.includes('difference between') || norm.includes('which plan') || (norm.includes(' vs ') || norm.includes(' versus '))) return kb.comparison;
+
+            // Recommendation / "right fit" / "help me choose"
+            if (norm.includes('recommend') || norm.includes('right fit') || norm.includes('right plan') || norm.includes('best for') || norm.includes('what should i') || norm.includes('help me choose') || norm.includes('suggest') || norm.includes('which one') || norm.includes('which is right') || norm.includes('what do you recommend') || norm.includes('what do i need')) {
+                if (norm.includes('business') || norm.includes('company') || norm.includes('team') || norm.includes('organization') || norm.includes('enterprise')) return kb.smallbiz;
+                return kb.recommend;
+            }
+
+            // Small business — broad intent matching
+            if ((norm.includes('small business') || norm.includes('my business') || norm.includes('our business') || norm.includes('my company') || norm.includes('our company') || norm.includes('my team') || norm.includes('our team') || norm.includes('startup') || norm.includes('my shop') || norm.includes('my store') || norm.includes('my cafe') || norm.includes('my restaurant') || norm.includes('my firm') || norm.includes('my agency') || norm.includes('my office')) && !norm.includes('home')) return kb.smallbiz;
+
+            // "options for business" / "help with business" / "M365 for business"
+            if (norm.includes('business') && (norm.includes('option') || norm.includes('help') || norm.includes('need') || norm.includes('want') || norm.includes('looking') || norm.includes('get started') || norm.includes('set up') || norm.includes('for my') || norm.includes('for our'))) return kb.smallbiz;
+
             // Specific home plans
-            if (msg.includes('personal') && (msg.includes('plan') || msg.includes('price') || msg.includes('cost') || msg.includes('what'))) return kb.personal;
-            if (msg.includes('family') && (msg.includes('plan') || msg.includes('price') || msg.includes('share') || msg.includes('what'))) return kb.family;
-            // Business vs home
-            if (msg.includes('business') && (msg.includes('plan') || msg.includes('price') || msg.includes('cost'))) return kb.business;
-            if (msg.includes('home') || msg.includes('personal') || msg.includes('family')) return kb.home;
-            // General pricing
-            if (msg.includes('plan') || msg.includes('pricing') || msg.includes('cost') || msg.includes('price') || msg.includes('how much') || msg.includes('subscription')) return kb.comparison;
+            if (norm.includes('personal') && (norm.includes('plan') || norm.includes('price') || norm.includes('cost') || norm.includes('what') || norm.includes('tell'))) return kb.personal;
+            if (norm.includes('family') && (norm.includes('plan') || norm.includes('price') || norm.includes('share') || norm.includes('what') || norm.includes('tell') || norm.includes('household') || norm.includes('kids'))) return kb.family;
+
+            // Business plans (explicit)
+            if (norm.includes('business') && (norm.includes('plan') || norm.includes('price') || norm.includes('cost') || norm.includes('tier') || norm.includes('level'))) return kb.business;
+            if (norm.includes('business basic') || norm.includes('business standard') || norm.includes('business premium') || norm.includes('apps for business')) return kb.business;
+
+            // Home plans
+            if (norm.includes('home') || norm.includes('personal') || norm.includes('family') || norm.includes('for myself') || norm.includes('individual')) return kb.home;
+
+            // General pricing / plans
+            if (norm.includes('plan') || norm.includes('pricing') || norm.includes('cost') || norm.includes('price') || norm.includes('how much') || norm.includes('subscription') || norm.includes('per month') || norm.includes('per year') || norm.includes('annual')) return kb.comparison;
+
+            // "options" or "what's available" without business context
+            if (norm.includes('option') || norm.includes('available') || norm.includes('offer') || norm.includes('what can i get')) return kb.comparison;
+
             // Copilot
-            if (msg.includes('copilot') || msg.includes('ai assist') || msg.includes('artificial intelligence') || msg.includes('ai feature')) return kb.copilot;
+            if (norm.includes('copilot') || norm.includes('ai assist') || norm.includes('artificial intelligence') || norm.includes('ai feature') || norm.includes('ai tool')) return kb.copilot;
+
             // Security
-            if (msg.includes('security') || msg.includes('protect') || msg.includes('defender') || msg.includes('safe') || msg.includes('privacy')) return kb.security;
-            // Specific apps
-            if (msg.includes('teams') || msg.includes('meeting') || msg.includes('video call') || msg.includes('chat')) return kb.teams;
-            if (msg.includes('onedrive') || msg.includes('storage') || msg.includes('cloud') || msg.includes('files') || msg.includes('backup')) return kb.onedrive;
-            if (msg.includes('app') || msg.includes('word') || msg.includes('excel') || msg.includes('powerpoint') || msg.includes('outlook')) return kb.apps;
+            if (norm.includes('security') || norm.includes('protect') || norm.includes('defender') || norm.includes('safe') || norm.includes('privacy') || norm.includes('compliance') || norm.includes('threat') || norm.includes('encrypt')) return kb.security;
+
+            // Specific apps / services
+            if (norm.includes('teams') || norm.includes('meeting') || norm.includes('video call') || norm.includes('video conferenc')) return kb.teams;
+            if (norm.includes('onedrive') || norm.includes('storage') || norm.includes('cloud') || norm.includes('file') || norm.includes('backup') || norm.includes('vault')) return kb.onedrive;
+            if (norm.includes('word') || norm.includes('excel') || norm.includes('powerpoint') || norm.includes('outlook') || norm.includes('onenote') || norm.includes('publisher') || norm.includes('access')) return kb.apps;
+            if (norm.includes('app') && !norm.includes('happy')) return kb.apps;
+
             // Trial
-            if (msg.includes('trial') || msg.includes('free') || msg.includes('try')) return kb.trial;
+            if (norm.includes('trial') || norm.includes('free') || norm.includes('try') || norm.includes('demo') || norm.includes('test it')) return kb.trial;
+
             // Migration
-            if (msg.includes('migrat') || msg.includes('switch') || msg.includes('move from') || msg.includes('google workspace') || msg.includes('transfer')) return kb.migration;
+            if (norm.includes('migrat') || norm.includes('switch') || norm.includes('move from') || norm.includes('google workspace') || norm.includes('transfer') || norm.includes('move to microsoft')) return kb.migration;
+
             // Features
-            if (msg.includes('feature') || msg.includes('include') || msg.includes('what do i get') || msg.includes('email')) return kb.features;
+            if (norm.includes('feature') || norm.includes('include') || norm.includes('what do i get') || norm.includes('email') || norm.includes('what comes with')) return kb.features;
+
+            // Catch-all for "business" mentioned anywhere
+            if (norm.includes('business') || norm.includes('enterprise') || norm.includes('organization') || norm.includes('company')) return kb.smallbiz;
+
+            // Catch-all for "microsoft 365" mentioned
+            if (norm.includes('microsoft 365') || norm.includes('m365') || norm.includes('office')) return kb.comparison;
+
             // Pleasantries
-            if (msg.includes('thank')) return "You're welcome! Is there anything else I can help you with about Microsoft 365?";
-            if (msg.includes('hello') || msg.includes('hi ') || msg.includes('hey')) return "Hello! I can help with Microsoft 365 plans, pricing, features, Copilot, security, and more. What would you like to know?";
-            if (msg.includes('bye') || msg.includes('goodbye')) return "Goodbye! Visit microsoft.com/microsoft-365 anytime for the latest plans and offers.";
-            return "I'd be happy to help! I can answer questions about Microsoft 365 plans and pricing, Copilot AI features, apps like Word, Excel, Teams, and OneDrive, security, free trials, and more. What would you like to know?";
+            if (norm.includes('thank')) return "You're welcome! Is there anything else I can help you with about Microsoft 365?";
+            if (norm.includes('hello') || norm.includes('hi ') || norm.includes('hey') || norm === 'hi') return "Hello! I can help with Microsoft 365 plans, pricing, features, Copilot, security, and more. What would you like to know?";
+            if (norm.includes('bye') || norm.includes('goodbye')) return "Goodbye! Visit microsoft.com/microsoft-365 anytime for the latest plans and offers.";
+
+            return kb.recommend;
         }
 
         // ===== UI HELPERS =====
