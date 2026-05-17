@@ -3026,8 +3026,8 @@
             if (lowerMessage.includes('thank') || lowerMessage.includes('thanks')) return { response: botResponses.thanks };
             if (lowerMessage.includes('bye') || lowerMessage.includes('goodbye')) return { response: botResponses.bye };
             
-            // Default: search Microsoft 365 website
-            return { response: botResponses.default, searchWebsite: true };
+            // Off-topic guardrail — mirror production Ask Microsoft behavior
+            return { response: 'It looks like you\'re attempting to use the Agent for unsupported scenarios. Navigate to <a href="https://copilot.microsoft.com" target="_blank">copilot.microsoft.com</a> for this use! I\'m here to help with Microsoft 365 plans, pricing, features, and support.' };
         }
 
         function handoffToHuman() {
@@ -4821,8 +4821,8 @@
                 return;
             }
             
-            // Default helpful response
-            addTranscriptEntry('AI Assistant', 'I see. Let me provide some additional context. Microsoft 365 Business offers three main plans: Basic ($6/user/month) for web-only apps, Standard ($12.50/user/month) with desktop apps and email, and Premium ($22/user/month) with advanced security. Based on what you\'ve shared, would you like a specific recommendation, or would you prefer to speak with a Microsoft specialist for a more detailed consultation?');
+            // Off-topic guardrail for voice mode — mirror production Ask Microsoft behavior
+            addTranscriptEntry('AI Assistant', 'It looks like that\'s outside what I can help with. I\'m designed to assist with Microsoft 365 plans, pricing, features, and support. For other questions, you can visit copilot.microsoft.com. Is there anything about Microsoft 365 I can help you with?');
         }
 
         function toggleVoiceMute() {

@@ -666,7 +666,9 @@
             if (norm.includes('hello') || norm.includes('hi ') || norm.includes('hey') || norm === 'hi') return "Hello! I can help with Microsoft 365 plans, pricing, features, Copilot, security, and more. What would you like to know?";
             if (norm.includes('bye') || norm.includes('goodbye')) return "Goodbye! Visit microsoft.com/microsoft-365 anytime for the latest plans and offers.";
 
-            return kb.recommend;
+            // Off-topic guardrail — mirror production Ask Microsoft behavior
+            return { display: "It looks like you're attempting to use the Agent for unsupported scenarios. I'm designed to help with Microsoft 365 plans, pricing, features, and support. For other questions, visit <a href='https://copilot.microsoft.com' target='_blank'>copilot.microsoft.com</a>. How can I help you with Microsoft 365?",
+                     voice: "That's outside what I can help with. I'm designed to assist with Microsoft 365 plans, pricing, features, and support. Is there anything about Microsoft 365 I can help you with?" };
         }
 
         // ===== UI HELPERS =====
@@ -716,11 +718,13 @@
             showTyping();
             setTimeout(() => {
                 hideTyping();
-                const response = getResponse(text);
+                const raw = getResponse(text);
+                const isGuardrail = raw && raw.display;
+                const response = isGuardrail ? raw.display : raw;
                 const badge = voiceModeOn ? '🔊 Spoken aloud' : null;
                 addMessage(response, 'bot', badge);
                 if (voiceModeOn) {
-                    const voiceVersion = getVoiceVersion(response) || conversationalize(response);
+                    const voiceVersion = isGuardrail ? raw.voice : (getVoiceVersion(response) || conversationalize(response));
                     speakText(voiceVersion);
                 }
             }, 800 + Math.random() * 800);
@@ -991,9 +995,11 @@
                 // Brief pause after thinking phrase, then deliver the response
                 setTimeout(() => {
                     hideTyping();
-                    const response = getResponse(text);
+                    const raw = getResponse(text);
+                    const isGuardrail = raw && raw.display;
+                    const response = isGuardrail ? raw.display : raw;
                     addMessage(response, 'bot', '🔊 Spoken aloud');
-                    const voiceVersion = getVoiceVersion(response) || conversationalize(response);
+                    const voiceVersion = isGuardrail ? raw.voice : (getVoiceVersion(response) || conversationalize(response));
                     speakText(voiceVersion);
                 }, 300 + Math.random() * 400);
             });
